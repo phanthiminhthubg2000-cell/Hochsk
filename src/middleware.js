@@ -1,11 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Khai báo các đường dẫn được phép truy cập tự do (không cần đăng nhập)
-// Ở đây chúng ta chỉ mở cửa cho Trang chủ ("/")
+// Chỉ mở cửa cho trang chủ "/"
 const isPublicRoute = createRouteMatcher(["/"]);
 
 export default clerkMiddleware((auth, req) => {
-  // Nếu người dùng vào một trang KHÔNG NẰM TRONG danh sách public ở trên, bắt buộc đăng nhập
   if (!isPublicRoute(req)) {
     auth().protect();
   }
@@ -13,9 +11,9 @@ export default clerkMiddleware((auth, req) => {
 
 export const config = {
   matcher: [
-    // Bỏ qua các file tĩnh và file nội bộ của Next.js
+    // Bỏ qua các file tĩnh, hình ảnh, cấu hình hệ thống
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Luôn chạy middleware cho các API routes
+    // Luôn chạy middleware cho các đường dẫn API
     '/(api|trpc)(.*)',
   ],
 };
