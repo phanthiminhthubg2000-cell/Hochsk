@@ -1,27 +1,23 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
-
-// Chỉ mở cửa cho trang chủ "/"
-const isPublicRoute = createRouteMatcher(["/"]);
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
 export default clerkMiddleware((auth, req) => {
-  // Nếu vào các trang không phải trang chủ
-  if (!isPublicRoute(req)) {
-    // Lấy thông tin xem người dùng đã đăng nhập chưa
-    const { userId } = auth();
-    
-    // Nếu chưa đăng nhập (không có userId), lập tức chuyển hướng về trang chủ
-    if (!userId) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+  // Lấy đường dẫn hiện tại mà khách đang truy cập
+  const path = req.nextUrl.pathname;
+
+  // Nếu khách đang ở đúng Trang chủ ("/") thì cho phép đi qua, không làm gì cả
+  if (path === "/") {
+    return;
   }
+
+  // Nếu khách vào bất kỳ trang nào khác, tự động bảo vệ và yêu cầu đăng nhập
+  auth().protect();
 });
 
 export const config = {
   matcher: [
-    // Bỏ qua các file tĩnh để web tải nhanh
+    // Bỏ qua các file tĩnh (hình ảnh, css, phông chữ...) để web không bị lỗi giao diện
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Chạy bảo mật cho API
+    // Luôn bảo mật các đường dẫn API
     '/(api|trpc)(.*)',
   ],
 };
