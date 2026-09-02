@@ -3,22 +3,27 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // State dùng để theo dõi học sinh nào đang được click mở rộng
   const [expandedId, setExpandedId] = useState(null);
 
   const isTeacher = user?.publicMetadata?.role === "teacher";
 
   useEffect(() => {
-    async function fetchStudentsProgress() {
-      if (isTeacher) {
-        try {
-          const q = query(collection(db, "progress"));
-          const querySnapshot = await getDocs(q);
+    let unsubscribe; // Biến để lưu hàm hủy lắng nghe
+
+    if (isLoaded && isTeacher) {
+      try {
+        const q = query(collection(db, "progress"));
+        
+        // Dùng onSnapshot để lắng nghe dữ liệu liên tục 24/7
+        unsubscribe = onSnapshot(q, (querySnapshot) => {
           const studentList = [];
           querySnapshot.forEach((doc) => {
             studentList.push({ id: doc.id, ...doc.data() });
@@ -28,31 +33,48 @@ export default function DashboardPage() {
           studentList.sort((a, b) => (b.lastLogin?.toMillis() || 0) - (a.lastLogin?.toMillis() || 0));
           
           setStudents(studentList);
-        } catch (e) {
-          console.error("Lỗi lấy dữ liệu:", e);
-        } finally {
           setLoading(false);
-        }
-      } else if (isLoaded) {
+        }, (error) => {
+          console.error("Lỗi lắng nghe dữ liệu:", error);
+          setLoading(false);
+        });
+
+      } catch (e) {
+        console.error("Lỗi khởi tạo lắng nghe:", e);
         setLoading(false);
       }
+    } else if (isLoaded && !isTeacher) {
+      setLoading(false);
     }
-    if (isLoaded) fetchStudentsProgress();
+
+    // Dọn dẹp bộ nhớ khi component bị đóng
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [isLoaded, isTeacher]);
 
+  // Hàm xử lý khi click vào tên 1 học sinh
   const toggleStudent = (id) => {
-    setExpandedId(expandedId === id ? null : id);
+    if (expandedId === id) {
+      setExpandedId(null); // Click lần 2 thì thu gọn
+    } else {
+      setExpandedId(id); // Click lần 1 thì mở rộng
+    }
   };
 
-  if (!isLoaded || loading) return <main className="flex min-h-screen items-center justify-center bg-slate-50"><h1 className="text-xl font-bold animate-pulse text-rose-500">Đang tải bảng quản lý...</h1></main>;
-  
-  if (!isTeacher) return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-4 text-center">
-      <h1 className="text-3xl font-black text-slate-800 mb-2">🚫 Truy cập bị từ chối</h1>
-      <p className="text-slate-500 mb-6">Trang này chỉ dành riêng cho tài khoản Giáo viên.</p>
-      <Link href="/" className="mt-4 px-6 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition">Về Trang Chủ</Link>
-    </main>
-  );
+  if (!isLoaded || loading) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-50"><h1 className="text-xl font-bold animate-pulse text-rose-500">Đang tải bảng quản lý...</h1></main>;
+  }
+
+  if (!isTeacher) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-4 text-center">
+        <h1 className="text-3xl font-black text-slate-800 mb-2">🚫 Truy cập bị từ chối</h1>
+        <p className="text-slate-500 mb-6">Trang này chỉ dành riêng cho tài khoản Giáo viên.</p>
+        <Link href="/" className="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition">Về Trang Chủ</Link>
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center py-10 bg-slate-50 px-4">
@@ -135,7 +157,7 @@ export default function DashboardPage() {
                         {student.arrangeExp ? <p className="text-2xl font-black text-orange-600">{student.arrangeExp} <span className="text-sm font-medium text-orange-500">EXP</span></p> : <p className="text-slate-400 text-sm italic">Chưa học</p>}
                       </div>
 
-                      {/* 6. Thực chiến (Sẽ hiển thị Chưa học nếu bạn chưa làm tab này) */}
+                      {/* 6. Thực chiến */}
                       <div className="p-4 rounded-xl border border-green-100 bg-green-50/50 flex flex-col justify-between">
                         <p className="font-bold text-green-700 mb-2">💬 Thực Chiến</p>
                         {student.roleplayExp ? <p className="text-2xl font-black text-green-600">{student.roleplayExp} <span className="text-sm font-medium text-green-500">EXP</span></p> : <p className="text-slate-400 text-sm italic">Chưa học</p>}
