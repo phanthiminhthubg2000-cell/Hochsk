@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+// ĐƯỜNG DẪN TỚI FILE DATA CỦA BẠN (Đảm bảo file dictation.json nằm đúng vị trí)
+import dictationData from "../dictation.json"; 
 
-// THIẾT LẬP THANG ĐIỂM (5000 EXP MỖI CẤP)
 const HSK_LEVELS = [
   { name: "HSK 1", requiredExp: 0 },
   { name: "HSK 2", requiredExp: 5000 },
@@ -22,12 +23,10 @@ export default function DictationPage() {
   const [userInput, setUserInput] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
   
   const [sentenceHistory, setSentenceHistory] = useState([]);
   const inputRef = useRef(null);
 
-  // Tải dữ liệu lưu trữ khi mở trang
   useEffect(() => {
     const savedExp = localStorage.getItem("ai_dictation_exp");
     const savedHistory = localStorage.getItem("ai_dictation_history");
@@ -44,79 +43,73 @@ export default function DictationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Lưu lại EXP mỗi khi có thay đổi
   useEffect(() => {
     localStorage.setItem("ai_dictation_exp", userExp);
   }, [userExp]);
 
-  // HÀM PHÁT ÂM THÔNG MINH (Tách biệt Tiếng Trung & Tiếng Việt)
   const playAudio = (text, language = "zh-CN") => {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // Dừng ngay giọng đọc cũ nếu đang đọc dở
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = language; 
-      utterance.rate = 0.85; // Đọc chậm lại một chút cho dễ nghe chép
+      utterance.rate = 0.85; 
       window.speechSynthesis.speak(utterance);
     } else {
       alert("Trình duyệt của bạn không hỗ trợ tính năng phát âm!");
     }
   };
 
-  // GỌI AI ĐỂ LẤY CÂU HỎI MỚI
-  const generateNewSentence = async (level, history = sentenceHistory) => {
+  // HÀM LẤY CÂU HỎI TỪ FILE JSON CỤC BỘ (Không dùng AI)
+  const generateNewSentence = (level, history = sentenceHistory) => {
     setIsLoading(true);
     setIsCorrect(null);
     setUserInput("");
     setShowAnswer(false);
-    setErrorMsg(null);
     setCurrentSentence(null);
     
-    try {
-      const res = await fetch('/api/dictation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            level: level,
-            recentSentences: history.slice(-5) // Gửi 5 câu gần nhất để tránh lặp
-        })
-      });
+    setTimeout(() => {
+        // Lọc các câu đúng level và chưa làm gần đây
+        let availableSentences = dictationData.filter(item => 
+            item.level === level && !history.includes(item.chinese)
+        );
 
-      if (!res.ok) {
-         const errData = await res.json();
-         throw new Error(errData.error || "Lỗi kết nối AI");
-      }
-      
-      const result = await res.json();
-      setCurrentSentence(result);
-      
-      // Auto đọc câu tiếng Trung ngay khi load xong
-      setTimeout(() => playAudio(result.chinese, "zh-CN"), 500);
+        // Nếu người dùng làm hết sạch câu trong file, reset vòng lặp
+        if (availableSentences.length === 0) {
+            const totalInLevel = dictationData.filter(item => item.level === level);
+            if (totalInLevel.length === 0) {
+                 alert(`Bạn chưa nhập dữ liệu cho ${level} vào file dictation.json!`);
+                 setIsLoading(false);
+                 return;
+            }
+            availableSentences = totalInLevel;
+        }
 
-      // Cập nhật lịch sử
-      const newHistory = [...history, result.chinese].slice(-50);
-      setSentenceHistory(newHistory);
-      localStorage.setItem("ai_dictation_history", JSON.stringify(newHistory));
+        // Bốc ngẫu nhiên 1 câu
+        const randomIndex = Math.floor(Math.random() * availableSentences.length);
+        const selected = availableSentences[randomIndex];
+        
+        setCurrentSentence(selected);
+        playAudio(selected.chinese, "zh-CN");
 
-    } catch (error) {
-      setErrorMsg(error.message);
-    } finally {
-      setIsLoading(false);
-      if(inputRef.current) inputRef.current.focus();
-    }
+        const newHistory = [...history, selected.chinese].slice(-50);
+        setSentenceHistory(newHistory);
+        localStorage.setItem("ai_dictation_history", JSON.stringify(newHistory));
+        
+        setIsLoading(false);
+        if(inputRef.current) inputRef.current.focus();
+    }, 300); // Giả lập độ trễ ngắn cho UI mượt mà
   };
 
-  // KIỂM TRA ĐÁP ÁN (Nghe chép thì phải gõ đúng chữ Hán)
   const checkAnswer = () => {
       if (!currentSentence || !userInput.trim()) return;
       
-      // So sánh loại bỏ dấu câu và khoảng trắng để tránh lỗi nhỏ
       const cleanUser = userInput.replace(/[.,!?，。？！\s]/g, "");
       const cleanTarget = currentSentence.chinese.replace(/[.,!?，。？！\s]/g, "");
 
       if (cleanUser === cleanTarget) {
           setIsCorrect(true);
-          setUserExp(prev => prev + 20); // Thưởng 20 EXP
-          playAudio("太棒了", "zh-CN"); // Khen ngợi bằng tiếng Trung
+          setUserExp(prev => prev + 20);
+          playAudio("太棒了", "zh-CN");
       } else {
           setIsCorrect(false);
       }
@@ -128,7 +121,6 @@ export default function DictationPage() {
       }
   };
 
-  // TÍNH TOÁN THANH TIẾN ĐỘ EXP
   const currentLevelIndex = HSK_LEVELS.findIndex(
     (l, idx) => userExp >= l.requiredExp && (idx === HSK_LEVELS.length - 1 || userExp < HSK_LEVELS[idx + 1].requiredExp)
   );
@@ -146,7 +138,6 @@ export default function DictationPage() {
     <main className="min-h-screen bg-slate-50 py-10 px-4">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
         
-        {/* === SIDEBAR (CỘT TRÁI) === */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 sticky top-10">
                 <Link href="/">
@@ -196,12 +187,11 @@ export default function DictationPage() {
                   disabled={isLoading}
                   className="w-full py-4 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 font-bold hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <span>🔄</span> {isLoading ? "Đang lấy câu..." : "Bỏ qua & Đổi câu khác"}
+                  <span>🔄</span> Bỏ qua & Đổi câu khác
                 </button>
             </div>
         </div>
 
-        {/* === KHU VỰC LUYỆN NGHE CHÉP (CỘT PHẢI) === */}
         <div className="w-full lg:w-2/3 flex flex-col gap-6">
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex justify-between items-center">
                 <div>
@@ -209,7 +199,6 @@ export default function DictationPage() {
                   <p className="text-slate-500 text-sm mt-1">Luyện nghe chép không giới hạn. Gõ đúng để nhận +20 EXP!</p>
                 </div>
                 
-                {/* Nút bấm nghe lại tiếng Trung */}
                 <button 
                     onClick={() => currentSentence && playAudio(currentSentence.chinese, "zh-CN")}
                     disabled={!currentSentence || isLoading}
@@ -224,21 +213,9 @@ export default function DictationPage() {
                 
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center animate-pulse">
-                        <div className="text-6xl mb-4">🤖</div>
-                        <h3 className="text-2xl font-bold text-slate-700">Giáo viên AI đang ra đề...</h3>
-                        <p className="text-slate-400 mt-2">Vui lòng đợi vài giây nhé!</p>
+                        <div className="text-6xl mb-4">🗂️</div>
+                        <h3 className="text-2xl font-bold text-slate-700">Đang chọn đề từ thư viện...</h3>
                     </div>
-                ) : errorMsg ? (
-                   <div className="text-center bg-red-50 p-8 rounded-2xl border border-red-200 w-full max-w-lg">
-                       <p className="text-red-600 font-bold text-2xl mb-4">Opps! Có lỗi xảy ra.</p>
-                       <p className="text-red-500 font-medium mb-6">{errorMsg}</p>
-                       <button 
-                            onClick={() => generateNewSentence(selectedHsk)}
-                            className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition"
-                        >
-                            🔄 Thử lại ngay
-                       </button>
-                   </div>
                 ) : currentSentence ? (
                     <div className="w-full flex flex-col items-center animate-fade-in">
                         <h3 className="text-slate-400 font-bold tracking-widest uppercase mb-4">Hãy nghe và gõ lại tiếng Trung</h3>
@@ -291,7 +268,6 @@ export default function DictationPage() {
                             </button>
                         )}
 
-                        {/* Nút Xem Gợi ý */}
                         {!isCorrect && (
                             <div className="mt-6 w-full max-w-lg flex flex-col items-center">
                                 <button 
@@ -306,7 +282,6 @@ export default function DictationPage() {
                                         <p className="text-slate-700 font-medium text-lg mb-4">{currentSentence.vietnamese}</p>
                                         
                                         <div className="flex gap-4 justify-center">
-                                            {/* Nút đọc tiếng Việt - Tách biệt giọng vi-VN */}
                                             <button 
                                                 onClick={() => playAudio(currentSentence.vietnamese, "vi-VN")}
                                                 className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-600 font-bold hover:bg-slate-200 transition flex items-center gap-2"
