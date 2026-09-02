@@ -5,7 +5,6 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY || "",
 });
 
-// Biến lưu trữ model đã tìm được (giúp không phải tìm lại nhiều lần gây chậm API)
 let cachedModelId = null;
 
 export async function POST(req) {
@@ -14,48 +13,50 @@ export async function POST(req) {
       return NextResponse.json({ error: "Chưa cấu hình GROQ_API_KEY" }, { status: 500 });
     }
 
-    const { level = "HSK 1", recentSentences = [] } = await req.json();
+    const body = await req.json();
+    const { level = "HSK 1", recentSentences = [] } = body;
     const shortHistory = recentSentences.slice(-5);
 
-    // THUẬT TOÁN TỰ ĐỘNG TÌM MODEL KHẢ DỤNG
+    // THUẬT TOÁN TỰ ĐỘNG TÌM MODEL TEXT AN TOÀN TRÊN GROQ
     if (!cachedModelId) {
       const modelsPage = await groq.models.list();
       const activeModels = modelsPage.data;
       
-      // Lọc tìm các model chứa chữ "llama" và có dung lượng nhẹ (8b) để tối ưu tốc độ
-      const llamaModels = activeModels.filter(m => m.id.includes("llama") && m.id.includes("8b"));
+      const textModels = activeModels.filter(m => !m.id.includes("/") && !m.id.includes("whisper"));
+      const preferredModels = textModels.filter(m => m.id.includes("llama-3.1-8b") || m.id.includes("llama"));
       
-      if (llamaModels.length > 0) {
-          cachedModelId = llamaModels[0].id; // Lấy model Llama khả dụng đầu tiên
-      } else if (activeModels.length > 0) {
-          cachedModelId = activeModels[0].id; // Nếu không có Llama, lấy đại model bất kỳ đang hoạt động
+      if (preferredModels.length > 0) {
+          cachedModelId = preferredModels[0].id;
+      } else if (textModels.length > 0) {
+          cachedModelId = textModels[0].id;
       } else {
-          throw new Error("Không tìm thấy model nào khả dụng trên Groq.");
+          cachedModelId = "llama-3.1-8b-instant"; 
       }
-      console.log("🤖 Hệ thống đã tự động chọn Model:", cachedModelId);
+      console.log("🤖 [Dictation] Đang dùng Model Text:", cachedModelId);
     }
 
-    const prompt = `Tạo 1 câu giao tiếp tiếng Trung luyện nghe chép (Từ vựng ${level}, 6-12 chữ). Không trùng với: [${shortHistory.join(",")}]. Chỉ trả về JSON thuần túy theo cấu trúc: {"chinese":"...","pinyin":"...","vietnamese":"..."}`;
+    const prompt = `Tạo 1 câu tiếng Trung thông dụng thuộc trình độ ${level} (khoảng 6-15 chữ).
+    Không trùng với các câu sau: [${shortHistory.join(",")}].
+    Chỉ trả về JSON thuần túy theo định dạng sau, không giải thích gì thêm:
+    {"chinese": "<câu tiếng Trung>", "pinyin": "<phiên âm>", "vietnamese": "<nghĩa tiếng Việt>"}`;
 
-    // Truyền biến model tự động tìm được vào đây
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: cachedModelId,
       temperature: 0.7,
-      max_tokens: 150,
+      max_tokens: 800, // ĐÃ TĂNG LÊN 800 ĐỂ AI KHÔNG BỊ NGẮT LỜI
       response_format: { type: "json_object" },
     });
 
     const rawText = chatCompletion.choices[0]?.message?.content || "{}";
-    
     const parsedData = JSON.parse(rawText);
+    
     return NextResponse.json(parsedData);
 
   } catch (error) {
-    console.error("Lỗi chi tiết từ Groq API:", error);
+    console.error("Lỗi chi tiết từ Groq API (Dictation):", error);
     
-    // Nếu lỗi do model tự động bị hỏng, xóa cache để lần sau tìm lại
-    if (error?.message?.includes("decommissioned") || error?.status === 404) {
+    if (error?.message?.includes("terms") || error?.message?.includes("decommissioned") || error?.message?.includes("support") || error?.status === 404 || error?.status === 400) {
         cachedModelId = null; 
     }
 
