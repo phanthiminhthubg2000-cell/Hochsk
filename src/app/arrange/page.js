@@ -8,11 +8,11 @@ import { doc, setDoc } from "firebase/firestore";
 // Cấu hình các cấp độ và số EXP cần thiết để mở khóa
 const HSK_LEVELS = [
   { name: "HSK 1", requiredExp: 0 },
-  { name: "HSK 2", requiredExp: 1000 },
-  { name: "HSK 3", requiredExp: 2000 },
-  { name: "HSK 4", requiredExp: 3000 },
-  { name: "HSK 5", requiredExp: 4000 },
-  { name: "HSK 6", requiredExp: 5000 },
+  { name: "HSK 2", requiredExp: 2000 },
+  { name: "HSK 3", requiredExp: 6000 },
+  { name: "HSK 4", requiredExp: 11000 },
+  { name: "HSK 5", requiredExp: 16000 },
+  { name: "HSK 6", requiredExp: 25000 },
 ];
 
 // Hàm trộn mảng ngẫu nhiên
@@ -26,7 +26,6 @@ const shuffleArray = (array) => {
 };
 
 export default function EndlessArrangePage() {
-  // BƯỚC 2: GỌI TÀI KHOẢN NGƯỜI DÙNG Ở ĐÂY
   const { user } = useUser();
 
   const [selectedHsk, setSelectedHsk] = useState("HSK 1");
@@ -71,7 +70,7 @@ export default function EndlessArrangePage() {
     }
   }, [sentenceHistory]);
 
-  // HÀM GỌI AI ĐỂ TẠO CÂU MỚI (Dùng chung API /api/dictation)
+  // HÀM GỌI AI ĐỂ TẠO CÂU MỚI
   const generateNewSentence = async (level, history = sentenceHistory) => {
     if (isFetchingRef.current) return;
     
@@ -85,7 +84,7 @@ export default function EndlessArrangePage() {
     try {
       const recentTexts = history.slice(-15); 
       
-      const res = await fetch('/api/dictation', {
+      const res = await fetch('/api/arrange', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level: level, recentSentences: recentTexts })
@@ -98,7 +97,7 @@ export default function EndlessArrangePage() {
       
       // Xử lý chuỗi: Loại bỏ dấu câu tiếng Trung để làm trò chơi xếp chữ
       const cleanChinese = data.chinese.replace(/[.,?!。，？！、]/g, '');
-      // Tách thành mảng từng chữ cái và cấp ID (để xử lý các chữ giống nhau)
+      // Tách thành mảng từng chữ cái và cấp ID
       const wordsArray = cleanChinese.split('').map((char, index) => ({ id: index, char }));
       
       setShuffledWords(shuffleArray(wordsArray));
@@ -116,7 +115,7 @@ export default function EndlessArrangePage() {
 
   // LOGIC SẮP XẾP TỪ
   const handleSelectWord = (word) => {
-    if (feedback === 'correct') return; // Đúng rồi thì không cho chọn nữa
+    if (feedback === 'correct') return; 
     setShuffledWords(prev => prev.filter(w => w.id !== word.id));
     setSelectedWords(prev => [...prev, word]);
     setFeedback(null);
@@ -129,8 +128,8 @@ export default function EndlessArrangePage() {
     setFeedback(null);
   };
 
-  // BƯỚC 3: KIỂM TRA ĐÁP ÁN VÀ ĐỒNG BỘ FIREBASE
-  const checkAnswer = async () => { // Thêm async vào đây
+  // KIỂM TRA ĐÁP ÁN VÀ ĐỒNG BỘ FIREBASE
+  const checkAnswer = async () => { 
     if (!currentSentence) return;
     
     const answerStr = selectedWords.map(w => w.char).join('');
@@ -138,6 +137,7 @@ export default function EndlessArrangePage() {
     
     if (answerStr === expectedStr) {
         setFeedback("correct");
+        setShowAnswer(false); // Ẩn đáp án nếu trước đó lỡ bật khi làm sai
         
         const newExp = userExp + 20;
         setUserExp(newExp); 
@@ -151,7 +151,6 @@ export default function EndlessArrangePage() {
             console.error("Lỗi đồng bộ điểm lên đám mây:", error);
           }
         }
-        // -------------------------------------
         
         setSentenceHistory(prev => {
             const newHistory = [...prev, currentSentence.chinese];
@@ -202,7 +201,7 @@ export default function EndlessArrangePage() {
     <main className="min-h-screen bg-slate-50 py-10 px-4">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
         
-        {/* CỘT BÊN TRÁI: THANH SIDEBAR & TIẾN ĐỘ EXP (MÀU ORANGE) */}
+        {/* CỘT BÊN TRÁI: THANH SIDEBAR & TIẾN ĐỘ EXP */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 sticky top-10">
                 <Link href="/">
@@ -254,13 +253,13 @@ export default function EndlessArrangePage() {
             </div>
         </div>
 
-        {/* CỘT BÊN PHẢI: KHU VỰC SẮP XẾP CÂU */}
+        {/* CỘT BÊN PHẢI: KHU VỰC SẮP XẾP CÂU (HARDCORE MODE) */}
         <div className="w-full lg:w-2/3 flex flex-col gap-6">
             
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-slate-800">Chế độ Sinh Tồn AI ({selectedHsk})</h2>
-                  <p className="text-slate-500 text-sm mt-1">Luyện phản xạ cấu trúc câu. Xếp đúng để nhận +20 EXP!</p>
+                  <p className="text-slate-500 text-sm mt-1">Luyện phản xạ cấu trúc câu thuần Trung. Xếp đúng nhận +20 EXP!</p>
                 </div>
                 <div className="text-4xl">🧩</div>
             </div>
@@ -275,19 +274,14 @@ export default function EndlessArrangePage() {
                     </div>
                 ) : currentSentence ? (
                     <div className="w-full flex flex-col items-center animate-fade-in">
-                        <h3 className="text-orange-400 font-bold tracking-widest uppercase mb-4 text-sm">GỢI Ý NGHĨA TIẾNG VIỆT</h3>
-
-                        <p className="text-3xl sm:text-4xl font-black text-slate-800 mb-10 text-center leading-tight">
-                          "{currentSentence.vietnamese}"
-                        </p>
-
+                        
                         {/* KHUNG ĐỰNG TỪ ĐÃ CHỌN */}
-                        <div className={`w-full max-w-2xl min-h-[100px] border-2 border-dashed rounded-2xl p-4 flex flex-wrap justify-center gap-3 items-center transition-all ${
+                        <div className={`w-full max-w-2xl min-h-[100px] border-2 border-dashed rounded-2xl p-4 flex flex-wrap justify-center gap-3 items-center transition-all mt-4 ${
                             feedback === 'correct' ? 'border-green-500 bg-green-50' : 
                             feedback === 'incorrect' ? 'border-red-500 bg-red-50' : 'border-orange-300 bg-orange-50/30'
                         }`}>
                             {selectedWords.length === 0 && !feedback && (
-                                <span className="text-slate-400 font-medium">Chạm vào ô bên dưới để xếp câu...</span>
+                                <span className="text-slate-400 font-medium">Chạm vào các chữ Hán bên dưới để sắp xếp...</span>
                             )}
                             
                             {selectedWords.map(word => (
@@ -309,7 +303,7 @@ export default function EndlessArrangePage() {
                             <p className="text-red-500 font-bold mt-6">❌ Thứ tự chưa đúng, hãy thử lại!</p>
                         )}
 
-                        {/* KHUNG ĐỰNG TỪ CÒN LẠI */}
+                        {/* KHUNG ĐỰNG TỪ CÒN LẠI (XÁO TRỘN) */}
                         <div className="w-full max-w-2xl mt-8 flex flex-wrap justify-center gap-3">
                             {shuffledWords.map(word => (
                                 <button
@@ -322,7 +316,7 @@ export default function EndlessArrangePage() {
                             ))}
                         </div>
 
-                        {/* Nút Kiểm tra & Đáp án */}
+                        {/* Nút Kiểm tra & Nút Xem Đáp Án (Chỉ xuất hiện khi làm sai) */}
                         <div className="w-full max-w-2xl mt-10 flex flex-col sm:flex-row gap-4">
                             <button 
                                 onClick={checkAnswer}
@@ -336,28 +330,33 @@ export default function EndlessArrangePage() {
                                 Kiểm tra
                             </button>
                             
-                            <button 
-                                onClick={() => {
-                                    setShowAnswer(!showAnswer);
-                                    if(!showAnswer) speak(currentSentence.chinese);
-                                }}
-                                className="px-6 py-4 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-all"
-                            >
-                                {showAnswer ? "Ẩn đáp án" : "Xem đáp án"}
-                            </button>
+                            {/* CHỈ HIỆN NÚT NÀY KHI NGƯỜI DÙNG LÀM SAI (feedback === 'incorrect') */}
+                            {feedback === 'incorrect' && (
+                                <button 
+                                    onClick={() => {
+                                        setShowAnswer(!showAnswer);
+                                        if(!showAnswer) speak(currentSentence.chinese);
+                                    }}
+                                    className="px-6 py-4 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-all animate-fade-in"
+                                >
+                                    {showAnswer ? "Ẩn đáp án" : "💡 Xem đáp án"}
+                                </button>
+                            )}
                         </div>
 
-                        {showAnswer && (
+                        {/* Khung hiển thị đáp án chi tiết chỉ bật khi làm sai và chủ động bấm */}
+                        {showAnswer && feedback === 'incorrect' && (
                             <div className="mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-200 animate-fade-in w-full max-w-2xl text-center">
-                                <p className="text-4xl font-black text-slate-800 mb-4">{currentSentence.chinese}</p>
-                                <p className="text-xl text-slate-600 font-medium mb-2">{currentSentence.pinyin}</p>
+                                <p className="text-4xl font-black text-slate-800 mb-2">{currentSentence.chinese}</p>
+                                <p className="text-xl text-slate-600 font-medium mb-3">{currentSentence.pinyin}</p>
+                                <p className="text-sm text-slate-500 italic">Nghĩa: {currentSentence.vietnamese}</p>
                             </div>
                         )}
                     </div>
                 ) : (
                    <div className="text-center">
-                       <p className="text-slate-500 font-bold mb-4">Chưa có câu nào được tải.</p>
-                       <button onClick={() => generateNewSentence(selectedHsk)} className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Thử lại</button>
+                        <p className="text-slate-500 font-bold mb-4">Chưa có câu nào được tải.</p>
+                        <button onClick={() => generateNewSentence(selectedHsk)} className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Thử lại</button>
                    </div>
                 )}
             </div>
