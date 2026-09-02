@@ -4,9 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import myCustomData from "../cards.json";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore"; 
 
-// Hàm chia nhỏ data thành các bài học (mỗi bài 10 từ)
 const generateLevelsFromData = (data, wordsPerLevel = 10) => {
   const levels = [];
   const dataArray = Array.isArray(data) ? data : [];
@@ -22,9 +21,7 @@ const generateLevelsFromData = (data, wordsPerLevel = 10) => {
 };
 
 export default function FlashcardPage() {
-  // BƯỚC 2: Gọi tài khoản người dùng
   const { user } = useUser();
-
   const availableHskLevels = [...new Set(myCustomData.map(item => item.level))].filter(Boolean).sort();
   const [selectedHsk, setSelectedHsk] = useState(availableHskLevels[0] || "");
   
@@ -40,17 +37,79 @@ export default function FlashcardPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [shadowingResult, setShadowingResult] = useState(null);
+
+  // --- TRẠNG THÁI KỶ LUẬT THÉP VÀ BÀI TẬP KÉP ---
+  const [canFlip, setCanFlip] = useState(false);
+  const [shadowingPassed, setShadowingPassed] = useState(false);
+  
+  const [meaningInput, setMeaningInput] = useState("");
+  const [meaningStatus, setMeaningStatus] = useState("idle"); // idle, correct, incorrect
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
-  // Lọc data, loại bỏ từ trùng lặp và chia bài học
+  const [userData, setUserData] = useState(null);
+
+  const [examState, setExamState] = useState({
+    isOpen: false,
+    questions: [],
+    currentIndex: 0,
+    score: 0,
+    isFinished: false,
+    total: 0,
+    passScore: 0
+  });
+
+  // Reset trạng thái mỗi khi chuyển từ vựng mới
+  useEffect(() => {
+    setCanFlip(false);
+    setShadowingPassed(false);
+    setIsFlipped(false);
+    setShadowingResult(null);
+    setMeaningInput("");
+    setMeaningStatus("idle");
+  }, [activeWordIndex, viewingLevel, filter, selectedHsk]);
+
+  // Tự động lật thẻ khi qua cả 2 bài test
+  useEffect(() => {
+    if (meaningStatus === "correct" && shadowingPassed) {
+      setCanFlip(true);
+      setIsFlipped(true);
+    }
+  }, [meaningStatus, shadowingPassed]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        try {
+          const docRef = doc(db, "progress", user.id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+          }
+        } catch (error) {
+          console.error("Lỗi lấy dữ liệu chứng chỉ:", error);
+        }
+      }
+    };
+    fetchUserData();
+  }, [user]);
+
+  const isHskLocked = (lvl) => {
+    const lvlStr = String(lvl).toLowerCase();
+    if (lvlStr.includes("2")) return !userData?.passedHSK1;
+    if (lvlStr.includes("3")) return !userData?.passedHSK2;
+    if (lvlStr.includes("4")) return !userData?.passedHSK3;
+    if (lvlStr.includes("5")) return !userData?.passedHSK4;
+    if (lvlStr.includes("6")) return !userData?.passedHSK5;
+    return false;
+  };
+
   useEffect(() => {
     const dataForHsk = selectedHsk 
       ? myCustomData.filter(item => item.level === selectedHsk) 
       : myCustomData;
       
-    // LỌC TỪ TRÙNG LẶP (Dựa trên chữ Hán - key "front")
     const uniqueData = dataForHsk.filter((item, index, self) =>
       index === self.findIndex((t) => t.front === item.front)
     );
@@ -59,10 +118,8 @@ export default function FlashcardPage() {
     setLevelsData(generatedLevels);
     setViewingLevel(1); 
     setActiveWordIndex(0);
-    setIsFlipped(false);
   }, [selectedHsk]);
 
-  // Load tiến độ HSK từ LocalStorage
   useEffect(() => {
     const savedExp = localStorage.getItem("hskk_exp");
     const savedProgress = localStorage.getItem("hskk_word_progress");
@@ -70,7 +127,6 @@ export default function FlashcardPage() {
     if (savedProgress) setWordProgress(JSON.parse(savedProgress));
   }, []);
 
-  // Tính cấp độ tối đa được mở khóa
   useEffect(() => {
     if (levelsData.length === 0) return;
     let newLevel = 1;
@@ -84,7 +140,6 @@ export default function FlashcardPage() {
     localStorage.setItem("hskk_exp", userExp);
   }, [userExp, levelsData]);
 
-  // Lưu trạng thái từ vựng
   useEffect(() => {
     if (Object.keys(wordProgress).length > 0) {
       localStorage.setItem("hskk_word_progress", JSON.stringify(wordProgress));
@@ -94,7 +149,6 @@ export default function FlashcardPage() {
   if (levelsData.length === 0) return <div className="p-10 text-center">Đang tải dữ liệu từ vựng...</div>;
 
   const activeLevelData = levelsData.find(l => l.level === viewingLevel) || levelsData[0];
-  
   const filteredWords = activeLevelData.words.filter(word => {
     const wordId = word.front;
     const status = wordProgress[wordId] || "learning";
@@ -103,12 +157,9 @@ export default function FlashcardPage() {
   });
 
   const activeWord = filteredWords[activeWordIndex];
-  
   const masteredCount = activeLevelData.words.filter(w => wordProgress[w.front] === "mastered").length;
-  
   const progressPercent = activeLevelData.words.length > 0 
-    ? Math.round((masteredCount / activeLevelData.words.length) * 100) 
-    : 0;
+    ? Math.round((masteredCount / activeLevelData.words.length) * 100) : 0;
 
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -116,22 +167,54 @@ export default function FlashcardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // BƯỚC 3: Đồng bộ số từ vựng lên Firebase
-  const markWord = async (status) => {
+  // --- LOGIC BÀI TẬP 1: KIỂM TRA NGHĨA GẦN ĐÚNG ---
+  const handleCheckMeaning = () => {
+    if (!meaningInput.trim() || !activeWord) return;
+    const inputStr = meaningInput.toLowerCase().trim();
+    const targetStr = activeWord.back.toLowerCase().trim();
+    
+    // Nếu nghĩa học viên nhập nằm trong chuỗi đáp án (hoặc ngược lại) -> Chấp nhận "gần đúng"
+    if (targetStr.includes(inputStr) || inputStr.includes(targetStr)) {
+      setMeaningStatus("correct");
+    } else {
+      setMeaningStatus("incorrect");
+    }
+  };
+
+  // --- LOGIC CHUYỂN TỪ ---
+  const handleMarkLearning = () => {
     if (!activeWord) return;
+    const wordId = activeWord.front;
+    setWordProgress({ ...wordProgress, [wordId]: "learning" });
+    
+    if (!isFlipped) {
+      // Lần đầu bấm: Lật thẻ để học viên xem nghĩa
+      setCanFlip(true);
+      setIsFlipped(true);
+    } else {
+      // Lần 2 bấm (đã lật thẻ): Chuyển sang từ tiếp theo nhưng KHÔNG cộng điểm
+      if (activeWordIndex < filteredWords.length - 1) {
+        setActiveWordIndex(prev => prev + 1);
+      } else {
+        setActiveWordIndex(0);
+      }
+    }
+  };
+
+  const handleMarkMasteredAndNext = async () => {
+    const isFullyPassed = shadowingPassed && meaningStatus === "correct";
+    if (!activeWord || !isFullyPassed) return;
+    
     const wordId = activeWord.front;
     const isAlreadyMastered = wordProgress[wordId] === "mastered";
     
-    const newProgress = { ...wordProgress, [wordId]: status };
+    const newProgress = { ...wordProgress, [wordId]: "mastered" };
     setWordProgress(newProgress);
     
-    if (status === "mastered" && !isAlreadyMastered) {
+    if (!isAlreadyMastered) {
       setUserExp(prev => prev + 20); 
-
-      // --- ĐOẠN ĐỒNG BỘ ĐÁM MÂY ---
       if (user) {
         try {
-          // Lọc ra tất cả những từ có trạng thái là 'mastered' để tính số lượng
           const learnedVocabArray = Object.keys(newProgress).filter(k => newProgress[k] === "mastered");
           const studentRef = doc(db, "progress", user.id);
           await setDoc(studentRef, { learnedVocab: learnedVocabArray }, { merge: true });
@@ -139,11 +222,7 @@ export default function FlashcardPage() {
           console.error("Lỗi đồng bộ từ vựng:", error);
         }
       }
-      // -----------------------------
     }
-
-    setShadowingResult(null); 
-    setIsFlipped(false);
 
     if (activeWordIndex < filteredWords.length - 1) {
       setActiveWordIndex(prev => prev + 1);
@@ -155,21 +234,19 @@ export default function FlashcardPage() {
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
     setActiveWordIndex(0);
-    setIsFlipped(false);
-    setShadowingResult(null);
   };
 
   const handleLevelChange = (levelObj) => {
       if (levelObj.level <= maxUnlockedLevel) {
           setViewingLevel(levelObj.level);
           setActiveWordIndex(0);
-          setIsFlipped(false);
           setFilter("all");
       } else {
-          alert(`🔒 Bạn cần đạt ${levelObj.requiredExp} EXP để mở khóa Bài ${levelObj.level}! Hãy học các bài trước để tích lũy EXP nhé.`);
+          alert(`🔒 Bạn cần đạt ${levelObj.requiredExp} EXP để mở khóa Bài ${levelObj.level}!`);
       }
   }
 
+  // --- LOGIC BÀI TẬP 2: GHI ÂM AI CHẤM ĐIỂM ---
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -210,6 +287,12 @@ export default function FlashcardPage() {
             });
             const data = await res.json();
             setShadowingResult(data);
+
+            // AI chấm trên 80 điểm thì ghi nhận vượt qua bài test phát âm
+            if (data.score >= 80) {
+              setShadowingPassed(true);
+            }
+
           } catch (e) {
             alert("Lỗi chấm điểm AI!");
             setShadowingResult(null);
@@ -221,16 +304,134 @@ export default function FlashcardPage() {
     }
   };
 
+  const dataForSelectedHsk = selectedHsk ? myCustomData.filter(item => item.level === selectedHsk) : myCustomData;
+  const uniqueDataForSelectedHsk = dataForSelectedHsk.filter((item, index, self) => index === self.findIndex((t) => t.front === item.front));
+  
+  const totalWordsForSelectedHsk = uniqueDataForSelectedHsk.length;
+  const masteredWordsForSelectedHsk = uniqueDataForSelectedHsk.filter(w => wordProgress[w.front] === "mastered").length;
+  const canTakeExam = totalWordsForSelectedHsk > 0 && masteredWordsForSelectedHsk === totalWordsForSelectedHsk;
+
+  // --- LOGIC BÀI THI CHỨNG CHỈ (BỎ QUA DO ĐÃ HOÀN THIỆN Ở BƯỚC TRƯỚC) ---
+  const openExam = () => {
+    if (!user) return alert("Bạn cần đăng nhập để thi!");
+    if (!canTakeExam) return alert("Bạn phải đánh dấu 'Đã thuộc' tất cả từ vựng của bộ này mới được phép thi!");
+    
+    const maxQuestions = Math.min(50, uniqueDataForSelectedHsk.length);
+    if (maxQuestions < 10) return alert("Chưa đủ từ vựng để tạo đề thi (Cần tối thiểu 10 từ)!");
+
+    const shuffledWords = [...uniqueDataForSelectedHsk].sort(() => 0.5 - Math.random());
+    const testWords = shuffledWords.slice(0, maxQuestions);
+
+    const generatedQuestions = testWords.map(word => {
+      const questionType = Math.floor(Math.random() * 4);
+      let questionText, subText, correctAnswer, optionPool;
+
+      switch (questionType) {
+        case 0: questionText = word.front; subText = word.ipa; correctAnswer = word.back; optionPool = uniqueDataForSelectedHsk.map(w => w.back); break;
+        case 1: questionText = word.back; subText = "Chọn chữ Hán đúng:"; correctAnswer = word.front; optionPool = uniqueDataForSelectedHsk.map(w => w.front); break;
+        case 2: questionText = word.ipa; subText = word.back; correctAnswer = word.front; optionPool = uniqueDataForSelectedHsk.map(w => w.front); break;
+        case 3: questionText = word.front; subText = word.back; correctAnswer = word.ipa; optionPool = uniqueDataForSelectedHsk.map(w => w.ipa); break;
+      }
+
+      const wrongOptions = optionPool.filter(opt => opt !== correctAnswer).sort(() => 0.5 - Math.random()).slice(0, 3);
+      const options = [...wrongOptions, correctAnswer].sort(() => 0.5 - Math.random());
+      
+      return { questionText, subText, options, correctAnswer };
+    });
+
+    setExamState({ isOpen: true, questions: generatedQuestions, currentIndex: 0, score: 0, isFinished: false, total: maxQuestions, passScore: Math.ceil(maxQuestions * 0.8) });
+  };
+
+  const handleAnswer = (selectedOption) => {
+    const isCorrect = selectedOption === examState.questions[examState.currentIndex].correctAnswer;
+    const newScore = isCorrect ? examState.score + 1 : examState.score;
+
+    if (examState.currentIndex + 1 < examState.questions.length) {
+      setExamState({ ...examState, currentIndex: examState.currentIndex + 1, score: newScore });
+    } else {
+      setExamState({ ...examState, currentIndex: examState.currentIndex + 1, score: newScore, isFinished: true });
+    }
+  };
+
+  const finishExam = async () => {
+    if (examState.score >= examState.passScore) {
+      const levelNum = selectedHsk.replace(/\D/g, ''); 
+      const flagName = `passedHSK${levelNum}`;
+      
+      try {
+        const studentRef = doc(db, "progress", user.id);
+        await setDoc(studentRef, { [flagName]: true }, { merge: true });
+        setUserData(prev => ({ ...prev, [flagName]: true }));
+        alert(`🎉 Xuất sắc! Bạn đạt ${examState.score}/${examState.total} điểm. Cấp độ tiếp theo đã được mở khóa!`);
+      } catch (error) {
+        console.error("Lỗi cập nhật Firebase:", error);
+      }
+    } else {
+      alert(`😢 Rất tiếc, bạn chỉ đạt ${examState.score}/${examState.total} điểm. Cần tối thiểu ${examState.passScore} điểm để đỗ. Hãy ôn bài và thử lại nhé!`);
+    }
+    setExamState({ ...examState, isOpen: false });
+  };
+
   const wordDisplay = activeWord ? activeWord.front : "";
   const pinyinDisplay = activeWord ? activeWord.ipa : "";
   const meaningDisplay = activeWord ? activeWord.back : "";
   const exampleDisplay = activeWord ? activeWord.example : "";
+  const isFullyPassed = shadowingPassed && meaningStatus === "correct";
 
   return (
     <main className="min-h-screen bg-slate-50 py-10 px-4">
+      {examState.isOpen && (
+        <div className="fixed inset-0 bg-slate-900 bg-opacity-75 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl relative">
+            <button onClick={() => setExamState({ ...examState, isOpen: false })} className="absolute top-4 right-5 text-slate-400 hover:text-red-500 font-bold text-xl">✕</button>
+            {!examState.isFinished ? (
+              <div className="animate-fade-in">
+                <div className="flex justify-between items-center mb-6 border-b pb-4">
+                  <h3 className="text-xl font-bold text-slate-800">Bài thi chứng chỉ {selectedHsk.toUpperCase()}</h3>
+                  <span className="font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full">Câu {examState.currentIndex + 1}/{examState.total}</span>
+                </div>
+                <div className="text-center mb-8">
+                  <h1 className={`font-black text-slate-800 mb-2 ${examState.questions[examState.currentIndex].questionText.length > 5 ? 'text-4xl' : 'text-6xl'}`}>
+                    {examState.questions[examState.currentIndex].questionText}
+                  </h1>
+                  {examState.questions[examState.currentIndex].subText && (
+                    <p className="text-xl text-slate-500 tracking-widest mt-2">{examState.questions[examState.currentIndex].subText}</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-3">
+                  {examState.questions[examState.currentIndex].options.map((option, idx) => (
+                    <button 
+                      key={idx}
+                      onClick={() => handleAnswer(option)}
+                      className={`w-full text-left px-6 py-4 bg-slate-50 hover:bg-rose-50 border-2 border-slate-100 hover:border-rose-300 rounded-xl font-medium text-slate-700 transition-all ${option.length < 10 ? 'text-2xl text-center' : 'text-lg'}`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center animate-fade-in py-10">
+                <div className="text-6xl mb-4">{examState.score >= examState.passScore ? '🏆' : '💔'}</div>
+                <h3 className="text-3xl font-black text-slate-800 mb-2">Kết quả của bạn</h3>
+                <p className={`text-2xl font-bold mb-6 ${examState.score >= examState.passScore ? 'text-green-500' : 'text-red-500'}`}>
+                  {examState.score} / {examState.total} câu
+                </p>
+                <button 
+                  onClick={finishExam}
+                  className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors"
+                >
+                  Xác nhận kết quả
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
         
-        {/* THANH SIDEBAR HSK */}
+        {/* SIDEBAR */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 sticky top-10">
                 <Link href="/">
@@ -243,20 +444,21 @@ export default function FlashcardPage() {
                     onChange={(e) => setSelectedHsk(e.target.value)}
                     className="w-full bg-rose-50 border-2 border-rose-200 text-rose-700 font-bold py-3 px-4 rounded-xl outline-none cursor-pointer hover:bg-rose-100 transition mb-6"
                 >
-                    {availableHskLevels.map(lvl => (
-                        <option key={lvl} value={lvl}>Bộ {lvl}</option>
-                    ))}
+                    {availableHskLevels.map(lvl => {
+                        const locked = isHskLocked(lvl);
+                        return (
+                            <option key={lvl} value={lvl} disabled={locked}>
+                                Bộ {lvl} {locked ? "🔒 (Cần đỗ cấp độ trước)" : ""}
+                            </option>
+                        );
+                    })}
                 </select>
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
                     <p className="text-sm font-bold text-slate-500 mb-1">TỔNG EXP CỦA BẠN</p>
                     <p className="text-3xl font-black text-yellow-500 mb-2">{userExp} <span className="text-sm text-slate-400">EXP</span></p>
-                    
                     <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                        <div 
-                        className="h-full bg-yellow-400 transition-all duration-500" 
-                        style={{ width: `${Math.min((userExp / (levelsData.find(l => l.level === maxUnlockedLevel + 1)?.requiredExp || Math.max(userExp, 1))) * 100, 100)}%` }}
-                        ></div>
+                        <div className="h-full bg-yellow-400 transition-all duration-500" style={{ width: `${Math.min((userExp / (levelsData.find(l => l.level === maxUnlockedLevel + 1)?.requiredExp || Math.max(userExp, 1))) * 100, 100)}%` }}></div>
                     </div>
                     <p className="text-xs font-medium text-slate-400 mt-2 text-right">
                         Cần {levelsData.find(l => l.level === maxUnlockedLevel + 1)?.requiredExp || 'MAX'} EXP để mở khóa bài tiếp theo
@@ -293,6 +495,26 @@ export default function FlashcardPage() {
                         );
                     })}
                 </div>
+
+                <div className="mt-6 pt-6 border-t border-slate-200">
+                    <button 
+                        onClick={openExam} 
+                        disabled={!canTakeExam}
+                        className={`w-full py-4 font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 ${
+                            canTakeExam 
+                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:shadow-lg hover:-translate-y-1' 
+                            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        }`}
+                    >
+                        🎓 THI CHỨNG CHỈ {selectedHsk.toUpperCase()}
+                    </button>
+                    <p className={`text-xs text-center mt-3 font-medium ${canTakeExam ? 'text-slate-500' : 'text-red-500'}`}>
+                        {canTakeExam 
+                            ? "Làm đúng 80% số câu để mở khóa cấp độ tiếp theo!" 
+                            : `Bạn cần học thuộc tất cả từ vựng để thi (${masteredWordsForSelectedHsk}/${totalWordsForSelectedHsk})`
+                        }
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -318,12 +540,29 @@ export default function FlashcardPage() {
 
             {filteredWords.length > 0 && activeWord ? (
             <div className="flex flex-col items-center gap-6 animate-fade-in">
+                
+                {/* THANH TRẠNG THÁI KIỂM TRA KÉP */}
+                <div className="flex flex-wrap justify-center gap-4 w-full">
+                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${meaningStatus === 'correct' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
+                        1. Nhập Nghĩa: {meaningStatus === 'correct' ? '✓ Đạt' : 'Chưa đạt'}
+                    </div>
+                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${shadowingPassed ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
+                        2. Đọc AI (80+): {shadowingPassed ? '✓ Đạt' : 'Chưa đạt'}
+                    </div>
+                </div>
+
                 <div 
-                onClick={() => setIsFlipped(!isFlipped)}
-                className="w-full bg-white p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center cursor-pointer transition-all hover:-translate-y-2 relative min-h-[400px] flex flex-col justify-center items-center"
+                onClick={() => {
+                  if (canFlip) {
+                    setIsFlipped(!isFlipped);
+                  } else {
+                    alert("🔒 Hãy vượt qua cả 2 bài kiểm tra bên dưới hoặc bấm 'Xem nghĩa' để lật thẻ!");
+                  }
+                }}
+                className={`w-full p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center transition-all relative min-h-[350px] flex flex-col justify-center items-center ${canFlip ? 'bg-white cursor-pointer hover:-translate-y-2' : 'bg-slate-50 cursor-not-allowed opacity-90'}`}
                 >
                 <div className="absolute right-6 top-6 flex gap-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${wordProgress[wordDisplay] === 'mastered' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${wordProgress[wordDisplay] === 'mastered' ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500'}`}>
                     {wordProgress[wordDisplay] === 'mastered' ? '✓ Đã thuộc' : 'Đang học'}
                     </span>
                 </div>
@@ -348,18 +587,46 @@ export default function FlashcardPage() {
                     )}
                     </div>
                 ) : (
-                    <p className="text-sm font-bold text-slate-400 mt-8 animate-pulse bg-slate-50 px-4 py-2 rounded-full">
-                    👆 Chạm vào thẻ để lật xem nghĩa
+                    <p className={`text-sm font-bold mt-8 px-4 py-2 rounded-full ${canFlip ? 'text-slate-400 bg-slate-100 animate-pulse' : 'text-rose-500 bg-rose-50'}`}>
+                    {canFlip ? "👆 Chạm vào thẻ để lật xem nghĩa" : "🔒 Vượt qua kiểm tra hoặc bấm 'Xem nghĩa' để lật"}
                     </p>
                 )}
                 </div>
 
                 <div className="w-full bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+                
+                {/* 1. KIỂM TRA NGHĨA */}
+                <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6 text-center">
+                    <p className="font-bold text-slate-600 mb-4">1. Nhập Nghĩa Tiếng Việt (Gần đúng)</p>
+                    <div className="flex gap-2">
+                        <input 
+                            type="text" 
+                            value={meaningInput}
+                            onChange={(e) => {
+                                setMeaningInput(e.target.value);
+                                setMeaningStatus("idle");
+                            }}
+                            placeholder="VD: xin chào..."
+                            disabled={meaningStatus === "correct"}
+                            className="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none transition-colors"
+                        />
+                        <button 
+                            onClick={handleCheckMeaning}
+                            disabled={meaningStatus === "correct" || !meaningInput.trim()}
+                            className={`px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${meaningStatus === 'correct' ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'}`}
+                        >
+                            {meaningStatus === "correct" ? "✓ Chuẩn" : "Kiểm tra"}
+                        </button>
+                    </div>
+                    {meaningStatus === "incorrect" && <p className="text-red-500 text-sm mt-3 font-medium animate-bounce">Nghĩa chưa chính xác, thử lại nhé!</p>}
+                </div>
+
+                {/* 2. KIỂM TRA PHÁT ÂM */}
                 <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 text-center">
-                    <p className="font-bold text-slate-600 mb-4">Luyện Phát Âm (Shadowing)</p>
+                    <p className="font-bold text-slate-600 mb-4">2. Đọc Ghi Âm (Cần 80+ điểm AI)</p>
                     
                     {!isRecording ? (
-                    <button onClick={startRecording} className="w-full py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 flex justify-center items-center gap-2 transition">
+                    <button onClick={startRecording} className="w-full py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 flex justify-center items-center gap-2 transition shadow-md">
                         🎙️ Nhấn để Ghi âm
                     </button>
                     ) : (
@@ -381,18 +648,24 @@ export default function FlashcardPage() {
                     )}
                 </div>
 
+                {/* NÚT ĐIỀU HƯỚNG */}
                 <div className="flex gap-4 w-full max-w-md mx-auto">
                     <button 
-                    onClick={() => markWord("learning")}
-                    className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold text-lg hover:border-red-400 hover:bg-red-50 transition-colors shadow-sm"
+                    onClick={handleMarkLearning}
+                    className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold text-md hover:border-red-400 hover:bg-red-50 transition-colors shadow-sm"
                     >
-                    ❌ Chưa thuộc
+                    {!isFlipped ? "👀 Xem nghĩa / Bỏ qua" : "⏭️ Từ tiếp theo (Không nhận EXP)"}
                     </button>
                     <button 
-                    onClick={() => markWord("mastered")}
-                    className="flex-1 py-4 bg-green-500 text-white rounded-2xl font-bold text-lg hover:bg-green-600 shadow-lg shadow-green-200 transition-colors"
+                    onClick={handleMarkMasteredAndNext}
+                    disabled={!isFullyPassed}
+                    className={`flex-1 py-4 rounded-2xl font-bold text-md transition-all shadow-sm ${
+                        isFullyPassed 
+                        ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200 shadow-lg hover:-translate-y-1' 
+                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    }`}
                     >
-                    ✓ Đã thuộc (+20 EXP)
+                    ✓ Đã thuộc & Tiếp ➔
                     </button>
                 </div>
                 </div>
