@@ -13,18 +13,18 @@ export async function POST(request) {
     const { action, level, answers } = body;
 
     // ==========================================
-    // KỊCH BẢN 1: TẠO ĐỀ THI ĐÚNG CẤU TRÚC
+    // KỊCH BẢN 1: TẠO ĐỀ THI
     // ==========================================
     if (action === "generate") {
       let examStructure = "";
       if (level === "HSK Cấp 3") {
-        examStructure = `Tạo ĐÚNG 15 câu: 8 câu nhắc lại (ngắn gọn), 5 câu miêu tả tranh, 2 câu trả lời câu hỏi.`;
+        examStructure = `Tạo ĐÚNG 15 câu: 8 câu type "repeat" (nhắc lại ngắn gọn), 5 câu type "picture" (miêu tả 1 tranh độc lập, bắt buộc imageCount: 1), 2 câu type "short" (trả lời câu hỏi).`;
       } else if (level === "HSK Cấp 4") {
-        examStructure = `Tạo ĐÚNG 7 câu: 2 câu nhắc lại, 3 câu miêu tả tranh (có tính liên kết), 2 câu trả lời câu hỏi.`;
+        examStructure = `Tạo ĐÚNG 5 câu: 2 câu type "repeat" (nhắc lại), 1 câu type "picture" (kể chuyện liên kết qua 3 bức tranh, bắt buộc imageCount: 3), 2 câu type "short" (trả lời câu hỏi).`;
       } else if (level === "HSK Cấp 5") {
-        examStructure = `Tạo ĐÚNG 7 câu: 2 câu nhắc lại, 3 câu miêu tả tranh logic, 2 câu trả lời câu hỏi dài.`;
+        examStructure = `Tạo ĐÚNG 5 câu: 2 câu type "repeat", 1 câu type "picture" (tư duy logic qua 3 bức tranh, bắt buộc imageCount: 3), 2 câu type "short".`;
       } else if (level === "HSK Cấp 6") {
-        examStructure = `Tạo ĐÚNG 8 câu: 2 câu nhắc lại, 4 câu miêu tả tranh logic, 2 câu trả lời câu hỏi tư duy sâu.`;
+        examStructure = `Tạo ĐÚNG 5 câu: 2 câu type "repeat", 1 câu type "picture" (tư duy sâu qua 4 bức tranh logic, bắt buộc imageCount: 4), 2 câu type "short".`;
       }
 
       const prompt = `Bạn là chuyên gia khảo thí HSKK. Hãy tạo một đề thi ${level}.
@@ -35,7 +35,7 @@ export async function POST(request) {
       Định dạng bắt buộc:
       [
         { "type": "repeat", "text": "câu tiếng Trung..." },
-        { "type": "picture", "text": "miêu tả..." },
+        { "type": "picture", "text": "Yêu cầu...", "imageCount": 3 },
         { "type": "short", "text": "câu hỏi mở..." }
       ]`;
 
@@ -45,28 +45,43 @@ export async function POST(request) {
     } 
     
     // ==========================================
-    // KỊCH BẢN 2: CHẤM ĐIỂM THANG 100 KÈM CẢI THIỆN
+    // KỊCH BẢN 2: CHẤM ĐIỂM THEO ĐÚNG BAREM
     // ==========================================
     if (action === "grade") {
+      let scoringRubric = "";
+      
+      if (level === "HSK Cấp 3") {
+        scoringRubric = `
+        - 8 câu đầu (Nhắc lại): Tối đa 5 điểm / 1 câu.
+        - 5 câu tiếp theo (Nhìn tranh): Tối đa 5 điểm / 1 câu.
+        - 2 câu cuối (Trả lời): Câu thứ nhất (câu 14) tối đa 15 điểm, Câu thứ hai (câu 15) tối đa 20 điểm.
+        `;
+      } else {
+        scoringRubric = `
+        - 2 câu đầu (Nhắc lại): Tối đa 10 điểm / 1 câu.
+        - 1 câu giữa (Nhìn tranh): Tối đa 20 điểm.
+        - 2 câu cuối (Trả lời): Tối đa 30 điểm / 1 câu.
+        `;
+      }
+
       const promptText = `Bạn là giám khảo HSKK. Hãy nghe các file ghi âm bài thi ${level} của thí sinh và chấm điểm.
-      Thí sinh không được gõ chữ, bài làm hoàn toàn là file âm thanh (đã được đính kèm).
+      Thí sinh không được gõ chữ, bài làm hoàn toàn là file âm thanh.
+      
+      HỆ THỐNG TÍNH ĐIỂM BẮT BUỘC (Tổng 100 điểm):
+      ${scoringRubric}
       
       YÊU CẦU CHẤM ĐIỂM NGHIÊM NGẶT:
-      1. Chấm điểm tổng trên thang điểm 100.
-      2. Đưa ra nhận xét chi tiết (Feedback) và hướng dẫn cách cải thiện (Improvement).
+      1. Cho điểm (score) từng câu DỰA TRÊN ĐÚNG MỨC ĐIỂM TỐI ĐA quy định ở trên. Tuyệt đối không cho quá điểm tối đa của câu đó.
+      2. Biến "totalScore" BẮT BUỘC phải bằng TỔNG CỘNG ĐIỂM của tất cả các câu trong phần "details".
+      3. Đưa ra nhận xét chi tiết và cách cải thiện cho từng câu.
       
-      TRẢ VỀ CHỈ MỘT OBJECT JSON HỢP LỆ, không có markdown. Định dạng:
+      TRẢ VỀ CHỈ MỘT OBJECT JSON HỢP LỆ, không có markdown. Định dạng mẫu:
       {
         "totalScore": 85,
         "overallFeedback": "Nhận xét tổng quan bài làm (Tiếng Việt)...",
-        "overallImprovement": "Cách cải thiện tổng thể để đạt điểm cao hơn...",
+        "overallImprovement": "Cách cải thiện tổng thể...",
         "details": [
-          { 
-            "score": 15, 
-            "question": "Câu 1", 
-            "feedback": "Nhận xét chi tiết file ghi âm này...",
-            "improvement": "Cách sửa lỗi phát âm/ngữ pháp..."
-          }
+          { "score": 5, "question": "Câu 1", "feedback": "Nhận xét...", "improvement": "Cách sửa..." }
         ]
       }`;
 
@@ -75,9 +90,7 @@ export async function POST(request) {
         parts.push({ text: `Câu ${index + 1} (${ans.type}): ${ans.question}` });
         if (ans.audioBase64) {
           const base64Data = ans.audioBase64.split(',')[1];
-          parts.push({
-            inlineData: { data: base64Data, mimeType: "audio/webm" }
-          });
+          parts.push({ inlineData: { data: base64Data, mimeType: "audio/webm" } });
         } else {
           parts.push({ text: `(Thí sinh không có file ghi âm)` });
         }

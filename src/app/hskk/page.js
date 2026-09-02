@@ -8,49 +8,50 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  const [examState, setExamState] = useState("idle"); 
+  // Các trạng thái của phòng thi: idle, loading, reading, speaking, global_prep, grading, done
+  const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
-  const [spokenText, setSpokenText] = useState("");
+  const [hasPrepped, setHasPrepped] = useState(false);
+  const [scratchpad, setScratchpad] = useState("");
   const [hskkFinalResult, setHskkFinalResult] = useState(null);
   
-  const recognitionRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
-  const speak = (text) => {
+  // Bảng cửu chương thời gian thi chuẩn của Hanban
+  const examConfig = {
+    "HSK Cấp 3": { prepTime: 360, repeat: 10, picture: 15, short: 90 },
+    "HSK Cấp 4": { prepTime: 600, repeat: 40, picture: 120, short: 120 },
+    "HSK Cấp 5": { prepTime: 600, repeat: 90, picture: 120, short: 150 },
+    "HSK Cấp 6": { prepTime: 600, repeat: 90, picture: 120, short: 150 }
+  };
+
+  const speak = (text, onEndCallback) => {
     window.speechSynthesis.cancel(); 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "zh-CN"; 
     utterance.rate = 0.8; 
+    utterance.onend = onEndCallback;
     window.speechSynthesis.speak(utterance);
   };
 
-  const getTimesForType = (type) => {
-    switch(type) {
-      case 'repeat': return { prep: 10, speak: 30 };
-      case 'retell': return { prep: 45, speak: 90 };
-      case 'picture': return { prep: 60, speak: 120 };
-      case 'short': return { prep: 60, speak: 120 };
-      default: return { prep: 30, speak: 60 };
-    }
-  };
-
+  // Quản lý đếm ngược (Chỉ đếm lúc chuẩn bị và lúc ghi âm)
   useEffect(() => {
     let timer;
-    if ((examState === "prep" || examState === "speaking") && timeLeft > 0) {
+    if ((examPhase === "speaking" || examPhase === "global_prep") && timeLeft > 0) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    } else if (timeLeft === 0 && (examState === "prep" || examState === "speaking")) {
-      const currentQ = examQuestions[currentQIndex];
-      if (!currentQ) return;
-      if (examState === "prep") {
-        setExamState("speaking");
-        setTimeLeft(getTimesForType(currentQ.type).speak);
-        startRecording();
-      } else if (examState === "speaking") {
-        handleNextQuestion(spokenText);
+    } else if (timeLeft === 0 && (examPhase === "speaking" || examPhase === "global_prep")) {
+      if (examPhase === "global_prep") {
+        // Hết giờ chuẩn bị -> Bắt đầu thi phần còn lại
+        startQuestionLogic(currentQIndex, true);
+      } else if (examPhase === "speaking") {
+        // Hết giờ nói -> Nộp file âm thanh tự động
+        stopRecordingAndNext();
       }
     }
     return () => clearInterval(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [examState, timeLeft, spokenText, currentQIndex, examQuestions]);
+  }, [examPhase, timeLeft, currentQIndex]);
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
@@ -59,8 +60,9 @@ export default function HskkPage() {
   };
 
   const generateHskkExam = async () => {
-    setExamState("scoring");
-    setExamAnswers([]); setSpokenText(""); setHskkFinalResult(null); 
+    setExamPhase("loading");
+    setExamAnswers([]); setHskkFinalResult(null); 
+    setHasPrepped(false); setScratchpad("");
     
     try {
       const res = await fetch('/api/hskk', {
@@ -71,60 +73,101 @@ export default function HskkPage() {
       const data = await res.json();
       if(data.error) throw new Error(data.error);
 
-      const fullExam = data.map(q => q.type === 'picture' ? { ...q, image: `https://picsum.photos/seed/${Math.random()}/800/400` } : q);
+      // Render mảng ảnh tùy theo số lượng ảnh AI yêu cầu (imageCount)
+      const fullExam = data.map(q => {
+        if (q.type === 'picture') {
+          const count = q.imageCount || 1;
+          const images = Array.from({length: count}, (_, i) => `https://loremflickr.com/800/400/people,objects,daily?random=${Math.random()}-${i}`);
+          return { ...q, images };
+        }
+        return q;
+      });
+      
       setExamQuestions(fullExam);
       setCurrentQIndex(0);
-      setExamState("prep");
-      setTimeLeft(getTimesForType(fullExam[0].type).prep);
+      startQuestionLogic(0, false);
     } catch (e) {
-      alert("Lỗi AI ra đề thi! Hãy kiểm tra lại API Key.");
-      setExamState("idle");
+      alert("Lỗi AI ra đề thi!");
+      setExamPhase("idle");
     }
   };
 
-  const startRecording = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'zh-CN';
-    recognition.continuous = true; 
-    recognition.interimResults = false;
+  const startQuestionLogic = (index, prepped = hasPrepped) => {
+    const q = examQuestions[index];
     
-    recognition.onresult = (e) => {
-      let currentTranscript = "";
-      for (let i = e.resultIndex; i < e.results.length; ++i) {
-        currentTranscript += e.results[i][0].transcript;
-      }
-      setSpokenText(prev => prev ? prev + "，" + currentTranscript : currentTranscript); 
-    };
-    
-    recognition.start();
-    recognitionRef.current = recognition;
+    // Nếu vừa thoát phần 'repeat' và chưa được chuẩn bị -> Nhảy vào phòng Global Prep
+    if (q.type !== 'repeat' && !prepped) {
+      setExamPhase("global_prep");
+      setTimeLeft(examConfig[hskkLevel].prepTime);
+      setHasPrepped(true);
+      return;
+    }
+
+    // Phần nhắc lại & trả lời câu hỏi: Nghe máy đọc trước rồi mới được nói
+    if (q.type === 'repeat' || q.type === 'short') {
+      setExamPhase("reading");
+      speak(q.text, () => {
+        setExamPhase("speaking");
+        setTimeLeft(examConfig[hskkLevel][q.type]);
+        startRecording();
+      });
+    } else {
+      // Phần tranh: Không đọc, nói luôn
+      setExamPhase("speaking");
+      setTimeLeft(examConfig[hskkLevel].picture);
+      startRecording();
+    }
   };
 
-  const stopRecording = () => {
-    if (recognitionRef.current) recognitionRef.current.stop();
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      mediaRecorder.start();
+    } catch (err) {
+      console.error("Không truy cập được Micro", err);
+    }
   };
 
-  const handleNextQuestion = (currentText) => {
-    stopRecording();
+  const stopRecordingAndNext = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          handleNextQuestion(reader.result);
+        };
+      };
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    } else {
+      handleNextQuestion(null);
+    }
+  };
+
+  const handleNextQuestion = (audioBase64) => {
     const currentQ = examQuestions[currentQIndex];
-    const newAnswers = [...examAnswers, { type: currentQ.type, question: currentQ.text, answer: currentText || "(Không trả lời)" }];
+    const newAnswers = [...examAnswers, { type: currentQ.type, question: currentQ.text, audioBase64 }];
     setExamAnswers(newAnswers);
-    setSpokenText("");
 
     if (currentQIndex < examQuestions.length - 1) {
-      const nextQIndex = currentQIndex + 1;
-      setCurrentQIndex(nextQIndex);
-      setExamState("prep");
-      setTimeLeft(getTimesForType(examQuestions[nextQIndex].type).prep);
+      const nextIdx = currentQIndex + 1;
+      setCurrentQIndex(nextIdx);
+      startQuestionLogic(nextIdx, hasPrepped);
     } else {
       submitFullExam(newAnswers);
     }
   };
 
   const submitFullExam = async (allAnswers) => {
-    setExamState("scoring");
+    setExamPhase("grading");
     try {
       const res = await fetch('/api/hskk', {
         method: 'POST',
@@ -136,39 +179,33 @@ export default function HskkPage() {
     } catch (error) {
       alert("Lỗi chấm điểm bài thi!");
     } finally {
-      setExamState("done");
+      setExamPhase("done");
     }
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center py-10 bg-slate-50 px-4">
-      <div className="w-full max-w-4xl flex justify-between items-center mb-8">
+      <div className="w-full max-w-5xl flex justify-between items-center mb-8">
         <Link href="/">
-          <button className="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm hover:bg-slate-100 transition flex items-center gap-2">
-            <span>←</span> Về Trang Chủ
+          <button className="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm hover:bg-slate-100 transition">
+            ← Về Trang Chủ
           </button>
         </Link>
         <h1 className="text-3xl font-extrabold text-slate-800">Phòng Khảo Thí HSKK</h1>
       </div>
 
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl border-t-8 border-rose-600 p-8">
-        {examState === "idle" && (
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl border-t-8 border-rose-600 p-8">
+        {examPhase === "idle" && (
           <div className="text-center py-10">
-            <div className="mb-8">
-              <select 
-                value={hskkLevel} 
-                onChange={(e) => setHskkLevel(e.target.value)} 
-                className="border-2 border-rose-200 text-rose-800 rounded-lg px-6 py-3 text-xl font-bold outline-none cursor-pointer"
-              >
-                <option value="HSK Cấp 3">HSKK Sơ Cấp (Cấp 3)</option>
-                <option value="HSK Cấp 4">HSKK Trung Cấp (Cấp 4)</option>
-                <option value="HSK Cấp 5">HSKK Cao Cấp (Cấp 5)</option>
-                <option value="HSK Cấp 6">HSKK Cao Cấp (Cấp 6)</option>
-              </select>
-            </div>
+            <select value={hskkLevel} onChange={(e) => setHskkLevel(e.target.value)} className="border-2 border-rose-200 text-rose-800 rounded-lg px-6 py-3 text-xl font-bold mb-8 outline-none cursor-pointer">
+              <option value="HSK Cấp 3">HSKK Sơ Cấp (Cấp 3)</option>
+              <option value="HSK Cấp 4">HSKK Trung Cấp (Cấp 4)</option>
+              <option value="HSK Cấp 5">HSKK Cao Cấp (Cấp 5)</option>
+              <option value="HSK Cấp 6">HSKK Cao Cấp (Cấp 6)</option>
+            </select>
             <div className="py-12 border-2 border-dashed border-rose-200 rounded-2xl bg-rose-50/50">
-              <p className="text-slate-600 font-medium text-lg mb-2">Bài thi mô phỏng sẽ diễn ra liên tục không ngừng.</p>
-              <p className="text-rose-600 font-bold mb-6">Hết thời gian đếm ngược, hệ thống tự động ngắt mic và chuyển câu.</p>
+              <p className="text-slate-600 font-medium text-lg mb-2">Thí sinh Vui lòng cấp quyền Microphone.</p>
+              <p className="text-rose-600 font-bold mb-6">Bài thi diễn ra liên tục, không ngắt quãng. Cố gắng hoàn thành tốt nhất!</p>
               <button onClick={generateHskkExam} className="px-10 py-5 bg-rose-600 text-white font-bold text-2xl rounded-2xl shadow-xl hover:bg-rose-700 hover:scale-105 transition-all">
                 🚀 Bắt Đầu Thi
               </button>
@@ -176,94 +213,135 @@ export default function HskkPage() {
           </div>
         )}
 
-        {examState === "scoring" && !hskkFinalResult && (
+        {(examPhase === "loading" || (examPhase === "grading" && !hskkFinalResult)) && (
            <div className="text-center py-24 flex flex-col items-center">
              <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-             <h2 className="text-3xl font-bold text-rose-600">Hệ thống đang xử lý qua AI...</h2>
+             <h2 className="text-3xl font-bold text-rose-600">{examPhase === "loading" ? "AI đang khởi tạo đề thi..." : "AI đang nghe và chấm điểm phát âm..."}</h2>
            </div>
         )}
 
-        {(examState === "prep" || examState === "speaking") && examQuestions.length > 0 && (
+        {examPhase === "global_prep" && (
+          <div className="flex flex-col gap-6 w-full animate-fade-in">
+            <div className="bg-rose-100 p-6 rounded-2xl text-center border-4 border-rose-300 shadow-inner">
+               <h2 className="text-3xl font-black text-rose-600 mb-2">THỜI GIAN CHUẨN BỊ ĐỀ</h2>
+               <p className="text-7xl font-mono font-black text-rose-700">{formatTime(timeLeft)}</p>
+               <p className="text-rose-600 mt-3 font-medium text-lg">Hết thời gian đếm ngược, hệ thống sẽ tự động bắt đầu tính giờ thi!</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+               {/* Phần xem trước đề */}
+               <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 h-[600px] overflow-y-auto">
+                  <h3 className="text-xl font-bold text-slate-800 mb-6 sticky top-0 bg-white pb-4 border-b z-10">Phần thi sắp tới:</h3>
+                  {examQuestions.filter(q => q.type !== 'repeat').map((q, idx) => (
+                     <div key={idx} className="mb-8 pb-6 border-b border-slate-100 last:border-0">
+                        <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-md text-sm font-bold mb-3 uppercase tracking-wider">
+                          {q.type === 'picture' ? "🖼️ Nhìn Tranh" : "❓ Trả Lời Câu Hỏi"}
+                        </span>
+                        {q.type === 'picture' && q.images && (
+                           <div className="flex flex-wrap gap-2 mb-4">
+                              {q.images.map((img, i) => <img key={i} src={img} className="h-28 rounded-lg object-cover shadow-sm border border-slate-200" alt="pic" />)}
+                           </div>
+                        )}
+                        <p className="font-bold text-slate-700 text-lg">{q.text}</p>
+                     </div>
+                  ))}
+               </div>
+               
+               {/* Phần nháp */}
+               <div className="flex flex-col h-[600px]">
+                  <h3 className="text-xl font-bold text-slate-800 mb-6">Giấy Nháp (Không thu lại)</h3>
+                  <textarea 
+                     value={scratchpad} 
+                     onChange={e => setScratchpad(e.target.value)}
+                     className="flex-1 w-full p-6 rounded-2xl border-2 border-slate-200 bg-yellow-50 focus:border-yellow-400 focus:outline-none resize-none text-xl leading-relaxed shadow-inner font-medium text-slate-700"
+                     placeholder="Dùng để nháp ý tưởng tại đây..."
+                  />
+               </div>
+            </div>
+          </div>
+        )}
+
+        {(examPhase === "reading" || examPhase === "speaking") && examQuestions.length > 0 && (
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center bg-slate-100 p-4 rounded-xl">
-               <span className="font-bold text-slate-500 tracking-widest uppercase">
-                 Câu hỏi {currentQIndex + 1} / {examQuestions.length}
-               </span>
+               <span className="font-bold text-slate-500 uppercase">Câu hỏi {currentQIndex + 1} / {examQuestions.length}</span>
                <span className="px-4 py-1 bg-white rounded-md text-rose-600 font-bold shadow-sm">
-                 {examQuestions[currentQIndex].type === "repeat" ? "Nghe Nhắc Lại" : examQuestions[currentQIndex].type === "retell" ? "Nghe Thuật Lại" : examQuestions[currentQIndex].type === "picture" ? "Nhìn Tranh" : "Trả Lời Câu Hỏi"}
+                 {examQuestions[currentQIndex].type === "repeat" ? "Nghe Nhắc Lại" : examQuestions[currentQIndex].type === "picture" ? "Nhìn Tranh" : "Trả Lời Câu Hỏi"}
                </span>
             </div>
 
-            <div className={`p-6 text-center rounded-2xl border-4 transition-all ${examState === "prep" ? "bg-blue-50 border-blue-200" : "bg-red-50 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.2)]"}`}>
-              <p className={`font-black uppercase tracking-widest text-lg mb-2 ${examState === "prep" ? "text-blue-500" : "text-red-500 animate-pulse"}`}>
-                {examState === "prep" ? "THỜI GIAN NHÁP Ý" : "🎙️ MICRO ĐANG MỞ - BẮT ĐẦU NÓI!"}
-              </p>
-              <p className={`text-7xl font-black font-mono ${examState === "prep" ? "text-blue-700" : "text-red-600"}`}>
-                {formatTime(timeLeft)}
-              </p>
-            </div>
+            {examPhase === "reading" ? (
+              <div className="p-8 text-center rounded-2xl border-4 bg-blue-50 border-blue-200 transition-all">
+                <p className="font-black uppercase tracking-widest text-2xl mb-2 text-blue-500 animate-pulse">
+                  🔊 ĐANG PHÁT AUDIO CÂU HỎI...
+                </p>
+                <p className="text-slate-500 font-medium">Vui lòng lắng nghe kỹ, mic sẽ mở ngay sau khi kết thúc.</p>
+              </div>
+            ) : (
+              <div className="p-8 text-center rounded-2xl border-4 bg-red-50 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.2)] transition-all">
+                <p className="font-black uppercase tracking-widest text-2xl mb-2 text-red-500 animate-pulse">
+                  🎙️ ĐANG GHI ÂM - HÃY NÓI VÀO MIC!
+                </p>
+                <p className="text-8xl font-black font-mono text-red-600">
+                  {formatTime(timeLeft)}
+                </p>
+              </div>
+            )}
 
             <div className="text-center py-4">
               {examQuestions[currentQIndex].type === "picture" ? (
                 <div className="flex flex-col items-center">
-                  <img src={examQuestions[currentQIndex].image} alt="HSKK" className="max-w-[500px] w-full rounded-2xl shadow-md border-4 border-slate-200 mb-6" />
-                  <h3 className="text-2xl font-bold text-rose-900">{examQuestions[currentQIndex].text}</h3>
+                  <div className="flex flex-wrap justify-center gap-4 mb-6">
+                    {examQuestions[currentQIndex].images?.map((img, i) => (
+                      <img key={i} src={img} alt="HSKK" className="max-w-[400px] w-full rounded-2xl shadow-md border-4 border-slate-200" />
+                    ))}
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-600">{examQuestions[currentQIndex].text}</h3>
                 </div>
-              ) : (examQuestions[currentQIndex].type === "repeat" || examQuestions[currentQIndex].type === "retell") ? (
-                <div className="flex flex-col items-center py-6">
-                  <button onClick={() => speak(examQuestions[currentQIndex].text)} className="w-28 h-28 bg-rose-100 text-rose-600 rounded-full text-6xl shadow-md mb-6 hover:bg-rose-200 transition-colors animate-bounce">🔊</button>
-                  <p className="text-slate-500 font-medium">Bấm vào biểu tượng loa để nghe lại câu hỏi.</p>
-                </div>
-              ) : (
-                <div>
-                  <h3 className="text-4xl font-bold text-rose-900 leading-normal mb-6">{examQuestions[currentQIndex].text}</h3>
-                  <button onClick={() => speak(examQuestions[currentQIndex].text)} className="w-16 h-16 inline-flex items-center justify-center bg-rose-50 text-rose-600 rounded-full text-3xl shadow-sm hover:bg-rose-100">🔊</button>
-                </div>
+              ) : examQuestions[currentQIndex].type !== "repeat" && (
+                <h3 className="text-4xl font-bold text-rose-900 leading-normal mb-6">{examQuestions[currentQIndex].text}</h3>
               )}
             </div>
-
-            {examState === "speaking" && (
-              <div className="flex flex-col animate-fade-in-up">
-                <p className="text-xs font-bold text-slate-400 uppercase mb-2">Băng ghi âm trực tiếp (Có thể gõ đè nếu hệ thống nghe sai)</p>
-                <textarea rows="4" value={spokenText} onChange={(e) => setSpokenText(e.target.value)} className="w-full px-5 py-4 rounded-xl border-2 border-red-200 focus:border-red-500 focus:outline-none text-xl bg-white shadow-inner" />
-                
-                <button onClick={() => handleNextQuestion(spokenText)} className="mt-6 w-full bg-slate-800 text-white font-bold py-5 text-xl rounded-xl shadow-xl hover:scale-[1.02] hover:bg-slate-900 transition-all">
-                  {currentQIndex < examQuestions.length - 1 ? "Bỏ Qua Thời Gian Chờ ➔ Chuyển Câu Tiếp" : "📝 Hoàn Thành Bài Thi"}
-                </button>
-              </div>
-            )}
+            
+            <p className="text-center text-slate-400 font-medium italic mt-4">
+              (Hệ thống sẽ tự động chuyển câu khi hết thời gian)
+            </p>
           </div>
         )}
 
-        {examState === "done" && hskkFinalResult && (
+        {examPhase === "done" && hskkFinalResult && (
           <div className="flex flex-col gap-6 animate-fade-in">
             <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 text-white text-center shadow-2xl relative overflow-hidden">
               <h3 className="text-2xl font-bold text-slate-300 mb-2">ĐIỂM TỔNG KẾT HSKK</h3>
               <div className={`text-9xl font-black mb-4 ${hskkFinalResult.totalScore >= 80 ? 'text-green-400' : hskkFinalResult.totalScore >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
-                {hskkFinalResult.totalScore}
+                {hskkFinalResult.totalScore}<span className="text-4xl text-slate-400">/100</span>
               </div>
-              <p className="text-xl leading-relaxed text-slate-200 font-medium px-4">{hskkFinalResult.overallFeedback}</p>
+              <p className="text-xl leading-relaxed text-slate-200 font-medium px-4 mb-4">{hskkFinalResult.overallFeedback}</p>
+              <div className="bg-white/10 p-4 rounded-xl text-left border border-white/20">
+                <span className="font-bold text-yellow-300 uppercase text-sm block mb-1">💡 Lời khuyên chung:</span>
+                <span className="text-slate-200">{hskkFinalResult.overallImprovement}</span>
+              </div>
             </div>
 
             <h4 className="text-2xl font-black text-slate-800 mt-4 border-b-2 border-slate-100 pb-4">Chi tiết từng câu hỏi:</h4>
             
             <div className="flex flex-col gap-4">
               {hskkFinalResult.details?.map((detail, idx) => (
-                <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex gap-6 items-start">
+                <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6 items-start">
                   <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-slate-100 flex flex-col items-center justify-center font-bold text-slate-700">
                     <span className="text-xs text-slate-400 uppercase">Điểm</span>
                     <span className="text-2xl">{detail.score}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-slate-400 mb-2 font-bold uppercase">Câu hỏi gốc / Chủ đề</p>
-                    <p className="text-lg font-bold text-slate-800 mb-4 bg-slate-50 p-3 rounded-lg">{detail.question}</p>
-                    <p className="text-slate-600 leading-relaxed"><span className="font-bold text-rose-600">Nhận xét:</span> {detail.feedback}</p>
+                    <p className="text-lg font-bold text-slate-800 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">{detail.question}</p>
+                    <p className="text-slate-600 leading-relaxed mb-3"><span className="font-bold text-rose-600">Nhận xét:</span> {detail.feedback}</p>
+                    <p className="text-slate-600 leading-relaxed"><span className="font-bold text-blue-600">Cách cải thiện:</span> {detail.improvement}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <button onClick={() => setExamState("idle")} className="mt-8 w-full py-5 bg-rose-600 text-white rounded-xl font-bold text-xl shadow-xl hover:bg-rose-700 transition-colors">
+            <button onClick={() => setExamPhase("idle")} className="mt-8 w-full py-5 bg-rose-600 text-white rounded-xl font-bold text-xl shadow-xl hover:bg-rose-700 transition-colors">
               🔄 Thi Lại Đề Khác
             </button>
           </div>
