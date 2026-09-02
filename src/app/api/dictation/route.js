@@ -17,13 +17,18 @@ export async function POST(req) {
     const { level = "HSK 1", recentSentences = [] } = body;
     const shortHistory = recentSentences.slice(-5);
 
-    // THUẬT TOÁN TỰ ĐỘNG TÌM MODEL TEXT AN TOÀN TRÊN GROQ
+    // THUẬT TOÁN TÌM MODEL TEXT AN TOÀN (Đã chặn model kiểm duyệt llama-guard)
     if (!cachedModelId) {
       const modelsPage = await groq.models.list();
       const activeModels = modelsPage.data;
       
-      const textModels = activeModels.filter(m => !m.id.includes("/") && !m.id.includes("whisper"));
-      const preferredModels = textModels.filter(m => m.id.includes("llama-3.1-8b") || m.id.includes("llama"));
+      const textModels = activeModels.filter(m => 
+          !m.id.includes("/") && 
+          !m.id.includes("whisper") && 
+          !m.id.includes("guard") // Chặn model kiểm duyệt bảo mật (thủ phạm sinh chữ lạ)
+      );
+      
+      const preferredModels = textModels.filter(m => m.id.includes("llama-3.1"));
       
       if (preferredModels.length > 0) {
           cachedModelId = preferredModels[0].id;
@@ -35,22 +40,30 @@ export async function POST(req) {
       console.log("🤖 [Dictation] Đang dùng Model Text:", cachedModelId);
     }
 
-    const prompt = `Tạo 1 câu tiếng Trung thông dụng thuộc trình độ ${level} (khoảng 6-15 chữ).
+    // PROMPT NGHIÊM NGẶT ÉP AI DÙNG TIẾNG TRUNG
+    const prompt = `Bạn là một giáo viên ngôn ngữ chuyên nghiệp.
+    Nhiệm vụ: Tạo 1 câu giao tiếp bằng Tiếng Trung Quốc (Simplified Chinese) thông dụng, trình độ ${level} (khoảng 6-15 chữ).
+    TUYỆT ĐỐI KHÔNG sử dụng bất kỳ ngôn ngữ nào khác ngoài Tiếng Trung và Tiếng Việt.
     Không trùng với các câu sau: [${shortHistory.join(",")}].
-    Chỉ trả về JSON thuần túy theo định dạng sau, không giải thích gì thêm:
-    {"chinese": "<câu tiếng Trung>", "pinyin": "<phiên âm>", "vietnamese": "<nghĩa tiếng Việt>"}`;
+    Chỉ trả về một đối tượng JSON thuần túy theo cấu trúc chính xác sau:
+    {"chinese": "<câu tiếng Trung Quốc>", "pinyin": "<phiên âm Pinyin chuẩn>", "vietnamese": "<nghĩa tiếng Việt tự nhiên>"}`;
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: cachedModelId,
-      temperature: 0.7,
-      max_tokens: 800, // ĐÃ TĂNG LÊN 800 ĐỂ AI KHÔNG BỊ NGẮT LỜI
+      temperature: 0.6, // Giảm độ sáng tạo để AI tập trung làm đúng ngôn ngữ
+      max_tokens: 800,
       response_format: { type: "json_object" },
     });
 
     const rawText = chatCompletion.choices[0]?.message?.content || "{}";
     const parsedData = JSON.parse(rawText);
     
+    // Kiểm tra an toàn trước khi trả về: Nếu AI không sinh ra tiếng Trung (thiếu trường chinese), báo lỗi để app gọi lại
+    if (!parsedData.chinese) {
+        throw new Error("AI trả về sai ngôn ngữ, đang tạo lại...");
+    }
+
     return NextResponse.json(parsedData);
 
   } catch (error) {
