@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 // Cấu hình các cấp độ và số EXP cần thiết để mở khóa
 const HSK_LEVELS = [
@@ -23,6 +26,9 @@ const shuffleArray = (array) => {
 };
 
 export default function EndlessArrangePage() {
+  // BƯỚC 2: GỌI TÀI KHOẢN NGƯỜI DÙNG Ở ĐÂY
+  const { user } = useUser();
+
   const [selectedHsk, setSelectedHsk] = useState("HSK 1");
   const [userExp, setUserExp] = useState(0);
   
@@ -123,8 +129,8 @@ export default function EndlessArrangePage() {
     setFeedback(null);
   };
 
-  // KIỂM TRA ĐÁP ÁN
-  const checkAnswer = () => {
+  // BƯỚC 3: KIỂM TRA ĐÁP ÁN VÀ ĐỒNG BỘ FIREBASE
+  const checkAnswer = async () => { // Thêm async vào đây
     if (!currentSentence) return;
     
     const answerStr = selectedWords.map(w => w.char).join('');
@@ -132,7 +138,20 @@ export default function EndlessArrangePage() {
     
     if (answerStr === expectedStr) {
         setFeedback("correct");
-        setUserExp(prev => prev + 20); 
+        
+        const newExp = userExp + 20;
+        setUserExp(newExp); 
+
+        // --- ĐOẠN CODE ĐỒNG BỘ LÊN FIREBASE ---
+        if (user) {
+          try {
+            const studentRef = doc(db, "progress", user.id);
+            await setDoc(studentRef, { arrangeExp: newExp }, { merge: true });
+          } catch (error) {
+            console.error("Lỗi đồng bộ điểm lên đám mây:", error);
+          }
+        }
+        // -------------------------------------
         
         setSentenceHistory(prev => {
             const newHistory = [...prev, currentSentence.chinese];

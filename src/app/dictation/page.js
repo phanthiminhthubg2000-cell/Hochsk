@@ -3,6 +3,9 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 // ĐƯỜNG DẪN TỚI FILE DATA CỦA BẠN (Đảm bảo file dictation.json nằm đúng vị trí)
 import dictationData from "../dictation.json"; 
+import { useUser } from "@clerk/nextjs";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const HSK_LEVELS = [
   { name: "HSK 1", requiredExp: 0 },
@@ -14,6 +17,9 @@ const HSK_LEVELS = [
 ];
 
 export default function DictationPage() {
+  // BƯỚC 2: Gọi tài khoản người dùng
+  const { user } = useUser();
+
   const [selectedHsk, setSelectedHsk] = useState("HSK 1");
   const [userExp, setUserExp] = useState(0); 
   
@@ -100,7 +106,8 @@ export default function DictationPage() {
     }, 300); // Giả lập độ trễ ngắn cho UI mượt mà
   };
 
-  const checkAnswer = () => {
+  // BƯỚC 3: Đồng bộ điểm lên Firebase khi gõ đúng
+  const checkAnswer = async () => {
       if (!currentSentence || !userInput.trim()) return;
       
       const cleanUser = userInput.replace(/[.,!?，。？！\s]/g, "");
@@ -108,8 +115,20 @@ export default function DictationPage() {
 
       if (cleanUser === cleanTarget) {
           setIsCorrect(true);
-          setUserExp(prev => prev + 20);
+          const newExp = userExp + 20;
+          setUserExp(newExp);
           playAudio("太棒了", "zh-CN");
+
+          // ĐOẠN ĐỒNG BỘ ĐÁM MÂY
+          if (user) {
+            try {
+              const studentRef = doc(db, "progress", user.id);
+              await setDoc(studentRef, { dictationExp: newExp }, { merge: true });
+            } catch (error) {
+              console.error("Lỗi đồng bộ Firebase:", error);
+            }
+          }
+
       } else {
           setIsCorrect(false);
       }

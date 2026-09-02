@@ -1,8 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function HskkPage() {
+  // BƯỚC 2: Gọi tài khoản người dùng
+  const { user } = useUser();
+
   const [hskkLevel, setHskkLevel] = useState("HSK Cấp 3");
   const [examQuestions, setExamQuestions] = useState([]); 
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -157,6 +163,7 @@ export default function HskkPage() {
     }
   };
 
+  // BƯỚC 3: Đồng bộ điểm HSKK lên Firebase sau khi AI chấm xong
   const submitFullExam = async (allAnswers) => {
     setExamPhase("grading");
     try {
@@ -167,6 +174,18 @@ export default function HskkPage() {
       });
       const data = await res.json();
       setHskkFinalResult(data);
+
+      // --- ĐOẠN ĐỒNG BỘ ĐÁM MÂY ---
+      if (user && data.totalScore) {
+        try {
+          const studentRef = doc(db, "progress", user.id);
+          await setDoc(studentRef, { hskkScore: data.totalScore }, { merge: true });
+        } catch (error) {
+          console.error("Lỗi đồng bộ điểm HSKK:", error);
+        }
+      }
+      // -----------------------------
+
     } catch (error) {
       alert("Lỗi chấm điểm bài thi!");
     } finally {

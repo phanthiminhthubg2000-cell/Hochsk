@@ -2,6 +2,9 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import myCustomData from "../cards.json";
+import { useUser } from "@clerk/nextjs";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 // Hàm chia nhỏ data thành các bài học (mỗi bài 10 từ)
 const generateLevelsFromData = (data, wordsPerLevel = 10) => {
@@ -19,6 +22,9 @@ const generateLevelsFromData = (data, wordsPerLevel = 10) => {
 };
 
 export default function FlashcardPage() {
+  // BƯỚC 2: Gọi tài khoản người dùng
+  const { user } = useUser();
+
   const availableHskLevels = [...new Set(myCustomData.map(item => item.level))].filter(Boolean).sort();
   const [selectedHsk, setSelectedHsk] = useState(availableHskLevels[0] || "");
   
@@ -110,15 +116,30 @@ export default function FlashcardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  const markWord = (status) => {
+  // BƯỚC 3: Đồng bộ số từ vựng lên Firebase
+  const markWord = async (status) => {
     if (!activeWord) return;
     const wordId = activeWord.front;
     const isAlreadyMastered = wordProgress[wordId] === "mastered";
     
-    setWordProgress(prev => ({ ...prev, [wordId]: status }));
+    const newProgress = { ...wordProgress, [wordId]: status };
+    setWordProgress(newProgress);
     
     if (status === "mastered" && !isAlreadyMastered) {
       setUserExp(prev => prev + 20); 
+
+      // --- ĐOẠN ĐỒNG BỘ ĐÁM MÂY ---
+      if (user) {
+        try {
+          // Lọc ra tất cả những từ có trạng thái là 'mastered' để tính số lượng
+          const learnedVocabArray = Object.keys(newProgress).filter(k => newProgress[k] === "mastered");
+          const studentRef = doc(db, "progress", user.id);
+          await setDoc(studentRef, { learnedVocab: learnedVocabArray }, { merge: true });
+        } catch (error) {
+          console.error("Lỗi đồng bộ từ vựng:", error);
+        }
+      }
+      // -----------------------------
     }
 
     setShadowingResult(null); 

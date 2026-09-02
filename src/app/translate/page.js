@@ -3,6 +3,9 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 // ĐƯỜNG DẪN TỚI FILE JSON (Giữ nguyên cấu trúc đúng của bạn)
 import arrangeData from "../arrange.json"; 
+import { useUser } from "@clerk/nextjs";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 // THIẾT LẬP LẠI THANG ĐIỂM: MỖI CẤP CÁCH NHAU 5000 EXP
 const HSK_LEVELS = [
@@ -15,6 +18,9 @@ const HSK_LEVELS = [
 ];
 
 export default function TranslatePage() {
+  // BƯỚC 2: Gọi tài khoản người dùng
+  const { user } = useUser();
+
   const [selectedHsk, setSelectedHsk] = useState("HSK 1");
   const [userExp, setUserExp] = useState(0); 
   
@@ -121,10 +127,22 @@ export default function TranslatePage() {
       const result = await res.json();
       setEvaluation(result);
 
+      // BƯỚC 3: ĐỒNG BỘ EXP KHI DỊCH ĐÚNG
       if (result.isCorrect) {
-          // Thưởng EXP cho người dùng (có thể tùy chỉnh điểm ở đây)
-          setUserExp(prev => prev + 30); 
+          const newExp = userExp + 30; // Cộng 30 EXP
+          setUserExp(newExp); 
           setSentenceHistory(prev => [...prev, currentSentence.vietnamese]); 
+
+          // --- ĐOẠN CODE ĐỒNG BỘ ĐÁM MÂY ---
+          if (user) {
+            try {
+              const studentRef = doc(db, "progress", user.id);
+              await setDoc(studentRef, { translateExp: newExp }, { merge: true });
+            } catch (error) {
+              console.error("Lỗi đồng bộ điểm Dịch:", error);
+            }
+          }
+          // ---------------------------------
       }
     } catch (error) {
       setErrorMsg(error.message);

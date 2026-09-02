@@ -3,6 +3,9 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 // Import data từ topics.json
 import myCustomData from "../topics.json"; 
+import { useUser } from "@clerk/nextjs";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const generateLevelsFromData = (data, wordsPerLevel = 10) => {
   const levels = [];
@@ -18,6 +21,9 @@ const generateLevelsFromData = (data, wordsPerLevel = 10) => {
 };
 
 export default function TopicFlashcardPage() {
+  // BƯỚC 2: Gọi tài khoản người dùng
+  const { user } = useUser();
+
   const availableCategories = [...new Set(myCustomData.map(item => item.topic || item.category || item.level))].filter(Boolean).sort();
   const [selectedCategory, setSelectedCategory] = useState(availableCategories[0] || "");
   
@@ -100,7 +106,8 @@ export default function TopicFlashcardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  const markWord = (status) => {
+  // BƯỚC 3: Đồng bộ điểm Topic lên Firebase khi chọn "Đã thuộc"
+  const markWord = async (status) => {
     if (!activeWord) return;
     const wordId = activeWord.front || activeWord.text || activeWord.word;
     const isAlreadyMastered = wordProgress[wordId] === "mastered";
@@ -108,7 +115,19 @@ export default function TopicFlashcardPage() {
     setWordProgress(prev => ({ ...prev, [wordId]: status }));
     
     if (status === "mastered" && !isAlreadyMastered) {
-      setUserExp(prev => prev + 20); 
+      const newExp = userExp + 20;
+      setUserExp(newExp); 
+
+      // --- ĐOẠN CODE ĐỒNG BỘ ĐÁM MÂY ---
+      if (user) {
+        try {
+          const studentRef = doc(db, "progress", user.id);
+          await setDoc(studentRef, { topicExp: newExp }, { merge: true });
+        } catch (error) {
+          console.error("Lỗi đồng bộ điểm Chủ đề:", error);
+        }
+      }
+      // ---------------------------------
     }
 
     setShadowingResult(null); 
