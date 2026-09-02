@@ -1,14 +1,40 @@
 "use client";
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
+import { useEffect } from "react";
+import { db } from "../firebase"; // Lưu ý: Đảm bảo đường dẫn này trỏ đúng file firebase.js của bạn
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Home() {
   const { isSignedIn } = useAuth(); 
   // Lấy thông tin chi tiết của người dùng hiện tại
-  const { user } = useUser(); 
+  const { user, isLoaded } = useUser(); 
 
   // Kiểm tra xem user này có role là teacher không
   const isTeacher = user?.publicMetadata?.role === "teacher";
+
+  // ĐỒNG BỘ DỮ LIỆU TÀI KHOẢN LÊN FIREBASE
+  useEffect(() => {
+    async function syncUserToFirebase() {
+      if (user) {
+        try {
+          const studentRef = doc(db, "progress", user.id);
+          // Lệnh setDoc với { merge: true } sẽ tạo mới tài khoản nếu chưa có, hoặc chỉ cập nhật lastLogin nếu đã có
+          await setDoc(studentRef, {
+            email: user.primaryEmailAddress?.emailAddress || "Không rõ email",
+            name: user.fullName || "Học viên",
+            lastLogin: serverTimestamp(),
+          }, { merge: true });
+        } catch (error) {
+          console.error("Lỗi đồng bộ tài khoản lên Firebase:", error);
+        }
+      }
+    }
+    
+    if (isLoaded) {
+      syncUserToFirebase();
+    }
+  }, [user, isLoaded]);
 
   const features = [
     { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/vocab", desc: "Học qua Flashcard 3D" },
@@ -68,4 +94,4 @@ export default function Home() {
       </div>
     </main>
   );
-}  
+}
