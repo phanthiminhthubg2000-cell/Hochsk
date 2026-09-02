@@ -108,7 +108,7 @@ export default function Home() {
   };
 
   const features = [
-    { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/flashcard", desc: "Học qua Flashcard 3D" },
+    { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/vocab", desc: "Học qua Flashcard 3D" },
     { id: "topic", name: "Chủ Đề", icon: "📚", color: "text-pink-600", bg: "bg-pink-50", link: "/topic", desc: "Từ vựng theo thực tế" },
     { id: "dictation", name: "Chép Chính Tả", icon: "🎧", color: "text-teal-600", bg: "bg-teal-50", link: "/dictation", desc: "Luyện nghe tiếng Trung" },
     { id: "translate", name: "Dịch Câu", icon: "✍️", color: "text-indigo-600", bg: "bg-indigo-50", link: "/translate", desc: "AI chấm điểm dịch thuật" },
