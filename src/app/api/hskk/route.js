@@ -7,8 +7,8 @@ export async function POST(request) {
     if (!apiKey) return NextResponse.json({ error: "Thiếu API Key." }, { status: 500 });
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Khuyên dùng gemini-1.5-flash hoặc pro để xử lý prompt dài tốt hơn
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); 
+    // Khuyên dùng gemini-3.6-flash hoặc pro để xử lý prompt dài tốt hơn
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" }); 
 
     const body = await request.json();
     const { action, level, answers } = body;
