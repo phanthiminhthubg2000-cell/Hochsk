@@ -8,7 +8,6 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  // Các trạng thái của phòng thi: idle, loading, reading, speaking, global_prep, grading, done
   const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
   const [hasPrepped, setHasPrepped] = useState(false);
@@ -18,7 +17,6 @@ export default function HskkPage() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
-  // Bảng cửu chương thời gian thi chuẩn của Hanban
   const examConfig = {
     "HSK Cấp 3": { prepTime: 360, repeat: 10, picture: 15, short: 90 },
     "HSK Cấp 4": { prepTime: 600, repeat: 40, picture: 120, short: 120 },
@@ -30,22 +28,19 @@ export default function HskkPage() {
     window.speechSynthesis.cancel(); 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "zh-CN"; 
-    utterance.rate = 0.8; 
+    utterance.rate = 0.85; 
     utterance.onend = onEndCallback;
     window.speechSynthesis.speak(utterance);
   };
 
-  // Quản lý đếm ngược (Chỉ đếm lúc chuẩn bị và lúc ghi âm)
   useEffect(() => {
     let timer;
     if ((examPhase === "speaking" || examPhase === "global_prep") && timeLeft > 0) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timeLeft === 0 && (examPhase === "speaking" || examPhase === "global_prep")) {
       if (examPhase === "global_prep") {
-        // Hết giờ chuẩn bị -> Bắt đầu thi phần còn lại
         startQuestionLogic(currentQIndex, true);
       } else if (examPhase === "speaking") {
-        // Hết giờ nói -> Nộp file âm thanh tự động
         stopRecordingAndNext();
       }
     }
@@ -73,11 +68,10 @@ export default function HskkPage() {
       const data = await res.json();
       if(data.error) throw new Error(data.error);
 
-      // Render mảng ảnh tùy theo số lượng ảnh AI yêu cầu (imageCount)
       const fullExam = data.map(q => {
         if (q.type === 'picture') {
           const count = q.imageCount || 1;
-          const images = Array.from({length: count}, (_, i) => `https://loremflickr.com/800/400/people,objects,daily?random=${Math.random()}-${i}`);
+          const images = Array.from({length: count}, (_, i) => `https://loremflickr.com/800/600/daily,objects?random=${Math.random()}-${i}`);
           return { ...q, images };
         }
         return q;
@@ -87,7 +81,7 @@ export default function HskkPage() {
       setCurrentQIndex(0);
       startQuestionLogic(0, false);
     } catch (e) {
-      alert("Lỗi AI ra đề thi!");
+      alert("Lỗi AI ra đề thi! Vui lòng thử lại.");
       setExamPhase("idle");
     }
   };
@@ -95,7 +89,6 @@ export default function HskkPage() {
   const startQuestionLogic = (index, prepped = hasPrepped) => {
     const q = examQuestions[index];
     
-    // Nếu vừa thoát phần 'repeat' và chưa được chuẩn bị -> Nhảy vào phòng Global Prep
     if (q.type !== 'repeat' && !prepped) {
       setExamPhase("global_prep");
       setTimeLeft(examConfig[hskkLevel].prepTime);
@@ -103,7 +96,6 @@ export default function HskkPage() {
       return;
     }
 
-    // Phần nhắc lại & trả lời câu hỏi: Nghe máy đọc trước rồi mới được nói
     if (q.type === 'repeat' || q.type === 'short') {
       setExamPhase("reading");
       speak(q.text, () => {
@@ -112,7 +104,6 @@ export default function HskkPage() {
         startRecording();
       });
     } else {
-      // Phần tranh: Không đọc, nói luôn
       setExamPhase("speaking");
       setTimeLeft(examConfig[hskkLevel].picture);
       startRecording();
@@ -216,7 +207,7 @@ export default function HskkPage() {
         {(examPhase === "loading" || (examPhase === "grading" && !hskkFinalResult)) && (
            <div className="text-center py-24 flex flex-col items-center">
              <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-             <h2 className="text-3xl font-bold text-rose-600">{examPhase === "loading" ? "AI đang khởi tạo đề thi..." : "AI đang nghe và chấm điểm phát âm..."}</h2>
+             <h2 className="text-3xl font-bold text-rose-600">{examPhase === "loading" ? "AI đang khởi tạo đề thi chuẩn..." : "Giám khảo AI đang phân tích âm thanh..."}</h2>
            </div>
         )}
 
@@ -229,17 +220,16 @@ export default function HskkPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-               {/* Phần xem trước đề */}
                <div className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 h-[600px] overflow-y-auto">
                   <h3 className="text-xl font-bold text-slate-800 mb-6 sticky top-0 bg-white pb-4 border-b z-10">Phần thi sắp tới:</h3>
                   {examQuestions.filter(q => q.type !== 'repeat').map((q, idx) => (
                      <div key={idx} className="mb-8 pb-6 border-b border-slate-100 last:border-0">
                         <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-md text-sm font-bold mb-3 uppercase tracking-wider">
-                          {q.type === 'picture' ? "🖼️ Nhìn Tranh" : "❓ Trả Lời Câu Hỏi"}
+                          {q.type === 'picture' ? "🖼️ Nhìn Tranh Kể Chuyện" : "❓ Trả Lời Câu Hỏi"}
                         </span>
                         {q.type === 'picture' && q.images && (
-                           <div className="flex flex-wrap gap-2 mb-4">
-                              {q.images.map((img, i) => <img key={i} src={img} className="h-28 rounded-lg object-cover shadow-sm border border-slate-200" alt="pic" />)}
+                           <div className={`grid gap-2 mb-4 ${q.images.length > 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                              {q.images.map((img, i) => <img key={i} src={img} className="w-full rounded-lg object-cover shadow-sm border border-slate-200" alt={`pic-${i}`} />)}
                            </div>
                         )}
                         <p className="font-bold text-slate-700 text-lg">{q.text}</p>
@@ -247,14 +237,13 @@ export default function HskkPage() {
                   ))}
                </div>
                
-               {/* Phần nháp */}
                <div className="flex flex-col h-[600px]">
                   <h3 className="text-xl font-bold text-slate-800 mb-6">Giấy Nháp (Không thu lại)</h3>
                   <textarea 
                      value={scratchpad} 
                      onChange={e => setScratchpad(e.target.value)}
                      className="flex-1 w-full p-6 rounded-2xl border-2 border-slate-200 bg-yellow-50 focus:border-yellow-400 focus:outline-none resize-none text-xl leading-relaxed shadow-inner font-medium text-slate-700"
-                     placeholder="Dùng để nháp ý tưởng tại đây..."
+                     placeholder="Dùng để nháp từ khóa, dàn ý tại đây..."
                   />
                </div>
             </div>
@@ -266,7 +255,7 @@ export default function HskkPage() {
             <div className="flex justify-between items-center bg-slate-100 p-4 rounded-xl">
                <span className="font-bold text-slate-500 uppercase">Câu hỏi {currentQIndex + 1} / {examQuestions.length}</span>
                <span className="px-4 py-1 bg-white rounded-md text-rose-600 font-bold shadow-sm">
-                 {examQuestions[currentQIndex].type === "repeat" ? "Nghe Nhắc Lại" : examQuestions[currentQIndex].type === "picture" ? "Nhìn Tranh" : "Trả Lời Câu Hỏi"}
+                 {examQuestions[currentQIndex].type === "repeat" ? (hskkLevel === "HSK Cấp 3" ? "Nghe Nhắc Lại" : "Nghe Thuật Lại (复述)") : examQuestions[currentQIndex].type === "picture" ? "Nhìn Tranh" : "Trả Lời Câu Hỏi"}
                </span>
             </div>
 
@@ -291,9 +280,9 @@ export default function HskkPage() {
             <div className="text-center py-4">
               {examQuestions[currentQIndex].type === "picture" ? (
                 <div className="flex flex-col items-center">
-                  <div className="flex flex-wrap justify-center gap-4 mb-6">
+                  <div className={`grid gap-4 mb-6 ${examQuestions[currentQIndex].images?.length > 2 ? 'grid-cols-2 max-w-3xl' : 'grid-cols-1 max-w-xl'}`}>
                     {examQuestions[currentQIndex].images?.map((img, i) => (
-                      <img key={i} src={img} alt="HSKK" className="max-w-[400px] w-full rounded-2xl shadow-md border-4 border-slate-200" />
+                      <img key={i} src={img} alt="HSKK" className="w-full rounded-2xl shadow-md border-4 border-slate-200" />
                     ))}
                   </div>
                   <h3 className="text-2xl font-bold text-slate-600">{examQuestions[currentQIndex].text}</h3>
