@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
+import { getRandomTopic } from "../../../topic-engine/topicPool";
 
 export async function POST(req) {
   try {
-    const { level = "HSK 1", recentSentences = [] } = await req.json();
+    const { level = "HSK 1", recentSituations = [] } = await req.json();
+
+    // Code tự động chọn chủ đề từ kho, loại trừ các tình huống vừa học gần đây
+    const selectedTopic = getRandomTopic(recentSituations);
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -15,13 +19,18 @@ export async function POST(req) {
         messages: [
           {
             role: "system",
-            content: `Bạn là giáo viên tiếng Trung. Hãy tạo MỘT câu ngẫu nhiên để học sinh luyện trò chơi SẮP XẾP TỪ VỰNG.
+            content: `Bạn là giáo viên tiếng Trung. Hãy tạo MỘT câu luyện sắp xếp từ vựng dựa trên bối cảnh cho trước.
             
-            YÊU CẦU:
-            1. Cấp độ: Chỉ dùng từ vựng thuộc cấp độ được yêu cầu. Ưu tiên các câu giao tiếp cơ bản, cấu trúc rõ ràng.
-            2. Độ dài: Từ 5 đến 10 chữ.
-            3. Không tạo lại các câu sau đây: [${recentSentences.join(" | ")}].
-            4. DỊCH THUẬT: Dịch sang tiếng Việt cực kỳ tự nhiên, mượt mà.
+            THÔNG TIN BẮT BUỘC:
+            - Cấp độ: ${level}
+            - Nhóm chủ đề: ${selectedTopic.group}
+            - Chủ đề: ${selectedTopic.topic}
+            - Tình huống thực tế: ${selectedTopic.situation}
+            
+            YÊU CẦU KỸ THUẬT:
+            1. Độ dài câu: Từ 5 đến 10 chữ Hán.
+            2. Nội dung câu phải phản ánh chính xác tình huống: "${selectedTopic.situation}".
+            3. Dịch nghĩa tiếng Việt cực kỳ tự nhiên, mượt mà.
 
             QUY TẮC BẮT BUỘC: Bạn PHẢI trả về ĐÚNG định dạng JSON thuần túy, tuyệt đối không kèm theo bất kỳ văn bản giải thích hay markdown nào khác ngoài JSON.
             Cấu trúc JSON bắt buộc:
@@ -33,7 +42,7 @@ export async function POST(req) {
           },
           {
             role: "user",
-            content: `Hãy tạo một câu sắp xếp cho cấp độ: ${level}`
+            content: `Hãy tạo một câu sắp xếp cho cấp độ ${level} theo tình huống: ${selectedTopic.situation}`
           }
         ]
       }),
@@ -62,7 +71,9 @@ export async function POST(req) {
     }
 
     const parsedData = JSON.parse(text);
-    return NextResponse.json(parsedData);
+    
+    // Gửi kèm theo trường "situation" để Frontend lưu vết chống lặp
+    return NextResponse.json({ ...parsedData, situation: selectedTopic.situation });
     
   } catch (error) {
     console.error("Lỗi API Arrange Chi Tiết:", error);

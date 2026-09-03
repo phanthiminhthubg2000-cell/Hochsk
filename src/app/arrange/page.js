@@ -5,7 +5,6 @@ import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 
-// Cấu hình các cấp độ và số EXP cần thiết để mở khóa
 const HSK_LEVELS = [
   { name: "HSK 1", requiredExp: 0 },
   { name: "HSK 2", requiredExp: 2000 },
@@ -15,7 +14,6 @@ const HSK_LEVELS = [
   { name: "HSK 6", requiredExp: 25000 },
 ];
 
-// Hàm trộn mảng ngẫu nhiên
 const shuffleArray = (array) => {
   const newArr = [...array];
   for (let i = newArr.length - 1; i > 0; i--) {
@@ -34,44 +32,41 @@ export default function EndlessArrangePage() {
   const [currentSentence, setCurrentSentence] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Trạng thái cho trò chơi sắp xếp
-  const [shuffledWords, setShuffledWords] = useState([]); // Các từ đang xáo trộn bên dưới
-  const [selectedWords, setSelectedWords] = useState([]); // Các từ người dùng đã chọn đưa lên trên
+  const [shuffledWords, setShuffledWords] = useState([]);
+  const [selectedWords, setSelectedWords] = useState([]);
   
   const [showAnswer, setShowAnswer] = useState(false);
   const [feedback, setFeedback] = useState(null); 
   
-  const [sentenceHistory, setSentenceHistory] = useState([]);
+  // Quản lý lịch sử tình huống để chống lặp
+  const [situationHistory, setSituationHistory] = useState([]);
   const isFetchingRef = useRef(false);
 
-  // Tải dữ liệu từ LocalStorage
   useEffect(() => {
     const savedExp = localStorage.getItem("ai_arrange_exp");
-    const savedHistory = localStorage.getItem("ai_arrange_history");
+    const savedSitHistory = localStorage.getItem("ai_arrange_sit_history");
     
     if (savedExp) setUserExp(parseInt(savedExp));
-    if (savedHistory) setSentenceHistory(JSON.parse(savedHistory));
+    if (savedSitHistory) setSituationHistory(JSON.parse(savedSitHistory));
     
     if (!currentSentence && !isFetchingRef.current) {
-        generateNewSentence("HSK 1", savedHistory ? JSON.parse(savedHistory) : []);
+        generateNewSentence("HSK 1", savedSitHistory ? JSON.parse(savedSitHistory) : []);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Lưu trữ EXP và Lịch sử
   useEffect(() => {
     localStorage.setItem("ai_arrange_exp", userExp);
   }, [userExp]);
 
   useEffect(() => {
-    if (sentenceHistory.length > 0) {
-      const recent = sentenceHistory.slice(-20);
-      localStorage.setItem("ai_arrange_history", JSON.stringify(recent));
+    if (situationHistory.length > 0) {
+      const recent = situationHistory.slice(-15);
+      localStorage.setItem("ai_arrange_sit_history", JSON.stringify(recent));
     }
-  }, [sentenceHistory]);
+  }, [situationHistory]);
 
-  // HÀM GỌI AI ĐỂ TẠO CÂU MỚI
-  const generateNewSentence = async (level, history = sentenceHistory) => {
+  const generateNewSentence = async (level, history = situationHistory) => {
     if (isFetchingRef.current) return;
     
     isFetchingRef.current = true;
@@ -82,12 +77,12 @@ export default function EndlessArrangePage() {
     setShowAnswer(false);
     
     try {
-      const recentTexts = history.slice(-15); 
+      const recentSits = history.slice(-10); 
       
       const res = await fetch('/api/arrange', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ level: level, recentSentences: recentTexts })
+        body: JSON.stringify({ level: level, recentSituations: recentSits })
       });
       
       if (!res.ok) throw new Error("Lỗi API tạo câu");
@@ -95,9 +90,12 @@ export default function EndlessArrangePage() {
       const data = await res.json();
       setCurrentSentence(data);
       
-      // Xử lý chuỗi: Loại bỏ dấu câu tiếng Trung để làm trò chơi xếp chữ
+      // Lưu tình huống trả về từ API vào lịch sử chống lặp
+      if (data.situation) {
+        setSituationHistory(prev => [...prev, data.situation]);
+      }
+      
       const cleanChinese = data.chinese.replace(/[.,?!。，？！、]/g, '');
-      // Tách thành mảng từng chữ cái và cấp ID
       const wordsArray = cleanChinese.split('').map((char, index) => ({ id: index, char }));
       
       setShuffledWords(shuffleArray(wordsArray));
@@ -113,7 +111,6 @@ export default function EndlessArrangePage() {
     }
   };
 
-  // LOGIC SẮP XẾP TỪ
   const handleSelectWord = (word) => {
     if (feedback === 'correct') return; 
     setShuffledWords(prev => prev.filter(w => w.id !== word.id));
@@ -128,7 +125,6 @@ export default function EndlessArrangePage() {
     setFeedback(null);
   };
 
-  // KIỂM TRA ĐÁP ÁN VÀ ĐỒNG BỘ FIREBASE
   const checkAnswer = async () => { 
     if (!currentSentence) return;
     
@@ -137,12 +133,11 @@ export default function EndlessArrangePage() {
     
     if (answerStr === expectedStr) {
         setFeedback("correct");
-        setShowAnswer(false); // Ẩn đáp án nếu trước đó lỡ bật khi làm sai
+        setShowAnswer(false);
         
         const newExp = userExp + 20;
         setUserExp(newExp); 
 
-        // --- ĐOẠN CODE ĐỒNG BỘ LÊN FIREBASE ---
         if (user) {
           try {
             const studentRef = doc(db, "progress", user.id);
@@ -152,12 +147,6 @@ export default function EndlessArrangePage() {
           }
         }
         
-        setSentenceHistory(prev => {
-            const newHistory = [...prev, currentSentence.chinese];
-            return newHistory;
-        });
-        
-        // Tự động chuyển câu sau 1.5 giây
         setTimeout(() => {
             if (!isFetchingRef.current) {
                 generateNewSentence(selectedHsk);
@@ -183,7 +172,6 @@ export default function EndlessArrangePage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Tính toán % thanh EXP
   const currentLevelIndex = HSK_LEVELS.findIndex(
     (l, idx) => userExp >= l.requiredExp && (idx === HSK_LEVELS.length - 1 || userExp < HSK_LEVELS[idx + 1].requiredExp)
   );
@@ -201,7 +189,6 @@ export default function EndlessArrangePage() {
     <main className="min-h-screen bg-slate-50 py-10 px-4">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
         
-        {/* CỘT BÊN TRÁI: THANH SIDEBAR & TIẾN ĐỘ EXP */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 sticky top-10">
                 <Link href="/">
@@ -253,9 +240,7 @@ export default function EndlessArrangePage() {
             </div>
         </div>
 
-        {/* CỘT BÊN PHẢI: KHU VỰC SẮP XẾP CÂU (HARDCORE MODE) */}
         <div className="w-full lg:w-2/3 flex flex-col gap-6">
-            
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-slate-800">Chế độ Sinh Tồn AI ({selectedHsk})</h2>
@@ -275,7 +260,6 @@ export default function EndlessArrangePage() {
                 ) : currentSentence ? (
                     <div className="w-full flex flex-col items-center animate-fade-in">
                         
-                        {/* KHUNG ĐỰNG TỪ ĐÃ CHỌN */}
                         <div className={`w-full max-w-2xl min-h-[100px] border-2 border-dashed rounded-2xl p-4 flex flex-wrap justify-center gap-3 items-center transition-all mt-4 ${
                             feedback === 'correct' ? 'border-green-500 bg-green-50' : 
                             feedback === 'incorrect' ? 'border-red-500 bg-red-50' : 'border-orange-300 bg-orange-50/30'
@@ -295,7 +279,6 @@ export default function EndlessArrangePage() {
                             ))}
                         </div>
 
-                        {/* Thông báo kết quả */}
                         {feedback === 'correct' && (
                             <p className="text-green-600 font-bold mt-6 animate-bounce">✨ Xếp câu chính xác! (+20 EXP)</p>
                         )}
@@ -303,7 +286,6 @@ export default function EndlessArrangePage() {
                             <p className="text-red-500 font-bold mt-6">❌ Thứ tự chưa đúng, hãy thử lại!</p>
                         )}
 
-                        {/* KHUNG ĐỰNG TỪ CÒN LẠI (XÁO TRỘN) */}
                         <div className="w-full max-w-2xl mt-8 flex flex-wrap justify-center gap-3">
                             {shuffledWords.map(word => (
                                 <button
@@ -316,7 +298,6 @@ export default function EndlessArrangePage() {
                             ))}
                         </div>
 
-                        {/* Nút Kiểm tra & Nút Xem Đáp Án (Chỉ xuất hiện khi làm sai) */}
                         <div className="w-full max-w-2xl mt-10 flex flex-col sm:flex-row gap-4">
                             <button 
                                 onClick={checkAnswer}
@@ -330,7 +311,6 @@ export default function EndlessArrangePage() {
                                 Kiểm tra
                             </button>
                             
-                            {/* CHỈ HIỆN NÚT NÀY KHI NGƯỜI DÙNG LÀM SAI (feedback === 'incorrect') */}
                             {feedback === 'incorrect' && (
                                 <button 
                                     onClick={() => {
@@ -344,7 +324,6 @@ export default function EndlessArrangePage() {
                             )}
                         </div>
 
-                        {/* Khung hiển thị đáp án chi tiết chỉ bật khi làm sai và chủ động bấm */}
                         {showAnswer && feedback === 'incorrect' && (
                             <div className="mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-200 animate-fade-in w-full max-w-2xl text-center">
                                 <p className="text-4xl font-black text-slate-800 mb-2">{currentSentence.chinese}</p>
