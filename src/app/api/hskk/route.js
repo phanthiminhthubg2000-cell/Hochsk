@@ -1,119 +1,134 @@
-import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-export async function POST(request) {
+// Khởi tạo Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+// Thuật toán Fisher-Yates xáo trộn ngẫu nhiên
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+export async function POST(req) {
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return NextResponse.json({ error: "Thiếu API Key." }, { status: 500 });
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    // Khuyên dùng gemini-3.6-flash hoặc pro để xử lý prompt dài tốt hơn
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" }); 
-
-    const body = await request.json();
-    const { action, level, answers } = body;
+    const body = await req.json();
 
     // ==========================================
-    // KỊCH BẢN 1: TẠO ĐỀ THI ĐỘNG THEO CHUẨN HANBAN MỚI
+    // 1. LOGIC BỐC ĐỀ THI (GENERATE)
     // ==========================================
-    if (action === "generate") {
-      let examRules = "";
-      
-      if (level === "HSK Cấp 3") {
-        examRules = `
-        - ĐỐI TƯỢNG: Trình độ HSK 3 (Từ vựng HSK 1-3).
-        - CÂU 1-8 (type: "repeat"): Câu đơn/phức dài 10-18 chữ Hán. Đa dạng cấu trúc (因为…所以, 把, 被, so sánh). Tình huống quen thuộc (quên đồ, tắc đường, kế hoạch).
-        - CÂU 9-13 (type: "picture", imageCount: 1): Tình huống đời sống (1-3 nhân vật, rõ hành động).
-        - CÂU 14-15 (type: "short"): Câu 14 (Kể/Giới thiệu trải nghiệm cá nhân). Câu 15 (Lựa chọn/Sở thích và giải thích lý do).
-        `;
-      } else if (level === "HSK Cấp 4") {
-        examRules = `
-        - ĐỐI TƯỢNG: Trình độ HSK 4 (Từ vựng HSK 1-4).
-        - CÂU 1-2 (type: "repeat" - Nghe thuật lại): Mỗi câu là đoạn văn 90-140 chữ Hán. Câu 1 (Câu chuyện đời sống/sự cố nhỏ). Câu 2 (Trải nghiệm có nhiều bước phát triển). Rõ bối cảnh, nhân vật, kết quả.
-        - CÂU 3 (type: "picture", imageCount: 3): Chuỗi tranh kể chuyện liên tục (Mở đầu -> Vấn đề -> Giải quyết).
-        - CÂU 4-5 (type: "short"): Câu 4 (Tình huống giả định/Kế hoạch giải quyết). Câu 5 (Đánh giá quan điểm/lựa chọn cá nhân). KHÔNG dùng câu hỏi quá đơn giản.
-        `;
-      } else if (level === "HSK Cấp 5") {
-        examRules = `
-        - ĐỐI TƯỢNG: Trình độ HSK 5 (Từ vựng HSK 1-5).
-        - CÂU 1-2 (type: "repeat" - Nghe thuật lại): Đoạn văn 180-260 chữ Hán. Câu 1 (Trải nghiệm cá nhân sâu sắc). Câu 2 (Sự việc có yếu tố vấn đề/thông tin xã hội).
-        - CÂU 3 (type: "picture", imageCount: 4): Chuỗi sự kiện phức tạp (Giới thiệu -> Vấn đề bất ngờ -> Phản ứng -> Kết quả/Bài học).
-        - CÂU 4-5 (type: "short"): Câu 4 (Phân tích hiện tượng/ảnh hưởng trong cuộc sống). Câu 5 (Cách hiểu/Phản biện về một nhận định/câu nói). Yêu cầu tư duy nhiều góc độ.
-        `;
-      } else if (level === "HSK Cấp 6") {
-        examRules = `
-        - ĐỐI TƯỢNG: Trình độ HSK 6 (Từ vựng HSK 1-6). Đòi hỏi tư duy sâu, logic, phản biện.
-        - CÂU 1-2 (type: "repeat" - Nghe thuật lại): Đoạn văn phức tạp, nhiều tầng diễn biến, nguyên nhân sâu xa, hoặc triết lý.
-        - CÂU 3 (type: "picture", imageCount: 4): Chuỗi hình trừu tượng hoặc câu chuyện có ngụ ý sâu sắc.
-        - CÂU 4-5 (type: "short"): Câu hỏi đa chiều, yêu cầu lập luận, so sánh các góc nhìn, phân tích ưu/nhược điểm và đưa ra kết luận có căn cứ.
-        `;
+    if (body.action === "generate") {
+      const dataDir = path.join(process.cwd(), 'src', 'app', 'data', 'hskk', 'hskk3');
+
+      try {
+        const [repeatRaw, pictureRaw, shortRaw] = await Promise.all([
+          fs.readFile(path.join(dataDir, 'repeat.json'), 'utf-8'),
+          fs.readFile(path.join(dataDir, 'picture.json'), 'utf-8'),
+          fs.readFile(path.join(dataDir, 'short.json'), 'utf-8')
+        ]);
+
+        const repeatData = JSON.parse(repeatRaw);
+        const pictureData = JSON.parse(pictureRaw);
+        const shortData = JSON.parse(shortRaw);
+
+        // Bọc chuỗi văn bản thuần túy vào Object để Frontend hiển thị được
+        const formatQuestion = (q, type) => {
+          if (typeof q === 'string') return { text: q, type };
+          return { ...q, type };
+        };
+
+        // Chuẩn HSKK 3: 8 câu nhắc lại, 5 câu tranh, 2 câu trả lời ngắn
+        const selectedRepeat = shuffleArray(repeatData).slice(0, 8).map(q => formatQuestion(q, 'repeat'));
+        const selectedPicture = shuffleArray(pictureData).slice(0, 5).map(q => formatQuestion(q, 'picture'));
+        const selectedShort = shuffleArray(shortData).slice(0, 2).map(q => formatQuestion(q, 'short'));
+
+        const fullExam = [...selectedRepeat, ...selectedPicture, ...selectedShort];
+        return NextResponse.json(fullExam);
+
+      } catch (fileError) {
+        console.error("Lỗi không tìm thấy file JSON:", fileError);
+        return NextResponse.json({ error: "Không tìm thấy dữ liệu đề thi JSON." }, { status: 404 });
+      }
+    }
+
+    // ==========================================
+    // 2. LOGIC CHẤM ĐIỂM BẰNG GEMINI (GRADE)
+    // ==========================================
+    if (body.action === "grade") {
+      const { level, answers } = body;
+
+      if (!process.env.GEMINI_API_KEY) {
+        return NextResponse.json({ error: "Chưa cấu hình GEMINI_API_KEY trong .env.local" }, { status: 500 });
       }
 
-      const prompt = `Bạn là chuyên gia khảo thí HSKK cấp cao. Hãy tạo một đề thi ${level} tuân thủ NGHIÊM NGẶT các quy tắc học thuật sau:
-      ${examRules}
-      
-      LỆNH TỐI CAO (SYSTEM DIRECTIVE): 
-      KHÔNG ĐƯỢC sinh ra bất kỳ văn bản, lời chào, hay tài liệu hướng dẫn nào. 
-      BẠN CHỈ ĐƯỢC PHÉP TRẢ VỀ DUY NHẤT 1 MẢNG JSON HỢP LỆ.
-      
-      Định dạng bắt buộc:
-      [
-        { "type": "repeat", "text": "<câu tiếng Trung>" },
-        { "type": "picture", "text": "<Mô tả yêu cầu bằng tiếng Trung>", "imageCount": <số lượng ảnh quy định> },
-        { "type": "short", "text": "<câu hỏi mở tiếng Trung>" }
-      ]`;
+      const model = genAI.getGenerativeModel({
+        model: "gemini-3.6-flash",
+        generationConfig: { responseMimeType: "application/json" }
+      });
 
-      const result = await model.generateContent(prompt);
-      let text = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
-      return NextResponse.json(JSON.parse(text));
-    } 
-    
-    // ==========================================
-    // KỊCH BẢN 2: CHẤM ĐIỂM THEO THANG 4 MỨC ĐỘ
-    // ==========================================
-    if (action === "grade") {
-      let scoringRubric = level === "HSK Cấp 3" ? 
-        `Câu 1-8 (5đ/câu), Câu 9-13 (5đ/câu), Câu 14 (15đ), Câu 15 (20đ). Tổng 100đ.` : 
-        `Câu 1-2 (10đ/câu), Câu 3 (20đ), Câu 4-5 (30đ/câu). Tổng 100đ.`;
+      // Tạo prompt chuẩn khảo thí HSKK, ép AI phải chấm điểm thực tế
+      const promptText = `
+Bạn là giám khảo chấm thi khẩu ngữ tiếng Trung HSKK (${level}).
+Dưới đây là danh sách các câu hỏi và các file ghi âm bài làm của thí sinh tương ứng theo thứ tự.
+Tiêu chí chấm thi:
+1. Phần Repeat (Nghe nhắc lại): Độ chính xác về từ vựng, thanh điệu (thanh 1, 2, 3, 4, khinh thanh) và ngữ điệu.
+2. Phần Picture (Nhìn tranh nói) & Short (Trả lời câu hỏi): Độ lưu loát, dùng từ vựng đúng ngữ cảnh, ngữ pháp câu, nói đủ ý.
 
-      const promptText = `Bạn là giám khảo HSKK. Hãy nghe các file ghi âm bài thi ${level} và chấm điểm dựa trên THANG ĐÁNH GIÁ 4 MỨC sau:
-      - Mức 4 (Tốt - 80-100% điểm tối đa): Đầy đủ, rõ ràng, trôi chảy, logic tốt, từ vựng phong phú.
-      - Mức 3 (Khá - 60-79% điểm tối đa): Đúng trọng tâm, có phát triển ý, vài lỗi nhỏ nhưng dễ hiểu.
-      - Mức 2 (Hạn chế - 40-59% điểm tối đa): Nội dung ngắn, sót ý, nhiều lỗi ngữ pháp/phát âm, nhiều khoảng dừng.
-      - Mức 1 (Chưa đạt - 0-39% điểm tối đa): Sai yêu cầu, quá ngắn, không logic, khó hiểu.
+YÊU CẦU BẮT BUỘC: 
+- Lắng nghe kỹ từng file âm thanh để chấm điểm thực tế. Tự động trừ điểm nếu thí sinh ngập ngừng, phát âm sai hoặc không trả lời.
+- Tuyệt đối không sao chép số điểm ví dụ.
+- Chỉ trả về kết quả theo ĐÚNG định dạng JSON sau (không thêm markdown, không thêm text thừa):
+{
+  "totalScore": <Tổng điểm tính toán thực tế từ 0 đến 100>,
+  "overallFeedback": "<Đánh giá tổng quan điểm mạnh và điểm cần cải thiện bằng tiếng Việt>",
+  "details": [
+    {
+      "question": "<Nội dung câu hỏi>",
+      "score": <Điểm thực tế của câu này>,
+      "feedback": "<Nhận xét chi tiết về phát âm/nội dung câu này bằng tiếng Việt>"
+    }
+  ]
+}
+`;
 
-      Barem điểm chuẩn: ${scoringRubric}
-      
-      LỆNH TỐI CAO: CHỈ TRẢ VỀ 1 ĐỐI TƯỢNG JSON. Định dạng:
-      {
-        "totalScore": <tổng điểm chính xác>,
-        "overallFeedback": "Nhận xét tổng quan (Tiếng Việt)",
-        "overallImprovement": "Lời khuyên",
-        "details": [
-          { "score": <điểm>, "question": "Câu 1", "feedback": "...", "improvement": "..." }
-        ]
-      }`;
+      const promptParts = [{ text: promptText }];
 
-      const parts = [{ text: promptText }];
+      // Đưa từng câu hỏi kèm file audio tương ứng vào payload gửi Gemini
       answers.forEach((ans, index) => {
-        parts.push({ text: `Câu ${index + 1} (${ans.type}): ${ans.question}` });
-        if (ans.audioBase64) {
-          const base64Data = ans.audioBase64.split(',')[1];
-          parts.push({ inlineData: { data: base64Data, mimeType: "audio/webm" } });
+        promptParts.push({
+          text: `\n--- Câu hỏi ${index + 1} (${ans.type}): "${ans.question}" ---`
+        });
+
+        if (ans.audioBase64 && ans.audioBase64.includes(",")) {
+          const base64Data = ans.audioBase64.split(",")[1];
+          promptParts.push({
+            inlineData: {
+              mimeType: "audio/webm",
+              data: base64Data
+            }
+          });
         } else {
-          parts.push({ text: `(Thí sinh bỏ trống)` });
+          promptParts.push({ text: "[Thí sinh không ghi âm hoặc không có âm thanh cho câu này]" });
         }
       });
 
-      const result = await model.generateContent(parts);
-      let text = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
-      return NextResponse.json(JSON.parse(text));
+      const result = await model.generateContent(promptParts);
+      const responseText = result.response.text();
+      const parsedResult = JSON.parse(responseText);
+
+      return NextResponse.json(parsedResult);
     }
 
-    return NextResponse.json({ error: "Lệnh không hợp lệ" }, { status: 400 });
+    return NextResponse.json({ error: "Hành động không hợp lệ" }, { status: 400 });
 
   } catch (error) {
-    console.error("Lỗi API chi tiết:", error);
-    return NextResponse.json({ error: "Lỗi kết nối máy chủ AI" }, { status: 500 });
+    console.error("Lỗi Server API HSKK:", error);
+    return NextResponse.json({ error: "Lỗi hệ thống khi chấm điểm bằng AI: " + error.message }, { status: 500 });
   }
 }
