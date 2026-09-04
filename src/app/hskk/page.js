@@ -13,17 +13,23 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  // examPhase: idle -> loading -> intro -> global_prep -> reading -> speaking -> grading -> done
+  // examPhase: idle -> device_check -> loading -> intro -> global_prep -> reading -> speaking -> grading -> done
   const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
   const [hasPrepped, setHasPrepped] = useState(false);
   const [scratchpad, setScratchpad] = useState("");
   const [hskkFinalResult, setHskkFinalResult] = useState(null);
   
+  // States cho phần kiểm tra thiết bị
+  const [isSpeakerTested, setIsSpeakerTested] = useState(false);
+  const [isMicTested, setIsMicTested] = useState(false);
+  const [isTestingMic, setIsTestingMic] = useState(false);
+  const [testAudioUrl, setTestAudioUrl] = useState(null);
+
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const utteranceRef = useRef(null);
 
-  // Cấu hình chuẩn form HSKK (Thời gian tính bằng giây)
   const examConfig = {
     "HSK Cấp 3": { prepTime: 420, repeat: 10, picture: 15, short: 90 },
     "HSK Cấp 4": { prepTime: 600, repeat: 40, picture: 120, short: 120 },
@@ -31,7 +37,6 @@ export default function HskkPage() {
     "HSK Cấp 6": { prepTime: 600, repeat: 90, picture: 120, short: 150 }
   };
 
-  // Kịch bản giới thiệu chuẩn Hanban
   const introScripts = {
     "HSK Cấp 3": "欢迎参加汉语水平考试（HSK）三级口语考试！本次考试分为三个部分，共十五题。第一部分是听后重复，共八题。第二部分是看图说话，共五题。第三部分是回答问题，共两题。全部考试时间为十五分钟，其中包含准备时间六分钟。请做好准备。现在，考试开始。",
     "HSK Cấp 4": "欢迎参加汉语水平考试（HSK）四级口语考试！本次考试分为三个部分，共五题。第一部分是听后复述，共两题。第二部分是看图说话，共一题。第三部分是回答问题，共两题。全部考试时间为二十分钟，其中包含准备时间十分钟。请做好准备。现在，考试开始。",
@@ -45,9 +50,15 @@ export default function HskkPage() {
     }
   }, []);
 
-  const speak = (text, onEndCallback) => {
+  const speak = (text, onEndCallback = () => {}) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) {
+      onEndCallback();
+      return;
+    }
+
     window.speechSynthesis.cancel(); 
     const utterance = new SpeechSynthesisUtterance(text);
+    utteranceRef.current = utterance;
     utterance.lang = "zh-CN"; 
     utterance.rate = 0.85; 
 
@@ -61,14 +72,68 @@ export default function HskkPage() {
       utterance.voice = premiumVoice;
     }
 
-    utterance.onend = onEndCallback;
-    utterance.onerror = onEndCallback; // Bỏ qua nếu có lỗi âm thanh để bài thi vẫn tiếp tục
+    let isFinished = false;
+    const safeEndCallback = () => {
+      if (!isFinished) {
+        isFinished = true;
+        utteranceRef.current = null; 
+        onEndCallback();
+      }
+    };
+
+    utterance.onend = safeEndCallback;
+    utterance.onerror = safeEndCallback; 
     window.speechSynthesis.speak(utterance);
+
+    const safeTimeoutMs = (text.length * 250) + 3000;
+    setTimeout(() => {
+      safeEndCallback();
+    }, safeTimeoutMs);
+  };
+
+  // --- HÀM KIỂM TRA THIẾT BỊ ---
+  const testSpeaker = () => {
+    speak("欢迎参加汉语水平考试。设备测试。");
+  };
+
+  const testMic = async () => {
+    setIsTestingMic(true);
+    setTestAudioUrl(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      const chunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        setTestAudioUrl(url);
+        stream.getTracks().forEach(track => track.stop());
+        setIsTestingMic(false);
+      };
+
+      mediaRecorder.start();
+      
+      // Ghi âm đúng 3 giây rồi tự ngắt
+      setTimeout(() => {
+        if (mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+        }
+      }, 3000);
+
+    } catch (err) {
+      console.error("Lỗi truy cập Micro:", err);
+      alert("Không thể truy cập Micro. Vui lòng cấp quyền trong cài đặt trình duyệt!");
+      setIsTestingMic(false);
+    }
   };
 
   useEffect(() => {
     let timer;
-    // Đã bỏ "intro" ra khỏi bộ đếm giờ tự động
     if (["speaking", "global_prep"].includes(examPhase) && timeLeft > 0) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timeLeft === 0) {
@@ -118,14 +183,13 @@ export default function HskkPage() {
       
       setExamQuestions(fullExam);
 
-      // Đề tải xong, bắt đầu đọc Intro
       setExamPhase("intro");
       const introText = introScripts[hskkLevel] || introScripts["HSK Cấp 3"];
       
       speak(introText, () => {
-        // AI đọc xong sẽ tự động kích hoạt câu 1
         setCurrentQIndex(0);
-        startQuestionLogic(0, false);
+        // Đã vá lỗi bất đồng bộ: Truyền trực tiếp fullExam vào hàm
+        startQuestionLogic(0, false, fullExam);
       });
     } catch (e) {
       alert("Lỗi AI ra đề thi! Vui lòng thử lại.");
@@ -133,9 +197,12 @@ export default function HskkPage() {
     }
   };
 
-  const startQuestionLogic = (index, prepped = hasPrepped) => {
-    const q = examQuestions[index];
+  // Đã vá lỗi bất đồng bộ: Thêm tham số questions
+  const startQuestionLogic = (index, prepped = hasPrepped, questions = examQuestions) => {
+    const q = questions[index];
     
+    if (!q) return; // Chốt chặn an toàn
+
     if (q.type !== 'repeat' && !prepped) {
       setExamPhase("global_prep");
       setTimeLeft(examConfig[hskkLevel].prepTime);
@@ -269,6 +336,7 @@ export default function HskkPage() {
 
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl border-t-8 border-rose-600 p-8">
         
+        {/* BƯỚC 1: CHỌN ĐỀ */}
         {examPhase === "idle" && (
           <div className="text-center py-10 animate-fade-in">
             <select value={hskkLevel} onChange={(e) => setHskkLevel(e.target.value)} className="border-2 border-rose-200 text-rose-800 rounded-lg px-6 py-3 text-xl font-bold mb-8 outline-none cursor-pointer">
@@ -279,10 +347,113 @@ export default function HskkPage() {
             </select>
             <div className="py-12 border-2 border-dashed border-rose-200 rounded-2xl bg-rose-50/50">
               <p className="text-slate-600 font-medium text-lg mb-2">Hệ thống sẽ bốc thăm đề ngẫu nhiên từ Ngân hàng Dữ liệu.</p>
-              <p className="text-rose-600 font-bold mb-6">Thí sinh Vui lòng cấp quyền Microphone trước khi bắt đầu.</p>
-              <button onClick={startExamSequence} className="px-10 py-5 bg-rose-600 text-white font-bold text-2xl rounded-2xl shadow-xl hover:bg-rose-700 hover:scale-105 transition-all">
-                🚀 Vào Phòng Thi
+              <button onClick={() => setExamPhase("device_check")} className="mt-6 px-10 py-5 bg-rose-600 text-white font-bold text-2xl rounded-2xl shadow-xl hover:bg-rose-700 hover:scale-105 transition-all">
+                🚀 Chuẩn bị vào thi
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* BƯỚC 2: KIỂM TRA LOA VÀ MICRO */}
+        {examPhase === "device_check" && (
+          <div className="max-w-2xl mx-auto py-6 animate-fade-in">
+            <h2 className="text-3xl font-black text-slate-800 mb-2 text-center">Kiểm tra loa và micro</h2>
+            <p className="text-slate-500 mb-8 text-center">Hãy hoàn tất hai bước dưới đây trước khi vào phòng thi.</p>
+
+            {/* Khối kiểm tra loa */}
+            <div className={`p-6 rounded-2xl border-2 mb-6 transition-all ${isSpeakerTested ? 'border-green-300 bg-green-50' : 'border-slate-200 bg-white'}`}>
+              <h3 className="text-xl font-bold text-slate-700 mb-2 flex items-center gap-2">
+                🔊 1. Kiểm tra loa
+              </h3>
+              <p className="text-slate-600 mb-4">Phát thử trực tiếp audio để xác nhận loa đang hoạt động tốt.</p>
+              
+              {isSpeakerTested && (
+                <div className="bg-green-100 text-green-700 p-3 rounded-lg font-medium mb-4 flex items-center gap-2">
+                  ✓ Bạn đã xác nhận nghe rõ audio.
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-4">
+                <button onClick={testSpeaker} className="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition">
+                  ▶ Phát thử audio
+                </button>
+                <button 
+                  onClick={() => setIsSpeakerTested(true)} 
+                  className={`px-5 py-2.5 font-bold rounded-xl border-2 transition ${isSpeakerTested ? 'border-green-500 text-green-600 bg-white' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                  ✓ Tôi nghe rõ
+                </button>
+              </div>
+            </div>
+
+            {/* Khối kiểm tra micro */}
+            <div className={`p-6 rounded-2xl border-2 mb-8 transition-all ${isMicTested ? 'border-green-300 bg-green-50' : 'border-slate-200 bg-white'}`}>
+              <h3 className="text-xl font-bold text-slate-700 mb-2 flex items-center gap-2">
+                🎙️ 2. Kiểm tra micro
+              </h3>
+              <p className="text-slate-600 mb-4">Cho phép quyền micro, nói thử khoảng 3 giây rồi nghe lại bản ghi.</p>
+
+              {isTestingMic && (
+                <div className="text-rose-600 font-bold mb-4 animate-pulse flex items-center gap-2">
+                  <div className="w-3 h-3 bg-rose-600 rounded-full"></div>
+                  Đang ghi âm (3 giây)...
+                </div>
+              )}
+
+              {testAudioUrl && !isTestingMic && (
+                <div className="mb-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <p className="text-slate-600 font-medium mb-2">Nghe lại bản ghi âm của bạn:</p>
+                  <audio src={testAudioUrl} controls className="w-full h-10" />
+                </div>
+              )}
+
+              {isMicTested && (
+                <div className="bg-green-100 text-green-700 p-3 rounded-lg font-medium mb-4 flex items-center gap-2">
+                  ✓ Micro của bạn hoạt động bình thường.
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-4">
+                <button 
+                  onClick={testMic} 
+                  disabled={isTestingMic}
+                  className={`px-5 py-2.5 font-bold rounded-xl transition ${isTestingMic ? 'bg-slate-400 text-white cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
+                  🎙️ Ghi thử 3 giây
+                </button>
+                
+                {testAudioUrl && (
+                  <button 
+                    onClick={() => setIsMicTested(true)} 
+                    className={`px-5 py-2.5 font-bold rounded-xl border-2 transition ${isMicTested ? 'border-green-500 text-green-600 bg-white' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                    ✓ Nghe rõ bản ghi
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Điều hướng */}
+            <div className="flex justify-between items-center border-t border-slate-200 pt-6">
+              <button 
+                onClick={() => setExamPhase("idle")} 
+                className="px-6 py-3 font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition">
+                ← Quay lại
+              </button>
+              <div className="flex flex-col items-end">
+                {(!isSpeakerTested || !isMicTested) && (
+                  <span className="text-sm text-rose-500 font-medium mb-2">
+                    Cần hoàn thành cả 2 bước kiểm tra để bắt đầu
+                  </span>
+                )}
+                <button 
+                  onClick={startExamSequence}
+                  disabled={!isSpeakerTested || !isMicTested}
+                  className={`px-8 py-3 font-bold text-lg rounded-xl transition shadow-lg ${
+                    isSpeakerTested && isMicTested 
+                      ? 'bg-rose-600 text-white hover:bg-rose-700 hover:scale-105' 
+                      : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                  }`}>
+                  VÀO PHÒNG THI
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -431,7 +602,12 @@ export default function HskkPage() {
               ))}
             </div>
 
-            <button onClick={() => setExamPhase("idle")} className="mt-8 w-full py-5 bg-rose-600 text-white rounded-xl font-bold text-xl shadow-xl hover:bg-rose-700 transition-colors">
+            <button onClick={() => {
+              setExamPhase("idle");
+              setIsSpeakerTested(false);
+              setIsMicTested(false);
+              setTestAudioUrl(null);
+            }} className="mt-8 w-full py-5 bg-rose-600 text-white rounded-xl font-bold text-xl shadow-xl hover:bg-rose-700 transition-colors">
               🔄 Về Phòng Chờ / Thi Lại
             </button>
           </div>
