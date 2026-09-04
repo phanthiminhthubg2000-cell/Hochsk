@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { db } from "../firebase"; 
+import { db } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Home() {
