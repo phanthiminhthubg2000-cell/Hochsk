@@ -53,13 +53,19 @@ export default function Home() {
 
           setStreak(currentStreak);
 
-          // Cập nhật lên Firebase
+          // Cập nhật lên Firebase (Mặc định tạm thời mở khóa tất cả các cấp độ HSK 1-6 để test)
           await setDoc(studentRef, {
             email: user.primaryEmailAddress?.emailAddress || "Không rõ email",
             name: user.fullName || "Học viên",
             lastLogin: serverTimestamp(),
             lastStreakDate: todayStr,
-            streakCount: currentStreak
+            streakCount: currentStreak,
+            passedHSK1: true,
+            passedHSK2: true,
+            passedHSK3: true,
+            passedHSK4: true,
+            passedHSK5: true,
+            passedHSK6: true,
           }, { merge: true });
 
         } catch (error) {
@@ -71,20 +77,39 @@ export default function Home() {
     if (isLoaded) syncUserAndCheckStreak();
   }, [user, isLoaded]);
 
+  // Hàm thiết lập lại dữ liệu học tập hoặc mở khóa nhanh
+  const handleUnlockAll = async () => {
+    if (!user) return;
+    try {
+      const studentRef = doc(db, "progress", user.id);
+      await setDoc(studentRef, {
+        passedHSK1: true,
+        passedHSK2: true,
+        passedHSK3: true,
+        passedHSK4: true,
+        passedHSK5: true,
+        passedHSK6: true,
+      }, { merge: true });
+
+      alert("⚡ Đã mở khóa toàn bộ các cấp độ HSK 1-6! Bạn có thể truy cập mọi tab.");
+      window.location.reload();
+    } catch (error) {
+      console.error("Lỗi mở khóa:", error);
+    }
+  };
+
   // Hàm thiết lập lại dữ liệu học tập
   const handleResetData = async () => {
     if (!user) return;
     
-    const confirmReset = window.confirm("⚠️ CẢNH BÁO TỐI KHẨN: Bạn có chắc chắn muốn XÓA TOÀN BỘ EXP, số từ vựng đã học và các chứng chỉ HSK không? Hành động này không thể hoàn tác!");
+    const confirmReset = window.confirm("⚠️ CẢNH BÁO TỐI KHẨN: Bạn có chắc chắn muốn XÓA TOÀN BỘ EXP, số từ vựng đã học và các chứng chỉ HSK không?");
     
     if (!confirmReset) return;
 
     try {
-      // 1. Xóa dữ liệu lưu trên bộ nhớ trình duyệt (LocalStorage)
       localStorage.removeItem("hskk_exp");
       localStorage.removeItem("hskk_word_progress");
 
-      // 2. Xóa dữ liệu điểm và chứng chỉ trên Firebase (Giữ lại Chuỗi Streak để động viên)
       const studentRef = doc(db, "progress", user.id);
       await setDoc(studentRef, {
         vocabExp: 0,
@@ -98,12 +123,11 @@ export default function Home() {
         passedHSK6: false
       }, { merge: true });
 
-      alert("🔄 Đã xóa toàn bộ dữ liệu học tập. Bắt đầu hành trình mới nào!");
-      window.location.reload(); // Tải lại trang để áp dụng thay đổi
+      alert("🔄 Đã xóa toàn bộ dữ liệu học tập.");
+      window.location.reload();
       
     } catch (error) {
       console.error("Lỗi xóa dữ liệu:", error);
-      alert("Đã xảy ra lỗi khi thiết lập lại dữ liệu.");
     }
   };
 
@@ -127,13 +151,22 @@ export default function Home() {
         
         <div className="flex flex-wrap items-center gap-3">
           {isSignedIn && (
-            <button 
-              onClick={handleResetData}
-              className="px-4 py-2.5 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 transition text-sm flex items-center gap-2"
-              title="Xóa toàn bộ dữ liệu và học lại từ đầu"
-            >
-              🔄 Học lại từ đầu
-            </button>
+            <>
+              <button 
+                onClick={handleUnlockAll}
+                className="px-4 py-2.5 bg-amber-100 text-amber-700 rounded-xl font-bold hover:bg-amber-200 transition text-sm flex items-center gap-2"
+                title="Mở khóa tất cả các cấp độ ngay lập tức"
+              >
+                ⚡ Mở Khóa Tất Cả
+              </button>
+              <button 
+                onClick={handleResetData}
+                className="px-4 py-2.5 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 transition text-sm flex items-center gap-2"
+                title="Xóa toàn bộ dữ liệu và học lại từ đầu"
+              >
+                🔄 Học lại từ đầu
+              </button>
+            </>
           )}
 
           {isTeacher && (
