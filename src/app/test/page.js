@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { db } from "../firebase";
+import { db } from "../../firebase"; // Đã sửa đúng đường dẫn lùi 2 cấp thư mục ra thư mục chứa firebase
 import { doc, setDoc } from "firebase/firestore";
 
 // Hàm sinh đề kiểm tra trực quan tương thích hoàn toàn với môi trường build của Vercel
