@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { generatePlacementTest, evaluateTestResult } from "@/utils/placementTestHelper";
+// Sửa đường dẫn import thành đường dẫn tương đối:
+import { generatePlacementTest, evaluateTestResult } from "../utils/placementTestHelper";
 
 export default function PlacementTestPage() {
   const { user } = useUser();
