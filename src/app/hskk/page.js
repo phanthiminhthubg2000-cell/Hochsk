@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import { doc, setDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase";
 
 export default function HskkPage() {
@@ -13,12 +13,11 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  // examPhase: idle -> device_check -> loading -> intro -> intro_countdown -> global_prep -> reading -> speaking -> grading -> done
+  // examPhase: idle -> device_check -> loading -> intro -> intro_countdown -> global_prep -> reading -> speaking -> submitting -> done
   const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
   const [hasPrepped, setHasPrepped] = useState(false);
   const [scratchpad, setScratchpad] = useState("");
-  const [hskkFinalResult, setHskkFinalResult] = useState(null);
   
   // States cho phần kiểm tra thiết bị
   const [isSpeakerTested, setIsSpeakerTested] = useState(false);
@@ -102,7 +101,11 @@ export default function HskkPage() {
     setTestAudioUrl(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      // Ép nén dung lượng test mic
+      const mediaRecorder = new MediaRecorder(stream, { 
+        mimeType: 'audio/webm',
+        audioBitsPerSecond: 16000 
+      });
       const chunks = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -147,7 +150,6 @@ export default function HskkPage() {
       }
     }
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examPhase, timeLeft, currentQIndex, hasPrepped]);
 
   const formatTime = (seconds) => {
@@ -159,7 +161,6 @@ export default function HskkPage() {
   const startExamSequence = async () => {
     setExamPhase("loading");
     setExamAnswers([]); 
-    setHskkFinalResult(null); 
     setHasPrepped(false); 
     setScratchpad("");
     setExamQuestions([]);
@@ -228,7 +229,11 @@ export default function HskkPage() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      // ÉP NÉN BITRATE ĐỂ TRÁNH LỖI DUNG LƯỢNG 1MB CỦA FIRESTORE
+      const mediaRecorder = new MediaRecorder(stream, { 
+        mimeType: 'audio/webm',
+        audioBitsPerSecond: 16000 
+      });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -260,7 +265,6 @@ export default function HskkPage() {
 
   const handleNextQuestion = (audioBase64) => {
     const currentQ = examQuestions[currentQIndex];
-    // BỔ SUNG: Lưu lại hình ảnh của đề bài vào mảng câu trả lời
     const newAnswers = [
       ...examAnswers, 
       { 
@@ -282,55 +286,47 @@ export default function HskkPage() {
   };
 
   const submitFullExam = async (allAnswers) => {
-    setExamPhase("grading");
+    setExamPhase("submitting");
+    
+    if (!user) {
+      alert("Lỗi: Bạn chưa đăng nhập, không thể lưu bài thi!");
+      setExamPhase("idle");
+      return;
+    }
+
     try {
-      const res = await fetch('/api/hskk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "grade", level: hskkLevel, answers: allAnswers })
+      const fallbackName = user.primaryEmailAddress?.emailAddress?.split('@')[0] || "Học viên ẩn danh";
+      const finalUserName = user.fullName || fallbackName;
+
+      const examsRef = collection(db, "hskk_exams");
+      const newExamDoc = await addDoc(examsRef, {
+        userId: user.id,
+        userName: finalUserName,
+        userEmail: user.primaryEmailAddress?.emailAddress || "",
+        level: hskkLevel,
+        submittedAt: serverTimestamp(),
+        status: "pending_teacher",
+        teacherScore: null,
+        teacherFeedback: null
       });
-      const data = await res.json();
-      setHskkFinalResult(data);
 
-      if (user && data.totalScore) {
-        try {
-          const studentRef = doc(db, "progress", user.id);
-          await setDoc(studentRef, { hskkScore: data.totalScore }, { merge: true });
-
-          const examsRef = collection(db, "hskk_exams");
-          const newExamDoc = await addDoc(examsRef, {
-            userId: user.id,
-            userName: user.fullName || "Học viên ẩn danh",
-            userEmail: user.primaryEmailAddress?.emailAddress || "",
-            level: hskkLevel,
-            submittedAt: serverTimestamp(),
-            status: "pending_teacher",
-            aiScore: data.totalScore,
-            aiFeedback: data.overallFeedback,
-            aiDetails: data.details,
-            teacherScore: null,
-            teacherFeedback: null
-          });
-
-          const answersCollectionRef = collection(db, "hskk_exams", newExamDoc.id, "answers");
-          for (let i = 0; i < allAnswers.length; i++) {
-            await addDoc(answersCollectionRef, {
-              questionIndex: i + 1,
-              type: allAnswers[i].type,
-              question: allAnswers[i].question,
-              images: allAnswers[i].images || [], // BỔ SUNG: Gửi hình ảnh lên Firestore
-              audioBase64: allAnswers[i].audioBase64 || null
-            });
-          }
-          
-        } catch (error) {
-          console.error("Lỗi đồng bộ Firebase:", error);
-        }
+      const answersCollectionRef = collection(db, "hskk_exams", newExamDoc.id, "answers");
+      for (let i = 0; i < allAnswers.length; i++) {
+        await addDoc(answersCollectionRef, {
+          questionIndex: i + 1,
+          type: allAnswers[i].type,
+          question: allAnswers[i].question || "",
+          images: allAnswers[i].images || [],
+          audioBase64: allAnswers[i].audioBase64 || null
+        });
       }
-    } catch (error) {
-      alert("Lỗi chấm điểm bài thi!");
-    } finally {
+      
       setExamPhase("done");
+      
+    } catch (error) {
+      console.error("Lỗi nộp bài thi:", error);
+      alert("Lỗi kết nối máy chủ! Quá trình nộp bài bị gián đoạn do mất mạng.");
+      setExamPhase("idle");
     }
   };
 
@@ -466,12 +462,13 @@ export default function HskkPage() {
           </div>
         )}
 
-        {(examPhase === "loading" || (examPhase === "grading" && !hskkFinalResult)) && (
-           <div className="text-center py-24 flex flex-col items-center">
+        {(examPhase === "loading" || examPhase === "submitting") && (
+           <div className="text-center py-24 flex flex-col items-center animate-fade-in">
              <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-6"></div>
              <h2 className="text-3xl font-bold text-rose-600">
-               {examPhase === "loading" ? "Đang chuẩn bị đề thi..." : "Giám khảo AI đang phân tích âm thanh..."}
+               {examPhase === "loading" ? "Đang chuẩn bị đề thi..." : "Đang đóng gói file ghi âm và gửi cho Giáo viên..."}
              </h2>
+             {examPhase === "submitting" && <p className="text-slate-500 mt-4">Vui lòng không đóng trình duyệt lúc này!</p>}
            </div>
         )}
 
@@ -493,7 +490,6 @@ export default function HskkPage() {
           </div>
         )}
 
-        {/* BƯỚC ĐẾM NGƯỢC CHUẨN BỊ VÀO THI SAU KHI ĐỌC INTRO */}
         {examPhase === "intro_countdown" && (
           <div className="text-center py-12 animate-fade-in flex flex-col items-center">
             <h2 className="text-4xl font-black text-rose-600 mb-6 uppercase tracking-wider">Chuẩn bị bắt đầu</h2>
@@ -598,31 +594,25 @@ export default function HskkPage() {
           </div>
         )}
 
-        {examPhase === "done" && hskkFinalResult && (
-          <div className="flex flex-col gap-6 animate-fade-in">
-            <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 text-white text-center shadow-2xl relative overflow-hidden">
-              <h3 className="text-2xl font-bold text-slate-300 mb-2">ĐIỂM TỔNG KẾT HSKK</h3>
-              <div className={`text-9xl font-black mb-4 ${hskkFinalResult.totalScore >= 80 ? 'text-green-400' : hskkFinalResult.totalScore >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
-                {hskkFinalResult.totalScore}<span className="text-4xl text-slate-400">/100</span>
-              </div>
-              <p className="text-xl leading-relaxed text-slate-200 font-medium px-4 mb-4">{hskkFinalResult.overallFeedback}</p>
-            </div>
-
-            <h4 className="text-2xl font-black text-slate-800 mt-4 border-b-2 border-slate-100 pb-4">Chi tiết từng câu hỏi:</h4>
-            
-            <div className="flex flex-col gap-4">
-              {hskkFinalResult.details?.map((detail, idx) => (
-                <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6 items-start">
-                  <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-slate-100 flex flex-col items-center justify-center font-bold text-slate-700">
-                    <span className="text-xs text-slate-400 uppercase">Điểm</span>
-                    <span className="text-2xl">{detail.score}</span>
-                  </div>
-                  <div className="flex-1 w-full">
-                    <p className="text-lg font-bold text-slate-800 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">{detail.question}</p>
-                    <p className="text-slate-600 leading-relaxed mb-3"><span className="font-bold text-rose-600">Nhận xét:</span> {detail.feedback}</p>
-                  </div>
+        {examPhase === "done" && (
+          <div className="flex flex-col gap-6 animate-fade-in text-center py-8">
+            <div className="p-12 rounded-3xl bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-2xl relative overflow-hidden">
+              <div className="text-9xl mb-6 drop-shadow-lg">🎉</div>
+              <h3 className="text-4xl font-black mb-4">Đã nộp bài thành công!</h3>
+              <p className="text-xl leading-relaxed font-medium px-4 mb-6">
+                Bài thi HSKK của bạn đã được mã hóa và gửi an toàn lên hệ thống.<br/>
+                Giáo viên của trung tâm sẽ trực tiếp nghe lại file ghi âm và chấm điểm cho bạn.
+              </p>
+              
+              <div className="inline-block bg-black/20 p-5 rounded-2xl border border-white/20">
+                <div className="flex items-center justify-center gap-3 text-2xl font-bold text-yellow-300 mb-2">
+                  <span>📧</span> Check Gmail của bạn nhé!
                 </div>
-              ))}
+                <p className="text-emerald-50 text-lg">
+                  Kết quả và nhận xét chi tiết sẽ được gửi tự động vào email <br/> 
+                  <span className="font-bold text-white">{user?.primaryEmailAddress?.emailAddress || "của bạn"}</span> ngay khi giáo viên chấm xong.
+                </p>
+              </div>
             </div>
 
             <button onClick={() => {
@@ -630,8 +620,8 @@ export default function HskkPage() {
               setIsSpeakerTested(false);
               setIsMicTested(false);
               setTestAudioUrl(null);
-            }} className="mt-8 w-full py-5 bg-rose-600 text-white rounded-xl font-bold text-xl shadow-xl hover:bg-rose-700 transition-colors">
-              🔄 Về Phòng Chờ / Thi Lại
+            }} className="mt-6 w-full py-5 bg-rose-600 text-white rounded-xl font-bold text-xl shadow-xl hover:bg-rose-700 transition-colors">
+              🔄 Về Phòng Chờ / Trang Chủ
             </button>
           </div>
         )}

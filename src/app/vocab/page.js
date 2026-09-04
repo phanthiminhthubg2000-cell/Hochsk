@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import myCustomData from "../cards.json";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
@@ -35,19 +35,15 @@ export default function FlashcardPage() {
   
   const [activeWordIndex, setActiveWordIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [shadowingResult, setShadowingResult] = useState(null);
 
-  // --- TRẠNG THÁI KỶ LUẬT THÉP VÀ BÀI TẬP KÉP ---
+  // --- TRẠNG THÁI KỶ LUẬT THÉP ---
   const [canFlip, setCanFlip] = useState(false);
-  const [shadowingPassed, setShadowingPassed] = useState(false);
   
-  const [meaningInput, setMeaningInput] = useState("");
-  const [meaningStatus, setMeaningStatus] = useState("idle"); // idle, correct, incorrect
+  // State: Đặt câu với AI
+  const [sentenceInput, setSentenceInput] = useState("");
+  const [isCheckingSentence, setIsCheckingSentence] = useState(false);
+  const [sentenceResult, setSentenceResult] = useState(null); // Chứa { isPass, feedback, suggestion }
   
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-
   const [userData, setUserData] = useState(null);
 
   const [examState, setExamState] = useState({
@@ -63,20 +59,18 @@ export default function FlashcardPage() {
   // Reset trạng thái mỗi khi chuyển từ vựng mới
   useEffect(() => {
     setCanFlip(false);
-    setShadowingPassed(false);
     setIsFlipped(false);
-    setShadowingResult(null);
-    setMeaningInput("");
-    setMeaningStatus("idle");
+    setSentenceInput("");
+    setSentenceResult(null);
   }, [activeWordIndex, viewingLevel, filter, selectedHsk]);
 
-  // Tự động lật thẻ khi qua cả 2 bài test
+  // Tự động lật thẻ khi qua bài test đặt câu
   useEffect(() => {
-    if (meaningStatus === "correct" && shadowingPassed) {
+    if (sentenceResult?.isPass) {
       setCanFlip(true);
       setIsFlipped(true);
     }
-  }, [meaningStatus, shadowingPassed]);
+  }, [sentenceResult]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -167,17 +161,33 @@ export default function FlashcardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // --- LOGIC BÀI TẬP 1: KIỂM TRA NGHĨA GẦN ĐÚNG ---
-  const handleCheckMeaning = () => {
-    if (!meaningInput.trim() || !activeWord) return;
-    const inputStr = meaningInput.toLowerCase().trim();
-    const targetStr = activeWord.back.toLowerCase().trim();
+  // --- LOGIC BÀI TẬP: AI CHẤM CÂU ---
+  const handleCheckSentence = async () => {
+    if (!sentenceInput.trim() || !activeWord) return;
     
-    // Nếu nghĩa học viên nhập nằm trong chuỗi đáp án (hoặc ngược lại) -> Chấp nhận "gần đúng"
-    if (targetStr.includes(inputStr) || inputStr.includes(targetStr)) {
-      setMeaningStatus("correct");
-    } else {
-      setMeaningStatus("incorrect");
+    setIsCheckingSentence(true);
+    setSentenceResult(null);
+
+    try {
+      const res = await fetch("/api/check-sentence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetWord: activeWord.front, userSentence: sentenceInput })
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) {
+        alert(data.error);
+        setSentenceResult(null);
+        return;
+      }
+
+      setSentenceResult(data);
+    } catch (error) {
+      alert("Lỗi kết nối AI để chấm câu! Vui lòng thử lại.");
+    } finally {
+      setIsCheckingSentence(false);
     }
   };
 
@@ -188,11 +198,9 @@ export default function FlashcardPage() {
     setWordProgress({ ...wordProgress, [wordId]: "learning" });
     
     if (!isFlipped) {
-      // Lần đầu bấm: Lật thẻ để học viên xem nghĩa
       setCanFlip(true);
       setIsFlipped(true);
     } else {
-      // Lần 2 bấm (đã lật thẻ): Chuyển sang từ tiếp theo nhưng KHÔNG cộng điểm
       if (activeWordIndex < filteredWords.length - 1) {
         setActiveWordIndex(prev => prev + 1);
       } else {
@@ -202,12 +210,12 @@ export default function FlashcardPage() {
   };
 
   const handleMarkMasteredAndNext = async () => {
-    const isFullyPassed = shadowingPassed && meaningStatus === "correct";
-    if (!activeWord || !isFullyPassed) return;
+    const isAlreadyMastered = wordProgress[activeWord?.front] === "mastered";
+    const isPassed = isAlreadyMastered || sentenceResult?.isPass;
+    
+    if (!activeWord || !isPassed) return;
     
     const wordId = activeWord.front;
-    const isAlreadyMastered = wordProgress[wordId] === "mastered";
-    
     const newProgress = { ...wordProgress, [wordId]: "mastered" };
     setWordProgress(newProgress);
     
@@ -246,64 +254,6 @@ export default function FlashcardPage() {
       }
   }
 
-  // --- LOGIC BÀI TẬP 2: GHI ÂM AI CHẤM ĐIỂM ---
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const options = { mimeType: 'audio/webm', audioBitsPerSecond: 16000 };
-      const mediaRecorder = new MediaRecorder(stream, options);
-      
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) audioChunksRef.current.push(e.data);
-      };
-      
-      mediaRecorder.start();
-      setIsRecording(true);
-      setShadowingResult(null);
-    } catch (err) {
-      alert("Vui lòng cấp quyền Micro!");
-    }
-  };
-
-  const stopRecordingAndGrade = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = async () => {
-          setIsRecording(false);
-          setShadowingResult("loading");
-          
-          try {
-            const targetText = activeWord.front;
-            const res = await fetch('/api/shadowing', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ targetText, audioBase64: reader.result })
-            });
-            const data = await res.json();
-            setShadowingResult(data);
-
-            // AI chấm trên 80 điểm thì ghi nhận vượt qua bài test phát âm
-            if (data.score >= 80) {
-              setShadowingPassed(true);
-            }
-
-          } catch (e) {
-            alert("Lỗi chấm điểm AI!");
-            setShadowingResult(null);
-          }
-        };
-      };
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-    }
-  };
-
   const dataForSelectedHsk = selectedHsk ? myCustomData.filter(item => item.level === selectedHsk) : myCustomData;
   const uniqueDataForSelectedHsk = dataForSelectedHsk.filter((item, index, self) => index === self.findIndex((t) => t.front === item.front));
   
@@ -311,7 +261,7 @@ export default function FlashcardPage() {
   const masteredWordsForSelectedHsk = uniqueDataForSelectedHsk.filter(w => wordProgress[w.front] === "mastered").length;
   const canTakeExam = totalWordsForSelectedHsk > 0 && masteredWordsForSelectedHsk === totalWordsForSelectedHsk;
 
-  // --- LOGIC BÀI THI CHỨNG CHỈ (BỎ QUA DO ĐÃ HOÀN THIỆN Ở BƯỚC TRƯỚC) ---
+  // --- LOGIC BÀI THI CHỨNG CHỈ ---
   const openExam = () => {
     if (!user) return alert("Bạn cần đăng nhập để thi!");
     if (!canTakeExam) return alert("Bạn phải đánh dấu 'Đã thuộc' tất cả từ vựng của bộ này mới được phép thi!");
@@ -376,7 +326,10 @@ export default function FlashcardPage() {
   const pinyinDisplay = activeWord ? activeWord.ipa : "";
   const meaningDisplay = activeWord ? activeWord.back : "";
   const exampleDisplay = activeWord ? activeWord.example : "";
-  const isFullyPassed = shadowingPassed && meaningStatus === "correct";
+  
+  const isAlreadyMastered = activeWord ? wordProgress[activeWord.front] === "mastered" : false;
+  const isFullyPassed = isAlreadyMastered || sentenceResult?.isPass;
+  const allowFlip = canFlip || isAlreadyMastered; 
 
   return (
     <main className="min-h-screen bg-slate-50 py-10 px-4">
@@ -541,25 +494,22 @@ export default function FlashcardPage() {
             {filteredWords.length > 0 && activeWord ? (
             <div className="flex flex-col items-center gap-6 animate-fade-in">
                 
-                {/* THANH TRẠNG THÁI KIỂM TRA KÉP */}
+                {/* THANH TRẠNG THÁI KIỂM TRA */}
                 <div className="flex flex-wrap justify-center gap-4 w-full">
-                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${meaningStatus === 'correct' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
-                        1. Nhập Nghĩa: {meaningStatus === 'correct' ? '✓ Đạt' : 'Chưa đạt'}
-                    </div>
-                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${shadowingPassed ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
-                        2. Đọc AI (80+): {shadowingPassed ? '✓ Đạt' : 'Chưa đạt'}
+                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${sentenceResult?.isPass || isAlreadyMastered ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
+                        Đặt câu: {sentenceResult?.isPass || isAlreadyMastered ? '✓ Đạt' : 'Chưa đạt'}
                     </div>
                 </div>
 
                 <div 
                 onClick={() => {
-                  if (canFlip) {
+                  if (allowFlip) {
                     setIsFlipped(!isFlipped);
                   } else {
-                    alert("🔒 Hãy vượt qua cả 2 bài kiểm tra bên dưới hoặc bấm 'Xem nghĩa' để lật thẻ!");
+                    alert("🔒 Hãy vượt qua bài kiểm tra bên dưới hoặc bấm 'Xem nghĩa' để lật thẻ!");
                   }
                 }}
-                className={`w-full p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center transition-all relative min-h-[350px] flex flex-col justify-center items-center ${canFlip ? 'bg-white cursor-pointer hover:-translate-y-2' : 'bg-slate-50 cursor-not-allowed opacity-90'}`}
+                className={`w-full p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center transition-all relative min-h-[350px] flex flex-col justify-center items-center ${allowFlip ? 'bg-white cursor-pointer hover:-translate-y-2' : 'bg-slate-50 cursor-not-allowed opacity-90'}`}
                 >
                 <div className="absolute right-6 top-6 flex gap-2">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${wordProgress[wordDisplay] === 'mastered' ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500'}`}>
@@ -587,64 +537,54 @@ export default function FlashcardPage() {
                     )}
                     </div>
                 ) : (
-                    <p className={`text-sm font-bold mt-8 px-4 py-2 rounded-full ${canFlip ? 'text-slate-400 bg-slate-100 animate-pulse' : 'text-rose-500 bg-rose-50'}`}>
-                    {canFlip ? "👆 Chạm vào thẻ để lật xem nghĩa" : "🔒 Vượt qua kiểm tra hoặc bấm 'Xem nghĩa' để lật"}
+                    <p className={`text-sm font-bold mt-8 px-4 py-2 rounded-full ${allowFlip ? 'text-slate-400 bg-slate-100 animate-pulse' : 'text-rose-500 bg-rose-50'}`}>
+                    {allowFlip ? "👆 Chạm vào thẻ để lật xem nghĩa" : "🔒 Vượt qua kiểm tra hoặc bấm 'Xem nghĩa' để lật"}
                     </p>
                 )}
                 </div>
 
                 <div className="w-full bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
                 
-                {/* 1. KIỂM TRA NGHĨA */}
-                <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6 text-center">
-                    <p className="font-bold text-slate-600 mb-4">1. Nhập Nghĩa Tiếng Việt (Gần đúng)</p>
+                {/* KIỂM TRA ĐẶT CÂU (AI CHẤM) */}
+                <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 text-center">
+                    <p className="font-bold text-slate-600 mb-4">
+                        Đặt câu tiếng Trung với từ: <span className="text-rose-600 text-xl">{activeWord.front}</span>
+                    </p>
                     <div className="flex gap-2">
                         <input 
                             type="text" 
-                            value={meaningInput}
+                            value={sentenceInput}
                             onChange={(e) => {
-                                setMeaningInput(e.target.value);
-                                setMeaningStatus("idle");
+                                setSentenceInput(e.target.value);
+                                if(sentenceResult && !sentenceResult.isPass) setSentenceResult(null);
                             }}
-                            placeholder="VD: xin chào..."
-                            disabled={meaningStatus === "correct"}
+                            placeholder={`VD: ${activeWord.front}...`}
+                            disabled={sentenceResult?.isPass || isCheckingSentence}
                             className="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none transition-colors"
                         />
                         <button 
-                            onClick={handleCheckMeaning}
-                            disabled={meaningStatus === "correct" || !meaningInput.trim()}
-                            className={`px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${meaningStatus === 'correct' ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'}`}
+                            onClick={handleCheckSentence}
+                            disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
+                            className={`px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${sentenceResult?.isPass ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'} disabled:opacity-50`}
                         >
-                            {meaningStatus === "correct" ? "✓ Chuẩn" : "Kiểm tra"}
+                            {isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Chuẩn" : "Kiểm tra")}
                         </button>
                     </div>
-                    {meaningStatus === "incorrect" && <p className="text-red-500 text-sm mt-3 font-medium animate-bounce">Nghĩa chưa chính xác, thử lại nhé!</p>}
-                </div>
-
-                {/* 2. KIỂM TRA PHÁT ÂM */}
-                <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 text-center">
-                    <p className="font-bold text-slate-600 mb-4">2. Đọc Ghi Âm (Cần 80+ điểm AI)</p>
                     
-                    {!isRecording ? (
-                    <button onClick={startRecording} className="w-full py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 flex justify-center items-center gap-2 transition shadow-md">
-                        🎙️ Nhấn để Ghi âm
-                    </button>
-                    ) : (
-                    <button onClick={stopRecordingAndGrade} className="w-full py-3 bg-red-500 text-white rounded-xl font-bold animate-pulse flex justify-center items-center gap-2 shadow-[0_0_15px_rgba(239,68,68,0.5)] transition">
-                        ⏹️ Đang thu âm... Bấm để Nộp
-                    </button>
-                    )}
-
-                    {shadowingResult === "loading" && <p className="text-rose-500 font-bold mt-4 animate-bounce">AI đang nghe và phân tích...</p>}
-                    
-                    {shadowingResult && shadowingResult !== "loading" && (
-                    <div className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-slate-200 text-left">
-                        <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-slate-700">Điểm số:</span>
-                        <span className={`text-2xl font-black ${shadowingResult.score >= 80 ? 'text-green-500' : 'text-red-500'}`}>{shadowingResult.score}/100</span>
+                    {/* Hiển thị Feedback của AI */}
+                    {sentenceResult && (
+                        <div className={`mt-4 p-4 rounded-xl text-left border animate-fade-in ${sentenceResult.isPass ? 'bg-green-50 border-green-200' : 'bg-rose-50 border-rose-200'}`}>
+                            <p className={`font-bold mb-1 ${sentenceResult.isPass ? 'text-green-700' : 'text-rose-700'}`}>
+                                {sentenceResult.isPass ? "✅ Rất tốt!" : "❌ Chưa chính xác:"}
+                            </p>
+                            <p className="text-sm text-slate-700 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
+                            
+                            {!sentenceResult.isPass && sentenceResult.suggestion && (
+                                <p className="text-sm text-slate-700 bg-white p-3 rounded-lg border border-slate-200 leading-relaxed">
+                                    <span className="font-bold text-yellow-600">💡 Gợi ý:</span> {sentenceResult.suggestion}
+                                </p>
+                            )}
                         </div>
-                        <p className="text-sm text-slate-600"><span className="font-bold">Nhận xét:</span> {shadowingResult.feedback}</p>
-                    </div>
                     )}
                 </div>
 
