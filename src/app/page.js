@@ -115,12 +115,10 @@ export default function Home() {
   const features = [
     { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/vocab", desc: "Học qua Flashcard 3D" },
     { id: "topic", name: "Chủ Đề", icon: "📚", color: "text-pink-600", bg: "bg-pink-50", link: "/topic", desc: "Từ vựng theo thực tế" },
-    { id: "dictation", name: "Chép Chính Tả", icon: "🎧", color: "text-teal-600", bg: "bg-teal-50", link: "/dictation", desc: "Luyện nghe tiếng Trung" },
-    { id: "translate", name: "Dịch Câu", icon: "✍️", color: "text-indigo-600", bg: "bg-indigo-50", link: "/translate", desc: "AI chấm điểm dịch thuật" },
-    { id: "arrange", name: "Sắp Xếp", icon: "🧩", color: "text-orange-600", bg: "bg-orange-50", link: "/arrange", desc: "Luyện tư duy ngữ pháp" },
+    // Đã vô hiệu hóa các tab dịch, sắp xếp, nghe chép chính tả theo yêu cầu
     { id: "roleplay", name: "Thực Chiến", icon: "💬", color: "text-green-600", bg: "bg-green-50", link: "/roleplay", desc: "Chat cùng người bản xứ AI" },
     { id: "hskk", name: "Thi HSKK", icon: "🎤", color: "text-rose-600", bg: "bg-rose-50", link: "/hskk", desc: "Phòng thi khẩu ngữ tự động" },
-    { id: "placement-test", name: "Kiểm Tra Trình Độ", icon: "🎯", color: "text-purple-600", bg: "bg-purple-50", link: "/test", desc: "Làm test 6 phần mở khóa cấp độ" },
+    { id: "placement-test", name: "Kiểm Tra Trình Độ", icon: "🎯", color: "text-purple-600", bg: "bg-purple-50", link: "/test", desc: "Làm test mở khóa cấp độ" },
   ];
 
   return (
@@ -220,7 +218,7 @@ export default function Home() {
           <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white relative overflow-hidden flex items-center justify-between shadow-lg">
             <div className="max-w-xl z-10">
               <h1 className="text-2xl md:text-3xl font-black mb-3">Biết chính xác bạn đang ở đâu và chạm tới mục tiêu HSK!</h1>
-              <p className="text-emerald-100 text-sm mb-6">Một lộ trình học cá nhân hóa – dành riêng cho bạn. Đánh giá toàn diện 6 kỹ năng.</p>
+              <p className="text-emerald-100 text-sm mb-6">Một lộ trình học cá nhân hóa – dành riêng cho bạn. Đánh giá toàn diện các kỹ năng.</p>
               <Link href="/test" className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-2xl shadow transition inline-block text-sm">
                 Kiểm tra trình độ ngay →
               </Link>
@@ -230,7 +228,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Khối Thống kê tiến độ & Thành tích (Đưa lên trên cho nổi bật) */}
+          {/* Khối Thống kê tiến độ & Thành tích */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Tiến độ học tập */}

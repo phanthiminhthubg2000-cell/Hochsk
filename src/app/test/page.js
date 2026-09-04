@@ -1,39 +1,71 @@
 "use client";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { db } from "../../firebase"; // Đã sửa đúng đường dẫn lùi 2 cấp thư mục ra thư mục chứa firebase
+import { db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 
-// Hàm sinh đề kiểm tra trực quan tương thích hoàn toàn với môi trường build của Vercel
+import allCards from "../cards.json";
+import allDictation from "../dictation.json";
+
+function getRandomItems(arr, n) {
+  if (!arr || !Array.isArray(arr)) return [];
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.8;
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert("Trình duyệt của bạn không hỗ trợ phát âm thanh.");
+  }
+}
+
 async function generatePlacementTest(level) {
   try {
+    let levelStr = `HSK${level}`;
+    let levelStrSpace = `HSK ${level}`;
+    const filterByLevel = (item) => item.level === levelStr || item.level === levelStrSpace || item.level == level;
+
+    const vocabFiltered = allCards.filter(filterByLevel);
+    const dictationFiltered = allDictation.filter(filterByLevel);
+
+    const repeatCount = level === 3 ? 5 : 2;
+    let repeatList = [];
+    if (level >= 3) {
+      try {
+        const repeatData = await import(`@/app/data/hskk/hskk${level}/repeat.json`).catch(() => ({ default: [] }));
+        const rawArr = repeatData.default || [];
+        repeatList = getRandomItems(rawArr, repeatCount).map(item => typeof item === 'string' ? { sentence: item } : item);
+      } catch (e) {
+        repeatList = [];
+      }
+    }
+
+    let shortList = [];
+    if (level >= 3) {
+      try {
+        const shortData = await import(`@/app/data/hskk/hskk${level}/short.json`).catch(() => ({ default: [] }));
+        const rawArr = shortData.default || [];
+        shortList = getRandomItems(rawArr, 1).map(item => typeof item === 'string' ? { prompt: item } : item);
+      } catch (e) {
+        shortList = [];
+      }
+    }
+
     let testPackage = {
       level: level,
-      maxScore: level <= 2 ? 200 : 300,
-      passScore: level <= 2 ? 120 : 180,
-      warningScore: level <= 2 ? 150 : 230,
+      maxScore: 100,
       sections: {
-        vocab: [
-          { word: "你好", meaning: "Xin chào" },
-          { word: "谢谢", meaning: "Cảm ơn" },
-          { word: "再见", meaning: "Tạm biệt" },
-          { word: "老师", meaning: "Giáo viên" },
-          { word: "学生", meaning: "Học sinh" }
-        ],
-        arrange: [
-          { sentence: "我喜欢学中文。" },
-          { sentence: "今天天气很好。" }
-        ],
-        translate: [
-          { vi: "Tôi thích học tiếng Trung." },
-          { vi: "Hôm nay thời tiết rất đẹp." }
-        ],
-        dictation: [
-          { text: "Nǐ hào ma?" },
-          { text: "Wǒ hěn hǎo." }
-        ],
-        writing: [
-          { prompt: `Hãy viết một đoạn văn ngắn giới thiệu về bản thân bằng tiếng Trung (Cấp độ HSK ${level}).` }
+        vocab: getRandomItems(vocabFiltered.length ? vocabFiltered : allCards, 10),
+        dictation: getRandomItems(dictationFiltered.length ? dictationFiltered : allDictation, 5),
+        repeat: repeatList,
+        writing: shortList.length ? shortList : [
+          { prompt: `Phần viết luận (HSK ${level}): Hãy đọc câu hỏi và viết câu trả lời bằng tiếng Trung.` }
         ]
       }
     };
@@ -45,26 +77,17 @@ async function generatePlacementTest(level) {
   }
 }
 
-// Hàm đánh giá kết quả và phân loại điểm số
 function evaluateTestResult(level, totalScore) {
-  const isHSK12 = level <= 2;
-  const passScore = isHSK12 ? 120 : 180;
-  const warningScore = isHSK12 ? 150 : 230;
-
+  const passScore = 70;
   if (totalScore < passScore) {
     return {
       status: "FAIL",
-      message: `Bạn đạt ${totalScore} điểm. Chưa đạt mức tối thiểu (${passScore}/${isHSK12 ? 200 : 300}). Bạn nên bắt đầu học từ cấp độ thấp hơn để củng cố kiến thức!`
-    };
-  } else if (totalScore < warningScore) {
-    return {
-      status: "PASS_WITH_WARNING",
-      message: `Chúc mừng bạn đã vượt qua mốc điểm đạt (${totalScore}/${isHSK12 ? 200 : 300})! Tuy nhiên, điểm số của bạn dưới mức ${warningScore}, hệ thống khuyên bạn nên ôn tập kỹ lại một chút để không bị hổng kiến thức.`
+      message: `Bạn đạt ${totalScore}/100 điểm. Chưa đạt mức tối thiểu (${passScore} điểm) để vượt qua cấp độ HSK ${level}.`
     };
   } else {
     return {
       status: "EXCELLENT",
-      message: `Xuất sắc! Bạn đạt ${totalScore}/${isHSK12 ? 200 : 300} điểm. Hệ thống đã mở khóa toàn bộ thông suốt từ HSK 1 đến HSK ${level} cho bạn!`
+      message: `🎉 Xuất sắc! Bạn đạt ${totalScore}/100 điểm và đã vượt qua bài kiểm tra định cấp độ HSK ${level}!`
     };
   }
 }
@@ -76,6 +99,8 @@ export default function PlacementTestPage() {
   const [loading, setLoading] = useState(false);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
+  const [playCounts, setPlayCounts] = useState({});
+  const [repeatPlayCounts, setRepeatPlayCounts] = useState({});
 
   const handleStartTest = async (level) => {
     setSelectedLevel(level);
@@ -83,6 +108,8 @@ export default function PlacementTestPage() {
     const res = await generatePlacementTest(level);
     if (res.success) {
       setTestData(res.test);
+      setPlayCounts({});
+      setRepeatPlayCounts({});
     } else {
       alert(res.message);
     }
@@ -96,53 +123,79 @@ export default function PlacementTestPage() {
     }));
   };
 
+  const handlePlayAudio = (idx, text) => {
+    const currentCount = playCounts[idx] || 0;
+    if (currentCount >= 2) {
+      alert("Bạn đã nghe tối đa 2 lần cho audio này!");
+      return;
+    }
+    speakText(text);
+    setPlayCounts(prev => ({
+      ...prev,
+      [idx]: currentCount + 1
+    }));
+  };
+
+  const handlePlayRepeatAudio = (idx, text) => {
+    const currentCount = repeatPlayCounts[idx] || 0;
+    if (currentCount >= 2) {
+      alert("Bạn đã nghe tối đa 2 lần cho câu này!");
+      return;
+    }
+    speakText(text);
+    setRepeatPlayCounts(prev => ({
+      ...prev,
+      [idx]: currentCount + 1
+    }));
+  };
+
   const handleSubmit = async () => {
-    let correctCount = 0;
-    let totalQuestions = 0;
+    const isHSK12 = selectedLevel <= 2;
 
+    // Phân bổ điểm mới (Bỏ phần dịch):
+    // HSK 1-2 (2 phần): Vocab (50đ), Dictation (50đ) = 100đ
+    // HSK 3-6 (4 phần): Mỗi phần 20đ (Vocab, Dictation, Repeat, Writing) + 20đ tùy chỉnh hoặc chia đều (Vocab 20, Dictation 20, Repeat 20, Writing 20, còn lại cấu trúc linh hoạt)
+
+    let vocabCorrectCount = 0;
+    const vocabTotal = testData.sections.vocab?.length || 10;
     testData.sections.vocab?.forEach((item, idx) => {
-      totalQuestions++;
-      const userAns = answers[`vocab_${idx}`]?.trim().toLowerCase();
-      const correctAns = (item.meaning || item.definition || "").toLowerCase();
-      if (userAns && correctAns.includes(userAns)) {
-        correctCount++;
-      }
+      const userAns = (answers[`vocab_${idx}`] || "").trim();
+      const targetWord = item.front || item.word || "";
+      if (userAns.length >= 2 && userAns.includes(targetWord)) vocabCorrectCount++;
     });
+    const vocabScore = (vocabCorrectCount / vocabTotal) * (isHSK12 ? 50 : 25);
 
-    testData.sections.arrange?.forEach((item, idx) => {
-      totalQuestions++;
-      const userAns = answers[`arrange_${idx}`]?.trim();
-      const correctAns = item.sentence || item.original;
-      if (userAns === correctAns) {
-        correctCount++;
-      }
-    });
-
-    testData.sections.translate?.forEach((item, idx) => {
-      totalQuestions++;
-      const userAns = answers[`translate_${idx}`]?.trim();
-      const correctAns = item.sentence || item.translation;
-      if (userAns === correctAns) {
-        correctCount++;
-      }
-    });
-
+    let dictationCorrectCount = 0;
+    const dictationTotal = testData.sections.dictation?.length || 5;
     testData.sections.dictation?.forEach((item, idx) => {
-      totalQuestions++;
-      const userAns = answers[`dictation_${idx}`]?.trim();
-      const correctAns = item.text || item.sentence;
-      if (userAns === correctAns) {
-        correctCount++;
-      }
+      const userAns = (answers[`dictation_${idx}`] || "").trim().replace(/\s+/g, "");
+      const correctAns = (item.chinese || item.sentence || "").trim().replace(/\s+/g, "").replace(/[.!?。]/g, "");
+      if (userAns === correctAns) dictationCorrectCount++;
     });
+    const dictationScore = (dictationCorrectCount / dictationTotal) * (isHSK12 ? 50 : 25);
 
-    const maxScore = testData.maxScore || (selectedLevel <= 2 ? 200 : 300);
-    const calculatedScore = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * maxScore) : 100;
-    
-    const evaluation = evaluateTestResult(selectedLevel, calculatedScore);
+    let repeatScore = 0;
+    if (!isHSK12) {
+      let repeatDoneCount = 0;
+      const repeatTotal = testData.sections.repeat?.length || 1;
+      testData.sections.repeat?.forEach((item, idx) => {
+        if ((answers[`repeat_${idx}`] || "").trim().length > 0) repeatDoneCount++;
+      });
+      repeatScore = (repeatDoneCount / repeatTotal) * 30;
+    }
+
+    let writingScore = 0;
+    if (!isHSK12) {
+      const writingAns = (answers[`writing_0`] || "").trim();
+      if (writingAns.length >= 10) writingScore = 20;
+      else if (writingAns.length > 0) writingScore = 10;
+    }
+
+    const totalCalculatedScore = Math.round(vocabScore + dictationScore + repeatScore + writingScore);
+    const evaluation = evaluateTestResult(selectedLevel, totalCalculatedScore);
     setResult(evaluation);
 
-    if (evaluation.status !== "FAIL" && user) {
+    if (totalCalculatedScore >= 70 && user) {
       try {
         const studentRef = doc(db, "progress", user.id);
         let updateData = {};
@@ -160,7 +213,7 @@ export default function PlacementTestPage() {
     return (
       <main className="min-h-screen bg-slate-50 p-6 max-w-4xl mx-auto">
         <h1 className="text-3xl font-black text-slate-800 mb-2">Bài Kiểm Tra Định Cấp Độ (Placement Test)</h1>
-        <p className="text-slate-500 mb-8">Chọn cấp độ bạn muốn thử sức để mở khóa hệ thống nhanh chóng:</p>
+        <p className="text-slate-500 mb-8">Chọn cấp độ bạn muốn thử sức:</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((lvl) => (
             <button
@@ -169,7 +222,7 @@ export default function PlacementTestPage() {
               className="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-rose-500 hover:shadow-md transition text-left cursor-pointer"
             >
               <div className="text-xl font-black text-rose-600 mb-1">HSK {lvl}</div>
-              <p className="text-xs text-slate-400 font-medium">Làm đề test mở khóa đến cấp {lvl}</p>
+              <p className="text-xs text-slate-400 font-medium">{lvl <= 2 ? "2 phần chính (Tổng 100đ)" : "4 phần chuyên sâu (Tổng 100đ)"}</p>
             </button>
           ))}
         </div>
@@ -178,7 +231,7 @@ export default function PlacementTestPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang khởi tạo đề thi HSK {selectedLevel}...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang tải dữ liệu HSK {selectedLevel}...</div>;
   }
 
   if (result) {
@@ -195,93 +248,121 @@ export default function PlacementTestPage() {
     );
   }
 
+  const isHSK12 = selectedLevel <= 2;
+
   return (
     <main className="min-h-screen bg-slate-50 p-6 max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-black text-slate-800">Đề Thi Thử HSK {selectedLevel}</h1>
+        <h1 className="text-2xl font-black text-slate-800">Đề Thi Thử HSK {selectedLevel} ({isHSK12 ? "2 phần" : "4 phần"})</h1>
         <button onClick={() => setSelectedLevel(null)} className="text-sm font-bold text-slate-400 hover:text-slate-600 cursor-pointer">Quay lại chọn cấp độ</button>
       </div>
 
       {testData && (
         <div className="space-y-6">
+          {/* Phần 1: Đặt câu */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-blue-600 mb-4">Phần 1: Từ Vựng</h3>
+            <h3 className="text-lg font-black text-blue-600 mb-2">Phần 1: Đặt Câu Với Từ Cho Trước ({isHSK12 ? "50 điểm" : "25 điểm"})</h3>
             <div className="space-y-4">
               {testData.sections.vocab?.map((item, idx) => (
                 <div key={idx} className="p-4 bg-slate-50 rounded-xl">
-                  <p className="font-bold text-slate-700 mb-2">Q{idx + 1}: <span className="text-xl text-blue-600">{item.word}</span></p>
+                  <p className="font-bold text-slate-700 mb-2">Q{idx + 1}: <span className="text-xl text-blue-600 px-2 py-0.5 bg-blue-50 rounded border border-blue-100">{item.front || item.word}</span></p>
                   <input 
                     type="text" 
-                    placeholder="Nhập nghĩa..."
+                    placeholder="Nhập câu tiếng Trung chứa từ trên..."
+                    value={answers[`vocab_${idx}`] || ""}
                     onChange={(e) => handleAnswerChange("vocab", idx, e.target.value)}
-                    className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 bg-white"
+                    className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 bg-white font-medium"
                   />
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Phần 2: Nghe chép chính tả */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-orange-600 mb-4">Phần 2: Sắp Xếp Câu</h3>
-            {testData.sections.arrange?.map((item, idx) => (
-              <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3">
-                <p className="font-bold text-slate-700 mb-2">Câu {idx + 1}: <span className="text-orange-500">{item.sentence}</span></p>
-                <input 
-                  type="text" 
-                  placeholder="Nhập lại câu..."
-                  onChange={(e) => handleAnswerChange("arrange", idx, e.target.value)}
-                  className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-orange-500 bg-white"
-                />
-              </div>
-            ))}
+            <h3 className="text-lg font-black text-teal-600 mb-2">Phần 2: Nghe Chép Chính Tả ({isHSK12 ? "50 điểm" : "25 điểm"})</h3>
+            <p className="text-xs text-slate-400 mb-4 font-medium">Mỗi audio tối đa nghe 2 lần:</p>
+            {testData.sections.dictation?.map((item, idx) => {
+              const audioText = item.chinese || item.sentence || "你好";
+              const currentCount = playCounts[idx] || 0;
+              return (
+                <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    disabled={currentCount >= 2}
+                    onClick={() => handlePlayAudio(idx, audioText)}
+                    className={`px-4 py-2 font-bold rounded-xl text-xs transition shadow shrink-0 ${currentCount >= 2 ? "bg-slate-300 text-slate-500 cursor-not-allowed" : "bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"}`}
+                  >
+                    🔊 Phát Audio {idx + 1} ({2 - currentCount} lần)
+                  </button>
+                  <input 
+                    type="text" 
+                    placeholder="Nghe và gõ lại..."
+                    value={answers[`dictation_${idx}`] || ""}
+                    onChange={(e) => handleAnswerChange("dictation", idx, e.target.value)}
+                    className="w-full sm:w-1/2 p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-teal-500 bg-white font-medium"
+                  />
+                </div>
+              );
+            })}
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-indigo-600 mb-4">Phần 3: Dịch Câu</h3>
-            {testData.sections.translate?.map((item, idx) => (
-              <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3">
-                <p className="font-bold text-slate-700 mb-2">Câu {idx + 1}: {item.vi}</p>
-                <input 
-                  type="text" 
-                  placeholder="Nhập tiếng Trung..."
-                  onChange={(e) => handleAnswerChange("translate", idx, e.target.value)}
-                  className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 bg-white"
-                />
-              </div>
-            ))}
-          </div>
+          {/* Phần 3: Nghe Lặp Lại HSKK (Chỉ HSK 3-6) */}
+          {!isHSK12 && (
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="text-lg font-black text-purple-600 mb-2">Phần 3: Nghe Lặp Lại HSKK (30 điểm)</h3>
+              <p className="text-xs text-slate-400 mb-4 font-medium">⚠️ Mỗi câu mẫu ở đây tối đa nghe 2 lần:</p>
+              {testData.sections.repeat?.map((item, idx) => {
+                const played = repeatPlayCounts[idx] || 0;
+                const sampleText = item.sentence || item.text || item.prompt || "";
+                return (
+                  <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      disabled={played >= 2}
+                      onClick={() => handlePlayRepeatAudio(idx, sampleText)}
+                      className={`px-4 py-2 font-bold rounded-xl text-xs transition shadow shrink-0 ${
+                        played >= 2 ? "bg-slate-300 text-slate-500 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
+                      }`}
+                    >
+                      🔊 Nghe Câu Mẫu {idx + 1} ({2 - played} lần)
+                    </button>
+                    <input 
+                      type="text" 
+                      placeholder="Gõ lại câu vừa nghe..."
+                      value={answers[`repeat_${idx}`] || ""}
+                      onChange={(e) => handleAnswerChange("repeat", idx, e.target.value)}
+                      className="w-full sm:w-1/2 p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-500 bg-white font-medium"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-teal-600 mb-4">Phần 4: Nghe Chép Chính Tả</h3>
-            {testData.sections.dictation?.map((item, idx) => (
-              <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3">
-                <p className="font-bold text-slate-700 mb-2">Audio {idx + 1}</p>
-                <input 
-                  type="text" 
-                  placeholder="Nghe và gõ lại..."
-                  onChange={(e) => handleAnswerChange("dictation", idx, e.target.value)}
-                  className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-teal-500 bg-white"
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-rose-600 mb-4">Phần 5: Viết Luận HSKK</h3>
-            {testData.sections.writing?.map((item, idx) => (
-              <div key={idx} className="p-4 bg-slate-50 rounded-xl">
-                <p className="font-bold text-slate-700 mb-2">{item.prompt}</p>
-                <textarea 
-                  rows={4}
-                  placeholder="Viết câu trả lời..."
-                  onChange={(e) => handleAnswerChange("writing", idx, e.target.value)}
-                  className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-rose-500 bg-white"
-                />
-              </div>
-            ))}
-          </div>
+          {/* Phần 4: Viết Luận / Phản Xạ HSKK (Chỉ HSK 3-6) */}
+          {!isHSK12 && (
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="text-lg font-black text-rose-600 mb-2">Phần 4: Viết Luận / Phản Xạ HSKK (20 điểm)</h3>
+              {testData.sections.writing?.map((item, idx) => (
+                <div key={idx} className="p-4 bg-slate-50 rounded-xl">
+                  <p className="font-bold text-slate-700 mb-3 text-sm bg-rose-50 p-3 rounded-xl border border-rose-100">
+                    {item.prompt || item.question || item.content || item}
+                  </p>
+                  <textarea 
+                    rows={4}
+                    placeholder="Viết câu trả lời bằng tiếng Trung tại đây..."
+                    value={answers[`writing_${idx}`] || ""}
+                    onChange={(e) => handleAnswerChange("writing", idx, e.target.value)}
+                    className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-rose-500 bg-white font-medium"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           <button 
+            type="button"
             onClick={handleSubmit}
             className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg cursor-pointer text-lg"
           >
