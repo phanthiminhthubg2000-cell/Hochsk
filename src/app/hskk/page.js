@@ -13,7 +13,7 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  // examPhase: idle -> device_check -> loading -> intro -> global_prep -> reading -> speaking -> grading -> done
+  // examPhase: idle -> device_check -> loading -> intro -> intro_countdown -> global_prep -> reading -> speaking -> grading -> done
   const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
   const [hasPrepped, setHasPrepped] = useState(false);
@@ -57,41 +57,42 @@ export default function HskkPage() {
     }
 
     window.speechSynthesis.cancel(); 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utteranceRef.current = utterance;
-    utterance.lang = "zh-CN"; 
-    utterance.rate = 0.85; 
-
-    const voices = window.speechSynthesis.getVoices();
-    const premiumVoice = voices.find(v => v.name.includes("Xiaoxiao")) 
-                      || voices.find(v => v.name.includes("Google") && v.lang.includes("zh-CN"))
-                      || voices.find(v => v.name.includes("Yaoyao"))
-                      || voices.find(v => v.lang.includes("zh") || v.lang.includes("ZH"));
-    
-    if (premiumVoice) {
-      utterance.voice = premiumVoice;
-    }
-
-    let isFinished = false;
-    const safeEndCallback = () => {
-      if (!isFinished) {
-        isFinished = true;
-        utteranceRef.current = null; 
-        onEndCallback();
-      }
-    };
-
-    utterance.onend = safeEndCallback;
-    utterance.onerror = safeEndCallback; 
-    window.speechSynthesis.speak(utterance);
-
-    const safeTimeoutMs = (text.length * 250) + 3000;
     setTimeout(() => {
-      safeEndCallback();
-    }, safeTimeoutMs);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utteranceRef.current = utterance;
+      utterance.lang = "zh-CN"; 
+      utterance.rate = 0.85; 
+
+      const voices = window.speechSynthesis.getVoices();
+      const premiumVoice = voices.find(v => v.name.includes("Xiaoxiao")) 
+                        || voices.find(v => v.name.includes("Google") && v.lang.includes("zh-CN"))
+                        || voices.find(v => v.name.includes("Yaoyao"))
+                        || voices.find(v => v.lang.includes("zh") || v.lang.includes("ZH"));
+      
+      if (premiumVoice) {
+        utterance.voice = premiumVoice;
+      }
+
+      let isFinished = false;
+      const safeEndCallback = () => {
+        if (!isFinished) {
+          isFinished = true;
+          utteranceRef.current = null; 
+          onEndCallback();
+        }
+      };
+
+      utterance.onend = safeEndCallback;
+      utterance.onerror = safeEndCallback; 
+      window.speechSynthesis.speak(utterance);
+
+      const safeTimeoutMs = (text.length * 250) + 3000;
+      setTimeout(() => {
+        safeEndCallback();
+      }, safeTimeoutMs);
+    }, 100);
   };
 
-  // --- HÀM KIỂM TRA THIẾT BỊ ---
   const testSpeaker = () => {
     speak("欢迎参加汉语水平考试。设备测试。");
   };
@@ -118,7 +119,6 @@ export default function HskkPage() {
 
       mediaRecorder.start();
       
-      // Ghi âm đúng 3 giây rồi tự ngắt
       setTimeout(() => {
         if (mediaRecorder.state !== "inactive") {
           mediaRecorder.stop();
@@ -134,10 +134,13 @@ export default function HskkPage() {
 
   useEffect(() => {
     let timer;
-    if (["speaking", "global_prep"].includes(examPhase) && timeLeft > 0) {
+    if (["intro_countdown", "speaking", "global_prep"].includes(examPhase) && timeLeft > 0) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timeLeft === 0) {
-      if (examPhase === "global_prep") {
+      if (examPhase === "intro_countdown") {
+        setCurrentQIndex(0);
+        startQuestionLogic(0, false); 
+      } else if (examPhase === "global_prep") {
         startQuestionLogic(currentQIndex, true);
       } else if (examPhase === "speaking") {
         stopRecordingAndNext();
@@ -187,9 +190,8 @@ export default function HskkPage() {
       const introText = introScripts[hskkLevel] || introScripts["HSK Cấp 3"];
       
       speak(introText, () => {
-        setCurrentQIndex(0);
-        // Đã vá lỗi bất đồng bộ: Truyền trực tiếp fullExam vào hàm
-        startQuestionLogic(0, false, fullExam);
+        setExamPhase("intro_countdown");
+        setTimeLeft(10);
       });
     } catch (e) {
       alert("Lỗi AI ra đề thi! Vui lòng thử lại.");
@@ -197,11 +199,10 @@ export default function HskkPage() {
     }
   };
 
-  // Đã vá lỗi bất đồng bộ: Thêm tham số questions
   const startQuestionLogic = (index, prepped = hasPrepped, questions = examQuestions) => {
     const q = questions[index];
     
-    if (!q) return; // Chốt chặn an toàn
+    if (!q) return;
 
     if (q.type !== 'repeat' && !prepped) {
       setExamPhase("global_prep");
@@ -259,7 +260,16 @@ export default function HskkPage() {
 
   const handleNextQuestion = (audioBase64) => {
     const currentQ = examQuestions[currentQIndex];
-    const newAnswers = [...examAnswers, { type: currentQ.type, question: currentQ.text, audioBase64 }];
+    // BỔ SUNG: Lưu lại hình ảnh của đề bài vào mảng câu trả lời
+    const newAnswers = [
+      ...examAnswers, 
+      { 
+        type: currentQ.type, 
+        question: currentQ.text, 
+        images: currentQ.images || [], 
+        audioBase64 
+      }
+    ];
     setExamAnswers(newAnswers);
 
     if (currentQIndex < examQuestions.length - 1) {
@@ -308,6 +318,7 @@ export default function HskkPage() {
               questionIndex: i + 1,
               type: allAnswers[i].type,
               question: allAnswers[i].question,
+              images: allAnswers[i].images || [], // BỔ SUNG: Gửi hình ảnh lên Firestore
               audioBase64: allAnswers[i].audioBase64 || null
             });
           }
@@ -360,7 +371,6 @@ export default function HskkPage() {
             <h2 className="text-3xl font-black text-slate-800 mb-2 text-center">Kiểm tra loa và micro</h2>
             <p className="text-slate-500 mb-8 text-center">Hãy hoàn tất hai bước dưới đây trước khi vào phòng thi.</p>
 
-            {/* Khối kiểm tra loa */}
             <div className={`p-6 rounded-2xl border-2 mb-6 transition-all ${isSpeakerTested ? 'border-green-300 bg-green-50' : 'border-slate-200 bg-white'}`}>
               <h3 className="text-xl font-bold text-slate-700 mb-2 flex items-center gap-2">
                 🔊 1. Kiểm tra loa
@@ -385,7 +395,6 @@ export default function HskkPage() {
               </div>
             </div>
 
-            {/* Khối kiểm tra micro */}
             <div className={`p-6 rounded-2xl border-2 mb-8 transition-all ${isMicTested ? 'border-green-300 bg-green-50' : 'border-slate-200 bg-white'}`}>
               <h3 className="text-xl font-bold text-slate-700 mb-2 flex items-center gap-2">
                 🎙️ 2. Kiểm tra micro
@@ -430,7 +439,6 @@ export default function HskkPage() {
               </div>
             </div>
 
-            {/* Điều hướng */}
             <div className="flex justify-between items-center border-t border-slate-200 pt-6">
               <button 
                 onClick={() => setExamPhase("idle")} 
@@ -481,8 +489,23 @@ export default function HskkPage() {
             <div className="flex flex-col items-center mt-4">
                <div className="w-14 h-14 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-4"></div>
                <p className="text-rose-600 font-bold animate-pulse text-xl">🔊 Hệ thống đang đọc thông báo...</p>
-               <p className="text-slate-500 font-medium mt-2">Bài thi sẽ tự động bắt đầu ngay sau khi thông báo kết thúc</p>
             </div>
+          </div>
+        )}
+
+        {/* BƯỚC ĐẾM NGƯỢC CHUẨN BỊ VÀO THI SAU KHI ĐỌC INTRO */}
+        {examPhase === "intro_countdown" && (
+          <div className="text-center py-12 animate-fade-in flex flex-col items-center">
+            <h2 className="text-4xl font-black text-rose-600 mb-6 uppercase tracking-wider">Chuẩn bị bắt đầu</h2>
+            
+            <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl p-10 max-w-xl text-center mb-8 shadow-inner">
+              <p className="text-xl text-slate-700 font-medium mb-6">Kỳ thi sẽ chính thức bắt đầu sau:</p>
+              <div className="text-9xl font-black font-mono text-rose-600 animate-pulse">
+                {timeLeft}
+              </div>
+            </div>
+            
+            <p className="text-slate-500 font-medium text-lg">Hãy hít một hơi thật sâu và sẵn sàng nhé!</p>
           </div>
         )}
 
