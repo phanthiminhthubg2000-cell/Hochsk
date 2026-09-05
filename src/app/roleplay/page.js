@@ -366,23 +366,31 @@ export default function RoleplayPage() {
               {/* Thẻ Chat Tự Do */}
               <div 
                 onClick={startFreeChat}
-                className="bg-white/95 backdrop-blur-xl p-10 rounded-[40px] shadow-sm border border-white hover:border-[#08A66A]/50 hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer group text-center"
+                className="relative p-10 rounded-[40px] shadow-sm border border-white hover:border-[#08A66A]/50 hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer group text-center overflow-hidden bg-cover bg-center"
+                style={{ backgroundImage: "url('/hskk/anh1.jpg')" }}
               >
-                <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">💬</div>
-                <h3 className="text-2xl font-black text-slate-800 mb-3">Chat Tự Do</h3>
-                <p className="text-slate-500 font-medium mb-8">Trò chuyện không giới hạn chủ đề với AI Bản Xứ để rèn luyện phản xạ ngôn ngữ hàng ngày.</p>
-                <button className="w-full py-4 bg-[#F4F8F5] text-[#08A66A] font-black rounded-2xl group-hover:bg-[#08A66A] group-hover:text-white transition-colors uppercase tracking-widest shadow-sm">Bắt đầu ngay →</button>
+                <div className="absolute inset-0 bg-white/85 backdrop-blur-[4px] group-hover:bg-white/75 transition-all z-0"></div>
+                <div className="relative z-10">
+                  <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">💬</div>
+                  <h3 className="text-2xl font-black text-slate-800 mb-3">Chat Tự Do</h3>
+                  <p className="text-slate-600 font-medium mb-8">Trò chuyện không giới hạn chủ đề với AI Bản Xứ để rèn luyện phản xạ ngôn ngữ hàng ngày.</p>
+                  <button className="w-full py-4 bg-white/80 border border-emerald-100 text-[#08A66A] font-black rounded-2xl group-hover:bg-[#08A66A] group-hover:text-white group-hover:border-[#08A66A] transition-colors uppercase tracking-widest shadow-sm">Bắt đầu ngay →</button>
+                </div>
               </div>
 
               {/* Thẻ Nhập Vai Tình Huống */}
               <div 
                 onClick={() => setPhase("roleplay_levels")}
-                className="bg-white/95 backdrop-blur-xl p-10 rounded-[40px] shadow-sm border border-white hover:border-amber-400/50 hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer group text-center"
+                className="relative p-10 rounded-[40px] shadow-sm border border-white hover:border-amber-400/50 hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer group text-center overflow-hidden bg-cover bg-center"
+                style={{ backgroundImage: "url('/hskk/anh2.jpg')" }}
               >
-                <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">🎭</div>
-                <h3 className="text-2xl font-black text-slate-800 mb-3">Nhập Vai Tình Huống</h3>
-                <p className="text-slate-500 font-medium mb-8">Sống trong các ngữ cảnh thực tế (Đi cafe, phỏng vấn, mua sắm...) và hoàn thành nhiệm vụ.</p>
-                <button className="w-full py-4 bg-[#FFF8E8] text-amber-600 font-black rounded-2xl group-hover:bg-amber-500 group-hover:text-white transition-colors uppercase tracking-widest shadow-sm">Chọn tình huống →</button>
+                <div className="absolute inset-0 bg-white/85 backdrop-blur-[4px] group-hover:bg-white/75 transition-all z-0"></div>
+                <div className="relative z-10">
+                  <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">🎭</div>
+                  <h3 className="text-2xl font-black text-slate-800 mb-3">Nhập Vai Tình Huống</h3>
+                  <p className="text-slate-600 font-medium mb-8">Sống trong các ngữ cảnh thực tế (Đi cafe, phỏng vấn, mua sắm...) và hoàn thành nhiệm vụ.</p>
+                  <button className="w-full py-4 bg-white/80 border border-amber-100 text-amber-600 font-black rounded-2xl group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 transition-colors uppercase tracking-widest shadow-sm">Chọn tình huống →</button>
+                </div>
               </div>
             </div>
           </div>
@@ -410,10 +418,14 @@ export default function RoleplayPage() {
                 <div 
                   key={lvl} 
                   onClick={() => { setSelectedHskLevel(`HSK ${lvl}`); setPhase("scenario_selection"); }}
-                  className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 shadow-sm border border-emerald-50 text-center hover:border-[#08A66A]/50 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group"
+                  className="relative rounded-[32px] p-8 shadow-sm border border-emerald-50 text-center hover:border-[#08A66A]/50 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group overflow-hidden bg-cover bg-center"
+                  style={{ backgroundImage: `url('/hskk/anh${(lvl % 3) + 1}.jpg')` }}
                 >
-                  <h3 className="text-3xl font-black text-slate-800 group-hover:text-[#08A66A] transition-colors mb-2">HSK {lvl}</h3>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">10 Tình Huống</p>
+                  <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px] group-hover:bg-white/80 transition-all z-0"></div>
+                  <div className="relative z-10">
+                    <h3 className="text-3xl font-black text-slate-800 group-hover:text-[#08A66A] transition-colors mb-2">HSK {lvl}</h3>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest bg-white/50 px-3 py-1.5 rounded-lg inline-block">10 Tình Huống</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -439,22 +451,23 @@ export default function RoleplayPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {SCENARIOS.filter(s => s.level === selectedHskLevel).map((scenario) => (
-                <div key={scenario.id} className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 shadow-sm border border-emerald-50 flex flex-col hover:border-[#08A66A]/50 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden">
+                <div key={scenario.id} className="relative rounded-[32px] p-6 shadow-sm border border-emerald-50 flex flex-col hover:border-[#08A66A]/50 hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/thucchien.jpg')" }}>
                   
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#DDF7EA] to-transparent rounded-bl-full pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-white/95 backdrop-blur-[4px] group-hover:bg-white/90 transition-all z-0"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#DDF7EA] to-transparent rounded-bl-full pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity z-0"></div>
                   
-                  <div className="flex justify-between items-start mb-6 relative z-10">
-                    <div className="w-16 h-16 bg-[#F4F8F5] rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-emerald-100 group-hover:scale-110 transition-transform">
+                  <div className="relative z-10 flex justify-between items-start mb-6">
+                    <div className="w-16 h-16 bg-[#F4F8F5] rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-emerald-100 group-hover:scale-110 transition-transform bg-white/80 backdrop-blur-sm">
                       {scenario.icon}
                     </div>
-                    <span className="text-[10px] font-black text-amber-500 bg-[#FFF8E8] px-3 py-1.5 rounded-lg border border-amber-200/50 shadow-sm">
+                    <span className="text-[10px] font-black text-amber-500 bg-[#FFF8E8] px-3 py-1.5 rounded-lg border border-amber-200/50 shadow-sm backdrop-blur-sm">
                       ⭐ {scenario.xp} XP
                     </span>
                   </div>
                   
                   <div className="relative z-10 mb-6 flex-1">
                     <h3 className="text-xl font-black text-slate-800 mb-2">{scenario.title}</h3>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 flex items-center gap-3">
+                    <div className="bg-slate-50/80 backdrop-blur-sm p-3 rounded-xl border border-slate-100 mb-4 flex items-center gap-3">
                       <div className="text-[11px] font-bold text-slate-600">
                         Bạn: <span className="text-[#08A66A]">{scenario.userRole}</span>
                       </div>
@@ -466,14 +479,14 @@ export default function RoleplayPage() {
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Từ vựng gợi ý</p>
                     <div className="flex flex-wrap gap-1.5">
                       {scenario.vocab.map(v => (
-                        <span key={v} className="px-2 py-1 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-md">{v}</span>
+                        <span key={v} className="px-2 py-1 bg-white/80 backdrop-blur-sm border border-slate-200 text-slate-600 text-[10px] font-bold rounded-md">{v}</span>
                       ))}
                     </div>
                   </div>
 
                   <button 
                     onClick={() => startRoleplay(scenario)}
-                    className="w-full py-4 bg-[#DDF7EA] text-[#08A66A] font-black rounded-2xl group-hover:bg-[#08A66A] group-hover:text-white transition-colors uppercase tracking-widest shadow-sm flex items-center justify-center gap-2 relative z-10 text-xs"
+                    className="w-full py-4 bg-[#DDF7EA]/80 backdrop-blur-sm border border-emerald-100 text-[#08A66A] font-black rounded-2xl group-hover:bg-[#08A66A] group-hover:text-white transition-colors uppercase tracking-widest shadow-sm flex items-center justify-center gap-2 relative z-10 text-xs"
                   >
                     Vào Tình Huống <span>→</span>
                   </button>
