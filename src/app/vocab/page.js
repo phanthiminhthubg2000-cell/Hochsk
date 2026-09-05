@@ -42,6 +42,9 @@ export default function FlashcardPage() {
   const [userData, setUserData] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
+  // ĐÃ FIX LỖI Ở ĐÂY: Khai báo biến streak lấy từ userData
+  const streak = userData?.streakCount || 0;
+
   const [examState, setExamState] = useState({
     isOpen: false,
     questions: [],
@@ -90,16 +93,14 @@ export default function FlashcardPage() {
     fetchUserData();
   }, [user]);
 
-  // Kiểm tra khóa bộ HSK: HSK 1 luôn mở, từ HSK 2 trở lên yêu cầu đã hoàn thành cấp trước hoặc pass test tương ứng
+  // Kiểm tra khóa bộ HSK
   const isHskLocked = (lvl) => {
     const cleanLvl = String(lvl).replace(/\D/g, ''); 
     if (!cleanLvl) return true;
     const levelNum = parseInt(cleanLvl, 10);
     
-    // HSK 1 mặc định mở cho tất cả mọi người không cần test
     if (levelNum === 1) return false;
     
-    // Từ HSK 2 trở lên: Cần phải đạt cờ passed của cấp liền kề trước đó HOẶC passed cấp hiện tại
     const requiredFlag = `passedHSK${levelNum - 1}`;
     const currentFlag = `passedHSK${levelNum}`;
     
@@ -141,7 +142,7 @@ export default function FlashcardPage() {
     }
   }, [wordProgress]);
 
-  if (levelsData.length === 0 || loadingUser) return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang tải dữ liệu từ vựng...</div>;
+  if (levelsData.length === 0 || loadingUser) return <div className="min-h-screen flex items-center justify-center font-bold text-[#08A66A] bg-[#F4F8F5]">Đang tải dữ liệu từ vựng...</div>;
 
   const activeLevelData = levelsData.find(l => l.level === viewingLevel) || levelsData[0];
   const filteredWords = activeLevelData.words.filter(word => {
@@ -155,6 +156,10 @@ export default function FlashcardPage() {
   const masteredCount = activeLevelData.words.filter(w => wordProgress[w.front] === "mastered").length;
   const progressPercent = activeLevelData.words.length > 0 
     ? Math.round((masteredCount / activeLevelData.words.length) * 100) : 0;
+
+  // Thống kê filter
+  const allCount = activeLevelData.words.length;
+  const learningCount = activeLevelData.words.length - masteredCount;
 
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -248,6 +253,14 @@ export default function FlashcardPage() {
     setFilter("all");
   };
 
+  const handlePrevWord = () => {
+    setActiveWordIndex(prev => prev > 0 ? prev - 1 : filteredWords.length - 1);
+  };
+
+  const handleNextWord = () => {
+    setActiveWordIndex(prev => prev < filteredWords.length - 1 ? prev + 1 : 0);
+  };
+
   const dataForSelectedHsk = selectedHsk ? myCustomData.filter(item => item.level === selectedHsk) : myCustomData;
   const uniqueDataForSelectedHsk = dataForSelectedHsk.filter((item, index, self) => index === self.findIndex((t) => t.front === item.front));
   
@@ -318,32 +331,35 @@ export default function FlashcardPage() {
   const wordDisplay = activeWord ? activeWord.front : "";
   const pinyinDisplay = activeWord ? activeWord.ipa : "";
   const meaningDisplay = activeWord ? activeWord.back : "";
-  const exampleDisplay = activeWord ? activeWord.example : "";
+  const exampleDisplay = activeWord?.example || ""; 
   
   const isAlreadyMastered = activeWord ? wordProgress[activeWord.front] === "mastered" : false;
   const isFullyPassed = isAlreadyMastered || sentenceResult?.isPass;
   const allowFlip = canFlip || isAlreadyMastered; 
-
   const isCurrentHskLocked = isHskLocked(selectedHsk);
 
   return (
-    <main className="min-h-screen bg-slate-50 py-10 px-4">
+    <div className="flex min-h-screen bg-[#F4F8F5] font-sans text-slate-800 selection:bg-emerald-200">
+      
+      {/* =========================================
+          EXAM MODAL
+          ========================================= */}
       {examState.isOpen && (
-        <div className="fixed inset-0 bg-slate-900 bg-opacity-75 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl relative">
-            <button onClick={() => setExamState({ ...examState, isOpen: false })} className="absolute top-4 right-5 text-slate-400 hover:text-red-500 font-bold text-xl">✕</button>
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-[32px] w-full max-w-lg p-8 shadow-2xl relative">
+            <button onClick={() => setExamState({ ...examState, isOpen: false })} className="absolute top-6 right-6 w-10 h-10 bg-slate-100 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 font-bold text-xl flex items-center justify-center transition-colors">✕</button>
             {!examState.isFinished ? (
               <div className="animate-fade-in">
-                <div className="flex justify-between items-center mb-6 border-b pb-4">
-                  <h3 className="text-xl font-bold text-slate-800">Bài thi chứng chỉ {selectedHsk.toUpperCase()}</h3>
-                  <span className="font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full">Câu {examState.currentIndex + 1}/{examState.total}</span>
+                <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 mt-2">
+                  <h3 className="text-lg font-black text-[#08A66A]">Thi {selectedHsk.toUpperCase()}</h3>
+                  <span className="font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full text-xs">Câu {examState.currentIndex + 1}/{examState.total}</span>
                 </div>
                 <div className="text-center mb-8">
                   <h1 className={`font-black text-slate-800 mb-2 ${examState.questions[examState.currentIndex].questionText.length > 5 ? 'text-4xl' : 'text-6xl'}`}>
                     {examState.questions[examState.currentIndex].questionText}
                   </h1>
                   {examState.questions[examState.currentIndex].subText && (
-                    <p className="text-xl text-slate-500 tracking-widest mt-2">{examState.questions[examState.currentIndex].subText}</p>
+                    <p className="text-lg text-slate-500 tracking-widest mt-2">{examState.questions[examState.currentIndex].subText}</p>
                   )}
                 </div>
                 <div className="flex flex-col gap-3">
@@ -351,7 +367,7 @@ export default function FlashcardPage() {
                     <button 
                       key={idx}
                       onClick={() => handleAnswer(option)}
-                      className={`w-full text-left px-6 py-4 bg-slate-50 hover:bg-rose-50 border-2 border-slate-100 hover:border-rose-300 rounded-xl font-medium text-slate-700 transition-all ${option.length < 10 ? 'text-2xl text-center' : 'text-lg'}`}
+                      className={`w-full text-left px-6 py-4 bg-white hover:bg-[#DDF7EA] border-2 border-slate-100 hover:border-[#08A66A] rounded-2xl font-bold text-slate-700 hover:text-[#087A55] transition-all ${option.length < 10 ? 'text-xl text-center' : 'text-md'}`}
                     >
                       {option}
                     </button>
@@ -362,12 +378,12 @@ export default function FlashcardPage() {
               <div className="text-center animate-fade-in py-10">
                 <div className="text-6xl mb-4">{examState.score >= examState.passScore ? '🏆' : '💔'}</div>
                 <h3 className="text-3xl font-black text-slate-800 mb-2">Kết quả của bạn</h3>
-                <p className={`text-2xl font-bold mb-6 ${examState.score >= examState.passScore ? 'text-green-500' : 'text-red-500'}`}>
+                <p className={`text-2xl font-bold mb-8 ${examState.score >= examState.passScore ? 'text-[#08A66A]' : 'text-rose-500'}`}>
                   {examState.score} / {examState.total} câu
                 </p>
                 <button 
                   onClick={finishExam}
-                  className="w-full py-4 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors"
+                  className="w-full py-4 bg-[#08A66A] text-white font-black rounded-2xl shadow-lg hover:bg-[#087A55] transition-colors hover:-translate-y-1"
                 >
                   Xác nhận kết quả
                 </button>
@@ -377,243 +393,387 @@ export default function FlashcardPage() {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+      {/* =========================================
+          SIDEBAR: BẢN ĐỒ HÀNH TRÌNH (LEARNING MAP)
+          ========================================= */}
+      <aside className="w-[320px] bg-white border-r border-emerald-100 flex flex-col h-screen sticky top-0 shadow-[4px_0_24px_rgba(8,166,106,0.04)] z-30 shrink-0 hidden lg:flex">
         
-        {/* SIDEBAR */}
-        <div className="w-full lg:w-1/3 flex flex-col gap-6">
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 sticky top-10">
-                <Link href="/">
-                    <button className="w-full mb-6 px-4 py-3 bg-slate-100 font-bold text-slate-600 rounded-xl hover:bg-slate-200 text-center transition">← Trở về Trang Chủ</button>
-                </Link>
-
-                <p className="font-bold text-slate-600 mb-2 uppercase tracking-widest text-sm">Chọn Bộ Từ Vựng</p>
-                <select 
-                    value={selectedHsk} 
-                    onChange={(e) => setSelectedHsk(e.target.value)}
-                    className="w-full bg-rose-50 border-2 border-rose-200 text-rose-700 font-bold py-3 px-4 rounded-xl outline-none cursor-pointer hover:bg-rose-100 transition mb-6"
-                >
-                    {availableHskLevels.map(lvl => {
-                        const locked = isHskLocked(lvl);
-                        return (
-                            <option key={lvl} value={lvl} disabled={locked}>
-                                Bộ {lvl} {locked ? "🔒 (Cần hoàn thành cấp trước hoặc làm Test)" : ""}
-                            </option>
-                        );
-                    })}
-                </select>
-
-                <p className="font-bold text-slate-800 mb-4">Lộ trình học tập</p>
-                <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                    {levelsData.map(lvl => {
-                        const isActive = lvl.level === viewingLevel;
-                        
-                        return (
-                            <button 
-                                key={lvl.level}
-                                onClick={() => handleLevelChange(lvl)}
-                                className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
-                                    isActive ? 'border-rose-500 bg-rose-50 shadow-md' : 'border-slate-200 bg-white hover:border-rose-300 hover:shadow-sm'
-                                }`}
-                            >
-                                <div className="text-left">
-                                    <p className={`font-bold text-lg ${isActive ? 'text-rose-600' : 'text-slate-700'}`}>
-                                        Bài {lvl.level}
-                                    </p>
-                                    <p className="text-xs text-slate-500 font-medium mt-1">
-                                        {lvl.words.length} từ vựng
-                                    </p>
-                                </div>
-                                <div className="text-2xl">
-                                    {isActive ? '🔥' : '📖'}
-                                </div>
-                            </button>
-                        );
-                    })}
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-slate-200">
-                    <button 
-                        onClick={openExam} 
-                        disabled={!canTakeExam}
-                        className={`w-full py-4 font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 ${
-                            canTakeExam 
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:shadow-lg hover:-translate-y-1' 
-                            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                        }`}
-                    >
-                        🎓 THI CHỨNG CHỈ {selectedHsk.toUpperCase()}
-                    </button>
-                    <p className={`text-xs text-center mt-3 font-medium ${canTakeExam ? 'text-slate-500' : 'text-red-500'}`}>
-                        {canTakeExam 
-                            ? "Làm đúng 80% số câu để vượt qua bài test mở khóa cấp độ!" 
-                            : `Bạn cần học thuộc tất cả từ vựng để thi (${masteredWordsForSelectedHsk}/${totalWordsForSelectedHsk})`
-                        }
-                    </p>
-                </div>
+        {/* Header Sidebar */}
+        <div className="p-6 border-b border-emerald-50">
+          <Link href="/">
+            <button className="flex items-center gap-2 text-slate-500 hover:text-[#08A66A] font-bold text-sm transition-colors mb-6">
+              <span>←</span> Trở về Trang Chủ
+            </button>
+          </Link>
+          
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-black text-[#08A66A] uppercase tracking-widest">Chọn hành trình</label>
+            <div className="relative">
+              <select 
+                value={selectedHsk} 
+                onChange={(e) => setSelectedHsk(e.target.value)}
+                className="w-full appearance-none bg-[#DDF7EA]/50 border border-[#08A66A]/20 text-[#087A55] font-black text-base rounded-2xl px-4 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-[#08A66A]/20"
+              >
+                {availableHskLevels.map(lvl => {
+                  const locked = isHskLocked(lvl);
+                  return (
+                    <option key={lvl} value={lvl} disabled={locked}>
+                      Bộ {lvl.toUpperCase()} {locked ? "🔒 (Khóa)" : ""}
+                    </option>
+                  );
+                })}
+              </select>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#08A66A] pointer-events-none">▼</span>
             </div>
+          </div>
         </div>
 
-        {/* KHU VỰC HỌC TẬP CHÍNH */}
-        <div className="w-full lg:w-2/3 flex flex-col gap-6">
+        {/* Roadmap Map */}
+        <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="font-black text-slate-900 text-sm">BẢN ĐỒ HỌC TẬP</h3>
+            <span className="text-[10px] font-bold text-[#08A66A] bg-[#DDF7EA] px-2 py-1 rounded-lg">{levelsData.length} bài</span>
+          </div>
+
+          <div className="relative pl-6 space-y-6 before:absolute before:left-[31px] before:top-4 before:bottom-4 before:w-[3px] before:bg-emerald-100/50 before:rounded-full">
+            {levelsData.map((lvl) => {
+              const isActive = lvl.level === viewingLevel;
+              const isCompleted = lvl.words.every(w => wordProgress[w.front] === "mastered") && lvl.words.length > 0;
+              
+              return (
+                <div key={lvl.level} className="relative flex items-center gap-4 group cursor-pointer" onClick={() => handleLevelChange(lvl)}>
+                  {/* Node & Mascot */}
+                  <div className="absolute -left-6 flex flex-col items-center justify-center">
+                    {isActive && (
+                      <div className="absolute -top-7 text-2xl animate-bounce z-20 filter drop-shadow-md">🐸</div>
+                    )}
+                    <div className={`w-5 h-5 rounded-full border-[3px] z-10 flex items-center justify-center transition-all ${
+                      isActive 
+                        ? 'bg-white border-[#08A66A] scale-125 shadow-[0_0_0_4px_rgba(8,166,106,0.15)]' 
+                        : isCompleted 
+                          ? 'bg-[#08A66A] border-[#08A66A]' 
+                          : 'bg-white border-slate-200'
+                    }`}>
+                      {isCompleted && !isActive && <span className="text-white text-[8px] font-black">✓</span>}
+                    </div>
+                  </div>
+
+                  {/* Lesson Card */}
+                  <div 
+                    className={`flex-1 p-3.5 rounded-2xl border transition-all ${
+                      isActive 
+                        ? 'bg-white border-[#08A66A] shadow-lg shadow-emerald-900/5 translate-x-1' 
+                        : isCompleted
+                          ? 'bg-[#F4F8F5] border-transparent opacity-80 hover:opacity-100 hover:bg-[#DDF7EA]/50'
+                          : 'bg-white border-slate-100 hover:border-[#08A66A]/40'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-0.5">
+                      <h4 className={`font-black text-sm ${isActive ? 'text-[#08A66A]' : 'text-slate-700'}`}>Bài {lvl.level}</h4>
+                      {isActive ? <span className="text-amber-500 text-xs">🔥</span> : isCompleted ? <span className="text-emerald-500 text-xs">✓</span> : null}
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-bold">{lvl.words.length} từ vựng</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Footer Sidebar: Exam Button */}
+        <div className="p-6 border-t border-emerald-50 bg-white">
+          <button 
+            onClick={openExam} 
+            disabled={!canTakeExam}
+            className={`w-full py-3.5 font-black text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-md ${
+                canTakeExam 
+                ? 'bg-[#08A66A] text-white hover:bg-[#087A55] hover:-translate-y-0.5 shadow-emerald-600/20' 
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none'
+            }`}
+          >
+            <span>🎓</span> THI CHỨNG CHỈ {selectedHsk.toUpperCase()}
+          </button>
+          <p className={`text-center text-[9px] font-bold mt-3 ${canTakeExam ? 'text-[#08A66A]' : 'text-slate-400'}`}>
+            {canTakeExam ? "Bạn đã sẵn sàng làm bài thi!" : `Hoàn thành ${masteredWordsForSelectedHsk}/${totalWordsForSelectedHsk} từ để thi`}
+          </p>
+        </div>
+      </aside>
+
+      {/* =========================================
+          MAIN CONTENT: VOCABULARY JOURNEY
+          ========================================= */}
+      <main className="flex-1 relative flex flex-col min-w-0 h-screen overflow-hidden">
+        
+        {/* BACKGROUND ẢNH VỚI LỚP PHỦ */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+          style={{ backgroundImage: "url('/hskk/backcover.jpg')" }} 
+        >
+          {/* Lớp phủ màu Mint-tinted để làm nổi bật UI Card */}
+          <div className="absolute inset-0 bg-[#F4F8F5]/85 backdrop-blur-[4px]"></div>
+        </div>
+
+        {/* NỘI DUNG CHÍNH (Cuộn được) */}
+        <div className="relative z-10 flex-1 overflow-y-auto scrollbar-hide pb-20">
+          <div className="max-w-4xl mx-auto w-full px-4 md:px-8 pt-6 md:pt-10">
+
             {isCurrentHskLocked ? (
-              <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center min-h-[450px]">
-                <div className="text-6xl mb-4">🔒</div>
-                <h3 className="text-2xl font-black text-slate-800 mb-2">Cấp độ {selectedHsk.toUpperCase()} đang bị khóa!</h3>
-                <p className="text-slate-500 mb-6 max-w-md">Bạn cần hoàn thành cấp độ trước đó hoặc tham gia bài kiểm tra trình độ để mở khóa bộ từ vựng này.</p>
-                <Link href="/test" className="px-6 py-3 bg-purple-600 text-white font-bold rounded-2xl shadow hover:bg-purple-700 transition">
-                  🎯 Đi tới Kiểm Tra Trình Độ ngay
-                </Link>
-              </div>
+               <div className="bg-white/90 backdrop-blur-xl p-12 rounded-[32px] shadow-xl border border-white text-center flex flex-col items-center justify-center min-h-[500px] mt-10">
+                 <div className="text-7xl mb-6 drop-shadow-sm">🔒</div>
+                 <h3 className="text-2xl font-black text-slate-800 mb-3">Cấp độ {selectedHsk.toUpperCase()} đang bị khóa!</h3>
+                 <p className="text-slate-500 mb-8 max-w-md font-medium leading-relaxed">Bạn cần hoàn thành bài kiểm tra cuối cấp của cấp độ trước đó hoặc tham gia làm bài đánh giá năng lực đầu vào.</p>
+                 <Link href="/test" className="px-8 py-4 bg-[#172033] text-white font-black text-sm rounded-2xl shadow-lg hover:bg-slate-800 hover:-translate-y-1 transition-all">
+                   🎯 Đi tới Kiểm Tra Trình Độ
+                 </Link>
+               </div>
             ) : (
               <>
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold text-slate-800">
-                        Tiến độ Bài {viewingLevel}
-                        </h2>
-                        <span className="font-black text-rose-600">{progressPercent}%</span>
+                {/* HEADER: GAMIFICATION & PROGRESS */}
+                <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                      <span>Bài {viewingLevel}</span>
+                    </h1>
+                    <p className="text-sm font-bold text-[#08A66A] mt-1.5 flex items-center gap-1.5">
+                      <span>🐸</span> Tiếp tục hành trình nào!
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white shadow-sm">
+                      <span className="text-amber-500 text-lg">🔥</span>
+                      <span className="font-black text-slate-800 text-sm">{streak} ngày</span>
                     </div>
-                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-6">
-                        <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
+                    {/* Placeholder cho XP */}
+                    <div className="flex items-center gap-1.5 bg-[#FFF8E8] px-3.5 py-2 rounded-xl border border-[#FFC83D]/30 shadow-sm">
+                      <span className="text-[#FFC83D] text-lg">⭐</span>
+                      <span className="font-black text-amber-700 text-sm">{masteredWordsForSelectedHsk * 10} XP</span>
                     </div>
-                    
-                    <div className="flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
-                        <button onClick={() => handleFilterChange("all")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'all' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500'}`}>Tất cả</button>
-                        <button onClick={() => handleFilterChange("learning")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'learning' ? 'bg-white shadow-sm text-red-500' : 'text-slate-500'}`}>Chưa thuộc</button>
-                        <button onClick={() => handleFilterChange("mastered")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'mastered' ? 'bg-white shadow-sm text-green-500' : 'text-slate-500'}`}>Đã thuộc</button>
+                  </div>
+                </header>
+
+                {/* TIẾN ĐỘ BÀI HỌC VÀ TABS */}
+                <div className="bg-white/90 backdrop-blur-xl rounded-[28px] p-6 md:p-8 shadow-sm border border-white mb-10">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-4 flex-1 pr-8">
+                      <div className="w-full h-3 bg-[#F4F8F5] rounded-full overflow-hidden border border-emerald-50">
+                        <div className="h-full bg-[#08A66A] rounded-full transition-all duration-500 relative" style={{ width: `${progressPercent}%` }}>
+                          <div className="absolute right-0 top-0 bottom-0 w-4 bg-white/20 blur-[2px]"></div>
+                        </div>
+                      </div>
+                      <span className="font-black text-[#08A66A] text-sm shrink-0">{progressPercent}%</span>
                     </div>
+                    <span className="text-xs font-bold text-slate-400 shrink-0">{masteredCount} / {allCount} từ đã thuộc</span>
+                  </div>
+
+                  {/* Segmented Control */}
+                  <div className="flex flex-wrap items-center bg-[#F4F8F5] p-1.5 rounded-2xl w-fit border border-emerald-100/50">
+                    <button 
+                      onClick={() => handleFilterChange("all")}
+                      className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "all" ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Tất cả <span className="ml-1 opacity-60 font-bold">{allCount}</span>
+                    </button>
+                    <button 
+                      onClick={() => handleFilterChange("learning")}
+                      className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "learning" ? 'bg-white text-rose-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Chưa thuộc <span className="ml-1 opacity-60 font-bold">{learningCount}</span>
+                    </button>
+                    <button 
+                      onClick={() => handleFilterChange("mastered")}
+                      className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "mastered" ? 'bg-white text-[#08A66A] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Đã thuộc <span className="ml-1 opacity-60 font-bold">{masteredCount}</span>
+                    </button>
+                  </div>
                 </div>
 
-                {filteredWords.length > 0 && activeWord ? (
-                  <div className="flex flex-col items-center gap-6 animate-fade-in w-full">
-                      
-                      {/* THANH TRẠNG THÁI KIỂM TRA */}
-                      <div className="flex flex-wrap justify-center gap-4 w-full">
-                          <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${sentenceResult?.isPass || isAlreadyMastered ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
-                              Đặt câu: {sentenceResult?.isPass || isAlreadyMastered ? '✓ Đạt' : 'Chưa đạt'}
-                          </div>
-                      </div>
-
-                      <div 
-                      onClick={() => {
-                        if (allowFlip) {
-                          setIsFlipped(!isFlipped);
-                        } else {
-                          alert("🔒 Hãy vượt qua bài kiểm tra bên dưới hoặc bấm 'Xem nghĩa' để lật thẻ!");
-                        }
-                      }}
-                      className={`w-full p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center transition-all relative min-h-[350px] flex flex-col justify-center items-center ${allowFlip ? 'bg-white cursor-pointer hover:-translate-y-2' : 'bg-slate-50 cursor-not-allowed opacity-90'}`}
-                      >
-                      <div className="absolute right-6 top-6 flex gap-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${wordProgress[wordDisplay] === 'mastered' ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500'}`}>
-                          {wordProgress[wordDisplay] === 'mastered' ? '✓ Đã thuộc' : 'Đang học'}
-                          </span>
-                      </div>
-
+                {filteredWords.length === 0 ? (
+                   <div className="bg-white/90 backdrop-blur-xl p-10 rounded-[32px] shadow-sm border border-white text-center">
+                     <div className="text-5xl mb-4">✨</div>
+                     <h3 className="text-xl font-bold text-slate-800">Không có từ vựng nào ở mục này!</h3>
+                   </div>
+                ) : (
+                  <>
+                    {/* KHU VỰC THẺ TỪ VỰNG (THE CORE) */}
+                    <div className="relative mb-10 mt-4">
+                      {/* Nút điều hướng */}
                       <button 
-                          onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} 
-                          className="w-16 h-16 bg-rose-50 text-rose-600 rounded-full text-3xl shadow-sm hover:scale-110 transition-transform mb-6 z-10"
+                        onClick={handlePrevWord}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#08A66A] shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-50 hover:scale-110 transition-all z-20"
                       >
-                          🔊
+                        <span className="text-xl font-black">←</span>
                       </button>
-                      
-                      <h3 className="text-8xl font-black text-slate-800 mb-6">{wordDisplay}</h3>
-                      
-                      {isFlipped ? (
-                          <div className="animate-fade-in w-full px-4">
-                          <p className="text-3xl font-medium text-slate-500 mb-2 tracking-widest">{pinyinDisplay}</p>
-                          <p className="text-2xl font-bold text-rose-600 mb-4">{meaningDisplay}</p>
-                          {exampleDisplay && (
-                              <p className="text-md italic text-slate-600 bg-slate-50 px-6 py-4 rounded-xl shadow-inner inline-block mt-2">
-                              <span className="font-bold text-slate-400">VD:</span> {exampleDisplay}
-                              </p>
-                          )}
-                          </div>
-                      ) : (
-                          <p className={`text-sm font-bold mt-8 px-4 py-2 rounded-full ${allowFlip ? 'text-slate-400 bg-slate-100 animate-pulse' : 'text-rose-500 bg-rose-50'}`}>
-                          {allowFlip ? "👆 Chạm vào thẻ để lật xem nghĩa" : "🔒 Vượt qua kiểm tra hoặc bấm 'Xem nghĩa' để lật"}
-                          </p>
-                      )}
-                      </div>
+                      <button 
+                        onClick={handleNextWord}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#08A66A] shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-50 hover:scale-110 transition-all z-20"
+                      >
+                        <span className="text-xl font-black">→</span>
+                      </button>
 
-                      <div className="w-full bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-                      
-                      {/* KIỂM TRA ĐẶT CÂU (AI CHẤM) */}
-                      <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 text-center">
-                          <p className="font-bold text-slate-600 mb-4">
-                              Đặt câu tiếng Trung với từ: <span className="text-rose-600 text-xl">{activeWord.front}</span>
-                          </p>
-                          <div className="flex gap-2">
-                              <input 
-                                  type="text" 
-                                  value={sentenceInput}
-                                  onChange={(e) => {
-                                      setSentenceInput(e.target.value);
-                                      if(sentenceResult && !sentenceResult.isPass) setSentenceResult(null);
-                                  }}
-                                  placeholder={`VD: ${activeWord.front}...`}
-                                  disabled={sentenceResult?.isPass || isCheckingSentence}
-                                  className="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none transition-colors"
-                              />
-                              <button 
-                                  onClick={handleCheckSentence}
-                                  disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
-                                  className={`px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${sentenceResult?.isPass ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'} disabled:opacity-50`}
-                              >
-                                  {isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Chuẩn" : "Kiểm tra")}
-                              </button>
-                          </div>
+                      {/* Vocab Card */}
+                      <div className="w-full max-w-xl mx-auto bg-white rounded-[40px] shadow-[0_20px_60px_-15px_rgba(8,166,106,0.12)] border border-white overflow-hidden relative group">
+                        
+                        {/* Trạng thái từ vựng & Progress */}
+                        <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
+                           <span className="font-bold text-slate-300 text-sm tracking-widest">{activeWordIndex + 1} / {filteredWords.length}</span>
+                           <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest uppercase border ${wordProgress[wordDisplay] === 'mastered' ? 'bg-[#DDF7EA] text-[#08A66A] border-[#08A66A]/20' : 'bg-slate-100 text-slate-500 border-slate-200/50'}`}>
+                             {wordProgress[wordDisplay] === 'mastered' ? '✓ Đã thuộc' : 'Đang học'}
+                           </span>
+                        </div>
+
+                        <div className="px-8 py-16 md:p-16 flex flex-col items-center justify-center text-center relative min-h-[460px] mt-4">
                           
-                          {/* Hiển thị Feedback của AI */}
+                          {/* Nút Nghe */}
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }}
+                            className="w-14 h-14 bg-[#F4F8F5] hover:bg-[#DDF7EA] text-slate-400 hover:text-[#08A66A] rounded-full flex items-center justify-center text-2xl transition-all hover:scale-110 mb-8 border border-emerald-50 shadow-sm"
+                          >
+                            🔊
+                          </button>
+
+                          {/* Character */}
+                          <h2 className="text-[120px] md:text-[140px] font-black text-[#172033] leading-none mb-6 font-serif tracking-tight drop-shadow-sm">
+                            {wordDisplay}
+                          </h2>
+
+                          {/* Thông tin chi tiết (Lật hoặc hiển thị luôn) */}
+                          <div className={`flex flex-col items-center w-full transition-all duration-500 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none absolute'}`}>
+                            <p className="text-3xl font-bold text-[#08A66A] mb-4 tracking-wider">{pinyinDisplay}</p>
+                            <p className="text-xl font-medium text-slate-600 mb-8 flex items-center gap-2">
+                              <span className="text-rose-400">❤️</span> {meaningDisplay}
+                            </p>
+
+                            {/* Ví dụ (nếu có) */}
+                            {exampleDisplay && (
+                              <div className="bg-[#FFF8E8] w-full max-w-sm p-5 rounded-3xl border border-[#FFC83D]/20">
+                                <p className="text-lg font-black text-slate-800 mb-1">{exampleDisplay}</p>
+                                <p className="text-xs font-bold text-slate-500">Mẫu câu minh họa</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Nút lật thẻ nếu chưa lật */}
+                          {!isFlipped && (
+                            <button 
+                              onClick={() => {
+                                if (allowFlip) setIsFlipped(true);
+                                else alert("🔒 Vượt qua thử thách đặt câu hoặc đánh dấu 'Đã thuộc' để mở nghĩa!");
+                              }}
+                              className={`absolute bottom-10 flex items-center gap-2 font-black text-xs px-6 py-3 rounded-full shadow-sm border transition-all ${allowFlip ? 'text-slate-500 hover:text-[#08A66A] bg-white border-slate-200 hover:border-[#08A66A] hover:-translate-y-1 cursor-pointer animate-pulse' : 'text-slate-400 bg-slate-50 border-slate-100 cursor-not-allowed'}`}
+                            >
+                              {allowFlip ? <><span className="text-lg">👁</span> Bấm để xem nghĩa</> : <><span className="text-lg">🔒</span> Mở khóa bằng thử thách</>}
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Progress Bar đính kèm đáy thẻ */}
+                        <div className="h-2 w-full bg-slate-50 flex">
+                          <div className="h-full bg-[#08A66A] transition-all" style={{ width: `${((activeWordIndex + 1) / filteredWords.length) * 100}%` }}></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ACTION AREA: MINI CHALLENGE ĐẶT CÂU */}
+                    <div className="max-w-2xl mx-auto mb-10">
+                      <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 md:p-10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden">
+                        {/* Trang trí góc */}
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#FFC83D]/10 to-transparent rounded-bl-full -z-0"></div>
+
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-12 bg-[#FFF8E8] text-[#FFC83D] rounded-2xl flex items-center justify-center text-2xl shadow-sm border border-[#FFC83D]/20">✍️</div>
+                            <div>
+                              <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Thử thách đặt câu</h3>
+                              <p className="text-xs font-medium text-slate-500 mt-1">
+                                Dùng từ <strong className="text-[#08A66A] text-sm bg-[#DDF7EA] px-2 py-0.5 rounded"> {wordDisplay} </strong> để tạo một câu:
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Giao diện mô phỏng điền từ */}
+                          <div className="bg-[#F4F8F5] px-6 py-5 rounded-2xl border border-emerald-100 mb-6 text-center shadow-inner">
+                             <p className="text-lg font-bold text-slate-500">
+                                汉语不太难。
+                             </p>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-center gap-3">
+                            <input 
+                              type="text" 
+                              placeholder="Nhập chữ Hán hoặc Pinyin..." 
+                              value={sentenceInput}
+                              onChange={(e) => {
+                                setSentenceInput(e.target.value);
+                                if (sentenceResult && !sentenceResult.isPass) setSentenceResult(null);
+                              }}
+                              disabled={sentenceResult?.isPass || isCheckingSentence}
+                              className="w-full sm:flex-1 bg-white border-2 border-slate-100 text-slate-800 font-bold text-sm rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-[#08A66A]/10 focus:border-[#08A66A] transition-all disabled:opacity-60 disabled:bg-slate-50"
+                            />
+                            <button 
+                              onClick={handleCheckSentence}
+                              disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
+                              className={`w-full sm:w-auto px-8 py-4 font-black text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${
+                                sentenceResult?.isPass 
+                                  ? 'bg-[#08A66A] text-white shadow-emerald-600/30' 
+                                  : 'bg-[#172033] hover:bg-slate-800 text-white shadow-slate-900/20 hover:-translate-y-0.5'
+                              }`}
+                            >
+                              <span>{isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Đã chấm" : "Kiểm tra")}</span>
+                            </button>
+                          </div>
+
+                          {/* Thông báo Feedback của AI */}
                           {sentenceResult && (
-                              <div className={`mt-4 p-4 rounded-xl text-left border animate-fade-in ${sentenceResult.isPass ? 'bg-green-50 border-green-200' : 'bg-rose-50 border-rose-200'}`}>
-                                  <p className={`font-bold mb-1 ${sentenceResult.isPass ? 'text-green-700' : 'text-rose-700'}`}>
-                                      {sentenceResult.isPass ? "✅ Rất tốt!" : "❌ Chưa chính xác:"}
-                                  </p>
-                                  <p className="text-sm text-slate-700 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
+                            <div className={`mt-6 p-5 rounded-2xl border animate-fade-in flex gap-4 ${sentenceResult.isPass ? 'bg-[#DDF7EA] border-[#08A66A]/30' : 'bg-rose-50 border-rose-200'}`}>
+                               <div className="text-3xl shrink-0 mt-1">{sentenceResult.isPass ? '🐸' : '💦'}</div>
+                               <div>
+                                  <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#087A55]' : 'text-rose-700'}`}>
+                                    {sentenceResult.isPass ? "太棒了！Tuyệt vời!" : "再试一次！Chưa chính xác:"}
+                                  </h4>
+                                  <p className="text-xs font-medium text-slate-700 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
                                   
                                   {!sentenceResult.isPass && sentenceResult.suggestion && (
-                                      <p className="text-sm text-slate-700 bg-white p-3 rounded-lg border border-slate-200 leading-relaxed">
-                                          <span className="font-bold text-yellow-600">💡 Gợi ý:</span> {sentenceResult.suggestion}
+                                      <p className="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/60 leading-relaxed shadow-sm">
+                                          <span className="font-black text-[#FFC83D]">💡 Gợi ý:</span> {sentenceResult.suggestion}
                                       </p>
                                   )}
-                              </div>
+                               </div>
+                            </div>
                           )}
+                        </div>
                       </div>
+                    </div>
 
-                      {/* NÚT ĐIỀU HƯỚNG */}
-                      <div className="flex gap-4 w-full max-w-md mx-auto">
-                          <button 
+                    {/* ACTION BUTTONS (ĐIỀU HƯỚNG CHÍNH) */}
+                    <div className="flex gap-4 w-full max-w-xl mx-auto pb-10">
+                        <button 
                           onClick={handleMarkLearning}
-                          className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold text-md hover:border-red-400 hover:bg-red-50 transition-colors shadow-sm"
-                          >
-                          {!isFlipped ? "👀 Xem nghĩa / Bỏ qua" : "⏭️ Từ tiếp theo"}
-                          </button>
-                          <button 
+                          className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-black text-sm hover:border-[#08A66A] hover:text-[#08A66A] hover:bg-[#F4F8F5] transition-all shadow-sm flex items-center justify-center gap-2"
+                        >
+                          {!isFlipped ? <><span>👀</span> Xem nghĩa / Bỏ qua</> : <><span>⏭️</span> Từ tiếp theo</>}
+                        </button>
+                        <button 
                           onClick={handleMarkMasteredAndNext}
                           disabled={!isFullyPassed}
-                          className={`flex-1 py-4 rounded-2xl font-bold text-md transition-all shadow-sm ${
+                          className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
                               isFullyPassed 
-                              ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200 shadow-lg hover:-translate-y-1' 
+                              ? 'bg-gradient-to-b from-[#08A66A] to-[#087A55] text-white hover:shadow-lg hover:-translate-y-1 hover:shadow-emerald-600/20' 
                               : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                           }`}
-                          >
-                          ✓ Đã thuộc & Tiếp ➔
-                          </button>
-                      </div>
-                      </div>
-                  </div>
-                ) : (
-                <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-200 text-center">
-                    <div className="text-6xl mb-4">🎉</div>
-                    <h3 className="text-2xl font-bold text-slate-800">Bạn đã hoàn thành bộ lọc này!</h3>
-                    <p className="text-slate-500 mt-2">Hãy ôn tập lại hoặc thử sức với bài thi chứng chỉ nhé.</p>
-                </div>
+                        >
+                          <span>✓</span> Đã thuộc & Tiếp ➔
+                        </button>
+                    </div>
+
+                  </>
                 )}
               </>
             )}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
