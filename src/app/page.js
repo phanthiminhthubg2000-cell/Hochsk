@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase";
+import { db } from "../firebase"; 
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Home() {
@@ -11,6 +11,8 @@ export default function Home() {
   const isTeacher = user?.publicMetadata?.role === "teacher";
   
   const [streak, setStreak] = useState(0);
+  const [userData, setUserData] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
 
   useEffect(() => {
     async function syncUserAndCheckStreak() {
@@ -19,15 +21,30 @@ export default function Home() {
           const studentRef = doc(db, "progress", user.id);
           const docSnap = await getDoc(studentRef);
           
+          let initialData = {};
+          if (docSnap.exists()) {
+            initialData = docSnap.data();
+            setUserData(initialData);
+          } else {
+            initialData = {
+              passedHSK1: false,
+              passedHSK2: false,
+              passedHSK3: false,
+              passedHSK4: false,
+              passedHSK5: false,
+              passedHSK6: false
+            };
+            setUserData(initialData);
+          }
+          
           const todayObj = new Date();
           const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
           
           let currentStreak = 1;
 
           if (docSnap.exists()) {
-            const data = docSnap.data();
-            const lastStreakDate = data.lastStreakDate;
-            const savedStreak = data.streakCount || 0;
+            const lastStreakDate = initialData.lastStreakDate;
+            const savedStreak = initialData.streakCount || 0;
 
             if (lastStreakDate === todayStr) {
               currentStreak = savedStreak;
@@ -52,50 +69,38 @@ export default function Home() {
             lastLogin: serverTimestamp(),
             lastStreakDate: todayStr,
             streakCount: currentStreak,
+            passedHSK1: initialData.passedHSK1 ?? false,
+            passedHSK2: initialData.passedHSK2 ?? false,
+            passedHSK3: initialData.passedHSK3 ?? false,
+            passedHSK4: initialData.passedHSK4 ?? false,
+            passedHSK5: initialData.passedHSK5 ?? false,
+            passedHSK6: initialData.passedHSK6 ?? false,
           }, { merge: true });
 
         } catch (error) {
           console.error("Lỗi đồng bộ tài khoản lên Firebase:", error);
+          setUserData({});
+        } finally {
+          setLoadingUser(false);
         }
+      } else {
+        setLoadingUser(false);
       }
     }
     
     if (isLoaded) syncUserAndCheckStreak();
   }, [user, isLoaded]);
 
-  const handleUnlockAll = async () => {
-    if (!user) return;
-    try {
-      const studentRef = doc(db, "progress", user.id);
-      await setDoc(studentRef, {
-        passedHSK1: true,
-        passedHSK2: true,
-        passedHSK3: true,
-        passedHSK4: true,
-        passedHSK5: true,
-        passedHSK6: true,
-      }, { merge: true });
-
-      alert("⚡ Đã mở khóa toàn bộ các cấp độ HSK 1-6! Bạn có thể truy cập mọi tab.");
-      window.location.reload();
-    } catch (error) {
-      console.error("Lỗi mở khóa:", error);
-    }
-  };
-
   const handleResetData = async () => {
     if (!user) return;
-    const confirmReset = window.confirm("⚠️ CẢNH BÁO TỐI KHẨN: Bạn có chắc chắn muốn XÓA TOÀN BỘ EXP, số từ vựng đã học và các chứng chỉ HSK không?");
+    const confirmReset = window.confirm("⚠️ CẢNH BÁO TỐI KHẨN: Bạn có chắc chắn muốn XÓA TOÀN BỘ dữ liệu học tập và các chứng chỉ HSK không?");
     if (!confirmReset) return;
 
     try {
-      localStorage.removeItem("hskk_exp");
       localStorage.removeItem("hskk_word_progress");
 
       const studentRef = doc(db, "progress", user.id);
       await setDoc(studentRef, {
-        vocabExp: 0,
-        roleplayExp: 0,
         learnedVocab: [],
         passedHSK1: false,
         passedHSK2: false,
@@ -112,13 +117,24 @@ export default function Home() {
     }
   };
 
+  const hasPassedAnyLevel = !loadingUser && userData && (
+    userData.passedHSK1 === true || 
+    userData.passedHSK2 === true || 
+    userData.passedHSK3 === true || 
+    userData.passedHSK4 === true || 
+    userData.passedHSK5 === true || 
+    userData.passedHSK6 === true
+  );
+
   const features = [
-    { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/vocab", desc: "Học qua Flashcard 3D" },
-    { id: "topic", name: "Chủ Đề", icon: "📚", color: "text-pink-600", bg: "bg-pink-50", link: "/topic", desc: "Từ vựng theo thực tế" },
-    // Đã vô hiệu hóa các tab dịch, sắp xếp, nghe chép chính tả theo yêu cầu
-    { id: "roleplay", name: "Thực Chiến", icon: "💬", color: "text-green-600", bg: "bg-green-50", link: "/roleplay", desc: "Chat cùng người bản xứ AI" },
-    { id: "hskk", name: "Thi HSKK", icon: "🎤", color: "text-rose-600", bg: "bg-rose-50", link: "/hskk", desc: "Phòng thi khẩu ngữ tự động" },
-    { id: "placement-test", name: "Kiểm Tra Trình Độ", icon: "🎯", color: "text-purple-600", bg: "bg-purple-50", link: "/test", desc: "Làm test mở khóa cấp độ" },
+    { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/vocab", desc: "Học qua Flashcard 3D", active: hasPassedAnyLevel },
+    { id: "topic", name: "Chủ Đề", icon: "📚", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
+    { id: "dictation", name: "Chép Chính Tả", icon: "🎧", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
+    { id: "translate", name: "Dịch Câu", icon: "✍️", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
+    { id: "arrange", name: "Sắp Xếp", icon: "🧩", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
+    { id: "roleplay", name: "Thực Chiến", icon: "💬", color: "text-green-600", bg: "bg-green-50", link: "/roleplay", desc: "Chat cùng người bản xứ AI", active: true },
+    { id: "hskk", name: "Thi HSKK", icon: "🎤", color: "text-rose-600", bg: "bg-rose-50", link: "/hskk", desc: "Phòng thi khẩu ngữ tự động", active: true },
+    { id: "placement-test", name: "Kiểm Tra Trình Độ", icon: "🎯", color: "text-purple-600", bg: "bg-purple-50", link: "/test", desc: "Làm test mở khóa cấp độ", active: true },
   ];
 
   return (
@@ -168,22 +184,13 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center gap-3 ml-auto">
             {isSignedIn && (
-              <>
-                <button 
-                  onClick={handleUnlockAll}
-                  className="px-3.5 py-2 bg-amber-100 text-amber-700 rounded-xl font-bold hover:bg-amber-200 transition text-xs flex items-center gap-1.5 cursor-pointer"
-                  title="Mở khóa tất cả các cấp độ ngay lập tức"
-                >
-                  ⚡ Mở Khóa
-                </button>
-                <button 
-                  onClick={handleResetData}
-                  className="px-3.5 py-2 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 transition text-xs flex items-center gap-1.5 cursor-pointer"
-                  title="Xóa toàn bộ dữ liệu và học lại từ đầu"
-                >
-                  🔄 Reset
-                </button>
-              </>
+              <button 
+                onClick={handleResetData}
+                className="px-3.5 py-2 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-200 transition text-xs flex items-center gap-1.5 cursor-pointer"
+                title="Xóa toàn bộ dữ liệu và học lại từ đầu"
+              >
+                🔄 Reset
+              </button>
             )}
 
             {isTeacher && (
@@ -218,7 +225,7 @@ export default function Home() {
           <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white relative overflow-hidden flex items-center justify-between shadow-lg">
             <div className="max-w-xl z-10">
               <h1 className="text-2xl md:text-3xl font-black mb-3">Biết chính xác bạn đang ở đâu và chạm tới mục tiêu HSK!</h1>
-              <p className="text-emerald-100 text-sm mb-6">Một lộ trình học cá nhân hóa – dành riêng cho bạn. Đánh giá toàn diện các kỹ năng.</p>
+              <p className="text-emerald-100 text-sm mb-6">Bạn cần làm bài kiểm tra trình độ để mở khóa từ vựng theo cấp độ.</p>
               <Link href="/test" className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-2xl shadow transition inline-block text-sm">
                 Kiểm tra trình độ ngay →
               </Link>
@@ -227,6 +234,18 @@ export default function Home() {
               加油
             </div>
           </div>
+
+          {!loadingUser && !hasPassedAnyLevel && isSignedIn && (
+            <div className="bg-amber-50 border-2 border-amber-200 p-6 rounded-3xl flex items-center justify-between shadow-sm">
+              <div>
+                <h3 className="text-lg font-black text-amber-800 mb-1">🔒 Từ Vựng đang bị khóa</h3>
+                <p className="text-sm text-amber-700">Hãy tham gia bài <strong>Kiểm Tra Trình Độ</strong> để mở khóa cấp độ từ vựng tương ứng.</p>
+              </div>
+              <Link href="/test" className="px-5 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl shadow transition text-sm shrink-0">
+                Làm Test Ngay ➔
+              </Link>
+            </div>
+          )}
 
           {/* Khối Thống kê tiến độ & Thành tích */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -286,15 +305,28 @@ export default function Home() {
             <h2 className="text-xl font-black text-slate-800 mb-4">Khám phá các công cụ học tập</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {features.map((feature) => (
-                <Link href={feature.link} key={feature.id}>
-                  <div className="flex flex-col p-6 bg-white rounded-3xl shadow-sm border border-slate-200 hover:shadow-xl transition-all cursor-pointer hover:-translate-y-1 group h-full">
+                feature.active ? (
+                  <Link href={feature.link} key={feature.id}>
+                    <div className="flex flex-col p-6 bg-white rounded-3xl shadow-sm border border-slate-200 hover:shadow-xl transition-all cursor-pointer hover:-translate-y-1 group h-full">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-4 ${feature.bg}`}>
+                        {feature.icon}
+                      </div>
+                      <h3 className={`text-xl font-black mb-1 ${feature.color}`}>{feature.name}</h3>
+                      <p className="text-slate-500 text-sm font-medium">{feature.desc}</p>
+                    </div>
+                  </Link>
+                ) : (
+                  <div key={feature.id} className="flex flex-col p-6 bg-slate-100/80 rounded-3xl border border-slate-200/80 opacity-75 relative overflow-hidden h-full select-none cursor-not-allowed">
+                    <div className="absolute top-4 right-4 bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wider uppercase flex items-center gap-1 shadow-xs">
+                      {feature.id === 'vocab' ? '🔒 Cần làm Test mở khóa' : '🔒 Sắp ra mắt'}
+                    </div>
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-4 ${feature.bg}`}>
                       {feature.icon}
                     </div>
                     <h3 className={`text-xl font-black mb-1 ${feature.color}`}>{feature.name}</h3>
-                    <p className="text-slate-500 text-sm font-medium">{feature.desc}</p>
+                    <p className="text-slate-400 text-sm font-medium">{feature.desc}</p>
                   </div>
-                </Link>
+                )
               ))}
             </div>
           </div>

@@ -13,11 +13,10 @@ const generateLevelsFromData = (data, wordsPerLevel = 10) => {
     const levelNumber = Math.floor(i / wordsPerLevel) + 1;
     levels.push({
       level: levelNumber,
-      requiredExp: (levelNumber - 1) * 100,
       words: dataArray.slice(i, i + wordsPerLevel)
     });
   }
-  return levels.length > 0 ? levels : [{ level: 1, requiredExp: 0, words: [] }];
+  return levels.length > 0 ? levels : [{ level: 1, words: [] }];
 };
 
 export default function FlashcardPage() {
@@ -26,8 +25,6 @@ export default function FlashcardPage() {
   const [selectedHsk, setSelectedHsk] = useState(availableHskLevels[0] || "");
   
   const [levelsData, setLevelsData] = useState([]);
-  const [userExp, setUserExp] = useState(0);
-  const [maxUnlockedLevel, setMaxUnlockedLevel] = useState(1);
   const [viewingLevel, setViewingLevel] = useState(1);
   
   const [wordProgress, setWordProgress] = useState({}); 
@@ -36,15 +33,14 @@ export default function FlashcardPage() {
   const [activeWordIndex, setActiveWordIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  // --- TRẠNG THÁI KỶ LUẬT THÉP ---
   const [canFlip, setCanFlip] = useState(false);
   
-  // State: Đặt câu với AI
   const [sentenceInput, setSentenceInput] = useState("");
   const [isCheckingSentence, setIsCheckingSentence] = useState(false);
-  const [sentenceResult, setSentenceResult] = useState(null); // Chứa { isPass, feedback, suggestion }
+  const [sentenceResult, setSentenceResult] = useState(null); 
   
   const [userData, setUserData] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true); // Thêm state kiểm soát load user
 
   const [examState, setExamState] = useState({
     isOpen: false,
@@ -56,7 +52,6 @@ export default function FlashcardPage() {
     passScore: 0
   });
 
-  // Reset trạng thái mỗi khi chuyển từ vựng mới
   useEffect(() => {
     setCanFlip(false);
     setIsFlipped(false);
@@ -64,7 +59,6 @@ export default function FlashcardPage() {
     setSentenceResult(null);
   }, [activeWordIndex, viewingLevel, filter, selectedHsk]);
 
-  // Tự động lật thẻ khi qua bài test đặt câu
   useEffect(() => {
     if (sentenceResult?.isPass) {
       setCanFlip(true);
@@ -80,24 +74,41 @@ export default function FlashcardPage() {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             setUserData(docSnap.data());
+          } else {
+            setUserData({});
           }
         } catch (error) {
           console.error("Lỗi lấy dữ liệu chứng chỉ:", error);
+          setUserData({});
+        } finally {
+          setLoadingUser(false);
         }
+      } else {
+        setLoadingUser(false);
       }
     };
     fetchUserData();
   }, [user]);
 
+  // Kiểm tra khóa bộ HSK dựa trên kết quả Placement Test đã lưu trong Firebase
   const isHskLocked = (lvl) => {
-    const lvlStr = String(lvl).toLowerCase();
-    if (lvlStr.includes("2")) return !userData?.passedHSK1;
-    if (lvlStr.includes("3")) return !userData?.passedHSK2;
-    if (lvlStr.includes("4")) return !userData?.passedHSK3;
-    if (lvlStr.includes("5")) return !userData?.passedHSK4;
-    if (lvlStr.includes("6")) return !userData?.passedHSK5;
-    return false;
+    if (!userData) return true; // Chưa tải xong thì tạm thời khóa để tránh chớp nháy
+    const cleanLvl = String(lvl).replace(/\D/g, ''); 
+    if (!cleanLvl) return true;
+    const levelNum = parseInt(cleanLvl, 10);
+    
+    const flagName = `passedHSK${levelNum}`;
+    return !userData[flagName];
   };
+
+  useEffect(() => {
+    if (userData && isHskLocked(selectedHsk)) {
+      const firstUnlocked = availableHskLevels.find(lvl => !isHskLocked(lvl));
+      if (firstUnlocked) {
+        setSelectedHsk(firstUnlocked);
+      }
+    }
+  }, [userData, selectedHsk]);
 
   useEffect(() => {
     const dataForHsk = selectedHsk 
@@ -115,24 +126,9 @@ export default function FlashcardPage() {
   }, [selectedHsk]);
 
   useEffect(() => {
-    const savedExp = localStorage.getItem("hskk_exp");
     const savedProgress = localStorage.getItem("hskk_word_progress");
-    if (savedExp) setUserExp(parseInt(savedExp));
     if (savedProgress) setWordProgress(JSON.parse(savedProgress));
   }, []);
-
-  useEffect(() => {
-    if (levelsData.length === 0) return;
-    let newLevel = 1;
-    for (let i = levelsData.length - 1; i >= 0; i--) {
-      if (userExp >= levelsData[i].requiredExp) {
-        newLevel = levelsData[i].level;
-        break;
-      }
-    }
-    setMaxUnlockedLevel(newLevel);
-    localStorage.setItem("hskk_exp", userExp);
-  }, [userExp, levelsData]);
 
   useEffect(() => {
     if (Object.keys(wordProgress).length > 0) {
@@ -140,7 +136,10 @@ export default function FlashcardPage() {
     }
   }, [wordProgress]);
 
-  if (levelsData.length === 0) return <div className="p-10 text-center">Đang tải dữ liệu từ vựng...</div>;
+  // Hiển thị màn hình chờ cho đến khi tải xong dữ liệu tiến độ từ Firebase
+  if (levelsData.length === 0 || loadingUser) {
+    return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang đồng bộ dữ liệu tiến độ...</div>;
+  }
 
   const activeLevelData = levelsData.find(l => l.level === viewingLevel) || levelsData[0];
   const filteredWords = activeLevelData.words.filter(word => {
@@ -161,7 +160,6 @@ export default function FlashcardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // --- LOGIC BÀI TẬP: AI CHẤM CÂU ---
   const handleCheckSentence = async () => {
     if (!sentenceInput.trim() || !activeWord) return;
     
@@ -191,7 +189,6 @@ export default function FlashcardPage() {
     }
   };
 
-  // --- LOGIC CHUYỂN TỪ ---
   const handleMarkLearning = () => {
     if (!activeWord) return;
     const wordId = activeWord.front;
@@ -220,7 +217,6 @@ export default function FlashcardPage() {
     setWordProgress(newProgress);
     
     if (!isAlreadyMastered) {
-      setUserExp(prev => prev + 20); 
       if (user) {
         try {
           const learnedVocabArray = Object.keys(newProgress).filter(k => newProgress[k] === "mastered");
@@ -245,14 +241,10 @@ export default function FlashcardPage() {
   };
 
   const handleLevelChange = (levelObj) => {
-      if (levelObj.level <= maxUnlockedLevel) {
-          setViewingLevel(levelObj.level);
-          setActiveWordIndex(0);
-          setFilter("all");
-      } else {
-          alert(`🔒 Bạn cần đạt ${levelObj.requiredExp} EXP để mở khóa Bài ${levelObj.level}!`);
-      }
-  }
+    setViewingLevel(levelObj.level);
+    setActiveWordIndex(0);
+    setFilter("all");
+  };
 
   const dataForSelectedHsk = selectedHsk ? myCustomData.filter(item => item.level === selectedHsk) : myCustomData;
   const uniqueDataForSelectedHsk = dataForSelectedHsk.filter((item, index, self) => index === self.findIndex((t) => t.front === item.front));
@@ -261,7 +253,6 @@ export default function FlashcardPage() {
   const masteredWordsForSelectedHsk = uniqueDataForSelectedHsk.filter(w => wordProgress[w.front] === "mastered").length;
   const canTakeExam = totalWordsForSelectedHsk > 0 && masteredWordsForSelectedHsk === totalWordsForSelectedHsk;
 
-  // --- LOGIC BÀI THI CHỨNG CHỈ ---
   const openExam = () => {
     if (!user) return alert("Bạn cần đăng nhập để thi!");
     if (!canTakeExam) return alert("Bạn phải đánh dấu 'Đã thuộc' tất cả từ vựng của bộ này mới được phép thi!");
@@ -312,7 +303,7 @@ export default function FlashcardPage() {
         const studentRef = doc(db, "progress", user.id);
         await setDoc(studentRef, { [flagName]: true }, { merge: true });
         setUserData(prev => ({ ...prev, [flagName]: true }));
-        alert(`🎉 Xuất sắc! Bạn đạt ${examState.score}/${examState.total} điểm. Cấp độ tiếp theo đã được mở khóa!`);
+        alert(`🎉 Xuất sắc! Bạn đạt ${examState.score}/${examState.total} điểm. Chứng chỉ cấp độ đã được cập nhật!`);
       } catch (error) {
         console.error("Lỗi cập nhật Firebase:", error);
       }
@@ -330,6 +321,8 @@ export default function FlashcardPage() {
   const isAlreadyMastered = activeWord ? wordProgress[activeWord.front] === "mastered" : false;
   const isFullyPassed = isAlreadyMastered || sentenceResult?.isPass;
   const allowFlip = canFlip || isAlreadyMastered; 
+
+  const isCurrentHskLocked = isHskLocked(selectedHsk);
 
   return (
     <main className="min-h-screen bg-slate-50 py-10 px-4">
@@ -401,27 +394,15 @@ export default function FlashcardPage() {
                         const locked = isHskLocked(lvl);
                         return (
                             <option key={lvl} value={lvl} disabled={locked}>
-                                Bộ {lvl} {locked ? "🔒 (Cần đỗ cấp độ trước)" : ""}
+                                Bộ {lvl} {locked ? "🔒 (Chưa vượt qua Test cấp độ)" : ""}
                             </option>
                         );
                     })}
                 </select>
 
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                    <p className="text-sm font-bold text-slate-500 mb-1">TỔNG EXP CỦA BẠN</p>
-                    <p className="text-3xl font-black text-yellow-500 mb-2">{userExp} <span className="text-sm text-slate-400">EXP</span></p>
-                    <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-yellow-400 transition-all duration-500" style={{ width: `${Math.min((userExp / (levelsData.find(l => l.level === maxUnlockedLevel + 1)?.requiredExp || Math.max(userExp, 1))) * 100, 100)}%` }}></div>
-                    </div>
-                    <p className="text-xs font-medium text-slate-400 mt-2 text-right">
-                        Cần {levelsData.find(l => l.level === maxUnlockedLevel + 1)?.requiredExp || 'MAX'} EXP để mở khóa bài tiếp theo
-                    </p>
-                </div>
-
                 <p className="font-bold text-slate-800 mb-4">Lộ trình học tập</p>
                 <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                     {levelsData.map(lvl => {
-                        const isUnlocked = lvl.level <= maxUnlockedLevel;
                         const isActive = lvl.level === viewingLevel;
                         
                         return (
@@ -429,20 +410,19 @@ export default function FlashcardPage() {
                                 key={lvl.level}
                                 onClick={() => handleLevelChange(lvl)}
                                 className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
-                                    isActive ? 'border-rose-500 bg-rose-50 shadow-md' : 
-                                    isUnlocked ? 'border-slate-200 bg-white hover:border-rose-300 hover:shadow-sm' : 'border-slate-100 bg-slate-50 opacity-60 cursor-not-allowed'
+                                    isActive ? 'border-rose-500 bg-rose-50 shadow-md' : 'border-slate-200 bg-white hover:border-rose-300 hover:shadow-sm'
                                 }`}
                             >
                                 <div className="text-left">
-                                    <p className={`font-bold text-lg ${isActive ? 'text-rose-600' : isUnlocked ? 'text-slate-700' : 'text-slate-400'}`}>
+                                    <p className={`font-bold text-lg ${isActive ? 'text-rose-600' : 'text-slate-700'}`}>
                                         Bài {lvl.level}
                                     </p>
                                     <p className="text-xs text-slate-500 font-medium mt-1">
-                                        {isUnlocked ? `${lvl.words.length} từ vựng` : `Cần ${lvl.requiredExp} EXP`}
+                                        {lvl.words.length} từ vựng
                                     </p>
                                 </div>
                                 <div className="text-2xl">
-                                    {isActive ? '🔥' : isUnlocked ? '🔓' : '🔒'}
+                                    {isActive ? '🔥' : '📖'}
                                 </div>
                             </button>
                         );
@@ -463,7 +443,7 @@ export default function FlashcardPage() {
                     </button>
                     <p className={`text-xs text-center mt-3 font-medium ${canTakeExam ? 'text-slate-500' : 'text-red-500'}`}>
                         {canTakeExam 
-                            ? "Làm đúng 80% số câu để mở khóa cấp độ tiếp theo!" 
+                            ? "Làm đúng 80% số câu để vượt qua bài test mở khóa cấp độ!" 
                             : `Bạn cần học thuộc tất cả từ vựng để thi (${masteredWordsForSelectedHsk}/${totalWordsForSelectedHsk})`
                         }
                     </p>
@@ -473,149 +453,162 @@ export default function FlashcardPage() {
 
         {/* KHU VỰC HỌC TẬP CHÍNH */}
         <div className="w-full lg:w-2/3 flex flex-col gap-6">
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-slate-800">
-                    Tiến độ Bài {viewingLevel}
-                    </h2>
-                    <span className="font-black text-rose-600">{progressPercent}%</span>
-                </div>
-                <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-6">
-                    <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
-                </div>
-                
-                <div className="flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
-                    <button onClick={() => handleFilterChange("all")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'all' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500'}`}>Tất cả</button>
-                    <button onClick={() => handleFilterChange("learning")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'learning' ? 'bg-white shadow-sm text-red-500' : 'text-slate-500'}`}>Chưa thuộc</button>
-                    <button onClick={() => handleFilterChange("mastered")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'mastered' ? 'bg-white shadow-sm text-green-500' : 'text-slate-500'}`}>Đã thuộc</button>
-                </div>
-            </div>
-
-            {filteredWords.length > 0 && activeWord ? (
-            <div className="flex flex-col items-center gap-6 animate-fade-in">
-                
-                {/* THANH TRẠNG THÁI KIỂM TRA */}
-                <div className="flex flex-wrap justify-center gap-4 w-full">
-                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${sentenceResult?.isPass || isAlreadyMastered ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
-                        Đặt câu: {sentenceResult?.isPass || isAlreadyMastered ? '✓ Đạt' : 'Chưa đạt'}
+            {isCurrentHskLocked ? (
+              <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center min-h-[450px]">
+                <div className="text-6xl mb-4">🔒</div>
+                <h3 className="text-2xl font-black text-slate-800 mb-2">Cấp độ {selectedHsk.toUpperCase()} đang bị khóa!</h3>
+                <p className="text-slate-500 mb-6 max-w-md">Bạn cần tham gia và vượt qua bài kiểm tra định cấp độ tương ứng tại mục <strong>Kiểm Tra Trình Độ</strong> để mở khóa bộ từ vựng này.</p>
+                <Link href="/test" className="px-6 py-3 bg-purple-600 text-white font-bold rounded-2xl shadow hover:bg-purple-700 transition">
+                  🎯 Đi tới Kiểm Tra Trình Độ ngay
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold text-slate-800">
+                        Tiến độ Bài {viewingLevel}
+                        </h2>
+                        <span className="font-black text-rose-600">{progressPercent}%</span>
                     </div>
-                </div>
-
-                <div 
-                onClick={() => {
-                  if (allowFlip) {
-                    setIsFlipped(!isFlipped);
-                  } else {
-                    alert("🔒 Hãy vượt qua bài kiểm tra bên dưới hoặc bấm 'Xem nghĩa' để lật thẻ!");
-                  }
-                }}
-                className={`w-full p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center transition-all relative min-h-[350px] flex flex-col justify-center items-center ${allowFlip ? 'bg-white cursor-pointer hover:-translate-y-2' : 'bg-slate-50 cursor-not-allowed opacity-90'}`}
-                >
-                <div className="absolute right-6 top-6 flex gap-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${wordProgress[wordDisplay] === 'mastered' ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500'}`}>
-                    {wordProgress[wordDisplay] === 'mastered' ? '✓ Đã thuộc' : 'Đang học'}
-                    </span>
-                </div>
-
-                <button 
-                    onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} 
-                    className="w-16 h-16 bg-rose-50 text-rose-600 rounded-full text-3xl shadow-sm hover:scale-110 transition-transform mb-6 z-10"
-                >
-                    🔊
-                </button>
-                
-                <h3 className="text-8xl font-black text-slate-800 mb-6">{wordDisplay}</h3>
-                
-                {isFlipped ? (
-                    <div className="animate-fade-in w-full px-4">
-                    <p className="text-3xl font-medium text-slate-500 mb-2 tracking-widest">{pinyinDisplay}</p>
-                    <p className="text-2xl font-bold text-rose-600 mb-4">{meaningDisplay}</p>
-                    {exampleDisplay && (
-                        <p className="text-md italic text-slate-600 bg-slate-50 px-6 py-4 rounded-xl shadow-inner inline-block mt-2">
-                        <span className="font-bold text-slate-400">VD:</span> {exampleDisplay}
-                        </p>
-                    )}
-                    </div>
-                ) : (
-                    <p className={`text-sm font-bold mt-8 px-4 py-2 rounded-full ${allowFlip ? 'text-slate-400 bg-slate-100 animate-pulse' : 'text-rose-500 bg-rose-50'}`}>
-                    {allowFlip ? "👆 Chạm vào thẻ để lật xem nghĩa" : "🔒 Vượt qua kiểm tra hoặc bấm 'Xem nghĩa' để lật"}
-                    </p>
-                )}
-                </div>
-
-                <div className="w-full bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-                
-                {/* KIỂM TRA ĐẶT CÂU (AI CHẤM) */}
-                <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 text-center">
-                    <p className="font-bold text-slate-600 mb-4">
-                        Đặt câu tiếng Trung với từ: <span className="text-rose-600 text-xl">{activeWord.front}</span>
-                    </p>
-                    <div className="flex gap-2">
-                        <input 
-                            type="text" 
-                            value={sentenceInput}
-                            onChange={(e) => {
-                                setSentenceInput(e.target.value);
-                                if(sentenceResult && !sentenceResult.isPass) setSentenceResult(null);
-                            }}
-                            placeholder={`VD: ${activeWord.front}...`}
-                            disabled={sentenceResult?.isPass || isCheckingSentence}
-                            className="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none transition-colors"
-                        />
-                        <button 
-                            onClick={handleCheckSentence}
-                            disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
-                            className={`px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${sentenceResult?.isPass ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'} disabled:opacity-50`}
-                        >
-                            {isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Chuẩn" : "Kiểm tra")}
-                        </button>
+                    <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-6">
+                        <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
                     </div>
                     
-                    {/* Hiển thị Feedback của AI */}
-                    {sentenceResult && (
-                        <div className={`mt-4 p-4 rounded-xl text-left border animate-fade-in ${sentenceResult.isPass ? 'bg-green-50 border-green-200' : 'bg-rose-50 border-rose-200'}`}>
-                            <p className={`font-bold mb-1 ${sentenceResult.isPass ? 'text-green-700' : 'text-rose-700'}`}>
-                                {sentenceResult.isPass ? "✅ Rất tốt!" : "❌ Chưa chính xác:"}
-                            </p>
-                            <p className="text-sm text-slate-700 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
-                            
-                            {!sentenceResult.isPass && sentenceResult.suggestion && (
-                                <p className="text-sm text-slate-700 bg-white p-3 rounded-lg border border-slate-200 leading-relaxed">
-                                    <span className="font-bold text-yellow-600">💡 Gợi ý:</span> {sentenceResult.suggestion}
-                                </p>
-                            )}
-                        </div>
-                    )}
+                    <div className="flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
+                        <button onClick={() => handleFilterChange("all")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'all' ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500'}`}>Tất cả</button>
+                        <button onClick={() => handleFilterChange("learning")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'learning' ? 'bg-white shadow-sm text-red-500' : 'text-slate-500'}`}>Chưa thuộc</button>
+                        <button onClick={() => handleFilterChange("mastered")} className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${filter === 'mastered' ? 'bg-white shadow-sm text-green-500' : 'text-slate-500'}`}>Đã thuộc</button>
+                    </div>
                 </div>
 
-                {/* NÚT ĐIỀU HƯỚNG */}
-                <div className="flex gap-4 w-full max-w-md mx-auto">
-                    <button 
-                    onClick={handleMarkLearning}
-                    className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold text-md hover:border-red-400 hover:bg-red-50 transition-colors shadow-sm"
-                    >
-                    {!isFlipped ? "👀 Xem nghĩa / Bỏ qua" : "⏭️ Từ tiếp theo (Không nhận EXP)"}
-                    </button>
-                    <button 
-                    onClick={handleMarkMasteredAndNext}
-                    disabled={!isFullyPassed}
-                    className={`flex-1 py-4 rounded-2xl font-bold text-md transition-all shadow-sm ${
-                        isFullyPassed 
-                        ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200 shadow-lg hover:-translate-y-1' 
-                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    }`}
-                    >
-                    ✓ Đã thuộc & Tiếp ➔
-                    </button>
+                {filteredWords.length > 0 && activeWord ? (
+                  <div className="flex flex-col items-center gap-6 animate-fade-in w-full">
+                      
+                      {/* THANH TRẠNG THÁI KIỂM TRA */}
+                      <div className="flex flex-wrap justify-center gap-4 w-full">
+                          <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-sm border ${sentenceResult?.isPass || isAlreadyMastered ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>
+                              Đặt câu: {sentenceResult?.isPass || isAlreadyMastered ? '✓ Đạt' : 'Chưa đạt'}
+                          </div>
+                      </div>
+
+                      <div 
+                      onClick={() => {
+                        if (allowFlip) {
+                          setIsFlipped(!isFlipped);
+                        } else {
+                          alert("🔒 Hãy vượt qua bài kiểm tra bên dưới hoặc bấm 'Xem nghĩa' để lật thẻ!");
+                        }
+                      }}
+                      className={`w-full p-10 rounded-3xl shadow-xl border-b-8 border-rose-600 text-center transition-all relative min-h-[350px] flex flex-col justify-center items-center ${allowFlip ? 'bg-white cursor-pointer hover:-translate-y-2' : 'bg-slate-50 cursor-not-allowed opacity-90'}`}
+                      >
+                      <div className="absolute right-6 top-6 flex gap-2">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${wordProgress[wordDisplay] === 'mastered' ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500'}`}>
+                          {wordProgress[wordDisplay] === 'mastered' ? '✓ Đã thuộc' : 'Đang học'}
+                          </span>
+                      </div>
+
+                      <button 
+                          onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} 
+                          className="w-16 h-16 bg-rose-50 text-rose-600 rounded-full text-3xl shadow-sm hover:scale-110 transition-transform mb-6 z-10"
+                      >
+                          🔊
+                      </button>
+                      
+                      <h3 className="text-8xl font-black text-slate-800 mb-6">{wordDisplay}</h3>
+                      
+                      {isFlipped ? (
+                          <div className="animate-fade-in w-full px-4">
+                          <p className="text-3xl font-medium text-slate-500 mb-2 tracking-widest">{pinyinDisplay}</p>
+                          <p className="text-2xl font-bold text-rose-600 mb-4">{meaningDisplay}</p>
+                          {exampleDisplay && (
+                              <p className="text-md italic text-slate-600 bg-slate-50 px-6 py-4 rounded-xl shadow-inner inline-block mt-2">
+                              <span className="font-bold text-slate-400">VD:</span> {exampleDisplay}
+                              </p>
+                          )}
+                          </div>
+                      ) : (
+                          <p className={`text-sm font-bold mt-8 px-4 py-2 rounded-full ${allowFlip ? 'text-slate-400 bg-slate-100 animate-pulse' : 'text-rose-500 bg-rose-50'}`}>
+                          {allowFlip ? "👆 Chạm vào thẻ để lật xem nghĩa" : "🔒 Vượt qua kiểm tra hoặc bấm 'Xem nghĩa' để lật"}
+                          </p>
+                      )}
+                      </div>
+
+                      <div className="w-full bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+                      
+                      {/* KIỂM TRA ĐẶT CÂU (AI CHẤM) */}
+                      <div className="w-full max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 text-center">
+                          <p className="font-bold text-slate-600 mb-4">
+                              Đặt câu tiếng Trung với từ: <span className="text-rose-600 text-xl">{activeWord.front}</span>
+                          </p>
+                          <div className="flex gap-2">
+                              <input 
+                                  type="text" 
+                                  value={sentenceInput}
+                                  onChange={(e) => {
+                                      setSentenceInput(e.target.value);
+                                      if(sentenceResult && !sentenceResult.isPass) setSentenceResult(null);
+                                  }}
+                                  placeholder={`VD: ${activeWord.front}...`}
+                                  disabled={sentenceResult?.isPass || isCheckingSentence}
+                                  className="flex-1 px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none transition-colors"
+                              />
+                              <button 
+                                  onClick={handleCheckSentence}
+                                  disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
+                                  className={`px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${sentenceResult?.isPass ? 'bg-green-500 text-white' : 'bg-rose-500 text-white hover:bg-rose-600'} disabled:opacity-50`}
+                              >
+                                  {isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Chuẩn" : "Kiểm tra")}
+                              </button>
+                          </div>
+                          
+                          {/* Hiển thị Feedback của AI */}
+                          {sentenceResult && (
+                              <div className={`mt-4 p-4 rounded-xl text-left border animate-fade-in ${sentenceResult.isPass ? 'bg-green-50 border-green-200' : 'bg-rose-50 border-rose-200'}`}>
+                                  <p className={`font-bold mb-1 ${sentenceResult.isPass ? 'text-green-700' : 'text-rose-700'}`}>
+                                      {sentenceResult.isPass ? "✅ Rất tốt!" : "❌ Chưa chính xác:"}
+                                  </p>
+                                  <p className="text-sm text-slate-700 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
+                                  
+                                  {!sentenceResult.isPass && sentenceResult.suggestion && (
+                                      <p className="text-sm text-slate-700 bg-white p-3 rounded-lg border border-slate-200 leading-relaxed">
+                                          <span className="font-bold text-yellow-600">💡 Gợi ý:</span> {sentenceResult.suggestion}
+                                      </p>
+                                  )}
+                              </div>
+                          )}
+                      </div>
+
+                      {/* NÚT ĐIỀU HƯỚNG */}
+                      <div className="flex gap-4 w-full max-w-md mx-auto">
+                          <button 
+                          onClick={handleMarkLearning}
+                          className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold text-md hover:border-red-400 hover:bg-red-50 transition-colors shadow-sm"
+                          >
+                          {!isFlipped ? "👀 Xem nghĩa / Bỏ qua" : "⏭️ Từ tiếp theo"}
+                          </button>
+                          <button 
+                          onClick={handleMarkMasteredAndNext}
+                          disabled={!isFullyPassed}
+                          className={`flex-1 py-4 rounded-2xl font-bold text-md transition-all shadow-sm ${
+                              isFullyPassed 
+                              ? 'bg-green-500 text-white hover:bg-green-600 shadow-green-200 shadow-lg hover:-translate-y-1' 
+                              : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                          }`}
+                          >
+                          ✓ Đã thuộc & Tiếp ➔
+                          </button>
+                      </div>
+                      </div>
+                  </div>
+                ) : (
+                <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-200 text-center">
+                    <div className="text-6xl mb-4">🎉</div>
+                    <h3 className="text-2xl font-bold text-slate-800">Bạn đã hoàn thành bộ lọc này!</h3>
+                    <p className="text-slate-500 mt-2">Hãy ôn tập lại hoặc thử sức với bài thi chứng chỉ nhé.</p>
                 </div>
-                </div>
-            </div>
-            ) : (
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-200 text-center">
-                <div className="text-6xl mb-4">🎉</div>
-                <h3 className="text-2xl font-bold text-slate-800">Bạn đã hoàn thành bộ lọc này!</h3>
-                <p className="text-slate-500 mt-2">Hãy cày thêm EXP để mở khóa bài học tiếp theo nhé.</p>
-            </div>
+                )}
+              </>
             )}
         </div>
       </div>
