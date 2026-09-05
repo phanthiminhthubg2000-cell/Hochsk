@@ -257,7 +257,7 @@ export default function RoleplayPage() {
     if (!zhMatch && !pyMatch && !viMatch) zh = msg.content;
 
     const avatar = phase === "free_chat" ? "🐼" : (activeScenario?.aiAvatar || "🤖");
-    const name = phase === "free_chat" ? "AI Bản Xứ" : (activeScenario?.aiName || "AI");
+    const name = phase === "free_chat" ? "Xiao Qingwa" : (activeScenario?.aiName || "AI");
 
     return (
       <div className="flex flex-col w-full animate-fade-in">
@@ -373,7 +373,7 @@ export default function RoleplayPage() {
                 <div className="relative z-10">
                   <div className="text-7xl mb-6 group-hover:scale-110 transition-transform">💬</div>
                   <h3 className="text-2xl font-black text-slate-800 mb-3">Chat Tự Do</h3>
-                  <p className="text-slate-600 font-medium mb-8">Trò chuyện không giới hạn chủ đề với AI Bản Xứ để rèn luyện phản xạ ngôn ngữ hàng ngày.</p>
+                  <p className="text-slate-600 font-medium mb-8">Trò chuyện không giới hạn chủ đề với Xiao Qingwa để rèn luyện phản xạ ngôn ngữ hàng ngày.</p>
                   <button className="w-full py-4 bg-white/80 border border-emerald-100 text-[#08A66A] font-black rounded-2xl group-hover:bg-[#08A66A] group-hover:text-white group-hover:border-[#08A66A] transition-colors uppercase tracking-widest shadow-sm">Bắt đầu ngay →</button>
                 </div>
               </div>
@@ -512,7 +512,7 @@ export default function RoleplayPage() {
               <div className="h-16 border-b border-slate-100 flex items-center justify-between px-6 bg-white/50 z-10 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-lg">🐼</div>
-                  <span className="font-bold text-slate-800">AI Bản Xứ</span>
+                  <span className="font-bold text-slate-800">Xiao Qingwa</span>
                   <div className="flex items-center gap-1.5 ml-2">
                     <div className="w-2 h-2 rounded-full bg-[#08A66A] animate-pulse"></div>
                     <span className="text-[10px] font-bold text-[#08A66A] uppercase tracking-widest">Đang trực tuyến</span>
