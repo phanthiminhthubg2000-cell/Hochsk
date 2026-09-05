@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import myCustomData from "../cards.json";
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore"; 
 
@@ -20,7 +20,7 @@ const generateLevelsFromData = (data, wordsPerLevel = 10) => {
 };
 
 export default function FlashcardPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const availableHskLevels = [...new Set(myCustomData.map(item => item.level))].filter(Boolean).sort();
   const [selectedHsk, setSelectedHsk] = useState(availableHskLevels[0] || "");
   
@@ -42,7 +42,6 @@ export default function FlashcardPage() {
   const [userData, setUserData] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
-  // ĐÃ FIX LỖI Ở ĐÂY: Khai báo biến streak lấy từ userData
   const streak = userData?.streakCount || 0;
 
   const [examState, setExamState] = useState({
@@ -142,7 +141,14 @@ export default function FlashcardPage() {
     }
   }, [wordProgress]);
 
-  if (levelsData.length === 0 || loadingUser) return <div className="min-h-screen flex items-center justify-center font-bold text-[#08A66A] bg-[#F4F8F5]">Đang tải dữ liệu từ vựng...</div>;
+  if (levelsData.length === 0 || loadingUser) return (
+    <div className="min-h-screen bg-[#F4F8F5] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="text-6xl animate-bounce">🐸</div>
+        <p className="font-black text-[#08A66A] tracking-widest uppercase">Đang tải dữ liệu từ vựng...</p>
+      </div>
+    </div>
+  );
 
   const activeLevelData = levelsData.find(l => l.level === viewingLevel) || levelsData[0];
   const filteredWords = activeLevelData.words.filter(word => {
@@ -318,12 +324,9 @@ export default function FlashcardPage() {
         const studentRef = doc(db, "progress", user.id);
         await setDoc(studentRef, { [flagName]: true }, { merge: true });
         setUserData(prev => ({ ...prev, [flagName]: true }));
-        alert(`🎉 Xuất sắc! Bạn đạt ${examState.score}/${examState.total} điểm. Chứng chỉ cấp độ đã được cập nhật!`);
       } catch (error) {
         console.error("Lỗi cập nhật Firebase:", error);
       }
-    } else {
-      alert(`😢 Rất tiếc, bạn chỉ đạt ${examState.score}/${examState.total} điểm. Cần tối thiểu ${examState.passScore} điểm để đỗ. Hãy ôn bài và thử lại nhé!`);
     }
     setExamState({ ...examState, isOpen: false });
   };
@@ -342,53 +345,74 @@ export default function FlashcardPage() {
     <div className="flex min-h-screen bg-[#F4F8F5] font-sans text-slate-800 selection:bg-emerald-200">
       
       {/* =========================================
-          EXAM MODAL
+          EXAM MODAL (NÂNG CẤP GIAO DIỆN PREMIUM)
           ========================================= */}
       {examState.isOpen && (
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] w-full max-w-lg p-8 shadow-2xl relative">
-            <button onClick={() => setExamState({ ...examState, isOpen: false })} className="absolute top-6 right-6 w-10 h-10 bg-slate-100 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 font-bold text-xl flex items-center justify-center transition-colors">✕</button>
-            {!examState.isFinished ? (
-              <div className="animate-fade-in">
-                <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4 mt-2">
-                  <h3 className="text-lg font-black text-[#08A66A]">Thi {selectedHsk.toUpperCase()}</h3>
-                  <span className="font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full text-xs">Câu {examState.currentIndex + 1}/{examState.total}</span>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-[32px] w-full max-w-lg shadow-2xl relative overflow-hidden flex flex-col">
+            
+            {/* Progress Bar (Nằm dính trên cùng Modal) */}
+            <div className="w-full h-2.5 bg-slate-100">
+              <div className="h-full bg-[#08A66A] transition-all duration-500" style={{ width: `${(examState.currentIndex / examState.total) * 100}%` }}></div>
+            </div>
+
+            <div className="p-8 md:p-10 relative">
+              <button onClick={() => setExamState({ ...examState, isOpen: false })} className="absolute top-6 right-6 w-10 h-10 bg-slate-50 rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 font-bold text-xl flex items-center justify-center transition-colors z-10 border border-slate-100">✕</button>
+              
+              {!examState.isFinished ? (
+                <div className="animate-slide-up-fade mt-2">
+                  <div className="flex items-center gap-3 mb-8">
+                    <span className="text-3xl">🎓</span>
+                    <div>
+                      <h3 className="text-lg font-black text-slate-800">Bài Thi {selectedHsk.toUpperCase()}</h3>
+                      <p className="text-[10px] font-black text-[#08A66A] tracking-widest uppercase">Câu {examState.currentIndex + 1} / {examState.total}</p>
+                    </div>
+                  </div>
+
+                  <div className="text-center mb-10 bg-[#F4F8F5] py-12 px-6 rounded-3xl border border-emerald-100 shadow-inner">
+                    <h1 className={`font-black text-slate-800 mb-2 ${examState.questions[examState.currentIndex].questionText.length > 5 ? 'text-4xl md:text-5xl' : 'text-6xl md:text-7xl'}`}>
+                      {examState.questions[examState.currentIndex].questionText}
+                    </h1>
+                    {examState.questions[examState.currentIndex].subText && (
+                      <p className="text-base text-slate-500 tracking-widest mt-4 font-bold">{examState.questions[examState.currentIndex].subText}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {examState.questions[examState.currentIndex].options.map((option, idx) => (
+                      <button 
+                        key={idx}
+                        onClick={() => handleAnswer(option)}
+                        className={`w-full text-left px-6 py-4.5 bg-white hover:bg-[#DDF7EA]/50 border-2 border-slate-100 hover:border-[#08A66A] rounded-2xl font-bold text-slate-700 hover:text-[#087A55] transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 ${option.length < 10 ? 'text-xl text-center' : 'text-base'}`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="text-center mb-8">
-                  <h1 className={`font-black text-slate-800 mb-2 ${examState.questions[examState.currentIndex].questionText.length > 5 ? 'text-4xl' : 'text-6xl'}`}>
-                    {examState.questions[examState.currentIndex].questionText}
-                  </h1>
-                  {examState.questions[examState.currentIndex].subText && (
-                    <p className="text-lg text-slate-500 tracking-widest mt-2">{examState.questions[examState.currentIndex].subText}</p>
-                  )}
+              ) : (
+                <div className="text-center animate-fade-in py-8">
+                  <div className="text-7xl mb-6 drop-shadow-md">{examState.score >= examState.passScore ? '🎉' : '💦'}</div>
+                  <h3 className="text-3xl font-black text-slate-800 mb-2">{examState.score >= examState.passScore ? 'Chúc mừng!' : 'Chưa đạt yêu cầu!'}</h3>
+                  <p className="text-slate-500 font-medium mb-8">Bạn cần đạt {examState.passScore} điểm để vượt qua bài kiểm tra.</p>
+
+                  <div className={`p-6 rounded-[24px] mb-8 border relative overflow-hidden ${examState.score >= examState.passScore ? 'bg-[#DDF7EA] border-[#08A66A]/30' : 'bg-rose-50 border-rose-200'}`}>
+                    <div className={`absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-50 ${examState.score >= examState.passScore ? 'bg-white/40' : 'bg-white/50'}`}></div>
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 relative z-10">Điểm của bạn</p>
+                    <p className={`text-5xl font-black relative z-10 ${examState.score >= examState.passScore ? 'text-[#08A66A]' : 'text-rose-500'}`}>
+                      {examState.score} <span className="text-2xl opacity-60">/ {examState.total}</span>
+                    </p>
+                  </div>
+
+                  <button 
+                    onClick={finishExam}
+                    className="w-full py-4.5 bg-[#172033] hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-xl transition-all hover:-translate-y-1 uppercase tracking-widest"
+                  >
+                    Xác nhận kết quả
+                  </button>
                 </div>
-                <div className="flex flex-col gap-3">
-                  {examState.questions[examState.currentIndex].options.map((option, idx) => (
-                    <button 
-                      key={idx}
-                      onClick={() => handleAnswer(option)}
-                      className={`w-full text-left px-6 py-4 bg-white hover:bg-[#DDF7EA] border-2 border-slate-100 hover:border-[#08A66A] rounded-2xl font-bold text-slate-700 hover:text-[#087A55] transition-all ${option.length < 10 ? 'text-xl text-center' : 'text-md'}`}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="text-center animate-fade-in py-10">
-                <div className="text-6xl mb-4">{examState.score >= examState.passScore ? '🏆' : '💔'}</div>
-                <h3 className="text-3xl font-black text-slate-800 mb-2">Kết quả của bạn</h3>
-                <p className={`text-2xl font-bold mb-8 ${examState.score >= examState.passScore ? 'text-[#08A66A]' : 'text-rose-500'}`}>
-                  {examState.score} / {examState.total} câu
-                </p>
-                <button 
-                  onClick={finishExam}
-                  className="w-full py-4 bg-[#08A66A] text-white font-black rounded-2xl shadow-lg hover:bg-[#087A55] transition-colors hover:-translate-y-1"
-                >
-                  Xác nhận kết quả
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -412,18 +436,18 @@ export default function FlashcardPage() {
               <select 
                 value={selectedHsk} 
                 onChange={(e) => setSelectedHsk(e.target.value)}
-                className="w-full appearance-none bg-[#DDF7EA]/50 border border-[#08A66A]/20 text-[#087A55] font-black text-base rounded-2xl px-4 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-[#08A66A]/20"
+                className="w-full appearance-none bg-[#DDF7EA]/50 border border-[#08A66A]/20 text-[#087A55] font-black text-sm rounded-2xl px-4 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-[#08A66A]/20 shadow-sm"
               >
                 {availableHskLevels.map(lvl => {
                   const locked = isHskLocked(lvl);
                   return (
                     <option key={lvl} value={lvl} disabled={locked}>
-                      Bộ {lvl.toUpperCase()} {locked ? "🔒 (Khóa)" : ""}
+                      Bộ {lvl.toUpperCase()} {locked ? "🔒 (Hoàn thành cấp trước hoặc Pass Test)" : ""}
                     </option>
                   );
                 })}
               </select>
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#08A66A] pointer-events-none">▼</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#08A66A] pointer-events-none text-xs">▼</span>
             </div>
           </div>
         </div>
@@ -521,7 +545,7 @@ export default function FlashcardPage() {
                <div className="bg-white/90 backdrop-blur-xl p-12 rounded-[32px] shadow-xl border border-white text-center flex flex-col items-center justify-center min-h-[500px] mt-10">
                  <div className="text-7xl mb-6 drop-shadow-sm">🔒</div>
                  <h3 className="text-2xl font-black text-slate-800 mb-3">Cấp độ {selectedHsk.toUpperCase()} đang bị khóa!</h3>
-                 <p className="text-slate-500 mb-8 max-w-md font-medium leading-relaxed">Bạn cần hoàn thành bài kiểm tra cuối cấp của cấp độ trước đó hoặc tham gia làm bài đánh giá năng lực đầu vào.</p>
+                 <p className="text-slate-500 mb-8 max-w-md font-medium leading-relaxed">Bạn cần hoàn thành bài kiểm tra của cấp độ trước đó hoặc tham gia thi vượt cấp để mở khóa cấp độ này.</p>
                  <Link href="/test" className="px-8 py-4 bg-[#172033] text-white font-black text-sm rounded-2xl shadow-lg hover:bg-slate-800 hover:-translate-y-1 transition-all">
                    🎯 Đi tới Kiểm Tra Trình Độ
                  </Link>
@@ -690,13 +714,6 @@ export default function FlashcardPage() {
                                 Dùng từ <strong className="text-[#08A66A] text-sm bg-[#DDF7EA] px-2 py-0.5 rounded"> {wordDisplay} </strong> để tạo một câu:
                               </p>
                             </div>
-                          </div>
-
-                          {/* Giao diện mô phỏng điền từ */}
-                          <div className="bg-[#F4F8F5] px-6 py-5 rounded-2xl border border-emerald-100 mb-6 text-center shadow-inner">
-                             <p className="text-lg font-bold text-slate-500">
-                                汉语不太难。
-                             </p>
                           </div>
 
                           <div className="flex flex-col sm:flex-row items-center gap-3">

@@ -3,9 +3,21 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
+import Link from "next/link";
 
-import allCards from "../cards.json";
-import allDictation from "../dictation.json";
+// Import đúng nguồn dữ liệu theo yêu cầu
+import arrangeData from "../arrange.json";    // Data câu dịch
+import sentencesData from "../sentences.json"; // Data câu sắp xếp
+
+// Hàm trộn mảng dùng cho việc xáo trộn từ trong câu sắp xếp
+function shuffleArray(array) {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
 
 function getRandomItems(arr, n) {
   if (!arr || !Array.isArray(arr)) return [];
@@ -13,60 +25,54 @@ function getRandomItems(arr, n) {
   return shuffled.slice(0, n);
 }
 
-function speakText(text) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'zh-CN';
-    utterance.rate = 0.8;
-    window.speechSynthesis.speak(utterance);
-  } else {
-    alert("Trình duyệt của bạn không hỗ trợ phát âm thanh.");
-  }
-}
-
+// KHỞI TẠO ĐỀ THI
 async function generatePlacementTest(level) {
   try {
     let levelStr = `HSK${level}`;
     let levelStrSpace = `HSK ${level}`;
     const filterByLevel = (item) => item.level === levelStr || item.level === levelStrSpace || item.level == level;
 
-    const vocabFiltered = allCards.filter(filterByLevel);
-    const dictationFiltered = allDictation.filter(filterByLevel);
+    // Lọc dữ liệu theo cấp độ
+    const translateFiltered = arrangeData.filter(filterByLevel);
+    const arrangeFiltered = sentencesData.filter(filterByLevel);
 
-    const repeatCount = level === 3 ? 5 : 2;
-    let repeatList = [];
-    if (level >= 3) {
-      try {
-        const repeatData = await import(`@/app/data/hskk/hskk${level}/repeat.json`).catch(() => ({ default: [] }));
-        const rawArr = repeatData.default || [];
-        repeatList = getRandomItems(rawArr, repeatCount).map(item => typeof item === 'string' ? { sentence: item } : item);
-      } catch (e) {
-        repeatList = [];
-      }
-    }
+    // Lấy 10 câu Dịch
+    const translateSection = getRandomItems(translateFiltered.length >= 10 ? translateFiltered : arrangeData, 10);
+    
+    // Lấy 10 câu Sắp xếp và xáo trộn chữ Hán sẵn
+    const arrangeSection = getRandomItems(arrangeFiltered.length >= 10 ? arrangeFiltered : sentencesData, 10).map(item => {
+      const chars = (item.chinese || item.front || "").replace(/[.!?。，？！、\s]/g, '').split('');
+      const scrambled = shuffleArray([...chars]).join(' - ');
+      return { ...item, scrambled };
+    });
 
-    let shortList = [];
+    // Lấy 2 câu Nghị luận (Chỉ dành cho HSK 3-6)
+    let essaySection = [];
     if (level >= 3) {
       try {
         const shortData = await import(`@/app/data/hskk/hskk${level}/short.json`).catch(() => ({ default: [] }));
         const rawArr = shortData.default || [];
-        shortList = getRandomItems(rawArr, 1).map(item => typeof item === 'string' ? { prompt: item } : item);
+        essaySection = getRandomItems(rawArr, 2).map(item => typeof item === 'string' ? { prompt: item } : item);
       } catch (e) {
-        shortList = [];
+        essaySection = [];
+      }
+      
+      // Fallback nếu không tải được file JSON nghị luận
+      if (essaySection.length === 0) {
+        essaySection = [
+          { prompt: `Phần viết luận 1 (HSK ${level}): Bạn hãy chia sẻ về một sở thích cá nhân bằng tiếng Trung.` },
+          { prompt: `Phần viết luận 2 (HSK ${level}): Theo bạn, việc học tiếng Trung mang lại những lợi ích gì?` }
+        ];
       }
     }
 
     let testPackage = {
       level: level,
-      maxScore: 100,
+      maxScore: level <= 2 ? 200 : 300,
       sections: {
-        vocab: getRandomItems(vocabFiltered.length ? vocabFiltered : allCards, 10),
-        dictation: getRandomItems(dictationFiltered.length ? dictationFiltered : allDictation, 5),
-        repeat: repeatList,
-        writing: shortList.length ? shortList : [
-          { prompt: `Phần viết luận (HSK ${level}): Hãy đọc câu hỏi và viết câu trả lời bằng tiếng Trung.` }
-        ]
+        translate: translateSection,
+        arrange: arrangeSection,
+        essay: essaySection
       }
     };
 
@@ -77,17 +83,33 @@ async function generatePlacementTest(level) {
   }
 }
 
+// ĐÁNH GIÁ KẾT QUẢ THEO THANG ĐIỂM MỚI
 function evaluateTestResult(level, totalScore) {
-  const passScore = 70;
+  const isHSK12 = level <= 2;
+  const maxScore = isHSK12 ? 200 : 300;
+  const passScore = isHSK12 ? 120 : 180;
+  const recommendScore = isHSK12 ? 150 : 230;
+
   if (totalScore < passScore) {
     return {
       status: "FAIL",
-      message: `Bạn đạt ${totalScore}/100 điểm. Chưa đạt mức tối thiểu (${passScore} điểm) để vượt qua cấp độ HSK ${level}.`
+      message: `Bạn đạt ${totalScore}/${maxScore} điểm. Chưa đạt mức tối thiểu (${passScore} điểm) để vượt qua bài đánh giá năng lực HSK ${level}.`,
+      score: totalScore,
+      maxScore: maxScore
+    };
+  } else if (totalScore < recommendScore) {
+    return {
+      status: "PASS_WARN",
+      message: `Bạn đạt ${totalScore}/${maxScore} điểm. Bạn ĐÃ QUA môn, nhưng điểm số nằm trong vùng rủi ro. Khuyến nghị bạn nên ôn tập lại kiến thức cấp độ HSK ${level} để nền tảng vững vàng hơn.`,
+      score: totalScore,
+      maxScore: maxScore
     };
   } else {
     return {
       status: "EXCELLENT",
-      message: `🎉 Xuất sắc! Bạn đạt ${totalScore}/100 điểm và đã vượt qua bài kiểm tra định cấp độ HSK ${level}!`
+      message: `🎉 Xuất sắc! Bạn đạt ${totalScore}/${maxScore} điểm. Kiến thức của bạn rất vững, hoàn toàn đủ khả năng chinh phục cấp độ tiếp theo!`,
+      score: totalScore,
+      maxScore: maxScore
     };
   }
 }
@@ -99,8 +121,6 @@ export default function PlacementTestPage() {
   const [loading, setLoading] = useState(false);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
-  const [playCounts, setPlayCounts] = useState({});
-  const [repeatPlayCounts, setRepeatPlayCounts] = useState({});
 
   const handleStartTest = async (level) => {
     setSelectedLevel(level);
@@ -108,8 +128,7 @@ export default function PlacementTestPage() {
     const res = await generatePlacementTest(level);
     if (res.success) {
       setTestData(res.test);
-      setPlayCounts({});
-      setRepeatPlayCounts({});
+      setAnswers({});
     } else {
       alert(res.message);
     }
@@ -123,79 +142,67 @@ export default function PlacementTestPage() {
     }));
   };
 
-  const handlePlayAudio = (idx, text) => {
-    const currentCount = playCounts[idx] || 0;
-    if (currentCount >= 2) {
-      alert("Bạn đã nghe tối đa 2 lần cho audio này!");
-      return;
-    }
-    speakText(text);
-    setPlayCounts(prev => ({
-      ...prev,
-      [idx]: currentCount + 1
-    }));
-  };
-
-  const handlePlayRepeatAudio = (idx, text) => {
-    const currentCount = repeatPlayCounts[idx] || 0;
-    if (currentCount >= 2) {
-      alert("Bạn đã nghe tối đa 2 lần cho câu này!");
-      return;
-    }
-    speakText(text);
-    setRepeatPlayCounts(prev => ({
-      ...prev,
-      [idx]: currentCount + 1
-    }));
-  };
-
   const handleSubmit = async () => {
     const isHSK12 = selectedLevel <= 2;
 
-    // Phân bổ điểm mới (Bỏ phần dịch):
-    // HSK 1-2 (2 phần): Vocab (50đ), Dictation (50đ) = 100đ
-    // HSK 3-6 (4 phần): Mỗi phần 20đ (Vocab, Dictation, Repeat, Writing) + 20đ tùy chỉnh hoặc chia đều (Vocab 20, Dictation 20, Repeat 20, Writing 20, còn lại cấu trúc linh hoạt)
+    // 1. CHẤM ĐIỂM PHẦN DỊCH CÂU (Tối đa 100 điểm - Chấm theo NGỮ NGHĨA linh hoạt)
+    let translateScore = 0;
+    testData.sections.translate?.forEach((item, idx) => {
+      const userAns = (answers[`translate_${idx}`] || "").trim().replace(/\s+/g, "");
+      const correctAns = (item.chinese || item.front || "").trim().replace(/\s+/g, "").replace(/[.!?。，？！、]/g, "");
+      
+      if (userAns.length > 0) {
+        // Thuật toán mô phỏng sự tương đồng ngữ nghĩa bằng độ phủ ký tự
+        let matchCount = 0;
+        for (let char of correctAns) {
+          if (userAns.includes(char)) matchCount++;
+        }
+        const matchRatio = matchCount / correctAns.length;
 
-    let vocabCorrectCount = 0;
-    const vocabTotal = testData.sections.vocab?.length || 10;
-    testData.sections.vocab?.forEach((item, idx) => {
-      const userAns = (answers[`vocab_${idx}`] || "").trim();
-      const targetWord = item.front || item.word || "";
-      if (userAns.length >= 2 && userAns.includes(targetWord)) vocabCorrectCount++;
+        if (userAns === correctAns) {
+          translateScore += 10; // Đúng 100% -> 10đ/câu
+        } else if (matchRatio >= 0.8) {
+          translateScore += 8;  // Hợp lý, đủ ý chính -> 8đ/câu
+        } else if (matchRatio >= 0.5) {
+          translateScore += 5;  // Đúng được một nửa -> 5đ/câu
+        } else if (matchRatio > 0) {
+          translateScore += 2;  // Có từ khóa đúng -> 2đ/câu
+        }
+      }
     });
-    const vocabScore = (vocabCorrectCount / vocabTotal) * (isHSK12 ? 50 : 25);
 
-    let dictationCorrectCount = 0;
-    const dictationTotal = testData.sections.dictation?.length || 5;
-    testData.sections.dictation?.forEach((item, idx) => {
-      const userAns = (answers[`dictation_${idx}`] || "").trim().replace(/\s+/g, "");
-      const correctAns = (item.chinese || item.sentence || "").trim().replace(/\s+/g, "").replace(/[.!?。]/g, "");
-      if (userAns === correctAns) dictationCorrectCount++;
+    // 2. CHẤM ĐIỂM PHẦN SẮP XẾP (Tối đa 100 điểm - Bắt buộc đúng thứ tự)
+    let arrangeCorrectCount = 0;
+    const arrangeTotal = testData.sections.arrange?.length || 10;
+    testData.sections.arrange?.forEach((item, idx) => {
+      const userAns = (answers[`arrange_${idx}`] || "").trim().replace(/\s+/g, "");
+      const correctAns = (item.chinese || item.front || "").trim().replace(/\s+/g, "").replace(/[.!?。，？！、]/g, "");
+      if (userAns === correctAns && userAns.length > 0) arrangeCorrectCount++;
     });
-    const dictationScore = (dictationCorrectCount / dictationTotal) * (isHSK12 ? 50 : 25);
+    const arrangeScore = (arrangeCorrectCount / arrangeTotal) * 100; // 100 điểm tối đa
 
-    let repeatScore = 0;
+    // 3. CHẤM ĐIỂM PHẦN NGHỊ LUẬN (Chỉ HSK 3-6) (Tối đa 100 điểm)
+    let essayScore = 0;
     if (!isHSK12) {
-      let repeatDoneCount = 0;
-      const repeatTotal = testData.sections.repeat?.length || 1;
-      testData.sections.repeat?.forEach((item, idx) => {
-        if ((answers[`repeat_${idx}`] || "").trim().length > 0) repeatDoneCount++;
+      const essayTotal = testData.sections.essay?.length || 2; // 2 câu
+      let currentEssayScore = 0;
+      testData.sections.essay?.forEach((item, idx) => {
+        const ans = (answers[`essay_${idx}`] || "").trim();
+        // Điểm max mỗi câu là 50đ. Tạm mô phỏng chấm dựa theo độ dài và nỗ lực viết.
+        if (ans.length >= 40) currentEssayScore += 50;
+        else if (ans.length >= 20) currentEssayScore += 35;
+        else if (ans.length > 0) currentEssayScore += 15;
       });
-      repeatScore = (repeatDoneCount / repeatTotal) * 30;
+      essayScore = currentEssayScore;
     }
 
-    let writingScore = 0;
-    if (!isHSK12) {
-      const writingAns = (answers[`writing_0`] || "").trim();
-      if (writingAns.length >= 10) writingScore = 20;
-      else if (writingAns.length > 0) writingScore = 10;
-    }
-
-    const totalCalculatedScore = Math.round(vocabScore + dictationScore + repeatScore + writingScore);
+    const totalCalculatedScore = Math.round(translateScore + arrangeScore + essayScore);
     const evaluation = evaluateTestResult(selectedLevel, totalCalculatedScore);
     setResult(evaluation);
 
-    if (totalCalculatedScore >= 70 && user) {
+    // Lưu vào Firebase nếu pass (Điểm >= mức Pass quy định ở evaluateTestResult)
+    const passThreshold = isHSK12 ? 120 : 180;
+    if (totalCalculatedScore >= passThreshold && user) {
       try {
         const studentRef = doc(db, "progress", user.id);
         let updateData = {};
@@ -209,40 +216,135 @@ export default function PlacementTestPage() {
     }
   };
 
+  // --- MÀN HÌNH CHỌN CẤP ĐỘ ---
   if (!selectedLevel) {
     return (
-      <main className="min-h-screen bg-slate-50 p-6 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-black text-slate-800 mb-2">Bài Kiểm Tra Định Cấp Độ (Placement Test)</h1>
-        <p className="text-slate-500 mb-8">Chọn cấp độ bạn muốn thử sức:</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((lvl) => (
-            <button
-              key={lvl}
-              onClick={() => handleStartTest(lvl)}
-              className="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-rose-500 hover:shadow-md transition text-left cursor-pointer"
-            >
-              <div className="text-xl font-black text-rose-600 mb-1">HSK {lvl}</div>
-              <p className="text-xs text-slate-400 font-medium">{lvl <= 2 ? "2 phần chính (Tổng 100đ)" : "4 phần chuyên sâu (Tổng 100đ)"}</p>
-            </button>
-          ))}
+      <main className="min-h-screen bg-[#F4F8F5] relative selection:bg-emerald-200">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-40"
+          style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F4F8F5]/90 to-[#F4F8F5]/40 backdrop-blur-[2px]"></div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center">
+          <div className="w-full flex justify-start mb-8">
+             <Link href="/">
+               <button className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl font-bold text-sm text-slate-600 shadow-sm border border-emerald-50 hover:text-[#08A66A] transition-all">
+                 <span>←</span> Trang chủ
+               </button>
+             </Link>
+          </div>
+
+          <div className="text-center mb-12">
+            <div className="w-20 h-20 bg-white rounded-3xl mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-emerald-100/50">🎯</div>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Đánh Giá Năng Lực</h1>
+            <p className="text-slate-600 font-medium max-w-lg mx-auto leading-relaxed">
+              Vượt qua bài kiểm tra để chứng minh năng lực và mở khóa các cấp độ HSK cao hơn trong hệ thống.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+            {[1, 2, 3, 4, 5, 6].map((lvl) => (
+              <div
+                key={lvl}
+                onClick={() => handleStartTest(lvl)}
+                className="bg-white p-8 rounded-[32px] shadow-sm border-2 border-transparent hover:border-[#08A66A] hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer group relative overflow-hidden flex flex-col items-center text-center"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#DDF7EA]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <h2 className="text-3xl font-black text-slate-800 group-hover:text-[#08A66A] transition-colors mb-2 relative z-10">
+                  HSK {lvl}
+                </h2>
+                <div className="w-8 h-1 bg-slate-100 group-hover:bg-[#08A66A] rounded-full mb-4 transition-colors relative z-10"></div>
+                
+                <p className="text-xs text-slate-500 font-medium relative z-10">
+                  {lvl <= 2 ? "2 Phần (Dịch, Sắp xếp)" : "3 Phần (Dịch, Xếp, Viết)"}
+                </p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 relative z-10">
+                  Tổng {lvl <= 2 ? 200 : 300} điểm
+                </p>
+                
+                <div className="mt-6 w-10 h-10 rounded-full bg-slate-50 group-hover:bg-[#08A66A] text-slate-400 group-hover:text-white flex items-center justify-center transition-colors relative z-10 shadow-inner">
+                  <span className="font-black">→</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     );
   }
 
+  // --- MÀN HÌNH LOADING ---
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang tải dữ liệu HSK {selectedLevel}...</div>;
+    return (
+      <div className="min-h-screen bg-[#F4F8F5] flex flex-col items-center justify-center relative">
+        <div className="text-6xl mb-6 animate-bounce">🐸</div>
+        <h3 className="text-xl font-black text-[#08A66A] uppercase tracking-widest">Đang tải đề thi HSK {selectedLevel}...</h3>
+        <p className="text-slate-500 text-sm mt-2 font-medium">Chuẩn bị tinh thần nào!</p>
+      </div>
+    );
   }
 
+  // --- MÀN HÌNH KẾT QUẢ MỚI (PHÙ HỢP LOGIC 3 TRẠNG THÁI) ---
   if (result) {
+    const isFailed = result.status === "FAIL";
+    const isWarn = result.status === "PASS_WARN";
+    const isExcellent = result.status === "EXCELLENT";
+    
+    // Cấu hình giao diện tùy theo trạng thái
+    const config = {
+      FAIL: { icon: '💦', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', title: 'Chưa đạt yêu cầu!' },
+      PASS_WARN: { icon: '⚠️', color: 'text-amber-500', bg: 'bg-[#FFF8E8]', border: 'border-[#FFC83D]/30', title: 'Khuyến nghị học lại!' },
+      EXCELLENT: { icon: '🏆', color: 'text-[#08A66A]', bg: 'bg-[#DDF7EA]', border: 'border-[#08A66A]/20', title: 'Chúc mừng bạn!' }
+    };
+    const ui = config[result.status];
+
     return (
-      <main className="min-h-screen bg-slate-50 p-6 max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 w-full">
-          <h2 className="text-2xl font-black text-slate-800 mb-4">Kết Quả Kiểm Tra</h2>
-          <p className="text-slate-600 font-medium mb-6">{result.message}</p>
-          <a href="/" className="px-6 py-3 bg-rose-600 text-white rounded-xl font-bold shadow-md hover:bg-rose-700 transition inline-block">
-            Quay về Trang Chủ
-          </a>
+      <main className="min-h-screen bg-[#F4F8F5] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-20" style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }}></div>
+        <div className="absolute inset-0 bg-[#F4F8F5]/80 backdrop-blur-md"></div>
+        
+        <div className="bg-white p-10 md:p-14 rounded-[40px] shadow-2xl border border-white max-w-lg w-full text-center relative z-10 flex flex-col items-center animate-slide-up-fade">
+          
+          {/* Vòng tròn biểu tượng */}
+          <div className="w-28 h-28 rounded-full bg-slate-50 flex items-center justify-center text-5xl shadow-inner border border-slate-100 mb-6 relative">
+            {ui.icon}
+            {!isFailed && <div className={`absolute -inset-2 rounded-full border-4 ${isExcellent ? 'border-[#08A66A]' : 'border-amber-400'} border-dashed animate-[spin_10s_linear_infinite] opacity-30`}></div>}
+          </div>
+          
+          <h2 className={`text-3xl font-black mb-2 ${ui.color}`}>
+            {ui.title}
+          </h2>
+          
+          {/* Bảng điểm tổng kết */}
+          <div className={`p-8 rounded-[32px] w-full my-8 relative overflow-hidden border ${ui.bg} ${ui.border}`}>
+            <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-30 ${isFailed ? 'bg-white/50' : 'bg-white'}`}></div>
+            <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 relative z-10">Điểm tổng kết</p>
+            <p className={`text-7xl font-black relative z-10 ${ui.color}`}>
+              {result.score} <span className="text-3xl opacity-50 font-bold">/ {result.maxScore}</span>
+            </p>
+          </div>
+
+          <p className="text-slate-600 font-medium mb-10 leading-relaxed px-2 text-sm">
+            {result.message}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
+            {(isFailed || isWarn) && (
+              <button 
+                onClick={() => { setResult(null); handleStartTest(selectedLevel); }}
+                className="flex-1 px-6 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-black text-sm hover:border-slate-300 transition-colors"
+              >
+                Thử lại lần nữa
+              </button>
+            )}
+            <Link href="/" className="flex-1 w-full">
+              <button className="w-full px-6 py-4 bg-[#172033] text-white rounded-2xl font-black text-sm shadow-xl hover:bg-slate-800 transition-colors uppercase tracking-widest">
+                Về Trang Chủ
+              </button>
+            </Link>
+          </div>
         </div>
       </main>
     );
@@ -250,126 +352,150 @@ export default function PlacementTestPage() {
 
   const isHSK12 = selectedLevel <= 2;
 
+  // --- MÀN HÌNH LÀM BÀI CHÍNH ---
   return (
-    <main className="min-h-screen bg-slate-50 p-6 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-black text-slate-800">Đề Thi Thử HSK {selectedLevel} ({isHSK12 ? "2 phần" : "4 phần"})</h1>
-        <button onClick={() => setSelectedLevel(null)} className="text-sm font-bold text-slate-400 hover:text-slate-600 cursor-pointer">Quay lại chọn cấp độ</button>
-      </div>
+    <main className="min-h-screen bg-[#F4F8F5] pb-20 relative selection:bg-emerald-200">
+      
+      {/* Header làm bài cố định */}
+      <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-30 shadow-sm">
+        <div className="max-w-4xl mx-auto px-6 h-20 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#DDF7EA] rounded-2xl flex items-center justify-center text-[#08A66A] text-2xl shadow-inner border border-emerald-50">🎯</div>
+            <div>
+              <h1 className="font-black text-slate-800 text-lg">Bài Đánh Giá Năng Lực HSK {selectedLevel}</h1>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{isHSK12 ? "2 Phần • Tổng 200 điểm" : "3 Phần • Tổng 300 điểm"}</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => {
+              if (window.confirm("Bạn có chắc chắn muốn hủy bài thi này không?")) setSelectedLevel(null);
+            }} 
+            className="px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl text-xs font-bold transition-colors border border-rose-100"
+          >
+            Hủy bài thi
+          </button>
+        </div>
+      </header>
 
-      {testData && (
-        <div className="space-y-6">
-          {/* Phần 1: Đặt câu */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-blue-600 mb-2">Phần 1: Đặt Câu Với Từ Cho Trước ({isHSK12 ? "50 điểm" : "25 điểm"})</h3>
-            <div className="space-y-4">
-              {testData.sections.vocab?.map((item, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 rounded-xl">
-                  <p className="font-bold text-slate-700 mb-2">Q{idx + 1}: <span className="text-xl text-blue-600 px-2 py-0.5 bg-blue-50 rounded border border-blue-100">{item.front || item.word}</span></p>
+      <div className="max-w-4xl mx-auto px-4 mt-8 space-y-8 animate-fade-in">
+        
+        {/* Phần 1: Dịch Câu */}
+        {testData?.sections?.translate && testData.sections.translate.length > 0 && (
+          <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-slate-200">
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+              <span className="text-2xl">✍️</span>
+              <div>
+                <h3 className="text-xl font-black text-slate-800">Phần 1: Dịch Câu</h3>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">10 Câu • 100 điểm</p>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              {testData.sections.translate.map((item, idx) => (
+                <div key={`trans-${idx}`} className="bg-[#F4F8F5] p-6 rounded-[24px] border border-emerald-50">
+                  <div className="flex items-start gap-3 mb-4">
+                    <span className="w-6 h-6 shrink-0 rounded-full bg-white text-slate-400 text-xs font-bold flex items-center justify-center shadow-sm border border-slate-200">{idx + 1}</span>
+                    <p className="font-bold text-slate-700 text-lg mt-0.5">
+                      {item.vietnamese || item.front}
+                    </p>
+                  </div>
                   <input 
                     type="text" 
-                    placeholder="Nhập câu tiếng Trung chứa từ trên..."
-                    value={answers[`vocab_${idx}`] || ""}
-                    onChange={(e) => handleAnswerChange("vocab", idx, e.target.value)}
-                    className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 bg-white font-medium"
+                    placeholder="Nhập bản dịch tiếng Trung (Chữ Hán)..."
+                    value={answers[`translate_${idx}`] || ""}
+                    onChange={(e) => handleAnswerChange("translate", idx, e.target.value)}
+                    className="w-full p-4 border-2 border-slate-200 rounded-2xl text-base outline-none focus:border-[#08A66A] focus:ring-4 focus:ring-[#08A66A]/10 bg-white font-medium text-slate-800 transition-all placeholder:text-slate-300"
                   />
                 </div>
               ))}
             </div>
           </div>
+        )}
 
-          {/* Phần 2: Nghe chép chính tả */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-black text-teal-600 mb-2">Phần 2: Nghe Chép Chính Tả ({isHSK12 ? "50 điểm" : "25 điểm"})</h3>
-            <p className="text-xs text-slate-400 mb-4 font-medium">Mỗi audio tối đa nghe 2 lần:</p>
-            {testData.sections.dictation?.map((item, idx) => {
-              const audioText = item.chinese || item.sentence || "你好";
-              const currentCount = playCounts[idx] || 0;
-              return (
-                <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    disabled={currentCount >= 2}
-                    onClick={() => handlePlayAudio(idx, audioText)}
-                    className={`px-4 py-2 font-bold rounded-xl text-xs transition shadow shrink-0 ${currentCount >= 2 ? "bg-slate-300 text-slate-500 cursor-not-allowed" : "bg-teal-600 hover:bg-teal-700 text-white cursor-pointer"}`}
-                  >
-                    🔊 Phát Audio {idx + 1} ({2 - currentCount} lần)
-                  </button>
+        {/* Phần 2: Sắp xếp câu */}
+        {testData?.sections?.arrange && testData.sections.arrange.length > 0 && (
+          <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-slate-200">
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+              <span className="text-2xl">🧩</span>
+              <div>
+                <h3 className="text-xl font-black text-slate-800">Phần 2: Sắp Xếp Câu</h3>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">10 Câu • 100 điểm</p>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              {testData.sections.arrange.map((item, idx) => (
+                <div key={`arr-${idx}`} className="bg-[#F4F8F5] p-6 rounded-[24px] border border-emerald-50">
+                  <div className="flex items-start gap-3 mb-4">
+                    <span className="w-6 h-6 shrink-0 rounded-full bg-white text-slate-400 text-xs font-bold flex items-center justify-center shadow-sm border border-slate-200">{idx + 1}</span>
+                    <div className="flex-1">
+                      <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Sắp xếp các từ sau thành câu đúng:</p>
+                      <div className="flex flex-wrap gap-2">
+                         {item.scrambled.split(' - ').map((char, i) => (
+                             <span key={i} className="px-4 py-2 bg-white border border-emerald-200 text-[#087A55] font-black rounded-xl shadow-sm text-lg cursor-default select-none">{char}</span>
+                         ))}
+                      </div>
+                    </div>
+                  </div>
                   <input 
                     type="text" 
-                    placeholder="Nghe và gõ lại..."
-                    value={answers[`dictation_${idx}`] || ""}
-                    onChange={(e) => handleAnswerChange("dictation", idx, e.target.value)}
-                    className="w-full sm:w-1/2 p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-teal-500 bg-white font-medium"
+                    placeholder="Gõ lại câu hoàn chỉnh..."
+                    value={answers[`arrange_${idx}`] || ""}
+                    onChange={(e) => handleAnswerChange("arrange", idx, e.target.value)}
+                    className="w-full p-4 border-2 border-slate-200 rounded-2xl text-base outline-none focus:border-[#08A66A] focus:ring-4 focus:ring-[#08A66A]/10 bg-white font-medium text-slate-800 transition-all placeholder:text-slate-300"
                   />
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Phần 3: Nghe Lặp Lại HSKK (Chỉ HSK 3-6) */}
-          {!isHSK12 && (
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-              <h3 className="text-lg font-black text-purple-600 mb-2">Phần 3: Nghe Lặp Lại HSKK (30 điểm)</h3>
-              <p className="text-xs text-slate-400 mb-4 font-medium">⚠️ Mỗi câu mẫu ở đây tối đa nghe 2 lần:</p>
-              {testData.sections.repeat?.map((item, idx) => {
-                const played = repeatPlayCounts[idx] || 0;
-                const sampleText = item.sentence || item.text || item.prompt || "";
-                return (
-                  <div key={idx} className="p-4 bg-slate-50 rounded-xl mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      disabled={played >= 2}
-                      onClick={() => handlePlayRepeatAudio(idx, sampleText)}
-                      className={`px-4 py-2 font-bold rounded-xl text-xs transition shadow shrink-0 ${
-                        played >= 2 ? "bg-slate-300 text-slate-500 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
-                      }`}
-                    >
-                      🔊 Nghe Câu Mẫu {idx + 1} ({2 - played} lần)
-                    </button>
-                    <input 
-                      type="text" 
-                      placeholder="Gõ lại câu vừa nghe..."
-                      value={answers[`repeat_${idx}`] || ""}
-                      onChange={(e) => handleAnswerChange("repeat", idx, e.target.value)}
-                      className="w-full sm:w-1/2 p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-500 bg-white font-medium"
-                    />
-                  </div>
-                );
-              })}
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Phần 4: Viết Luận / Phản Xạ HSKK (Chỉ HSK 3-6) */}
-          {!isHSK12 && (
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-              <h3 className="text-lg font-black text-rose-600 mb-2">Phần 4: Viết Luận / Phản Xạ HSKK (20 điểm)</h3>
-              {testData.sections.writing?.map((item, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 rounded-xl">
-                  <p className="font-bold text-slate-700 mb-3 text-sm bg-rose-50 p-3 rounded-xl border border-rose-100">
-                    {item.prompt || item.question || item.content || item}
-                  </p>
+        {/* Phần 3: Viết Luận (Chỉ HSK 3-6) */}
+        {!isHSK12 && testData?.sections?.essay && testData.sections.essay.length > 0 && (
+          <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-slate-200">
+            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+              <span className="text-2xl">📝</span>
+              <div>
+                <h3 className="text-xl font-black text-slate-800">Phần 3: Viết Luận / Phản Xạ</h3>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">2 Câu • 100 điểm</p>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              {testData.sections.essay.map((item, idx) => (
+                <div key={`essay-${idx}`} className="bg-slate-50 p-6 rounded-[24px] border border-slate-100">
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-4">
+                    <p className="font-bold text-slate-800 text-sm leading-relaxed">
+                      <span className="text-rose-500 font-black mr-2">Q{idx + 1}:</span>
+                      {item.prompt}
+                    </p>
+                  </div>
+                  
                   <textarea 
                     rows={4}
                     placeholder="Viết câu trả lời bằng tiếng Trung tại đây..."
-                    value={answers[`writing_${idx}`] || ""}
-                    onChange={(e) => handleAnswerChange("writing", idx, e.target.value)}
-                    className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-rose-500 bg-white font-medium"
+                    value={answers[`essay_${idx}`] || ""}
+                    onChange={(e) => handleAnswerChange("essay", idx, e.target.value)}
+                    className="w-full p-5 border-2 border-slate-200 rounded-2xl text-base outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10 bg-white font-medium text-slate-800 transition-all resize-none placeholder:text-slate-300"
                   />
                 </div>
               ))}
             </div>
-          )}
+          </div>
+        )}
 
+        {/* Nút Submit */}
+        <div className="pt-8 pb-10 flex justify-center">
           <button 
             type="button"
             onClick={handleSubmit}
-            className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg cursor-pointer text-lg"
+            className="w-full md:w-auto md:min-w-[300px] py-5 px-8 bg-[#08A66A] text-white rounded-2xl font-black shadow-xl shadow-emerald-600/20 hover:bg-[#087A55] hover:-translate-y-1 transition-all text-lg tracking-wide flex items-center justify-center gap-3 uppercase"
           >
-            Nộp Bài & Nhận Kết Quả
+            <span>✓</span> Nộp Bài & Xem Điểm
           </button>
         </div>
-      )}
+
+      </div>
     </main>
   );
 }

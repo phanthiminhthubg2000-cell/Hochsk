@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase"; 
 import { doc, setDoc, getDoc, collection, getDocs, query, limit, serverTimestamp } from "firebase/firestore";
 
@@ -56,6 +56,177 @@ export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [hallOfFameTab, setHallOfFameTab] = useState("hskk");
 
+  // ==========================================
+  // STATE: TÌM KIẾM, HỎI AI & VIẾT TAY
+  // ==========================================
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiResponse, setAiResponse] = useState(null);
+
+  const [showHandwriting, setShowHandwriting] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [handwritingResult, setHandwritingResult] = useState([]);
+  const canvasRef = useRef(null);
+  
+  // Dùng useRef để lưu tọa độ viết tay (đảm bảo Real-time, không bị trễ như useState)
+  const strokesRef = useRef([]);
+  const currentStrokeRef = useRef([[], [], []]); 
+
+  // Bắt sự kiện phím tắt Ctrl+K để mở tìm kiếm
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+      if (e.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen]);
+
+  // Logic lọc từ điển nhanh
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const mockData = [
+      { hanzi: "喜欢", pinyin: "xǐhuan", meaning: "thích", type: "Từ vựng" },
+      { hanzi: "爱", pinyin: "ài", meaning: "yêu", type: "Từ vựng" },
+      { hanzi: "因为...所以...", pinyin: "yīnwèi...suǒyǐ...", meaning: "bởi vì... nên...", type: "Ngữ pháp" },
+      { hanzi: "学习", pinyin: "xuéxí", meaning: "học tập", type: "Từ vựng" },
+    ];
+    const results = mockData.filter(item => 
+      item.hanzi.includes(searchQuery) ||
+      item.pinyin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.meaning.toLowerCase().includes(searchQuery.toLowerCase())
+    ).slice(0, 4);
+    setSearchResults(results);
+  }, [searchQuery]);
+
+  // Hàm gọi API Hỏi AI
+  const handleAskAI = async () => {
+    if (!searchQuery.trim()) return;
+    setIsAiLoading(true);
+    setAiResponse(null);
+
+    try {
+      const response = await fetch('/api/ask-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: searchQuery }),
+        cache: 'no-store'
+      });
+
+      if (!response.ok) throw new Error("Lỗi API AI");
+      const data = await response.json();
+      setAiResponse(data.answer || data.response || data.message || "AI đã nhận câu hỏi nhưng không có nội dung trả về.");
+    } catch (error) {
+      console.error("AI Error:", error);
+      setAiResponse("⚠️ Xin lỗi, Giáo viên AI đang bận hoặc bạn chưa thiết lập API backend tại '/api/ask-ai'. Vui lòng kiểm tra lại server để kết nối với Gemini/OpenAI nhé!");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  // ==========================================
+  // HÀM NHẬN DIỆN CHỮ VIẾT TAY ĐÃ SỬA LỖI
+  // ==========================================
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#172033";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setIsDrawing(true);
+    
+    // Bắt đầu một nét mới, để trống mảng thời gian
+    currentStrokeRef.current = [[x], [y], []];
+  };
+
+  const draw = (e) => {
+    if (!isDrawing || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    ctx.lineTo(x, y);
+    ctx.stroke();
+
+    // Thêm tọa độ trực tiếp vào reference
+    currentStrokeRef.current[0].push(x);
+    currentStrokeRef.current[1].push(y);
+  };
+
+  const stopDrawing = async () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+
+    if (currentStrokeRef.current[0].length === 0) return;
+
+    // Đẩy nét vừa vẽ vào tổng các nét
+    strokesRef.current.push([...currentStrokeRef.current]);
+
+    try {
+      const response = await fetch('https://inputtools.google.com/request?itc=zh-CN-t-i0-handwrit&app=mobilesearch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          app_version: 0.4,
+          api_level: "5.37.3",
+          device: window.navigator.userAgent,
+          input_type: 0,
+          options: "enable_pre_space",
+          requests: [{
+            writing_guide: { writing_area_width: 200, writing_area_height: 200 },
+            pre_context: "",
+            max_num_results: 6,
+            max_completions: 0,
+            language: "zh-CN",
+            ink: strokesRef.current // Gửi tọa độ chuẩn xác
+          }]
+        })
+      });
+
+      const data = await response.json();
+      if (data[0] === "SUCCESS") {
+        setHandwritingResult(data[1][0][1]); // Cập nhật danh sách dự đoán
+      }
+    } catch (err) {
+      console.error("Lỗi nhận diện chữ viết tay:", err);
+    }
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Reset Data
+    setHandwritingResult([]);
+    strokesRef.current = [];
+    currentStrokeRef.current = [[], [], []];
+  };
+
+  // ==========================================
+  // FETCH USER DATA & FIREBASE
+  // ==========================================
   useEffect(() => {
     async function syncUserAndFetchData() {
       if (user) {
@@ -69,14 +240,9 @@ export default function Home() {
             setUserData(initialData);
           } else {
             initialData = {
-              passedHSK1: false,
-              passedHSK2: false,
-              passedHSK3: false,
-              passedHSK4: false,
-              passedHSK5: false,
-              passedHSK6: false,
-              learnedVocab: [],
-              hskkScore: null
+              passedHSK1: false, passedHSK2: false, passedHSK3: false,
+              passedHSK4: false, passedHSK5: false, passedHSK6: false,
+              learnedVocab: [], hskkScore: null
             };
             setUserData(initialData);
           }
@@ -127,7 +293,6 @@ export default function Home() {
           const data = docSnap.data();
           const vocabLen = Array.isArray(data.learnedVocab) ? data.learnedVocab.length : 0;
           const userStreak = data.streakCount || 1;
-          
           const realHskkScore = (data.hskkScore !== undefined && data.hskkScore !== null) ? data.hskkScore : null;
 
           usersList.push({
@@ -240,15 +405,13 @@ export default function Home() {
   return (
     <div className="flex min-h-screen font-sans text-slate-800 relative overflow-hidden selection:bg-emerald-200">
       
-      {/* BACKGROUND ẢNH CÓ LỚP PHỦ MỜ CHO TOÀN BỘ TRANG (CẢ SIDEBAR & MAIN) */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: "url('/hskk/nen.jpg')" }} /* <--- THAY LINK ẢNH NỀN TOÀN TRANG TẠI ĐÂY */
+        style={{ backgroundImage: "url('/hskk/nen.jpg')" }} 
       >
         <div className="absolute inset-0 bg-[#F4F8F5]/85 backdrop-blur-[4px]"></div>
       </div>
 
-      {/* SIDEBAR TRÁI - GIAO DIỆN KÍNH MỜ (GLASSMORPHISM) */}
       <aside className={`relative z-10 border-r border-white/50 hidden md:flex flex-col justify-between sticky top-0 h-screen p-5 transition-all duration-300 bg-white/40 backdrop-blur-xl shadow-[4px_0_24px_rgba(8,166,106,0.05)] ${isSidebarCollapsed ? 'w-24' : 'w-[280px]'}`}>
         <div className="relative z-10 flex flex-col justify-between h-full">
           <div>
@@ -349,18 +512,21 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* MAIN CONTENT PHẢI */}
       <main className="relative z-10 flex-1 flex flex-col min-w-0">
         
-        {/* HEADER GIAO DIỆN KÍNH MỜ */}
         <header className="h-20 bg-white/40 backdrop-blur-xl border-b border-white/50 px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 shadow-sm">
-          <div className="w-full max-w-md relative hidden sm:block">
-            <input 
-              type="text" 
-              placeholder="🔍 Tìm từ vựng, ngữ pháp, chủ đề..." 
-              className="w-full bg-white/60 border-2 border-white rounded-2xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#08A66A]/20 text-slate-700 font-medium placeholder:text-slate-400"
-            />
-            <span className="absolute right-3 top-2.5 bg-white text-slate-400 text-xs font-bold px-2 py-0.5 rounded-lg border border-slate-100 shadow-sm">Ctrl K</span>
+          
+          <div 
+            onClick={() => setIsSearchOpen(true)}
+            className="w-full max-w-md relative hidden sm:block cursor-pointer group"
+          >
+            <div className="w-full bg-white/60 border-2 border-white rounded-2xl px-4 py-2.5 text-sm flex items-center gap-2 group-hover:bg-white/90 transition-all shadow-sm">
+              <span className="text-lg opacity-60">🔍</span>
+              <span className="text-slate-500 font-medium select-none">Tra từ vựng, ngữ pháp hoặc hỏi AI...</span>
+            </div>
+            <span className="absolute right-3 top-2.5 bg-white text-slate-400 text-xs font-bold px-2 py-0.5 rounded-lg border border-slate-100 shadow-sm group-hover:text-[#08A66A] transition-colors">
+              Ctrl K
+            </span>
           </div>
 
           <div className="flex items-center gap-4 ml-auto">
@@ -391,13 +557,10 @@ export default function Home() {
 
         <div className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8">
           
-          {/* BỐ CỤC CHÍNH: TRÁI (BẢNG VÀNG + BANNER) | PHẢI (ĐÁNH GIÁ TRÌNH ĐỘ) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             
-            {/* CỘT TRÁI (Span 2): BẢNG VÀNG & BANNER */}
             <div className="lg:col-span-2 flex flex-col gap-6">
               
-              {/* 1. BẢNG VÀNG HALL OF FAME (Top 3 - Dark Luxury) */}
               <section className="flex-1 relative p-6 md:p-8 overflow-hidden rounded-[32px] text-white shadow-xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] border border-white/20 flex flex-col justify-center">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,210,100,0.1),transparent_50%)] pointer-events-none"></div>
 
@@ -487,7 +650,6 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* 2. BANNER GIỚI THIỆU CHÍNH */}
               <section 
                 className="flex-1 rounded-[32px] p-6 md:p-8 border border-white shadow-md relative overflow-hidden flex flex-col justify-center bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: "url('/hskk/tuvung.jpg')" }} 
@@ -514,7 +676,6 @@ export default function Home() {
 
             </div>
 
-            {/* CỘT PHẢI (Span 1): ĐÁNH GIÁ TRÌNH ĐỘ */}
             <div className="lg:col-span-1">
               <div 
                 className="relative h-full bg-white/80 backdrop-blur-xl rounded-[32px] p-6 md:p-8 shadow-sm border border-white flex flex-col justify-between"
@@ -563,10 +724,8 @@ export default function Home() {
 
           </div>
 
-          {/* 3 BIỂU ĐỒ HÌNH TRÒN CÓ NỀN ẢNH TÙY CHỈNH */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
             
-            {/* 1. Biểu đồ Roadmap HSK */}
             <div 
               className="relative rounded-[32px] p-6 shadow-sm border border-white flex flex-col items-center justify-between overflow-hidden bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: "url('/hskk/anh1.jpg')" }} 
@@ -592,7 +751,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 2. Biểu đồ Thành tích Huy hiệu */}
             <div 
               className="relative rounded-[32px] p-6 shadow-sm border border-white flex flex-col items-center justify-between overflow-hidden bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: "url('/hskk/anh2.jpg')" }} 
@@ -618,7 +776,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 3. Biểu đồ Mục tiêu Học Từ vựng */}
             <div 
               className="relative rounded-[32px] p-6 shadow-sm border border-white flex flex-col items-center justify-between overflow-hidden bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: "url('/hskk/anh3.jpg')" }} 
@@ -650,7 +807,6 @@ export default function Home() {
 
           </div>
 
-          {/* HỆ THỐNG CÔNG CỤ HỌC TẬP */}
           <div className="space-y-4 pt-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <h2 className="text-xl font-black text-slate-900">Công cụ học tập</h2>
@@ -691,7 +847,6 @@ export default function Home() {
                       className="relative p-6 rounded-[32px] shadow-sm border border-white hover:border-[#08A66A] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group h-full overflow-hidden bg-cover bg-center bg-no-repeat"
                       style={{ backgroundImage: tool.bgImage }}
                     >
-                      {/* Lớp phủ (overlay) giúp chữ nổi lên trên nền ảnh */}
                       <div className="absolute inset-0 bg-white/85 backdrop-blur-[4px] pointer-events-none z-0 group-hover:bg-white/75 transition-all"></div>
                       
                       <div className="relative z-10 flex flex-col h-full justify-between">
@@ -763,6 +918,204 @@ export default function Home() {
 
         </div>
       </main>
+
+      {/* =========================================
+          MODAL TÌM KIẾM & HỎI AI (CTRL + K)
+          ========================================= */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[8vh] px-4">
+          <div 
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => { setIsSearchOpen(false); setSearchQuery(""); setAiResponse(null); }}
+          ></div>
+
+          <div className="relative bg-white/95 backdrop-blur-xl w-full max-w-3xl rounded-[32px] shadow-2xl border border-white overflow-hidden animate-fade-in flex flex-col max-h-[85vh]">
+            
+            <div className="flex flex-col border-b border-slate-100">
+              <div className="flex items-center px-6 py-5">
+                <span className="text-2xl mr-4 opacity-50">✨</span>
+                <input 
+                  autoFocus
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && searchQuery.trim()) handleAskAI();
+                  }}
+                  placeholder="Tra từ vựng hoặc hỏi AI kiến thức..."
+                  className="flex-1 bg-transparent text-xl font-bold text-slate-800 outline-none placeholder:text-slate-300 placeholder:font-medium"
+                />
+                
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setShowHandwriting(!showHandwriting)}
+                    className={`p-2 rounded-xl font-black text-xl transition-all border ${showHandwriting ? 'bg-[#08A66A] text-white border-[#08A66A] shadow-md shadow-emerald-500/20' : 'bg-slate-50 text-slate-400 border-slate-200 hover:text-[#08A66A]'}`}
+                    title="Viết tay chữ Hán"
+                  >
+                    ✍️
+                  </button>
+                  <button 
+                    onClick={() => { setIsSearchOpen(false); setSearchQuery(""); setAiResponse(null); }}
+                    className="text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-400 px-3 py-2 rounded-xl hover:bg-rose-50 hover:text-rose-500 transition-colors"
+                  >
+                    ESC
+                  </button>
+                </div>
+              </div>
+
+              {showHandwriting && (
+                <div className="bg-[#F4F8F5] p-4 border-t border-emerald-100 animate-slide-down">
+                  <div className="flex gap-4">
+                    <div className="flex-1 relative bg-white rounded-2xl border-2 border-emerald-100 overflow-hidden shadow-inner flex justify-center w-full max-w-[200px] mx-auto h-[200px]">
+                      <div className="absolute inset-0 pointer-events-none opacity-20 flex flex-col">
+                        <div className="flex-1 border-b border-dashed border-slate-500"></div>
+                        <div className="flex-1"></div>
+                        <div className="absolute inset-0 flex">
+                          <div className="flex-1 border-r border-dashed border-slate-500"></div>
+                          <div className="flex-1"></div>
+                        </div>
+                      </div>
+
+                      <canvas
+                        ref={canvasRef}
+                        width={200}
+                        height={200}
+                        className="cursor-crosshair touch-none relative z-10 w-full h-full"
+                        onPointerDown={startDrawing}
+                        onPointerMove={draw}
+                        onPointerUp={stopDrawing}
+                        onPointerOut={stopDrawing}
+                      ></canvas>
+
+                      <button
+                        onClick={clearCanvas}
+                        className="absolute bottom-2 right-2 bg-slate-100/80 backdrop-blur-sm text-slate-500 p-1.5 rounded-lg text-[10px] font-bold hover:bg-rose-50 hover:text-rose-500 z-20 transition"
+                      >
+                        🗑️ Xóa
+                      </button>
+                    </div>
+
+                    <div className="w-[110px] shrink-0 flex flex-col">
+                      <p className="text-[10px] font-black text-[#08A66A] uppercase tracking-wider text-center border-b border-emerald-100 pb-2 mb-2">Dự đoán</p>
+                      <div className="grid grid-cols-2 gap-2 content-start flex-1 overflow-y-auto custom-scrollbar pr-1">
+                        {handwritingResult.length > 0 ? handwritingResult.map((char, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              setSearchQuery(prev => prev + char);
+                              clearCanvas();
+                            }}
+                            className="aspect-square bg-white border border-emerald-100 rounded-xl text-xl font-black text-slate-700 hover:bg-[#08A66A] hover:text-white hover:border-[#08A66A] transition-all shadow-sm flex items-center justify-center"
+                          >
+                            {char}
+                          </button>
+                        )) : (
+                          <div className="col-span-2 flex items-center justify-center text-slate-400 text-xs text-center border-2 border-dashed border-emerald-100 rounded-xl aspect-[2/1] bg-white">
+                            Viết chữ để<br/>nhận diện
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50/50">
+              
+              {searchQuery.trim() !== "" && !aiResponse && !isAiLoading && (
+                <div 
+                  onClick={handleAskAI}
+                  className="mb-6 p-4 bg-gradient-to-r from-[#DDF7EA] to-emerald-50 border border-[#08A66A]/20 rounded-2xl cursor-pointer hover:shadow-md transition group flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition">🤖</div>
+                  <div>
+                    <h4 className="font-black text-[#087A55]">Hỏi Giáo viên AI</h4>
+                    <p className="text-xs text-[#08A66A] font-medium">Bấm vào đây để AI giải đáp kiến thức: <span className="font-bold text-slate-700">"{searchQuery}"</span></p>
+                  </div>
+                  <div className="ml-auto text-[#08A66A] font-black px-3 py-1 bg-white rounded-lg opacity-0 group-hover:opacity-100 transition">Enter ↵</div>
+                </div>
+              )}
+
+              {isAiLoading && (
+                <div className="p-6 bg-white border border-emerald-100 rounded-[24px] shadow-sm mb-6 flex items-start gap-4 animate-pulse">
+                   <div className="w-10 h-10 bg-[#08A66A] text-white rounded-full flex items-center justify-center text-xl shrink-0">🐸</div>
+                   <div className="pt-2">
+                     <div className="flex gap-1.5">
+                       <div className="w-2.5 h-2.5 bg-emerald-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                       <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                       <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                     </div>
+                     <p className="text-xs font-bold text-emerald-600 mt-2">AI đang phân tích câu hỏi...</p>
+                   </div>
+                </div>
+              )}
+
+              {aiResponse && !isAiLoading && (
+                <div className="p-6 bg-white border border-emerald-100 rounded-[24px] shadow-sm mb-6 flex items-start gap-4 animate-fade-in relative overflow-hidden">
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#DDF7EA] rounded-bl-full opacity-30 pointer-events-none"></div>
+                   
+                   <div className="w-10 h-10 bg-[#08A66A] text-white rounded-full flex items-center justify-center text-xl shrink-0 relative z-10 shadow-md">🐸</div>
+                   <div className="flex-1 relative z-10">
+                     <div className="flex items-center gap-2 mb-2">
+                       <h4 className="font-black text-[#087A55]">Giáo viên AI</h4>
+                       <span className="text-[9px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md font-bold border border-emerald-100">AI ASSISTANT</span>
+                     </div>
+                     
+                     <div className="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                       {aiResponse}
+                     </div>
+
+                     <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-3">
+                       <button className="text-xs font-bold text-slate-400 hover:text-[#08A66A] flex items-center gap-1"><span className="text-base">👍</span> Hữu ích</button>
+                       <button 
+                          onClick={() => { setAiResponse(null); setSearchQuery(""); }} 
+                          className="text-xs font-bold text-slate-400 hover:text-rose-500 flex items-center gap-1 ml-auto"
+                       >
+                         Hỏi câu khác
+                       </button>
+                     </div>
+                   </div>
+                </div>
+              )}
+
+              {!aiResponse && !isAiLoading && searchQuery.trim() !== "" && searchResults.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 mb-2">Kết quả từ điển nhanh</p>
+                  {searchResults.map((item, idx) => (
+                    <div 
+                      key={idx} 
+                      className="flex items-center justify-between p-4 bg-white hover:bg-[#DDF7EA]/50 border border-slate-100 hover:border-[#08A66A]/30 rounded-2xl cursor-pointer transition-all group shadow-sm"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-50 group-hover:bg-white rounded-xl flex items-center justify-center text-2xl font-black text-[#172033] shadow-inner border border-slate-200/50">
+                          {item.hanzi}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-slate-800 group-hover:text-[#08A66A]">{item.pinyin}</h4>
+                          <p className="text-sm text-slate-500 font-medium">{item.meaning}</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold text-[#08A66A] bg-[#DDF7EA] px-3 py-1 rounded-lg shadow-sm">
+                        {item.type}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {searchQuery.trim() === "" && !aiResponse && (
+                <div className="py-16 flex flex-col items-center justify-center text-center opacity-60">
+                  <span className="text-6xl mb-4 grayscale opacity-50">🔍</span>
+                  <p className="font-bold text-slate-500 text-lg">Bạn muốn tra cứu điều gì?</p>
+                  <p className="text-sm text-slate-400 mt-1 max-w-sm">Nhập từ vựng, ngữ pháp, pinyin, tiếng Việt hoặc đặt một câu hỏi cho AI.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
