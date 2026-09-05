@@ -40,7 +40,7 @@ export default function FlashcardPage() {
   const [sentenceResult, setSentenceResult] = useState(null); 
   
   const [userData, setUserData] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true); // Thêm state kiểm soát load user
+  const [loadingUser, setLoadingUser] = useState(true);
 
   const [examState, setExamState] = useState({
     isOpen: false,
@@ -90,15 +90,20 @@ export default function FlashcardPage() {
     fetchUserData();
   }, [user]);
 
-  // Kiểm tra khóa bộ HSK dựa trên kết quả Placement Test đã lưu trong Firebase
+  // Kiểm tra khóa bộ HSK: HSK 1 luôn mở, từ HSK 2 trở lên yêu cầu đã hoàn thành cấp trước hoặc pass test tương ứng
   const isHskLocked = (lvl) => {
-    if (!userData) return true; // Chưa tải xong thì tạm thời khóa để tránh chớp nháy
     const cleanLvl = String(lvl).replace(/\D/g, ''); 
     if (!cleanLvl) return true;
     const levelNum = parseInt(cleanLvl, 10);
     
-    const flagName = `passedHSK${levelNum}`;
-    return !userData[flagName];
+    // HSK 1 mặc định mở cho tất cả mọi người không cần test
+    if (levelNum === 1) return false;
+    
+    // Từ HSK 2 trở lên: Cần phải đạt cờ passed của cấp liền kề trước đó HOẶC passed cấp hiện tại
+    const requiredFlag = `passedHSK${levelNum - 1}`;
+    const currentFlag = `passedHSK${levelNum}`;
+    
+    return !userData?.[requiredFlag] && !userData?.[currentFlag];
   };
 
   useEffect(() => {
@@ -136,10 +141,7 @@ export default function FlashcardPage() {
     }
   }, [wordProgress]);
 
-  // Hiển thị màn hình chờ cho đến khi tải xong dữ liệu tiến độ từ Firebase
-  if (levelsData.length === 0 || loadingUser) {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang đồng bộ dữ liệu tiến độ...</div>;
-  }
+  if (levelsData.length === 0 || loadingUser) return <div className="min-h-screen flex items-center justify-center font-bold text-slate-600">Đang tải dữ liệu từ vựng...</div>;
 
   const activeLevelData = levelsData.find(l => l.level === viewingLevel) || levelsData[0];
   const filteredWords = activeLevelData.words.filter(word => {
@@ -394,7 +396,7 @@ export default function FlashcardPage() {
                         const locked = isHskLocked(lvl);
                         return (
                             <option key={lvl} value={lvl} disabled={locked}>
-                                Bộ {lvl} {locked ? "🔒 (Chưa vượt qua Test cấp độ)" : ""}
+                                Bộ {lvl} {locked ? "🔒 (Cần hoàn thành cấp trước hoặc làm Test)" : ""}
                             </option>
                         );
                     })}
@@ -457,7 +459,7 @@ export default function FlashcardPage() {
               <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center min-h-[450px]">
                 <div className="text-6xl mb-4">🔒</div>
                 <h3 className="text-2xl font-black text-slate-800 mb-2">Cấp độ {selectedHsk.toUpperCase()} đang bị khóa!</h3>
-                <p className="text-slate-500 mb-6 max-w-md">Bạn cần tham gia và vượt qua bài kiểm tra định cấp độ tương ứng tại mục <strong>Kiểm Tra Trình Độ</strong> để mở khóa bộ từ vựng này.</p>
+                <p className="text-slate-500 mb-6 max-w-md">Bạn cần hoàn thành cấp độ trước đó hoặc tham gia bài kiểm tra trình độ để mở khóa bộ từ vựng này.</p>
                 <Link href="/test" className="px-6 py-3 bg-purple-600 text-white font-bold rounded-2xl shadow hover:bg-purple-700 transition">
                   🎯 Đi tới Kiểm Tra Trình Độ ngay
                 </Link>

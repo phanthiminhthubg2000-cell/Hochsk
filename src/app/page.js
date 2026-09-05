@@ -26,8 +26,9 @@ export default function Home() {
             initialData = docSnap.data();
             setUserData(initialData);
           } else {
+            // Mặc định khởi tạo HSK1 là true (mở khóa sẵn), từ HSK2 trở lên là false
             initialData = {
-              passedHSK1: false,
+              passedHSK1: true,
               passedHSK2: false,
               passedHSK3: false,
               passedHSK4: false,
@@ -69,17 +70,17 @@ export default function Home() {
             lastLogin: serverTimestamp(),
             lastStreakDate: todayStr,
             streakCount: currentStreak,
-            passedHSK1: initialData.passedHSK1 ?? false,
-            passedHSK2: initialData.passedHSK2 ?? false,
-            passedHSK3: initialData.passedHSK3 ?? false,
-            passedHSK4: initialData.passedHSK4 ?? false,
-            passedHSK5: initialData.passedHSK5 ?? false,
-            passedHSK6: initialData.passedHSK6 ?? false,
+            passedHSK1: initialData.passedHSK1 === false ? false : true,
+            passedHSK2: initialData.passedHSK2 === true ? true : false,
+            passedHSK3: initialData.passedHSK3 === true ? true : false,
+            passedHSK4: initialData.passedHSK4 === true ? true : false,
+            passedHSK5: initialData.passedHSK5 === true ? true : false,
+            passedHSK6: initialData.passedHSK6 === true ? true : false,
           }, { merge: true });
 
         } catch (error) {
           console.error("Lỗi đồng bộ tài khoản lên Firebase:", error);
-          setUserData({});
+          setUserData({ passedHSK1: true });
         } finally {
           setLoadingUser(false);
         }
@@ -102,7 +103,7 @@ export default function Home() {
       const studentRef = doc(db, "progress", user.id);
       await setDoc(studentRef, {
         learnedVocab: [],
-        passedHSK1: false,
+        passedHSK1: true,
         passedHSK2: false,
         passedHSK3: false,
         passedHSK4: false,
@@ -117,21 +118,14 @@ export default function Home() {
     }
   };
 
-  const hasPassedAnyLevel = !loadingUser && userData && (
-    userData.passedHSK1 === true || 
-    userData.passedHSK2 === true || 
-    userData.passedHSK3 === true || 
-    userData.passedHSK4 === true || 
-    userData.passedHSK5 === true || 
-    userData.passedHSK6 === true
-  );
+  const hasPassedAnyLevel = true;
 
-  const features = [
+ const features = [
     { id: "vocab", name: "HSK Từ Vựng", icon: "🗂️", color: "text-blue-600", bg: "bg-blue-50", link: "/vocab", desc: "Học qua Flashcard 3D", active: hasPassedAnyLevel },
     { id: "topic", name: "Chủ Đề", icon: "📚", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
-    { id: "dictation", name: "Chép Chính Tả", icon: "🎧", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
-    { id: "translate", name: "Dịch Câu", icon: "✍️", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
-    { id: "arrange", name: "Sắp Xếp", icon: "🧩", color: "text-slate-400", bg: "bg-slate-100", link: "#", desc: "Đang nâng cấp dữ liệu", active: false },
+    { id: "dictation", name: "Chép Chính Tả", icon: "🎧", color: "text-emerald-600", bg: "bg-emerald-50", link: "/dictation", desc: "Luyện nghe chép file tĩnh HSK", active: true }, // Đã mở khóa
+    { id: "translate", name: "Dịch Câu", icon: "✍️", color: "text-amber-600", bg: "bg-amber-50", link: "/translate", desc: "Luyện dịch câu thực chiến", active: hasPassedAnyLevel },
+    { id: "arrange", name: "Sắp Xếp", icon: "🧩", color: "text-indigo-600", bg: "bg-indigo-50", link: "/arrange", desc: "Sắp xếp từ thành câu đúng", active: hasPassedAnyLevel },
     { id: "roleplay", name: "Thực Chiến", icon: "💬", color: "text-green-600", bg: "bg-green-50", link: "/roleplay", desc: "Chat cùng người bản xứ AI", active: true },
     { id: "hskk", name: "Thi HSKK", icon: "🎤", color: "text-rose-600", bg: "bg-rose-50", link: "/hskk", desc: "Phòng thi khẩu ngữ tự động", active: true },
     { id: "placement-test", name: "Kiểm Tra Trình Độ", icon: "🎯", color: "text-purple-600", bg: "bg-purple-50", link: "/test", desc: "Làm test mở khóa cấp độ", active: true },
@@ -225,27 +219,15 @@ export default function Home() {
           <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white relative overflow-hidden flex items-center justify-between shadow-lg">
             <div className="max-w-xl z-10">
               <h1 className="text-2xl md:text-3xl font-black mb-3">Biết chính xác bạn đang ở đâu và chạm tới mục tiêu HSK!</h1>
-              <p className="text-emerald-100 text-sm mb-6">Bạn cần làm bài kiểm tra trình độ để mở khóa từ vựng theo cấp độ.</p>
-              <Link href="/test" className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-2xl shadow transition inline-block text-sm">
-                Kiểm tra trình độ ngay →
+              <p className="text-emerald-100 text-sm mb-6">Bắt đầu ngay với HSK 1 hoặc làm bài kiểm tra trình độ để mở khóa cấp độ cao hơn.</p>
+              <Link href="/vocab" className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-2xl shadow transition inline-block text-sm">
+                Vào học HSK 1 ngay →
               </Link>
             </div>
             <div className="hidden lg:block opacity-90 text-right text-6xl">
               加油
             </div>
           </div>
-
-          {!loadingUser && !hasPassedAnyLevel && isSignedIn && (
-            <div className="bg-amber-50 border-2 border-amber-200 p-6 rounded-3xl flex items-center justify-between shadow-sm">
-              <div>
-                <h3 className="text-lg font-black text-amber-800 mb-1">🔒 Từ Vựng đang bị khóa</h3>
-                <p className="text-sm text-amber-700">Hãy tham gia bài <strong>Kiểm Tra Trình Độ</strong> để mở khóa cấp độ từ vựng tương ứng.</p>
-              </div>
-              <Link href="/test" className="px-5 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl shadow transition text-sm shrink-0">
-                Làm Test Ngay ➔
-              </Link>
-            </div>
-          )}
 
           {/* Khối Thống kê tiến độ & Thành tích */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -318,7 +300,7 @@ export default function Home() {
                 ) : (
                   <div key={feature.id} className="flex flex-col p-6 bg-slate-100/80 rounded-3xl border border-slate-200/80 opacity-75 relative overflow-hidden h-full select-none cursor-not-allowed">
                     <div className="absolute top-4 right-4 bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wider uppercase flex items-center gap-1 shadow-xs">
-                      {feature.id === 'vocab' ? '🔒 Cần làm Test mở khóa' : '🔒 Sắp ra mắt'}
+                      🔒 Sắp ra mắt
                     </div>
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-4 ${feature.bg}`}>
                       {feature.icon}
