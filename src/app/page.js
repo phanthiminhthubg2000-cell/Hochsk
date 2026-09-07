@@ -53,14 +53,18 @@ const RadarChart = ({ data }) => {
   return (
     <div className="flex items-center justify-center">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
+        {/* Background Grids (Nét đứt) */}
         {[20, 40, 60, 80, 100].map((level) => (
-          <polygon key={level} points={data.map((_, index) => `${getPoint(index, level).x},${getPoint(index, level).y}`).join(" ")} fill="none" stroke="#E2E8F0" strokeWidth="1" strokeDasharray={level % 40 === 0 ? "0" : "4 4"} />
+          <polygon key={level} points={data.map((_, index) => `${getPoint(index, level).x},${getPoint(index, level).y}`).join(" ")} fill="none" stroke="#E2E8F0" strokeWidth="1" strokeDasharray="4 4" />
         ))}
+        {/* Axes */}
         {data.map((_, index) => (
           <line key={index} x1={center} y1={center} x2={getPoint(index, 100).x} y2={getPoint(index, 100).y} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="4 4" />
         ))}
+        {/* Data Polygon */}
         <polygon points={polygonPoints} fill="#8FD9A8" fillOpacity="0.4" stroke="#2F8F6E" strokeWidth="2.5" strokeLinejoin="round" className="transition-all duration-1000 drop-shadow-sm" />
         {data.map((item, index) => <circle key={index} cx={getPoint(index, item.value).x} cy={getPoint(index, item.value).y} r="5" fill="#1B5E4B" className="drop-shadow-md" />)}
+        {/* Labels */}
         {data.map((item, index) => (
           <text key={index} x={getPoint(index, 125).x} y={getPoint(index, 125).y} textAnchor="middle" dominantBaseline="middle" className="fill-[#1B5E4B] text-[10px] font-black uppercase tracking-widest">
             {item.label}
@@ -87,7 +91,12 @@ export default function HomePage() {
   const [isTeacher, setIsTeacher] = useState(false); 
 
   const [skillMap, setSkillMap] = useState({
-    vocabulary: 60, grammar: 50, listening: 65, translation: 45, writing: 50, speaking: 55,
+    vocabulary: 60,
+    grammar: 50,
+    listening: 65,
+    translation: 45,
+    writing: 50,
+    speaking: 55,
   });
 
   // --- SEARCH / AI STATES ---
@@ -103,6 +112,7 @@ export default function HomePage() {
   const searchResults = searchQuery.trim() === "" ? [] : [
     { hanzi: "学习", pinyin: "xuéxí", meaning: "học tập", type: "[Động]" },
     { hanzi: "学校", pinyin: "xuéxiào", meaning: "trường học", type: "[Danh]" },
+    { hanzi: "朋友", pinyin: "péngyou", meaning: "bạn bè", type: "[Danh]" },
   ].filter(item => item.hanzi.includes(searchQuery.trim()) || item.pinyin.toLowerCase().includes(searchQuery.trim().toLowerCase()) || item.meaning.toLowerCase().includes(searchQuery.trim().toLowerCase()));
 
   // ============================================================
@@ -138,6 +148,7 @@ export default function HomePage() {
     { label: "NÓI", value: Math.min(skillMap?.speaking || 55, 100), key: "speaking" },
   ];
 
+  // Phân tích điểm mạnh / yếu động
   const sortedSkills = [...realSkillData].sort((a, b) => b.value - a.value);
   const strongSkills = sortedSkills.slice(0, 2);
   const weakSkills = sortedSkills.slice(-2);
@@ -155,7 +166,7 @@ export default function HomePage() {
     return suggestions;
   };
 
-  // TÍCH HỢP ẢNH TỪ KHO DATA LÀM TEXTURE CHIỀU SÂU
+  // Khu vườn cá nhân hóa (Màu trơn)
   const gardenAreas = [
     { name: "Cây Từ vựng", level: Math.floor((skillMap?.vocabulary || 40) / 10) + 1, icon: "🌱", link: "/vocab", bg: "bg-[#2F8F6E]", text: "text-white", bgImg: "/hskk/tuvung.jpg" },
     { name: "Đầm Chủ đề", level: Math.floor(((skillMap?.vocabulary || 40) + (skillMap?.translation || 40)) / 20) + 1, icon: "🪷", link: "/topic", bg: "bg-[#F2765B]", text: "text-white", bgImg: "/hskk/chude.jpg" },
@@ -171,6 +182,9 @@ export default function HomePage() {
     { title: "Sắp xếp câu", progress: 0, total: 10, xp: 20, icon: "☀️" },
   ];
 
+  // ============================================================
+  // ĐỒNG BỘ TOÀN DIỆN DỮ LIỆU USER THEO USERID
+  // ============================================================
   useEffect(() => {
     if (!isSignedIn || !userId) return;
 
@@ -188,6 +202,7 @@ export default function HomePage() {
         const pSnap = await getDoc(pRef);
         const pData = pSnap.exists() ? pSnap.data() : {};
 
+        // Hợp nhất dữ liệu có độ ưu tiên
         const mergedStreak = uData.streak ?? upData.profile?.streak_days ?? pData.streakCount ?? 0;
         const mergedHearts = uData.hearts ?? upData.profile?.hearts ?? 5;
         const mergedXp = uData.xp ?? upData.profile?.hsk_xp ?? pData.xp ?? 0;
@@ -209,8 +224,11 @@ export default function HomePage() {
         if (uData.role === "teacher" || uData.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
           setIsTeacher(true);
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Lỗi đồng bộ dữ liệu người dùng:", err);
+      }
 
+      // Tải bảng xếp hạng Ao Sen
       try {
         const q = query(collection(db, "users"), limit(8));
         const qSnap = await getDocs(q);
@@ -245,7 +263,9 @@ export default function HomePage() {
 
         list.sort((a, b) => b.xp - a.xp);
         setLeaderboard(list);
-      } catch (err) {}
+      } catch (err) {
+        console.error("Lỗi tải bảng xếp hạng:", err);
+      }
     };
 
     loadCompleteUserData();
@@ -263,13 +283,16 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Cập nhật Cấp độ học tập đồng bộ vào cả users và user_progress
   const handleChangeLevel = async (newLevel) => {
     setCurrentLevel(newLevel);
     if (userId) {
       try {
         await setDoc(doc(db, "users", userId), { currentLevel: newLevel }, { merge: true });
         await setDoc(doc(db, "user_progress", userId), { "profile.level": newLevel }, { merge: true });
-      } catch (error) {}
+      } catch (error) {
+        console.error("Lỗi cập nhật cấp độ:", error);
+      }
     }
   };
 
@@ -505,7 +528,7 @@ export default function HomePage() {
             </div>
 
             {/* Cột phải: Nhiệm vụ hôm nay */}
-            <div className="rounded-[32px] bg-white/90 backdrop-blur-sm p-8 shadow-sm flex flex-col gap-4 border border-white">
+            <div className="rounded-[32px] bg-white p-8 shadow-sm flex flex-col gap-4 border border-[#E2E8F0]">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
                 <div className="w-10 h-10 rounded-full border-[3px] border-[#8FD9A8] text-[#2F8F6E] flex items-center justify-center text-[11px] font-black bg-white shadow-sm">
@@ -553,42 +576,63 @@ export default function HomePage() {
           <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]" id="leaderboard">
             
             {/* Bảng Vàng -> Ao Sen */}
-            <div className="rounded-[32px] bg-white/90 backdrop-blur-sm p-8 shadow-sm flex flex-col border border-white">
+            <div className="rounded-[32px] bg-white p-8 shadow-sm flex flex-col border border-[#E2E8F0]">
               <div className="mb-6 flex items-center justify-between border-b border-[#E2E8F0] pb-4">
                 <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Ao sen danh vọng</h2>
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-3 py-1.5 rounded-lg border border-[#8FD9A8]">Toàn hệ thống</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-3 py-1.5 rounded-lg border border-[#8FD9A8]">Top Server</span>
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3 flex-1">
                 {leaderboard.length === 0 ? (
                   <p className="text-center text-xs font-bold text-slate-400 py-6">Đang tải ao sen...</p>
                 ) : (
-                  leaderboard.map((person, index) => {
-                    const isMe = person.id === userId;
-                    return (
-                      <div key={index} className={`flex items-center justify-between rounded-2xl p-3 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-transparent hover:border-[#8FD9A8]/40'}`}>
+                  <>
+                    {/* Render danh sách User thật */}
+                    {leaderboard.map((person, index) => {
+                      const isMe = person.id === userId;
+                      return (
+                        <div key={index} className={`flex items-center justify-between rounded-2xl p-3 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8]/40'}`}>
+                          <div className="flex items-center gap-3">
+                            <span className="w-8 text-center text-lg font-black text-[#FFD666] drop-shadow-sm">
+                              {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : <span className="text-sm text-slate-400">#{index + 1}</span>}
+                            </span>
+                            <img src={person.avatar} alt={person.name} className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-white" />
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className={`text-sm font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'}`}>{person.name}</h4>
+                                {isMe && <span className="bg-[#8FD9A8]/30 text-[#2F8F6E] text-[9px] px-1.5 py-0.5 rounded font-black">BẠN</span>}
+                              </div>
+                              <p className="text-[10px] font-bold text-[#F2765B] mt-0.5">🔥 {person.streak} ngày streak</p>
+                            </div>
+                          </div>
+                          <span className="text-[11px] font-black text-[#1B5E4B] bg-[#EEF5E9] px-2 py-1 rounded-lg">{person.xp.toLocaleString()} XP</span>
+                        </div>
+                      );
+                    })}
+
+                    {/* Render các SLOT TRỐNG để lấp đầy không gian (Chỉ hiện tối đa 5 slot) */}
+                    {[...Array(Math.max(0, 5 - leaderboard.length))].map((_, i) => (
+                      <div key={`empty-${i}`} className="flex items-center justify-between rounded-2xl p-3 border border-dashed border-[#8FD9A8]/40 bg-[#F4F7F6]/50 opacity-70 animate-pulse">
                         <div className="flex items-center gap-3">
-                          <span className="w-6 text-center text-sm font-black text-[#FFD666] drop-shadow-sm">
-                            {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`}
-                          </span>
-                          <img src={person.avatar} alt={person.name} className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-[#EEF5E9]" />
-                          <div>
-                            <h4 className={`text-sm font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'}`}>{person.name} {isMe && "(Bạn)"}</h4>
-                            <p className="text-[10px] font-bold text-[#F2765B]">🔥 {person.streak} ngày streak</p>
+                          <span className="w-8 text-center text-sm font-black text-slate-300">-</span>
+                          <div className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-dashed border-[#8FD9A8]/50 bg-white flex items-center justify-center text-xl grayscale opacity-50">🐸</div>
+                          <div className="flex flex-col gap-1.5">
+                            <div className="h-3.5 w-24 bg-slate-200/60 rounded-full"></div>
+                            <div className="h-2 w-16 bg-slate-200/60 rounded-full"></div>
                           </div>
                         </div>
-                        <span className="text-[11px] font-black text-[#1B5E4B]">{person.xp.toLocaleString()} XP</span>
+                        <div className="h-5 w-12 bg-slate-200/50 rounded-lg"></div>
                       </div>
-                    );
-                  })
+                    ))}
+                  </>
                 )}
               </div>
             </div>
 
             {/* Radar -> AI Coach */}
-            <div className="rounded-[32px] bg-white/90 backdrop-blur-sm p-8 shadow-sm border border-white">
+            <div className="rounded-[32px] bg-white p-8 shadow-sm border border-[#E2E8F0]">
                <div className="mb-6"><h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                  <div className="flex justify-center scale-90 md:scale-100">
