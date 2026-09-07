@@ -13,7 +13,7 @@ export async function POST(req) {
 
     // Khởi tạo Gemini với API Key từ file .env.local
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
 
     // Đóng vai giáo viên tiếng Trung để AI trả lời đúng trọng tâm
     const systemInstruction = `Bạn là một giáo viên tiếng Trung xuất sắc tại Hành Trình HSK. 

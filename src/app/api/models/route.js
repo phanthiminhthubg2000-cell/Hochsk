@@ -13,9 +13,9 @@ export async function POST(req) {
     const { level = "HSK 1", recentSentences = [] } = await req.json();
     const shortHistory = recentSentences.slice(-5);
 
-    // CHỈ SỬ DỤNG GEMINI 3.7 FLASH - Đã được xác nhận có sẵn trong tài khoản của bạn
+    // CHỈ SỬ DỤNG GEMINI 3.8 FLASH - Đã được xác nhận có sẵn trong tài khoản của bạn
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.7-flash",
+      model: "gemini-3.8-flash",
       generationConfig: {
           responseMimeType: "application/json",
           maxOutputTokens: 150,

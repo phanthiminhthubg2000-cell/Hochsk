@@ -34,10 +34,11 @@ export default function FlashcardPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [canFlip, setCanFlip] = useState(false);
   
-  // STATE: AI CHALLENGE
+  // STATE: AI CHALLENGE & ERROR HANDLING
   const [sentenceInput, setSentenceInput] = useState("");
   const [isCheckingSentence, setIsCheckingSentence] = useState(false);
   const [sentenceResult, setSentenceResult] = useState(null); 
+  const [aiError, setAiError] = useState(null); // Bắt lỗi AI mượt mà
   
   // STATE: USER & FIREBASE
   const [userData, setUserData] = useState(null);
@@ -102,7 +103,7 @@ export default function FlashcardPage() {
 
   // --- RESET TRẠNG THÁI THẺ ---
   useEffect(() => {
-    setCanFlip(false); setIsFlipped(false); setSentenceInput(""); setSentenceResult(null);
+    setCanFlip(false); setIsFlipped(false); setSentenceInput(""); setSentenceResult(null); setAiError(null);
   }, [activeWordIndex, viewingLevel, filter, selectedHsk, mode]);
 
   useEffect(() => {
@@ -110,11 +111,9 @@ export default function FlashcardPage() {
   }, [sentenceResult]);
 
   if (levelsData.length === 0 || loadingUser) return (
-    <div className="min-h-screen bg-[#F4F8F5] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <div className="text-6xl animate-bounce">🐸</div>
-        <p className="font-black text-[#08A66A] tracking-widest uppercase">Đang tải dữ liệu từ vựng...</p>
-      </div>
+    <div className="min-h-screen bg-[#EEF5E9] flex flex-col items-center justify-center gap-4">
+      <div className="w-10 h-10 border-4 border-[#2F8F6E] border-t-transparent rounded-full animate-spin"></div>
+      <p className="font-bold text-[#1B5E4B]">Đang tải khu vườn từ vựng...</p>
     </div>
   );
 
@@ -145,17 +144,36 @@ export default function FlashcardPage() {
   };
 
   const handleCheckSentence = async () => {
-    if (!sentenceInput.trim() || !activeWord) return;
-    setIsCheckingSentence(true); setSentenceResult(null);
+    if (!sentenceInput.trim() || !activeWord || isCheckingSentence) return;
+    
+    setIsCheckingSentence(true); 
+    setSentenceResult(null);
+    setAiError(null); // Xóa lỗi cũ
+    
     try {
       const res = await fetch("/api/check-sentence", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ targetWord: activeWord.front, userSentence: sentenceInput })
       });
+      
+      if (!res.ok) {
+        if (res.status === 429) throw new Error("Ếch canh đang trả lời quá nhiều bạn cùng lúc, đợi vài giây rồi thử lại nhé! 💦");
+        throw new Error("Lỗi kết nối đến não bộ của Ếch Canh. Vui lòng thử lại! 🐸");
+      }
+      
       const data = await res.json();
-      if (data.error) { alert(data.error); setSentenceResult(null); return; }
+      
+      if (data.error) { 
+        setAiError(data.error); 
+        return; 
+      }
+      
       setSentenceResult(data);
-    } catch (error) { alert("Lỗi kết nối AI để chấm câu! Vui lòng thử lại."); } finally { setIsCheckingSentence(false); }
+    } catch (error) { 
+      setAiError(error.message || "Lỗi mạng. Vui lòng kiểm tra lại kết nối!"); 
+    } finally { 
+      setIsCheckingSentence(false); 
+    }
   };
 
   const handleMarkLearning = () => {
@@ -198,26 +216,26 @@ export default function FlashcardPage() {
   const allowFlip = canFlip || isAlreadyMastered; 
 
   return (
-    <div className="flex min-h-screen bg-[#F4F8F5] font-sans text-slate-800 selection:bg-emerald-200">
+    <div className="flex min-h-screen bg-[#EEF5E9] font-sans text-[#1B5E4B] selection:bg-[#8FD9A8]/50">
       
       {/* =========================================
-          SIDEBAR: BẢN ĐỒ HÀNH TRÌNH
+          SIDEBAR: HSK GARDEN STYLE
           ========================================= */}
-      <aside className="w-[320px] bg-white border-r border-emerald-100 flex flex-col h-screen sticky top-0 shadow-sm z-30 shrink-0 hidden lg:flex">
-        <div className="p-6 border-b border-emerald-50">
+      <aside className="w-[320px] bg-[#F7FAF3] border-r border-[#8FD9A8]/30 flex flex-col h-screen sticky top-0 shadow-sm z-30 shrink-0 hidden lg:flex">
+        <div className="p-6 border-b border-[#E2E8F0]">
           <Link href="/">
-            <button className="flex items-center gap-2 text-slate-500 hover:text-[#08A66A] font-bold text-sm transition-colors mb-6">
-              <span>←</span> Trở về Bản Đồ
+            <button className="flex items-center gap-2 text-slate-500 hover:text-[#2F8F6E] font-bold text-sm transition-colors mb-6">
+              <span>←</span> Trở về Vườn
             </button>
           </Link>
           
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black text-[#08A66A] uppercase tracking-widest">Chọn hành trình</label>
+            <label className="text-[10px] font-black text-[#2F8F6E] uppercase tracking-widest">Chọn hành trình</label>
             <div className="relative">
               <select 
                 value={selectedHsk} 
                 onChange={(e) => { setSelectedHsk(e.target.value); setMode("learn"); }}
-                className="w-full appearance-none bg-[#DDF7EA]/50 border border-[#08A66A]/20 text-[#087A55] font-black text-sm rounded-2xl px-4 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-[#08A66A]/20 shadow-sm"
+                className="w-full appearance-none bg-white border border-[#E2E8F0] text-[#1B5E4B] font-black text-sm rounded-2xl px-4 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-[#8FD9A8]/50 shadow-sm"
               >
                 {availableHskLevels.map(lvl => (
                   <option key={lvl} value={lvl}>
@@ -225,18 +243,18 @@ export default function FlashcardPage() {
                   </option>
                 ))}
               </select>
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#08A66A] pointer-events-none text-xs">▼</span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2F8F6E] pointer-events-none text-xs">▼</span>
             </div>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="font-black text-slate-900 text-sm">DANH SÁCH BÀI HỌC</h3>
-            <span className="text-[10px] font-bold text-[#08A66A] bg-[#DDF7EA] px-2 py-1 rounded-lg">{levelsData.length} bài</span>
+            <h3 className="font-black text-[#1B5E4B] text-sm">DANH SÁCH BÀI HỌC</h3>
+            <span className="text-[10px] font-bold text-[#2F8F6E] bg-[#8FD9A8]/30 px-2 py-1 rounded-lg">{levelsData.length} bài</span>
           </div>
 
-          <div className="relative pl-6 space-y-6 before:absolute before:left-[31px] before:top-4 before:bottom-4 before:w-[3px] before:bg-emerald-100/50 before:rounded-full">
+          <div className="relative pl-6 space-y-6 before:absolute before:left-[31px] before:top-4 before:bottom-4 before:w-[4px] before:bg-[#8FD9A8]/40 before:rounded-full">
             {levelsData.map((lvl) => {
               const isActive = lvl.level === viewingLevel && mode === "learn";
               const isCompleted = lvl.words.every(w => wordProgress[w.front] === "mastered") && lvl.words.length > 0;
@@ -245,15 +263,15 @@ export default function FlashcardPage() {
                 <div key={lvl.level} className="relative flex items-center gap-4 group cursor-pointer" onClick={() => { handleLevelChange(lvl); setMode("learn"); }}>
                   <div className="absolute -left-6 flex flex-col items-center justify-center">
                     {isActive && <div className="absolute -top-7 text-2xl animate-bounce z-20 filter drop-shadow-md">🐸</div>}
-                    <div className={`w-5 h-5 rounded-full border-[3px] z-10 flex items-center justify-center transition-all ${
-                      isActive ? 'bg-white border-[#08A66A] scale-125 shadow-[0_0_0_4px_rgba(8,166,106,0.15)]' : isCompleted ? 'bg-[#08A66A] border-[#08A66A]' : 'bg-white border-slate-200'
+                    <div className={`w-6 h-6 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] z-10 flex items-center justify-center transition-all shadow-sm ${
+                      isActive ? 'bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_6px_rgba(47,143,110,0.2)]' : isCompleted ? 'bg-[#1B5E4B] text-[#8FD9A8]' : 'bg-[#EEF5E9] text-slate-400 border border-slate-200 group-hover:bg-[#8FD9A8]'
                     }`}>
-                      {isCompleted && !isActive && <span className="text-white text-[8px] font-black">✓</span>}
+                      {isCompleted && !isActive ? <span className="text-[10px] font-black">✓</span> : <span className="text-[10px] font-black">{lvl.level}</span>}
                     </div>
                   </div>
-                  <div className={`flex-1 p-3.5 rounded-2xl border transition-all ${isActive ? 'bg-white border-[#08A66A] shadow-lg shadow-emerald-900/5 translate-x-1' : isCompleted ? 'bg-[#F4F8F5] border-transparent opacity-80 hover:opacity-100 hover:bg-[#DDF7EA]/50' : 'bg-white border-slate-100 hover:border-[#08A66A]/40'}`}>
+                  <div className={`flex-1 p-4 rounded-[20px] transition-all border ${isActive ? 'bg-[#FDFBF7] border-[#FFD666]/40 shadow-sm translate-x-1' : isCompleted ? 'bg-transparent border-transparent opacity-80 hover:opacity-100 hover:bg-white' : 'bg-transparent border-transparent group-hover:bg-white group-hover:border-[#E2E8F0]'}`}>
                     <div className="flex justify-between items-start mb-0.5">
-                      <h4 className={`font-black text-sm ${isActive ? 'text-[#08A66A]' : 'text-slate-700'}`}>Bài {lvl.level}</h4>
+                      <h4 className={`font-black text-sm ${isActive ? 'text-[#1B5E4B]' : 'text-slate-700'}`}>Bài {lvl.level}</h4>
                     </div>
                     <p className="text-[10px] text-slate-400 font-bold">{lvl.words.length} từ vựng</p>
                   </div>
@@ -268,95 +286,93 @@ export default function FlashcardPage() {
           MAIN CONTENT: VOCABULARY JOURNEY
           ========================================= */}
       <main className="flex-1 relative flex flex-col min-w-0 h-screen overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0" style={{ backgroundImage: "url('/hskk/backcover.jpg')" }}>
-          <div className="absolute inset-0 bg-[#F4F8F5]/85 backdrop-blur-[4px]"></div>
-        </div>
-
+        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 10px 10px, #8FD9A8 2px, transparent 0)", backgroundSize: "40px 40px" }}></div>
+        
         <div className="relative z-10 flex-1 overflow-y-auto scrollbar-hide pb-20">
           <div className="max-w-4xl mx-auto w-full px-4 md:px-8 pt-6 md:pt-10">
 
             {/* HEADER: TOGGLE HỌC / ÔN TẬP */}
             <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-              <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-white shadow-sm backdrop-blur-md">
+              <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-[20px] border border-white shadow-sm backdrop-blur-md">
                 <button 
                   onClick={() => setMode("learn")}
-                  className={`px-5 py-2.5 rounded-xl font-black text-sm transition-all ${mode === "learn" ? 'bg-[#172033] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`px-5 py-2.5 rounded-[16px] font-black text-sm transition-all ${mode === "learn" ? 'bg-[#1B5E4B] text-white shadow-md' : 'text-slate-500 hover:text-[#2F8F6E]'}`}
                 >
                   🌱 Học Từ Mới
                 </button>
                 <button 
                   onClick={() => setMode("review")}
-                  className={`px-5 py-2.5 rounded-xl font-black text-sm transition-all flex items-center gap-2 ${mode === "review" ? 'bg-rose-500 text-white shadow-md' : 'text-slate-500 hover:text-rose-500'}`}
+                  className={`px-5 py-2.5 rounded-[16px] font-black text-sm transition-all flex items-center gap-2 ${mode === "review" ? 'bg-[#F2765B] text-white shadow-md' : 'text-slate-500 hover:text-[#F2765B]'}`}
                 >
-                  💦 Ôn Tập Yếu Điểm
-                  {Object.keys(errorDna).length > 0 && <span className={`w-5 h-5 rounded-full flex justify-center items-center text-[10px] ${mode === "review" ? 'bg-white text-rose-500' : 'bg-rose-100 text-rose-600'}`}>{Object.keys(errorDna).length}</span>}
+                  💦 Ôn Tập
+                  {Object.keys(errorDna).length > 0 && <span className={`w-5 h-5 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex justify-center items-center text-[10px] ${mode === "review" ? 'bg-white text-[#F2765B]' : 'bg-[#FFF1F2] text-[#BE123C]'}`}>{Object.keys(errorDna).length}</span>}
                 </button>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white shadow-sm">
-                  <span className="text-amber-500 text-lg">🔥</span><span className="font-black text-slate-800 text-sm">{streak} ngày</span>
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white shadow-sm">
+                  <span className="text-[#F2765B] text-lg">🔥</span><span className="font-black text-[#1B5E4B] text-sm">{streak} ngày</span>
                 </div>
               </div>
             </header>
 
             {/* TIẾN ĐỘ BÀI HỌC (Ẩn đi nếu đang ở chế độ Ôn Tập) */}
             {mode === "learn" && (
-              <div className="bg-white/90 backdrop-blur-xl rounded-[28px] p-6 md:p-8 shadow-sm border border-white mb-10">
+              <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 md:p-8 shadow-sm border border-[#E2E8F0] mb-10">
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-4 flex-1 pr-8">
-                    <div className="w-full h-3 bg-[#F4F8F5] rounded-full overflow-hidden border border-emerald-50">
-                      <div className="h-full bg-[#08A66A] rounded-full transition-all duration-500 relative" style={{ width: `${progressPercent}%` }}></div>
+                    <div className="w-full h-3.5 bg-[#EEF5E9] rounded-full overflow-hidden border border-[#E2E8F0]/50 shadow-inner">
+                      <div className="h-full bg-[#2F8F6E] rounded-full transition-all duration-700 relative shadow-[0_0_10px_rgba(47,143,110,0.5)]" style={{ width: `${progressPercent}%` }}></div>
                     </div>
-                    <span className="font-black text-[#08A66A] text-sm shrink-0">{progressPercent}%</span>
+                    <span className="font-black text-[#2F8F6E] text-lg shrink-0">{progressPercent}%</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-400 shrink-0">{masteredCount} / {allCount} từ đã thuộc</span>
+                  <span className="text-xs font-bold text-slate-400 shrink-0 bg-[#F4F7F6] px-3 py-1.5 rounded-xl">{masteredCount} / {allCount} từ đã thuộc</span>
                 </div>
 
-                <div className="flex flex-wrap items-center bg-[#F4F8F5] p-1.5 rounded-2xl w-fit border border-emerald-100/50">
-                  <button onClick={() => setFilter("all")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "all" ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Tất cả <span className="ml-1 opacity-60 font-bold">{allCount}</span></button>
-                  <button onClick={() => setFilter("learning")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "learning" ? 'bg-white text-rose-500 shadow-sm' : 'text-slate-500'}`}>Chưa thuộc <span className="ml-1 opacity-60 font-bold">{learningCount}</span></button>
-                  <button onClick={() => setFilter("mastered")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "mastered" ? 'bg-white text-[#08A66A] shadow-sm' : 'text-slate-500'}`}>Đã thuộc <span className="ml-1 opacity-60 font-bold">{masteredCount}</span></button>
+                <div className="flex flex-wrap items-center bg-[#F4F7F6] p-1.5 rounded-2xl w-fit border border-[#E2E8F0]">
+                  <button onClick={() => setFilter("all")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "all" ? 'bg-white text-[#1B5E4B] shadow-sm' : 'text-slate-500'}`}>Tất cả <span className="ml-1 opacity-60 font-bold">{allCount}</span></button>
+                  <button onClick={() => setFilter("learning")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "learning" ? 'bg-white text-[#F2765B] shadow-sm' : 'text-slate-500'}`}>Chưa thuộc <span className="ml-1 opacity-60 font-bold">{learningCount}</span></button>
+                  <button onClick={() => setFilter("mastered")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "mastered" ? 'bg-white text-[#2F8F6E] shadow-sm' : 'text-slate-500'}`}>Đã thuộc <span className="ml-1 opacity-60 font-bold">{masteredCount}</span></button>
                 </div>
               </div>
             )}
 
             {/* THÔNG BÁO HẾT TỪ */}
             {currentWordsPool.length === 0 ? (
-                <div className="bg-white/90 backdrop-blur-xl p-10 rounded-[32px] shadow-sm border border-white text-center">
-                  <div className="text-5xl mb-4">{mode === "learn" ? "✨" : "🎉"}</div>
-                  <h3 className="text-xl font-bold text-slate-800">
-                    {mode === "learn" ? "Không có từ vựng nào ở mục này!" : "Tuyệt vời! Bạn không còn từ nào cần phải ôn lại."}
+                <div className="bg-white/90 backdrop-blur-xl p-12 rounded-[40px] shadow-sm border border-[#E2E8F0] text-center">
+                  <div className="text-6xl mb-6">{mode === "learn" ? "✨" : "🐸🎉"}</div>
+                  <h3 className="text-2xl font-black text-[#1B5E4B]">
+                    {mode === "learn" ? "Không có từ vựng nào ở mục này!" : "Tuyệt vời! Khu vườn không còn từ nào cần ôn."}
                   </h3>
                 </div>
             ) : (
               <>
                 {/* KHU VỰC THẺ TỪ VỰNG */}
                 <div className="relative mb-10 mt-4">
-                  <button onClick={() => setActiveWordIndex(prev => prev > 0 ? prev - 1 : currentWordsPool.length - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#08A66A] shadow-sm border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">←</span></button>
-                  <button onClick={() => setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#08A66A] shadow-sm border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">→</span></button>
+                  <button onClick={() => setActiveWordIndex(prev => prev > 0 ? prev - 1 : currentWordsPool.length - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F8F6E] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">←</span></button>
+                  <button onClick={() => setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F8F6E] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">→</span></button>
 
-                  <div className={`w-full max-w-xl mx-auto bg-white rounded-[40px] shadow-[0_20px_60px_-15px_rgba(8,166,106,0.12)] border overflow-hidden relative group ${mode === "review" ? 'border-rose-100' : 'border-white'}`}>
+                  <div className={`w-full max-w-xl mx-auto bg-white rounded-[40px] shadow-xl border-b-[8px] overflow-hidden relative group transition-all ${mode === "review" ? 'border-b-[#F2765B]' : 'border-b-[#2F8F6E]'}`}>
                     
                     <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
                         <span className="font-bold text-slate-300 text-sm tracking-widest">{activeWordIndex + 1} / {currentWordsPool.length}</span>
-                        <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest uppercase border ${wordProgress[wordDisplay] === 'mastered' ? 'bg-[#DDF7EA] text-[#08A66A] border-[#08A66A]/20' : mode === 'review' ? 'bg-rose-50 text-rose-500 border-rose-200' : 'bg-slate-100 text-slate-500 border-slate-200/50'}`}>
+                        <span className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase border ${wordProgress[wordDisplay] === 'mastered' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B] border-[#8FD9A8]' : mode === 'review' ? 'bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]' : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
                           {wordProgress[wordDisplay] === 'mastered' ? '✓ Đã thuộc' : mode === 'review' ? '💦 Cần ôn lại' : 'Đang học'}
                         </span>
                     </div>
 
                     <div className="px-8 py-16 md:p-16 flex flex-col items-center justify-center text-center relative min-h-[460px] mt-4">
-                      <button onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} className="w-14 h-14 bg-[#F4F8F5] hover:bg-[#DDF7EA] text-slate-400 hover:text-[#08A66A] rounded-full flex items-center justify-center text-2xl transition-all hover:scale-110 mb-8 border border-emerald-50 shadow-sm">🔊</button>
+                      <button onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} className="w-16 h-16 bg-[#F4F7F6] text-[#2F8F6E] border border-[#E2E8F0] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl transition-all hover:scale-110 hover:bg-[#2F8F6E] hover:text-white mb-8 z-10 shadow-sm">🔊</button>
                       
-                      <h2 className="text-[120px] md:text-[140px] font-black text-[#172033] leading-none mb-6 font-serif tracking-tight drop-shadow-sm">{wordDisplay}</h2>
+                      <h2 className="text-[120px] md:text-[140px] font-black text-[#1B5E4B] leading-none mb-6 font-serif tracking-tight drop-shadow-sm">{wordDisplay}</h2>
 
-                      <div className={`flex flex-col items-center w-full transition-all duration-500 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none absolute'}`}>
-                        <p className="text-3xl font-bold text-[#08A66A] mb-4 tracking-wider">{pinyinDisplay}</p>
-                        <p className="text-xl font-medium text-slate-600 mb-8 flex items-center gap-2"><span className="text-rose-400">❤️</span> {meaningDisplay}</p>
+                      <div className={`flex flex-col items-center w-full transition-all duration-500 z-10 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none absolute'}`}>
+                        <p className="text-2xl font-bold text-slate-400 mb-3 tracking-widest uppercase">{pinyinDisplay}</p>
+                        <p className="text-3xl font-black text-[#2F8F6E] mb-6">{meaningDisplay}</p>
                         {exampleDisplay && (
-                          <div className="bg-[#FFF8E8] w-full max-w-sm p-5 rounded-3xl border border-[#FFC83D]/20">
-                            <p className="text-lg font-black text-slate-800 mb-1">{exampleDisplay}</p>
-                            <p className="text-xs font-bold text-slate-500">Mẫu câu minh họa</p>
+                          <div className="bg-white border border-[#8FD9A8] px-6 py-4 rounded-2xl shadow-sm max-w-lg mt-2 relative">
+                            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-3 py-0.5 border border-[#8FD9A8] rounded-full font-black text-[#2F8F6E] text-[9px] uppercase tracking-widest shadow-sm">Mẫu câu</span>
+                            <p className="text-base font-medium text-[#1B5E4B] leading-relaxed mt-2">{exampleDisplay}</p>
                           </div>
                         )}
                       </div>
@@ -365,58 +381,73 @@ export default function FlashcardPage() {
                         <button 
                           onClick={() => {
                             if (allowFlip) setIsFlipped(true);
-                            else alert("🔒 Vượt qua thử thách đặt câu hoặc đánh dấu 'Đã thuộc' để mở nghĩa!");
                           }}
-                          className={`absolute bottom-10 flex items-center gap-2 font-black text-xs px-6 py-3 rounded-full shadow-sm border transition-all ${allowFlip ? 'text-slate-500 hover:text-[#08A66A] bg-white border-slate-200 hover:border-[#08A66A] hover:-translate-y-1 cursor-pointer animate-pulse' : 'text-slate-400 bg-slate-50 border-slate-100 cursor-not-allowed'}`}
+                          className={`absolute bottom-10 flex items-center gap-2 font-black text-xs px-6 py-3 rounded-full shadow-sm border transition-all z-10 ${allowFlip ? 'text-[#2F8F6E] bg-white border-[#E2E8F0] hover:border-[#8FD9A8] hover:-translate-y-1 cursor-pointer animate-pulse' : 'text-slate-400 bg-slate-50 border-slate-100 cursor-not-allowed opacity-50'}`}
                         >
-                          {allowFlip ? <><span className="text-lg">👁</span> Bấm để xem nghĩa</> : <><span className="text-lg">🔒</span> Mở khóa bằng thử thách</>}
+                          {allowFlip ? <><span className="text-lg">👁</span> Bấm để xem nghĩa</> : <><span className="text-lg">🔒</span> Trả lời đúng để mở</>}
                         </button>
                       )}
                     </div>
 
-                    <div className="h-2 w-full bg-slate-50 flex">
-                      <div className={`h-full transition-all ${mode === "review" ? 'bg-rose-400' : 'bg-[#08A66A]'}`} style={{ width: `${((activeWordIndex + 1) / currentWordsPool.length) * 100}%` }}></div>
+                    <div className="h-2 w-full bg-[#EEF5E9] flex">
+                      <div className={`h-full transition-all ${mode === "review" ? 'bg-[#F2765B]' : 'bg-[#2F8F6E]'}`} style={{ width: `${((activeWordIndex + 1) / currentWordsPool.length) * 100}%` }}></div>
                     </div>
                   </div>
                 </div>
 
-                {/* KHU VỰC ĐẶT CÂU & CHẤM ĐIỂM */}
+                {/* KHU VỰC ĐẶT CÂU & CHẤM ĐIỂM (CÓ SMART ERROR HANDLING) */}
                 <div className="max-w-2xl mx-auto mb-10">
-                  <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 md:p-10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#FFC83D]/10 to-transparent rounded-bl-full -z-0"></div>
+                  <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 md:p-10 shadow-sm border border-[#E2E8F0] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#FFD666]/20 to-transparent rounded-bl-full -z-0 pointer-events-none"></div>
 
                     <div className="relative z-10">
                       <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 bg-[#FFF8E8] text-[#FFC83D] rounded-2xl flex items-center justify-center text-2xl shadow-sm border border-[#FFC83D]/20">✍️</div>
+                        <div className="w-12 h-12 bg-[#FFF8E8] text-[#FFC83D] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl shadow-sm border border-[#FFC83D]/20">✍️</div>
                         <div>
-                          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Thử thách đặt câu</h3>
-                          <p className="text-xs font-medium text-slate-500 mt-1">Dùng từ <strong className="text-[#08A66A] text-sm bg-[#DDF7EA] px-2 py-0.5 rounded"> {wordDisplay} </strong> để tạo một câu:</p>
+                          <h3 className="text-sm font-black text-[#1B5E4B] uppercase tracking-widest">Thử thách đặt câu</h3>
+                          <p className="text-xs font-medium text-slate-500 mt-1">Dùng từ <strong className="text-[#2F8F6E] text-sm bg-[#8FD9A8]/20 px-2 py-0.5 rounded border border-[#8FD9A8]/30"> {wordDisplay} </strong> để tạo một câu:</p>
                         </div>
                       </div>
 
                       <div className="flex flex-col sm:flex-row items-center gap-3">
                         <input 
-                          type="text" placeholder="Nhập chữ Hán hoặc Pinyin..." value={sentenceInput}
-                          onChange={(e) => { setSentenceInput(e.target.value); if (sentenceResult && !sentenceResult.isPass) setSentenceResult(null); }}
+                          type="text" 
+                          placeholder="Nhập chữ Hán hoặc Pinyin..." 
+                          value={sentenceInput}
+                          onChange={(e) => { 
+                            setSentenceInput(e.target.value); 
+                            if (sentenceResult && !sentenceResult.isPass) setSentenceResult(null); 
+                            if (aiError) setAiError(null); 
+                          }}
                           disabled={sentenceResult?.isPass || isCheckingSentence}
-                          className="w-full sm:flex-1 bg-white border-2 border-slate-100 text-slate-800 font-bold text-sm rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-[#08A66A]/10 focus:border-[#08A66A] transition-all disabled:opacity-60 disabled:bg-slate-50"
+                          className="w-full sm:flex-1 bg-white border-2 border-[#E2E8F0] text-[#1B5E4B] font-bold text-sm rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-[#8FD9A8]/30 focus:border-[#2F8F6E] transition-all disabled:opacity-60 disabled:bg-slate-50"
                         />
                         <button 
-                          onClick={handleCheckSentence} disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
-                          className={`w-full sm:w-auto px-8 py-4 font-black text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${sentenceResult?.isPass ? 'bg-[#08A66A] text-white shadow-emerald-600/30' : 'bg-[#172033] hover:bg-slate-800 text-white shadow-slate-900/20 hover:-translate-y-0.5'}`}
+                          onClick={handleCheckSentence} 
+                          disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
+                          className={`w-full sm:w-auto px-8 py-4 font-black text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${sentenceResult?.isPass ? 'bg-[#2F8F6E] text-white shadow-[#8FD9A8]/50' : 'bg-[#1B5E4B] hover:bg-[#2F8F6E] text-white hover:-translate-y-0.5'}`}
                         >
                           <span>{isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Đã chấm" : "Kiểm tra")}</span>
                         </button>
                       </div>
 
-                      {sentenceResult && (
-                        <div className={`mt-6 p-5 rounded-2xl border animate-fade-in flex gap-4 ${sentenceResult.isPass ? 'bg-[#DDF7EA] border-[#08A66A]/30' : 'bg-rose-50 border-rose-200'}`}>
+                      {/* HIỂN THỊ LỖI QUÁ TẢI API (Smart Error Catching) */}
+                      {aiError && (
+                        <div className="mt-6 p-4 rounded-2xl border bg-[#FFF1F2] border-[#FECDD3] animate-fade-in flex gap-3 items-center shadow-sm">
+                           <div className="text-2xl shrink-0">💦</div>
+                           <p className="text-xs font-bold text-[#BE123C] leading-relaxed">{aiError}</p>
+                        </div>
+                      )}
+
+                      {/* HIỂN THỊ KẾT QUẢ CHẤM ĐIỂM CỦA AI */}
+                      {sentenceResult && !aiError && (
+                        <div className={`mt-6 p-5 rounded-2xl border animate-fade-in flex gap-4 shadow-inner ${sentenceResult.isPass ? 'bg-[#EEF5E9] border-[#8FD9A8]/50' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
                             <div className="text-3xl shrink-0 mt-1">{sentenceResult.isPass ? '🐸' : '💦'}</div>
                             <div>
-                              <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#087A55]' : 'text-rose-700'}`}>{sentenceResult.isPass ? "太棒了！Tuyệt vời!" : "再试一次！Chưa chính xác:"}</h4>
-                              <p className="text-xs font-medium text-slate-700 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
+                              <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#1B5E4B]' : 'text-[#BE123C]'}`}>{sentenceResult.isPass ? "太棒了！Tuyệt vời!" : "再试一次！Chưa chính xác:"}</h4>
+                              <p className="text-xs font-medium text-[#1B5E4B]/80 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
                               {!sentenceResult.isPass && sentenceResult.suggestion && (
-                                  <p className="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/60 leading-relaxed shadow-sm"><span className="font-black text-[#FFC83D]">💡 Gợi ý:</span> {sentenceResult.suggestion}</p>
+                                  <p className="text-xs text-[#1B5E4B] bg-white p-3 rounded-xl border border-slate-200/60 leading-relaxed shadow-sm"><span className="font-black text-[#FFC83D]">💡 Gợi ý:</span> {sentenceResult.suggestion}</p>
                               )}
                             </div>
                         </div>
@@ -427,12 +458,12 @@ export default function FlashcardPage() {
 
                 {/* NÚT ACTION (ĐIỀU HƯỚNG CHÍNH) */}
                 <div className="flex gap-4 w-full max-w-xl mx-auto pb-10">
-                    <button onClick={() => { handleMarkLearning(); setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0); }} className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-black text-sm hover:border-[#08A66A] hover:text-[#08A66A] transition-all shadow-sm flex items-center justify-center gap-2">
+                    <button onClick={() => { handleMarkLearning(); setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0); }} className="flex-1 py-4 bg-white border-2 border-[#E2E8F0] text-slate-500 rounded-2xl font-black text-sm hover:border-[#F2765B] hover:bg-[#FFF1F2] hover:text-[#BE123C] transition-all shadow-sm flex items-center justify-center gap-2">
                       {!isFlipped ? <><span>👀</span> Xem nghĩa / Bỏ qua</> : <><span>⏭️</span> Từ tiếp theo</>}
                     </button>
                     <button 
                       onClick={handleMarkMasteredAndNext} disabled={!isFullyPassed}
-                      className={`flex-[1.5] py-4 rounded-2xl font-black text-sm transition-all shadow-md flex justify-center items-center gap-2 ${isFullyPassed ? 'bg-[#08A66A] text-white hover:bg-[#087A55] hover:shadow-lg hover:-translate-y-1' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                      className={`flex-[1.5] py-4 rounded-2xl font-black text-sm transition-all shadow-md flex justify-center items-center gap-2 ${isFullyPassed ? 'bg-[#2F8F6E] text-white hover:bg-[#1B5E4B] hover:shadow-lg hover:-translate-y-1' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
                     >
                       <span>✓</span> Đã thuộc (+5 XP) ➔
                     </button>

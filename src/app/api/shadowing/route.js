@@ -8,7 +8,7 @@ export async function POST(request) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     // Sử dụng model bạn yêu cầu
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
 
     const body = await request.json();
     const { targetText, audioBase64 } = body;
