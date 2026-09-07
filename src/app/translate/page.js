@@ -1,653 +1,540 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import arrangeData from "../arrange.json"; 
-import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
+import { useState, useEffect, useRef } from "react";
+import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import { updateUserProgress } from "../../lib/firebaseUtils";
 
-const HSK_LEVELS = [
-  { name: "HSK 1", requiredExp: 0 },
-  { name: "HSK 2", requiredExp: 2000 },
-  { name: "HSK 3", requiredExp: 4000 },
-  { name: "HSK 4", requiredExp: 6000 },
-  { name: "HSK 5", requiredExp: 8000 },
-  { name: "HSK 6", requiredExp: 10000 },
-];
+// IMPORT DATA TỪ FILE ARRANGE.JSON
+import translationData from "../arrange.json"; 
+
+// --- HÀM CHUẨN HÓA LEVEL (Khắc phục lỗi đếm thiếu câu do khoảng trắng) ---
+const matchLevel = (dataLevel, targetLevel) => {
+  if (!dataLevel || !targetLevel) return false;
+  // Xóa mọi dấu cách, đưa về viết hoa (Ví dụ: "HSK 6" hay "hsk6" đều thành "HSK6")
+  const cleanDataLevel = dataLevel.toString().replace(/\s+/g, '').toUpperCase();
+  const cleanTargetLevel = targetLevel.toString().replace(/\s+/g, '').toUpperCase();
+  return cleanDataLevel === cleanTargetLevel;
+};
+
+// --- THUẬT TOÁN DỰ PHÒNG (NẾU API LỖI) ---
+const getSimilarity = (s1, s2) => {
+  let longer = s1.length > s2.length ? s1 : s2;
+  let shorter = s1.length > s2.length ? s2 : s1;
+  if (longer.length === 0) return 1.0;
+  const costs = new Array();
+  for (let i = 0; i <= longer.length; i++) {
+    let lastValue = i;
+    for (let j = 0; j <= shorter.length; j++) {
+      if (i == 0) costs[j] = j;
+      else {
+        if (j > 0) {
+          let newValue = costs[j - 1];
+          if (longer.charAt(i - 1) != shorter.charAt(j - 1)) {
+            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+          }
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    if (i > 0) costs[shorter.length] = lastValue;
+  }
+  return (longer.length - costs[shorter.length]) / parseFloat(longer.length);
+};
 
 export default function TranslatePage() {
+  const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
 
-  const [selectedHsk, setSelectedHsk] = useState("HSK 1");
-  const [userData, setUserData] = useState(null);
-  const [userExp, setUserExp] = useState(0); 
+  // --- STATES ĐIỀU HƯỚNG ---
+  const [step, setStep] = useState("SELECT_LEVEL"); 
+  const [selectedHskLevel, setSelectedHskLevel] = useState(null);
+  const [taskList, setTaskList] = useState([]);
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+
+  // --- STATES NGƯỜI DÙNG & GIAO DIỆN ---
   const [loadingUser, setLoadingUser] = useState(true);
-  
-  const [currentSentence, setCurrentSentence] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGrading, setIsGrading] = useState(false); 
-  
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [hearts, setHearts] = useState(5);
+  const [hskXp, setHskXp] = useState(0);
+
+  // --- STATES NHẮN TIN (MESSAGING UI) ---
   const [userInput, setUserInput] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+  const [feedbackState, setFeedbackState] = useState("idle"); 
   const [showAnswer, setShowAnswer] = useState(false);
-  const [evaluation, setEvaluation] = useState(null); 
-  const [errorMsg, setErrorMsg] = useState(null);
-  
-  const [sentenceHistory, setSentenceHistory] = useState([]);
-  
-  // UI States
-  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [combo, setCombo] = useState(0);
+  const [isEvaluating, setIsEvaluating] = useState(false); 
+  const chatContainerRef = useRef(null);
 
-  // Lấy dữ liệu Streak (Mô phỏng từ userData)
-  const streak = userData?.streakCount || 0;
-
+  // --- FETCH DATA FIREBASE ---
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user) {
+    async function syncUserAndFetchData() {
+      if (userId) {
         try {
-          const docRef = doc(db, "progress", user.id);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUserData(data);
-            const cloudExp = data.translateExp !== undefined ? data.translateExp : (parseInt(localStorage.getItem("ai_translate_exp")) || 0);
-            setUserExp(cloudExp);
-          } else {
-            setUserData({});
-            const localExp = parseInt(localStorage.getItem("ai_translate_exp")) || 0;
-            setUserExp(localExp);
+          const newStudentRef = doc(db, "user_progress", userId);
+          const newDocSnap = await getDoc(newStudentRef);
+          if (newDocSnap.exists()) {
+            const newData = newDocSnap.data();
+            setHskXp(newData.profile?.hsk_xp || 0);
+            setHearts(newData.profile?.hearts ?? 5);
+            setStreak(newData.profile?.streak_days || 0);
           }
-        } catch (error) {
-          console.error("Lỗi lấy dữ liệu tiến độ:", error);
-          setUserData({});
-          setUserExp(parseInt(localStorage.getItem("ai_translate_exp")) || 0);
-        } finally {
-          setLoadingUser(false);
-        }
-      } else {
-        setUserExp(parseInt(localStorage.getItem("ai_translate_exp")) || 0);
-        setLoadingUser(false);
+        } catch (error) { console.error("Lỗi:", error); }
       }
-    };
-    fetchUserData();
-  }, [user]);
-
-  useEffect(() => {
-    if (!loadingUser) {
-      localStorage.setItem("ai_translate_exp", userExp);
+      setLoadingUser(false);
     }
-  }, [userExp, loadingUser]);
+    if (isLoaded) syncUserAndFetchData();
+  }, [userId, isLoaded]);
 
-  const isHskLocked = (lvlName) => {
-    const cleanLvl = String(lvlName).replace(/\D/g, ''); 
-    if (!cleanLvl) return true;
-    const levelNum = parseInt(cleanLvl, 10);
+  // Cuộn chat xuống cuối tự động
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory, isEvaluating]);
+
+  // --- KHỞI TẠO BÀI TẬP ---
+  const startLevel = (level) => {
+    // Sử dụng hàm chuẩn hóa matchLevel thay cho includes
+    const rawData = translationData.filter(t => 
+      matchLevel(t.level, level) && 
+      t.vietnamese && t.chinese
+    );
     
-    if (levelNum === 1) return false;
-    
-    const requiredFlag = `passedHSK${levelNum - 1}`;
-    const currentFlag = `passedHSK${levelNum}`;
-    const passedTest = userData?.[requiredFlag] || userData?.[currentFlag];
-
-    const targetLvlObj = HSK_LEVELS.find(l => l.name === lvlName);
-    const hasEnoughExp = targetLvlObj && userExp >= targetLvlObj.requiredExp;
-
-    return !(passedTest || hasEnoughExp);
+    if (rawData.length > 0) {
+      const shuffled = [...rawData].sort(() => 0.5 - Math.random());
+      const selectedTasks = shuffled.slice(0, 10);
+      
+      setSelectedHskLevel(level);
+      setTaskList(selectedTasks);
+      setCurrentTaskIndex(0);
+      setCombo(0);
+      
+      setChatHistory([
+        { role: 'system', content: `Phiên luyện dịch: ${level} (10 Câu)` },
+        { role: 'contact', content: `Chào bạn! Cùng luyện dịch nhé. Hãy dịch câu sau sang tiếng Trung:\n\n「 ${selectedTasks[0].vietnamese} 」` }
+      ]);
+      setStep("DO_TRANSLATION");
+      setUserInput("");
+      setFeedbackState("idle");
+      setShowAnswer(false);
+    } else {
+      alert(`Dữ liệu cấp độ ${level} chưa sẵn sàng. Vui lòng thử cấp độ khác!`);
+    }
   };
 
-  useEffect(() => {
-    if (userData && isHskLocked(selectedHsk)) {
-      const firstUnlocked = HSK_LEVELS.find(lvl => !isHskLocked(lvl.name));
-      if (firstUnlocked) {
-        setSelectedHsk(firstUnlocked.name);
-      }
-    }
-  }, [userData, userExp, selectedHsk]);
+  // --- GỌI AI CHẤM ĐIỂM CHI TIẾT ---
+  const checkAnswer = async () => {
+    if (!userInput.trim() || feedbackState === "correct" || isEvaluating) return;
 
-  useEffect(() => {
-    const savedHistory = localStorage.getItem("ai_translate_history");
-    let historyArr = [];
-    if (savedHistory) {
-        historyArr = JSON.parse(savedHistory);
-        setSentenceHistory(historyArr);
-    }
-    generateNewSentence("HSK 1", historyArr);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (sentenceHistory.length > 0) {
-      const recent = sentenceHistory.slice(-50);
-      localStorage.setItem("ai_translate_history", JSON.stringify(recent));
-    }
-  }, [sentenceHistory]);
-
-  const generateNewSentence = (level, history = sentenceHistory) => {
-    setIsLoading(true);
-    setEvaluation(null);
+    const currentTask = taskList[currentTaskIndex];
+    const currentUserInput = userInput;
     setUserInput("");
-    setShowAnswer(false);
-    setErrorMsg(null);
     
-    try {
-      const targetLvl = level.replace(/\s+/g, '').toUpperCase();
-      
-      let availableSentences = arrangeData.filter(item => {
-          if (!item.level) return false;
-          const itemLvl = item.level.replace(/\s+/g, '').toUpperCase();
-          return itemLvl === targetLvl && !history.includes(item.vietnamese);
-      });
-
-      if (availableSentences.length === 0) {
-          const totalInLevel = arrangeData.filter(item => item.level && item.level.replace(/\s+/g, '').toUpperCase() === targetLvl);
-          if (totalInLevel.length === 0) {
-               throw new Error(`Chưa có dữ liệu cho ${level} trong file JSON.`);
-          } else {
-               availableSentences = totalInLevel; 
-          }
-      }
-
-      const randomIndex = Math.floor(Math.random() * availableSentences.length);
-      
-      setTimeout(() => {
-          setCurrentSentence(availableSentences[randomIndex]);
-          setIsLoading(false);
-      }, 300); // Thêm tí delay mượt mà
-      
-    } catch (error) {
-      setCurrentSentence(null); 
-      setErrorMsg(error.message);
-      setIsLoading(false);
-    }
-  };
-
-  const submitTranslation = async () => {
-    if (!currentSentence || !userInput.trim()) return;
-    setIsGrading(true);
-    setEvaluation(null);
-    setErrorMsg(null);
+    setChatHistory(prev => [...prev, { role: 'user', content: currentUserInput, status: 'pending' }]);
+    setIsEvaluating(true);
 
     try {
-      const res = await fetch('/api/translate', {
+      const response = await fetch('/api/evaluate-translation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            action: "grade",
-            vietnamese: currentSentence.vietnamese,
-            chinese: currentSentence.chinese,
-            userInput: userInput.trim()
+        body: JSON.stringify({
+          vietnamese: currentTask.vietnamese,
+          targetChinese: currentTask.chinese,
+          userTranslation: currentUserInput
         })
       });
 
-      if (!res.ok) throw new Error("Lỗi khi kết nối với Giáo viên AI");
-      
-      const result = await res.json();
-      setEvaluation(result);
-
-      if (result.isCorrect) {
-          setSentenceHistory(prev => [...prev, currentSentence.vietnamese]); 
-
-          const currentSelectedNum = parseInt(selectedHsk.replace(/\D/g, ''), 10);
-          
-          let highestUnlockedNum = 1;
-          for (let lvl of HSK_LEVELS) {
-            if (!isHskLocked(lvl.name)) {
-              const num = parseInt(lvl.name.replace(/\D/g, ''), 10);
-              if (num > highestUnlockedNum) highestUnlockedNum = num;
-            }
-          }
-
-          if (currentSelectedNum >= highestUnlockedNum) {
-              const newExp = userExp + 10; 
-              setUserExp(newExp); 
-
-              if (user) {
-                try {
-                  const studentRef = doc(db, "progress", user.id);
-                  await setDoc(studentRef, { translateExp: newExp }, { merge: true });
-                } catch (error) {
-                  console.error("Lỗi đồng bộ EXP lên đám mây:", error);
-                }
-              }
-          }
+      let aiResult;
+      if (response.ok) {
+        aiResult = await response.json();
+      } else {
+        throw new Error("API Route not found or failed");
       }
+
+      handleEvaluationResult(aiResult, currentUserInput, currentTask);
+
     } catch (error) {
-      setErrorMsg(error.message);
-    } finally {
-      setIsGrading(false);
+      console.warn("⚠️ API Chấm điểm chưa sẵn sàng. Đang sử dụng thuật toán dự phòng (Fallback)...");
+      
+      const cleanUser = currentUserInput.replace(/[.,!?，。？！\s]/g, "").toLowerCase();
+      const cleanTarget = currentTask.chinese.replace(/[.,!?，。？！\s]/g, "").toLowerCase();
+      const simScore = Math.round(getSimilarity(cleanUser, cleanTarget) * 100);
+      
+      const fallbackResult = {
+        score: simScore,
+        feedback: simScore >= 80 ? "Ngữ pháp và từ vựng của bạn khá ổn, truyền đạt đúng ý nghĩa cơ bản!" : "Câu dịch bị lệch nghĩa hoặc sai từ vựng khá nhiều.",
+        suggestion: `Người bản xứ thường dùng cấu trúc: ${currentTask.chinese}`
+      };
+      handleEvaluationResult(fallbackResult, currentUserInput, currentTask);
     }
   };
 
-  const handleKeyDown = (e) => {
-      if (e.key === 'Enter' && e.ctrlKey && !isLoading && !isGrading && userInput.trim() && !evaluation?.isCorrect) {
-          submitTranslation();
+  const handleEvaluationResult = async (result, currentUserInput, currentTask) => {
+    const isPass = result.score >= 80;
+    
+    setChatHistory(prev => {
+      const newHistory = [...prev];
+      const lastUserMsgIndex = newHistory.map(m => m.role).lastIndexOf('user');
+      if(lastUserMsgIndex !== -1) newHistory[lastUserMsgIndex].status = isPass ? 'correct' : 'incorrect';
+      return newHistory;
+    });
+
+    setChatHistory(prev => [...prev, { 
+      role: 'contact', 
+      isDetailedFeedback: true,
+      score: result.score,
+      feedback: result.feedback,
+      suggestion: result.suggestion,
+      isPass: isPass
+    }]);
+
+    setIsEvaluating(false);
+
+    if (isPass) {
+      setFeedbackState("correct");
+      setCombo(prev => prev + 1);
+      if (userId) {
+        try { await updateUserProgress(userId, 15, "writing", 2); } 
+        catch (e) { console.error(e); }
       }
+    } else {
+      setFeedbackState("incorrect");
+      setCombo(0);
+    }
   };
 
-  const currentLevelIndex = HSK_LEVELS.findIndex(
-    (l, idx) => userExp >= l.requiredExp && (idx === HSK_LEVELS.length - 1 || userExp < HSK_LEVELS[idx + 1].requiredExp)
-  );
-  const currentLvlObj = HSK_LEVELS[currentLevelIndex !== -1 ? currentLevelIndex : 0];
-  const nextLvlObj = HSK_LEVELS[currentLevelIndex + 1];
-  
-  let expPercent = 100;
-  if (nextLvlObj) {
-      const expInCurrentLevel = userExp - currentLvlObj.requiredExp;
-      const expNeeded = nextLvlObj.requiredExp - currentLvlObj.requiredExp;
-      expPercent = Math.min(Math.round((expInCurrentLevel / expNeeded) * 100), 100);
-  }
+  // --- CHUYỂN SANG CÂU TIẾP THEO ---
+  const nextTask = () => {
+    const nextIdx = currentTaskIndex + 1;
+    if (nextIdx < taskList.length) {
+      setCurrentTaskIndex(nextIdx);
+      setUserInput("");
+      setFeedbackState("idle");
+      setShowAnswer(false);
+      
+      setChatHistory(prev => [
+        ...prev, 
+        { role: 'contact', content: `Tiếp tục nhé! Câu này thì sao:\n\n「 ${taskList[nextIdx].vietnamese} 」` }
+      ]);
+    } else {
+      setChatHistory(prev => [
+        ...prev, 
+        { role: 'system', content: "🎉 HOÀN THÀNH BÀI TẬP 🎉" },
+        { role: 'contact', content: "Tuyệt vời, bạn đã hoàn thành toàn bộ thử thách dịch thuật của phiên này! Bạn rất siêu đó nha 🐸✨" }
+      ]);
+      setFeedbackState("finished");
+    }
+  };
 
-  const isCurrentHskLocked = isHskLocked(selectedHsk);
-
-  let currentMaxUnlockedName = "HSK 1";
-  for (let lvl of HSK_LEVELS) {
-    if (!isHskLocked(lvl.name)) currentMaxUnlockedName = lvl.name;
-  }
-  const isPlayingAtMaxLevel = selectedHsk === currentMaxUnlockedName;
-
-  const recentHistory = [...sentenceHistory].reverse().slice(0, 10);
-  
-  // Tính toán trước EXP cần thiết để tránh ghi trực tiếp logic hàm trong JSX
-  const requiredExpForSelectedHsk = HSK_LEVELS.find(l => l.name === selectedHsk)?.requiredExp || 0;
-
-  if (loadingUser) {
-    return (
-      <div className="min-h-screen bg-[#F4F8F5] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-6xl animate-bounce">🐸</div>
-          <p className="font-black text-[#08A66A] tracking-widest uppercase">Đang tải không gian học...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loadingUser) return <div className="min-h-screen bg-[#F7FAF8]"></div>;
 
   return (
-    <div className="min-h-screen bg-[#F4F8F5] font-sans text-slate-800 relative overflow-hidden flex flex-col selection:bg-emerald-200">
+    <div className="flex min-h-screen font-sans text-[#142033] bg-[#F7FAF8] selection:bg-[#10B981]/20">
       
-      {/* BACKGROUND ẢNH CÓ LỚP PHỦ MỜ */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: "url('/hskk/dich.jpg')" }} 
-      >
-        <div className="absolute inset-0 bg-[#F4F8F5]/90 backdrop-blur-[2px]"></div>
-      </div>
+      {/* ==========================================
+          SIDEBAR
+          ========================================== */}
+      <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#E2E8F0] bg-white transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
+        <div className="flex h-full flex-col">
+          <div className={`flex items-center px-6 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#10B981] text-white shadow-sm">🐸</div>
+            {!isSidebarCollapsed && <h2 className="truncate text-base font-black tracking-tight text-[#142033]">Hành Trình HSK</h2>}
+          </div>
 
-      {/* =========================================
-          TẦNG 1: HEADER CỐ ĐỊNH (TOP NAV)
-          ========================================= */}
-      <header className="relative z-20 bg-white/80 backdrop-blur-md border-b border-emerald-100 shadow-sm sticky top-0">
-        <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
-          
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-12 h-12 bg-[#08A66A] rounded-full flex items-center justify-center text-white text-2xl shadow-sm">🐸</div>
-            <div>
-              <h1 className="font-black text-slate-900 text-lg leading-tight">Hành Trình HSK</h1>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Học tiếng Trung, chạm đến tương lai</p>
-            </div>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-2">
-            <Link href="/" className="px-5 py-2.5 rounded-2xl text-sm font-bold text-slate-500 hover:bg-emerald-50 hover:text-[#08A66A] transition-colors flex items-center gap-2">
-              <span className="text-lg">🏠</span> Trang chủ
-            </Link>
-            <Link href="/vocab" className="px-5 py-2.5 rounded-2xl text-sm font-bold text-slate-500 hover:bg-emerald-50 hover:text-[#08A66A] transition-colors flex items-center gap-2">
-              <span className="text-lg">📚</span> Học tập
-            </Link>
-            <div className="px-5 py-2.5 rounded-2xl text-sm font-black bg-[#DDF7EA] text-[#08A66A] shadow-sm flex items-center gap-2 cursor-pointer">
-              <span className="text-lg">✍️</span> Dịch câu
-            </div>
+          <nav className="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar">
+            <p className="px-2 text-[10px] font-bold uppercase tracking-widest text-[#94A3B8] mb-2">{!isSidebarCollapsed ? "Học tập" : "•"}</p>
+            <Link href="/" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033] transition-colors"><span className="text-lg opacity-80">🏠</span>{!isSidebarCollapsed && <span>Trang chủ</span>}</Link>
+            <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033] transition-colors"><span className="text-lg opacity-80">📚</span>{!isSidebarCollapsed && <span>Từ vựng</span>}</Link>
+            <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033] transition-colors"><span className="text-lg opacity-80">🎧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
+            <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033] transition-colors"><span className="text-lg opacity-80">🧩</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
+            <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30"><span className="text-lg">✍️</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
+            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033] transition-colors"><span className="text-lg opacity-80">💬</span>{!isSidebarCollapsed && <span>Thực chiến AI</span>}</Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl shadow-sm border border-emerald-50">
-              <span className="text-amber-500 text-lg">🔥</span>
-              <div className="flex flex-col">
-                <span className="font-black text-slate-800 text-xs leading-none">{streak} ngày</span>
-                <span className="text-[8px] text-slate-400 font-bold">Chuỗi học liên tiếp</span>
+          <div className="border-t border-[#E2E8F0] p-4">
+            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-[#F8FAFC] py-2.5 text-xs font-bold text-[#64748B] hover:bg-[#E2E8F0] transition-colors">
+              {isSidebarCollapsed ? "→" : "← Thu gọn"}
+            </button>
+            {isSignedIn ? (
+              <div className={`flex items-center rounded-xl bg-white border border-[#E2E8F0] shadow-sm p-2 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+                <UserButton afterSignOutUrl="/" />
+                {!isSidebarCollapsed && <div className="min-w-0"><p className="truncate text-xs font-bold">{user?.fullName || "Học viên"}</p></div>}
               </div>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl shadow-sm border border-amber-50">
-              <span className="text-[#FFC83D] text-lg">⭐</span>
-              <div className="flex flex-col">
-                <span className="font-black text-slate-800 text-xs leading-none">{userExp} XP</span>
-                <span className="text-[8px] text-slate-400 font-bold">Điểm dịch thuật</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2 pl-4 border-l border-slate-200">
-              {isLoaded && user ? (
-                <div className="flex items-center gap-2">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-[9px] text-slate-400 font-bold">Xin chào,</p>
-                    <p className="text-xs font-black text-slate-800">{user.firstName || "Bạn"}</p>
-                  </div>
-                  <UserButton afterSignOutUrl="/" />
-                </div>
-              ) : (
-                <SignInButton mode="modal">
-                  <button className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl shadow-md">Đăng nhập</button>
-                </SignInButton>
-              )}
-            </div>
+            ) : (
+              <SignInButton mode="modal">
+                <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#142033] py-3 text-xs font-bold text-white hover:bg-black">👤 {!isSidebarCollapsed && "Đăng nhập"}</button>
+              </SignInButton>
+            )}
           </div>
         </div>
-      </header>
+      </aside>
 
-      {/* =========================================
-          TẦNG 2 & 3: MAIN WORKSPACE
-          ========================================= */}
-      <div className="relative z-10 flex-1 overflow-y-auto scrollbar-hide py-8">
-        <div className="max-w-[1400px] mx-auto px-6">
-          
-          {/* Top Breadcrumb & Focus Mode */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4 md:gap-6">
-              <Link href="/">
-                <button className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl font-bold text-sm text-slate-600 shadow-sm border border-white hover:text-[#08A66A] transition-all">
-                  <span>←</span> Quay lại
-                </button>
-              </Link>
-              
-              <div className="hidden sm:flex items-center gap-2 text-sm font-bold bg-white/60 px-4 py-2 rounded-xl backdrop-blur-md">
-                <span className="text-slate-600">Học tập</span>
-                <span className="text-slate-400">›</span>
-                <span className="text-slate-600">Dịch thuật</span>
-                <span className="text-slate-400">›</span>
-                <span className="text-[#08A66A] font-black">{selectedHsk}</span>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setIsFocusMode(!isFocusMode)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-sm transition-all shadow-sm border ${
-                isFocusMode 
-                  ? 'bg-[#08A66A] text-white border-[#087A55] shadow-emerald-500/20' 
-                  : 'bg-white text-[#08A66A] border-white hover:bg-[#DDF7EA]'
-              }`}
-            >
-              <span>🌿</span> Chế độ tập trung
-            </button>
-          </div>
-
-          {/* LAYOUT CHIA 3 CỘT (Left Sidebar - Main Center - Right Sidebar) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start transition-all duration-500">
+      <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
+        
+        {/* TOP BAR */}
+        <header className="sticky top-0 z-30 h-16 border-b border-[#E2E8F0] bg-white/90 px-6 backdrop-blur-md flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {step === "DO_TRANSLATION" ? (
+              <button onClick={() => setStep("SELECT_LEVEL")} className="text-[#64748B] hover:text-[#142033] transition flex items-center gap-1 font-bold text-sm bg-[#F8FAFC] px-3 py-1.5 rounded-lg border border-[#E2E8F0] shadow-sm">
+                ← <span className="hidden sm:inline">Trở về</span>
+              </button>
+            ) : (
+              <h2 className="font-black text-lg hidden sm:block text-[#142033]">Dịch Thuật Ứng Dụng (Translation)</h2>
+            )}
             
-            {/* --- CỘT TRÁI: HỒ SƠ TIẾN BỘ --- */}
-            {!isFocusMode && (
-              <div className="lg:col-span-3 transition-all duration-500 animate-fade-in w-full">
-                <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 shadow-sm border border-white sticky top-28">
-                  
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
-                      <span className="text-xl">🎯</span> Hành trình
-                    </h3>
-                  </div>
-
-                  <div className="bg-[#F4F8F5] p-5 rounded-2xl border border-emerald-100/50 mb-6">
-                    <p className="text-[10px] font-black text-[#08A66A] tracking-widest uppercase mb-1">Cấp độ hiện tại</p>
-                    <p className="text-2xl font-black text-slate-800 mb-2">{currentLvlObj?.name}</p>
-                    
-                    <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden mb-2">
-                        <div className="h-full bg-[#08A66A] transition-all duration-500" style={{ width: `${expPercent}%` }}></div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center text-xs font-bold text-slate-500">
-                      <span>{userExp} XP</span>
-                      {nextLvlObj && <span>→ {nextLvlObj.name}</span>}
-                    </div>
-                  </div>
-
-                  <p className="font-bold text-sm text-slate-700 mb-3 uppercase tracking-widest text-[10px]">Chuyển cấp độ bài tập</p>
-                  <select 
-                      value={selectedHsk} 
-                      onChange={(e) => {
-                          setSelectedHsk(e.target.value);
-                          generateNewSentence(e.target.value);
-                      }}
-                      className="w-full bg-white border-2 border-slate-100 text-[#087A55] font-black py-3 px-4 rounded-xl outline-none cursor-pointer hover:border-[#08A66A] transition mb-6 shadow-sm"
-                  >
-                      {HSK_LEVELS.map(lvl => {
-                          const locked = isHskLocked(lvl.name);
-                          return (
-                              <option key={lvl.name} value={lvl.name} disabled={locked}>
-                                  {lvl.name} {locked ? `🔒 (Cần ${lvl.requiredExp} XP)` : ""}
-                              </option>
-                          );
-                      })}
-                  </select>
-
-                  <div className="flex flex-col items-center mt-6 pt-6 border-t border-slate-100 text-center">
-                    <div className="text-5xl drop-shadow-sm mb-3">🐸</div>
-                    <h4 className="font-black text-[#087A55] text-sm">加油！</h4>
-                    <p className="text-xs font-medium text-emerald-700 mt-1 leading-relaxed">
-                      {isPlayingAtMaxLevel 
-                        ? "Làm bài ở cấp độ này sẽ được cộng +10 XP mỗi câu!" 
-                        : "Ôn tập thật tốt nhé! Không cộng XP ở cấp độ này."}
-                    </p>
-                  </div>
-                </div>
+            {step === "DO_TRANSLATION" && (
+              <div className="flex items-center gap-2 text-sm font-bold bg-white px-4 py-1.5 rounded-lg border border-[#E2E8F0] shadow-sm">
+                <span className="text-[#10B981]">Tiến trình: {currentTaskIndex + 1} / {taskList.length}</span>
               </div>
             )}
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {combo > 1 && <span className="text-xs font-black text-[#F4B740] bg-[#FFFBEB] px-3 py-1 rounded-full border border-[#FDE68A] animate-pulse">🔥 Combo {combo}</span>}
+            <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 shadow-sm">
+              <span className="text-sm">⭐</span><span className="text-xs font-black text-[#F4B740]">{hskXp}</span>
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 shadow-sm">
+              <span className="text-sm">❤️</span><span className="text-xs font-black text-[#F43F70]">{hearts}</span>
+            </div>
+          </div>
+        </header>
 
-            {/* --- CỘT GIỮA: KHU VỰC DỊCH THUẬT (MAIN CARD) --- */}
-            <div className={`${isFocusMode ? 'lg:col-span-8 lg:col-start-3' : 'lg:col-span-6'} transition-all duration-500 w-full`}>
-              {isCurrentHskLocked ? (
-                <div className="bg-white/95 backdrop-blur-xl p-12 rounded-[32px] shadow-lg border border-white text-center flex flex-col items-center justify-center min-h-[500px]">
-                  <div className="text-6xl mb-6">🔒</div>
-                  <h3 className="text-2xl font-black text-slate-800 mb-3">Cấp độ {selectedHsk} đang bị khóa!</h3>
-                  <p className="text-slate-500 mb-8 max-w-md font-medium leading-relaxed">
-                    Bạn cần đạt đủ {requiredExpForSelectedHsk} EXP hoặc vượt qua bài kiểm tra để mở khóa.
-                  </p>
-                  <Link href="/test" className="px-6 py-3.5 bg-[#172033] text-white font-bold rounded-2xl shadow hover:bg-slate-800 transition">
-                    🎯 Kiểm Tra Trình Độ ngay
-                  </Link>
-                </div>
-              ) : (
-                <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 md:p-10 shadow-lg shadow-emerald-900/5 border border-white relative overflow-hidden flex flex-col h-full min-h-[600px]">
+        <div className="flex-1 p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+          
+          {/* PHASE 1: CHỌN CẤP ĐỘ */}
+          {step === "SELECT_LEVEL" && (
+            <div className="animate-fade-in mt-6 max-w-4xl mx-auto">
+              <div className="text-center mb-10">
+                <div className="w-20 h-20 bg-white rounded-[24px] mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#E2E8F0]">✍️</div>
+                <h1 className="text-3xl md:text-4xl font-black text-[#142033] tracking-tight mb-4">Luyện Dịch AI</h1>
+                <p className="text-[#64748B] font-medium text-sm max-w-lg mx-auto">Giáo viên Ếch Xanh sẽ chấm điểm chi tiết, phân tích lỗi sai và gợi ý cách diễn đạt tự nhiên như người bản xứ.</p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+                {["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6"].map((lvl) => {
+                  const tasks = translationData.filter(t => matchLevel(t.level, lvl) && t.vietnamese && t.chinese);
+                  const hasData = tasks.length > 0;
                   
-                  {/* Header trong Card */}
-                  <div className="flex justify-between items-start mb-8 relative z-10">
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="text-[#FFC83D] text-2xl">✦</span>
-                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">Thử Thách Dịch Thuật</h2>
+                  return (
+                    <div key={lvl} onClick={() => { if (hasData) startLevel(lvl); }} className={`bg-white border rounded-[24px] p-6 text-center transition-all ${hasData ? "border-[#E2E8F0] hover:border-[#10B981] hover:shadow-md cursor-pointer hover:-translate-y-1" : "border-[#E2E8F0] opacity-60 cursor-not-allowed bg-[#F8FAFC]"}`}>
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4 mx-auto ${hasData ? 'bg-[#ECFDF5] text-[#10B981]' : 'bg-[#F1F5F9] text-[#94A3B8]'}`}>
+                        {hasData ? '🎓' : '🔒'}
                       </div>
-                      <p className="text-slate-500 text-sm font-bold bg-slate-100 px-3 py-1 rounded-lg w-fit ml-8">
-                        {selectedHsk}
-                      </p>
+                      <h3 className="text-lg font-black text-[#142033] mb-1">{lvl}</h3>
+                      <span className={`text-[9px] font-bold uppercase tracking-widest ${hasData ? 'text-[#10B981]' : 'text-[#94A3B8]'}`}>{hasData ? `${tasks.length} Câu hỏi` : "Sắp ra mắt"}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* PHASE 2: GIAO DIỆN NHẮN TIN (AI TEACHER CHAT) */}
+          {step === "DO_TRANSLATION" && taskList.length > 0 && (
+            <div className="h-[calc(100vh-140px)] flex flex-col lg:flex-row gap-6 animate-fade-in">
+              
+              {/* CỘT TRÁI: ĐIỆN THOẠI NHẮN TIN */}
+              <div className="lg:col-span-8 w-full flex flex-col h-full bg-white rounded-[32px] border border-[#E2E8F0] shadow-xl overflow-hidden relative">
+                
+                {/* Header Điện thoại */}
+                <div className="h-16 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center px-6 shrink-0 z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-xl shadow-sm">🐸</div>
+                    <div>
+                      <h3 className="font-bold text-[#142033] text-sm">Xiao Qingwa (Giáo viên AI)</h3>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></div>
+                        <span className="text-[9px] font-bold text-[#10B981] uppercase tracking-wider">Đang trực tuyến</span>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  {isLoading ? (
-                      <div className="flex-1 flex flex-col items-center justify-center animate-pulse py-20">
-                          <div className="text-6xl mb-4">🗂️</div>
-                          <h3 className="text-xl font-bold text-slate-500">Đang chọn câu hỏi mới...</h3>
-                      </div>
-                  ) : currentSentence ? (
-                      <div className="flex-1 flex flex-col w-full animate-fade-in relative z-10">
-                          
-                          {/* PROMPT CARD (CÂU TIẾNG VIỆT) */}
-                          <div className="bg-[#F4F8F5] p-8 rounded-[24px] border border-emerald-100/50 mb-8 relative">
-                            <div className="absolute -top-3 left-6 bg-[#08A66A] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
-                              🇻🇳 Hãy dịch sang Tiếng Trung
+                {/* Khung Chat Liên Tục */}
+                <div ref={chatContainerRef} className="flex-1 bg-[#F8FAFC] p-4 md:p-6 overflow-y-auto custom-scrollbar flex flex-col gap-4 relative scroll-smooth">
+                  
+                  {chatHistory.map((msg, idx) => {
+                    if (msg.role === 'system') {
+                      return (
+                        <div key={idx} className="flex justify-center w-full my-2 animate-fade-in">
+                          <span className="bg-[#1E293B]/80 backdrop-blur-md text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest text-center max-w-[80%]">
+                            {msg.content}
+                          </span>
+                        </div>
+                      );
+                    }
+                    if (msg.role === 'contact') {
+                      if (msg.isDetailedFeedback) {
+                        return (
+                          <div key={idx} className="flex items-end gap-2 w-full animate-fade-in">
+                            <div className="w-8 h-8 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-sm shrink-0 mb-1">🐸</div>
+                            <div className={`p-4 rounded-2xl rounded-bl-sm max-w-[85%] shadow-sm border ${msg.isPass ? 'bg-[#ECFDF5] border-[#A7F3D0]' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
+                              <div className="flex items-center gap-2 mb-3 border-b border-black/5 pb-2">
+                                 <span className={`text-2xl font-black ${msg.isPass ? 'text-[#059669]' : 'text-[#E11D48]'}`}>{msg.score}</span>
+                                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#64748B] bg-white/80 px-2 py-1 rounded">Điểm AI</span>
+                              </div>
+                              <p className="text-[14px] font-medium text-[#142033] whitespace-pre-wrap leading-relaxed mb-3"><strong>📝 Phân tích:</strong> {msg.feedback}</p>
+                              {msg.suggestion && (
+                                <p className="text-[14px] font-medium text-[#142033] whitespace-pre-wrap leading-relaxed bg-white/80 p-3 rounded-xl border border-black/5"><strong>💡 Gợi ý hay:</strong> {msg.suggestion}</p>
+                              )}
                             </div>
-                            <p className="text-2xl md:text-[28px] font-bold text-slate-800 leading-relaxed mt-2 text-center">
-                              {currentSentence.vietnamese}
-                            </p>
                           </div>
-
-                          {/* INPUT AREA */}
-                          <div className="relative mb-8">
-                              <p className="text-[10px] font-black text-[#08A66A] uppercase tracking-widest mb-2 pl-2 flex items-center gap-1.5">
-                                <span className="text-base">✍️</span> Bản dịch của bạn
-                              </p>
-                              <textarea 
-                                  rows="3"
-                                  value={userInput}
-                                  onChange={(e) => {
-                                      setUserInput(e.target.value);
-                                      setEvaluation(null);
-                                      setShowAnswer(false);
-                                  }}
-                                  onKeyDown={handleKeyDown}
-                                  placeholder="Nhập bản dịch tiếng Trung..."
-                                  className={`w-full bg-white border-2 text-slate-800 font-bold text-xl rounded-[24px] p-6 outline-none transition-all resize-none shadow-sm placeholder:text-slate-300 placeholder:font-medium ${
-                                      evaluation?.isCorrect === true ? 'border-emerald-500 bg-[#DDF7EA]/50 text-[#087A55]' :
-                                      evaluation?.isCorrect === false ? 'border-rose-400 bg-rose-50/50 text-rose-700' :
-                                      'border-slate-200 focus:border-[#08A66A] focus:ring-4 focus:ring-[#08A66A]/10'
-                                  }`}
-                                  disabled={evaluation?.isCorrect || isGrading}
-                              ></textarea>
-                              <div className="absolute bottom-4 right-4 flex items-center gap-3">
-                                <span className="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-1 rounded-md hidden sm:block">Ctrl + Enter</span>
-                                <span className="text-xs font-bold text-slate-300">{userInput.length} / 100</span>
-                              </div>
+                        );
+                      }
+                      return (
+                        <div key={idx} className="flex items-end gap-2 w-full animate-fade-in">
+                          <div className="w-8 h-8 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-sm shrink-0 mb-1">🐸</div>
+                          <div className={`p-3.5 rounded-2xl rounded-bl-sm max-w-[85%] shadow-sm ${msg.isReaction ? 'bg-transparent shadow-none text-2xl p-0' : 'bg-white border border-[#E2E8F0] text-[#142033]'}`}>
+                            {msg.isReaction ? msg.content : <p className="text-[15px] font-medium whitespace-pre-wrap leading-relaxed">{msg.content}</p>}
                           </div>
-
-                          {/* FEEDBACK TỪ AI */}
-                          {isGrading && (
-                              <div className="flex items-center gap-3 p-4 bg-blue-50 text-blue-600 rounded-2xl border border-blue-100 font-bold text-sm mb-8 animate-pulse w-fit">
-                                <span className="text-xl">👨‍🏫</span> AI đang đọc và chấm bài...
-                              </div>
-                          )}
-
-                          {evaluation && (
-                              <div className={`mb-8 p-6 rounded-[24px] border relative animate-fade-in ${evaluation.isCorrect ? 'bg-[#DDF7EA] border-[#08A66A]/30' : 'bg-rose-50 border-rose-200'}`}>
-                                  {evaluation.isCorrect && isPlayingAtMaxLevel && (
-                                    <div className="absolute -top-8 right-4 flex flex-col items-center animate-slide-up-fade">
-                                      <span className="text-2xl">✨</span>
-                                      <span className="font-black text-[#FFC83D] text-lg drop-shadow-md">+10 XP</span>
-                                    </div>
-                                  )}
-
-                                  <div className="flex items-start gap-4">
-                                    <div className="text-4xl mt-1">{evaluation.isCorrect ? '🐸' : '🐸'}</div>
-                                    <div className="flex-1">
-                                      <h4 className={`font-black text-lg mb-2 ${evaluation.isCorrect ? 'text-[#087A55]' : 'text-rose-700'}`}>
-                                          {evaluation.isCorrect ? "太棒了！Rất tốt!" : "Gần đúng rồi! Thử lại nhé."}
-                                      </h4>
-                                      <p className="text-sm text-slate-700 leading-relaxed font-medium mb-3">
-                                        {evaluation.message}
-                                      </p>
-                                      
-                                      {!evaluation.isCorrect && evaluation.suggestion && (
-                                          <div className="bg-white p-4 rounded-xl border border-rose-100 shadow-sm">
-                                            <p className="text-xs font-black text-[#FFC83D] mb-1">💡 GỢI Ý MẸO NHỚ:</p>
-                                            <p className="text-sm text-slate-600 leading-relaxed">{evaluation.suggestion}</p>
-                                          </div>
-                                      )}
-                                    </div>
-                                  </div>
-                              </div>
-                          )}
-
-                          {/* BẢNG ĐÁP ÁN (Khi bấm xem) */}
-                          {showAnswer && !evaluation?.isCorrect && (
-                              <div className="mb-8 p-6 bg-slate-50 rounded-[24px] border border-slate-200 animate-fade-in text-center relative overflow-hidden">
-                                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-100/50 rounded-bl-full -z-0"></div>
-                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 relative z-10">Đáp án chuẩn tham khảo</p>
-                                  <p className="text-3xl font-black text-[#172033] mb-2 relative z-10">{currentSentence.chinese}</p>
-                                  <p className="text-lg font-bold text-slate-500 relative z-10">{currentSentence.pinyin}</p>
-                              </div>
-                          )}
-
-                          {/* NÚT ACTION - Luôn neo ở dưới */}
-                          <div className="mt-auto flex flex-col sm:flex-row gap-4 pt-4">
-                              {!evaluation?.isCorrect && (
-                                  <button 
-                                      onClick={() => setShowAnswer(!showAnswer)}
-                                      className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-black text-sm hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center gap-2"
-                                  >
-                                      <span className="text-lg">{showAnswer ? "🙈" : "👁"}</span> {showAnswer ? "Ẩn đáp án" : "Xem đáp án chuẩn"}
-                                  </button>
-                              )}
-
-                              {!evaluation?.isCorrect ? (
-                                  <button 
-                                      onClick={submitTranslation}
-                                      disabled={isGrading || !userInput.trim()}
-                                      className="flex-1 py-4 bg-[#08A66A] text-white rounded-2xl font-black text-sm hover:bg-[#087A55] transition-all shadow-lg shadow-emerald-600/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                                  >
-                                      ✨ Nộp bài cho AI chấm
-                                  </button>
-                              ) : (
-                                  <button 
-                                      onClick={() => generateNewSentence(selectedHsk)}
-                                      className="w-full py-4 bg-[#172033] text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                                  >
-                                      Câu tiếp theo ➔
-                                  </button>
-                              )}
+                        </div>
+                      );
+                    }
+                    if (msg.role === 'user') {
+                      return (
+                        <div key={idx} className="flex items-end gap-2 w-full flex-row-reverse animate-fade-in">
+                          <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">🧑‍🎓</div>
+                          <div className={`p-3.5 rounded-2xl rounded-br-sm max-w-[85%] shadow-sm transition-all ${msg.status === 'correct' ? 'bg-[#10B981] text-white' : msg.status === 'incorrect' ? 'bg-[#F43F70] text-white' : 'bg-[#E2E8F0] text-[#64748B]'}`}>
+                            <p className="text-[15px] font-medium whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                           </div>
+                        </div>
+                      );
+                    }
+                  })}
 
+                  {/* HIỂU ỨNG AI ĐANG GÕ */}
+                  {isEvaluating && (
+                    <div className="flex items-end gap-2 w-full animate-fade-in">
+                      <div className="w-8 h-8 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center text-sm shrink-0 mb-1">🐸</div>
+                      <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-white border border-[#E2E8F0] shadow-sm flex items-center gap-1.5 h-[42px]">
+                        <div className="w-2 h-2 bg-[#94A3B8] rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-[#94A3B8] rounded-full animate-bounce" style={{animationDelay: '0.15s'}}></div>
+                        <div className="w-2 h-2 bg-[#94A3B8] rounded-full animate-bounce" style={{animationDelay: '0.3s'}}></div>
                       </div>
-                  ) : (
-                      <div className="text-center bg-red-50 p-6 rounded-2xl border border-red-200 m-auto">
-                          <p className="text-red-600 font-bold text-xl mb-2">Thông báo</p>
-                          <p className="text-red-500 font-medium max-w-md mx-auto">{errorMsg || "Lỗi không xác định"}</p>
-                      </div>
+                    </div>
                   )}
                 </div>
-              )} 
-            </div>
 
-            {/* --- CỘT PHẢI: GỢI Ý & LỊCH SỬ --- */}
-            {!isFocusMode && (
-              <div className="lg:col-span-3 transition-all duration-500 animate-fade-in w-full flex flex-col gap-6">
-                
-                {/* Gợi ý nhỏ */}
-                <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 shadow-sm border border-white">
-                  <h3 className="text-base font-black text-slate-800 flex items-center gap-2 mb-5">
-                    <span className="text-xl">💡</span> Gợi ý nhỏ
-                  </h3>
-                  <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                      <span className="text-[#08A66A] shrink-0 mt-0.5">🎧</span>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">Đọc kỹ câu Tiếng Việt và xác định thì/thể của câu.</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-[#08A66A] shrink-0 mt-0.5">📚</span>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">Sử dụng đúng từ vựng thuộc {selectedHsk}.</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-[#08A66A] shrink-0 mt-0.5">🌿</span>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">Dịch tự nhiên, không cần word-by-word.</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-[#08A66A] shrink-0 mt-0.5">⭐</span>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">AI sẽ chấm độ tự nhiên và ngữ pháp.</p>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Lịch sử làm bài */}
-                <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 shadow-sm border border-white flex-1 min-h-[300px]">
-                  <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
-                      <span className="text-xl">⏳</span> Lịch sử
-                    </h3>
-                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">{recentHistory.length} câu</span>
-                  </div>
-
-                  <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-                    {recentHistory.length > 0 ? recentHistory.map((sent, i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 bg-[#F4F8F5] rounded-xl border border-emerald-50">
-                        <span className="text-[#08A66A] font-black text-xs shrink-0 mt-0.5">✓</span>
-                        <p className="text-xs font-bold text-slate-600 line-clamp-2 leading-relaxed" title={sent}>{sent}</p>
-                      </div>
-                    )) : (
-                      <p className="text-xs text-slate-400 font-medium text-center py-10 italic">
-                        Chưa có lịch sử làm bài.<br/>Hãy dịch câu đầu tiên nhé!
-                      </p>
-                    )}
+                {/* Khu vực Gõ Tin Nhắn */}
+                <div className="bg-white border-t border-[#E2E8F0] p-4 shrink-0">
+                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-2 flex flex-col gap-2 transition-all focus-within:border-[#10B981] focus-within:bg-white focus-within:shadow-sm">
+                    <textarea 
+                      rows="2"
+                      placeholder={feedbackState === "finished" ? "Bạn đã hoàn thành phiên luyện tập này." : isEvaluating ? "Giáo viên AI đang chấm điểm..." : "Gõ bản dịch tiếng Trung vào đây..."}
+                      value={userInput}
+                      onChange={(e) => { setUserInput(e.target.value); setFeedbackState("idle"); setShowAnswer(false); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey && userInput.trim() && feedbackState !== 'correct' && feedbackState !== 'finished' && !isEvaluating) checkAnswer(); }}
+                      disabled={feedbackState === "correct" || feedbackState === "finished" || isEvaluating}
+                      className="w-full bg-transparent resize-none outline-none text-[#142033] font-medium px-2 py-1 placeholder:text-[#94A3B8] disabled:opacity-50 text-[15px]"
+                    ></textarea>
+                    <div className="flex items-center justify-between px-2 pb-1">
+                      <span className="text-[10px] font-bold text-[#94A3B8]">Ctrl + ↵ để gửi</span>
+                      <button 
+                        onClick={checkAnswer} 
+                        disabled={!userInput.trim() || feedbackState === "correct" || feedbackState === "finished" || isEvaluating}
+                        className="bg-[#142033] text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-black disabled:opacity-50 disabled:bg-[#CBD5E1] shadow-md transition-all"
+                      >
+                        Gửi
+                      </button>
+                    </div>
                   </div>
                 </div>
-
               </div>
-            )}
 
-          </div>
+              {/* CỘT PHẢI: THÔNG TIN BỔ TRỢ */}
+              <aside className="lg:col-span-4 w-full h-full flex flex-col gap-4">
+                
+                {feedbackState !== "finished" && (
+                  <div className="bg-white rounded-[24px] border border-[#E2E8F0] p-6 shadow-sm flex flex-col flex-1">
+                    <div className="flex items-center gap-2 mb-4 pb-4 border-b border-[#F1F5F9] shrink-0">
+                      <span className="text-xl">🎯</span>
+                      <h3 className="font-black text-[#142033] text-base">Câu cần dịch hiện tại</h3>
+                    </div>
+                    
+                    <p className="text-[#142033] font-bold text-lg leading-relaxed mb-6 shrink-0">"{taskList[currentTaskIndex]?.vietnamese}"</p>
+
+                    {/* KHU VỰC TRẠNG THÁI (LẤP ĐẦY KHOẢNG TRỐNG) */}
+                    <div className="flex-1 flex flex-col justify-center mb-6">
+                      
+                      {feedbackState === "idle" && !isEvaluating && !showAnswer && (
+                        <div className="bg-[#F8FAFC] border border-[#E2E8F0] border-dashed rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full animate-fade-in">
+                          <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm mb-3">💬</div>
+                          <h4 className="text-sm font-black text-[#142033] mb-1">Đến lượt bạn!</h4>
+                          <p className="text-xs text-[#64748B] font-medium leading-relaxed px-2">Nhập bản dịch vào khung chat bên trái để Giáo viên AI chấm điểm nhé.</p>
+                        </div>
+                      )}
+
+                      {isEvaluating && (
+                        <div className="bg-[#ECFDF5]/50 border border-[#A7F3D0]/50 rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full animate-fade-in">
+                          <div className="w-10 h-10 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin mb-4"></div>
+                          <h4 className="text-sm font-bold text-[#10B981] animate-pulse">Xiao Qingwa đang chấm điểm...</h4>
+                        </div>
+                      )}
+
+                      {showAnswer && (
+                        <div className="bg-[#ECFDF5] p-5 rounded-2xl border border-[#A7F3D0] h-full flex flex-col justify-center animate-fade-in">
+                          <span className="text-[10px] font-black text-[#10B981] uppercase tracking-widest block mb-2 text-center">Đáp án tiêu chuẩn</span>
+                          <span className="text-xl font-black text-[#142033] text-center mb-2">{taskList[currentTaskIndex]?.chinese}</span>
+                          {taskList[currentTaskIndex]?.ipa && <p className="text-sm font-bold text-[#10B981] text-center">{taskList[currentTaskIndex]?.ipa}</p>}
+                        </div>
+                      )}
+
+                      {feedbackState === "correct" && (
+                        <div className="bg-[#FFFBEB] p-6 rounded-2xl border border-[#FDE68A] h-full flex flex-col items-center justify-center text-center animate-fade-in">
+                          <div className="text-4xl mb-2">🏆</div>
+                          <p className="text-xs font-black text-[#F59E0B] uppercase tracking-widest mb-1">Chính xác!</p>
+                          <p className="text-3xl font-black text-[#F59E0B]">+15 XP</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Vùng Button (Cố định dưới cùng) */}
+                    <div className="shrink-0">
+                      {feedbackState === "incorrect" && !isEvaluating && (
+                        <button onClick={() => setShowAnswer(!showAnswer)} className="w-full py-3.5 mb-3 bg-white border border-[#E2E8F0] text-[#64748B] font-bold text-sm rounded-xl hover:bg-[#F8FAFC] transition-colors shadow-sm">
+                          {showAnswer ? "Ẩn đáp án" : "Bí quá? Xem đáp án mẫu"}
+                        </button>
+                      )}
+
+                      <button 
+                        onClick={nextTask}
+                        disabled={feedbackState !== "correct"}
+                        className="w-full py-4 bg-[#10B981] text-white rounded-xl font-black text-sm uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#059669] transition-colors shadow-md"
+                      >
+                        Câu tiếp theo →
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Khi kết thúc Session */}
+                {feedbackState === "finished" && (
+                  <div className="bg-white rounded-[24px] border border-[#E2E8F0] p-8 shadow-sm flex flex-col items-center justify-center flex-1 text-center animate-fade-in">
+                    <div className="text-6xl mb-4">🐸🎉</div>
+                    <h3 className="font-black text-[#142033] text-2xl mb-2">Tuyệt cú mèo!</h3>
+                    <p className="text-sm text-[#64748B] font-medium mb-8">Bạn đã xuất sắc hoàn thành phiên dịch cùng Xiao Qingwa.</p>
+                    <button 
+                      onClick={() => setStep("SELECT_LEVEL")}
+                      className="w-full py-4 bg-[#10B981] text-white rounded-xl font-black text-sm uppercase tracking-widest hover:bg-[#059669] transition-colors shadow-xl"
+                    >
+                      Chọn cấp độ khác
+                    </button>
+                  </div>
+                )}
+
+              </aside>
+
+            </div>
+          )}
+
         </div>
-      </div>
+      </main>
     </div>
   );
 }
