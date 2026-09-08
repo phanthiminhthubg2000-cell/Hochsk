@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
+import { useUser, useAuth, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase"; 
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateUserProgress } from "../../lib/firebaseUtils";
 
 // --- NGÂN HÀNG 60 TÌNH HUỐNG ---
@@ -83,9 +83,18 @@ const SCENARIOS = [
 
 export default function RoleplayPage() {
   const { user, isLoaded } = useUser();
+  const { userId, isSignedIn } = useAuth();
+  
   const [phase, setPhase] = useState("mode_selection");
   const [activeScenario, setActiveScenario] = useState(null);
   const [selectedHskLevel, setSelectedHskLevel] = useState("HSK 1");
+
+  // --- STATE ĐỒNG BỘ XP/WATER TOÀN HỆ THỐNG ---
+  const [hskXp, setHskXp] = useState(0);
+  const [water, setWater] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [hearts, setHearts] = useState(5);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Chat State
   const [chatHistory, setChatHistory] = useState([]);
@@ -97,6 +106,44 @@ export default function RoleplayPage() {
   const [isRecording, setIsRecording] = useState(false);
 
   const [completedMissions, setCompletedMissions] = useState([]);
+
+  // Fetch Global Data
+  useEffect(() => {
+    async function fetchGlobalData() {
+      if (userId) {
+        try {
+          const userRef = doc(db, "users", userId);
+          const userSnap = await getDoc(userRef);
+          
+          let currentXp = 0;
+          let currentWater = 0;
+          let currentStreak = 0;
+
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            currentXp = data.xp || 0;
+            currentWater = data.water || 0;
+            currentStreak = data.streak || 0;
+          }
+
+          const newStudentRef = doc(db, "user_progress", userId);
+          const newDocSnap = await getDoc(newStudentRef);
+          if (newDocSnap.exists()) {
+            const newData = newDocSnap.data();
+            if (currentXp === 0) currentXp = newData.profile?.hsk_xp || 0;
+            if (currentStreak === 0) currentStreak = newData.profile?.streak_days || 0;
+            setHearts(newData.profile?.hearts ?? 5);
+          }
+
+          setHskXp(currentXp);
+          setWater(currentWater);
+          setStreak(currentStreak);
+
+        } catch (error) { console.error("Lỗi:", error); }
+      }
+    }
+    if (isLoaded) fetchGlobalData();
+  }, [userId, isLoaded, user]);
 
   // Auto-scroll
   useEffect(() => {
@@ -211,12 +258,30 @@ export default function RoleplayPage() {
     }
   };
 
-  // --- KẾT THÚC VÀ CỘNG XP ---
+  // ============================================================
+  // KẾT THÚC VÀ CỘNG XP ĐỒNG BỘ TOÀN HỆ THỐNG
+  // ============================================================
   const finishRoleplay = async () => {
     setPhase("report");
-    if (user && activeScenario) {
+    if (userId && activeScenario) {
       try {
-        await updateUserProgress(user.id, activeScenario.xp, "speaking", 2);
+        const bonusXp = activeScenario.xp;
+        const bonusWater = 5; // Thưởng 5 giọt nước mỗi khi nhập vai xong
+
+        const newXp = hskXp + bonusXp;
+        const newWater = water + bonusWater;
+
+        // Cập nhật giao diện lập tức
+        setHskXp(newXp);
+        setWater(newWater);
+
+        // Lưu vào Firebase Users Collection
+        await setDoc(doc(db, "users", userId), {
+          xp: newXp,
+          water: newWater
+        }, { merge: true });
+
+        await updateUserProgress(userId, bonusXp, "speaking", 2);
       } catch (e) {
         console.error("Lỗi cập nhật XP Roleplay:", e);
       }
@@ -298,57 +363,110 @@ export default function RoleplayPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F4F8F5] font-sans text-[#172033] selection:bg-[#10A66A]/20">
+    <div className="flex min-h-screen bg-[#F4F8F5] font-sans text-[#1B5E4B] selection:bg-[#8FD9A8]/50">
       
       {/* Background Ảnh Kính Mờ Global */}
-      <div className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none" style={{ backgroundImage: "url('/hskk/thucchien.jpg')" }}>
+      <div className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none" style={{ backgroundImage: "url('/hskk/nen.jpg')" }}>
         <div className="absolute inset-0 bg-[#F4F8F5]/80 backdrop-blur-xl"></div>
       </div>
 
       {/* ==========================================
           SIDEBAR
           ========================================== */}
-      <aside className="w-64 bg-white/60 backdrop-blur-2xl border-r border-white/40 hidden md:flex flex-col sticky top-0 h-screen shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        <div className="p-6">
-          <Link href="/" className="flex items-center gap-3 mb-10 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 bg-gradient-to-br from-[#08A66A] to-[#058252] rounded-xl flex items-center justify-center text-white text-sm shadow-sm">🐸</div>
-            <div>
-              <h1 className="font-black text-[#172033] tracking-tight text-sm">Hành Trình HSK</h1>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-[#08A66A]">Roleplay Bản Xứ</p>
-            </div>
-          </Link>
+      <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-white/60 backdrop-blur-2xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
+        <div className="flex h-full flex-col">
+          <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#1B5E4B] text-xl text-white shadow-sm">🐸</div>
+            {!isSidebarCollapsed && (
+              <div className="min-w-0">
+                <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">Khu Vườn HSK</h2>
+                <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Roleplay Bản Xứ</p>
+              </div>
+            )}
+          </div>
 
-          <nav className="space-y-1">
-            <Link href="/" className="flex items-center gap-3 px-3 py-2.5 text-slate-500 hover:bg-white/80 hover:text-[#172033] rounded-xl font-medium text-sm transition-colors">
-              <span className="text-base opacity-80">⌂</span> Trang chủ
+          <nav className="flex-1 overflow-y-auto px-3 py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <Link href="/" className="mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">🏠</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
             </Link>
             
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Học tập</p>
+            <Link href="/test" className="mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">🎯</span>{!isSidebarCollapsed && <span>Kiểm tra năng lực</span>}
+            </Link>
+
+            <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">
+              {!isSidebarCollapsed ? "Góc Học Tập" : "•"}
             </div>
-            <Link href="/vocab" className="flex items-center gap-3 px-3 py-2 text-slate-500 hover:bg-white/80 hover:text-[#172033] rounded-xl font-medium text-sm transition-colors"><span className="text-base opacity-80">📚</span> Từ vựng</Link>
-            <Link href="/dictation" className="flex items-center gap-3 px-3 py-2 text-slate-500 hover:bg-white/80 hover:text-[#172033] rounded-xl font-medium text-sm transition-colors"><span className="text-base opacity-80">🎧</span> Nghe chép</Link>
-            <Link href="/arrange" className="flex items-center gap-3 px-3 py-2 text-slate-500 hover:bg-white/80 hover:text-[#172033] rounded-xl font-medium text-sm transition-colors"><span className="text-base opacity-80">🧩</span> Ngữ pháp</Link>
-            
-            <Link href="/roleplay" className="flex items-center gap-3 px-3 py-2.5 bg-white border border-white shadow-sm text-[#10A66A] rounded-xl font-bold text-sm">
-              <span className="text-base">💬</span> Thực chiến AI
+
+            <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">📚</span>{!isSidebarCollapsed && <span>Từ vựng</span>}
+            </Link>
+            <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">💡</span>{!isSidebarCollapsed && <span>Theo chủ đề</span>}
+            </Link>
+            <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">🧩</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}
+            </Link>
+            <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">🎧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}
+            </Link>
+            <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">✍️</span>{!isSidebarCollapsed && <span>Dịch câu</span>}
+            </Link>
+            <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}
+            </Link>
+            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl bg-[#8FD9A8]/30 px-3 py-2.5 text-sm font-bold text-[#1B5E4B]">
+              <span className="w-6 text-center text-lg">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}
             </Link>
           </nav>
+
+          <div className="border-t border-[#8FD9A8]/20 p-4">
+            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-white/50 py-2.5 text-xs font-bold text-slate-500 hover:bg-white transition-colors shadow-sm">
+              {isSidebarCollapsed ? "→" : "← Thu gọn"}
+            </button>
+            {isSignedIn ? (
+              <div className={`flex items-center rounded-2xl bg-white border border-[#E2E8F0] shadow-sm p-2.5 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+                <UserButton afterSignOutUrl="/" />
+                {!isSidebarCollapsed && (
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
+                    <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <SignInButton mode="modal">
+                <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1B5E4B] py-3 text-xs font-bold text-white hover:bg-[#2F8F6E] shadow-md transition-all">
+                  👤 {!isSidebarCollapsed && "Đăng nhập"}
+                </button>
+              </SignInButton>
+            )}
+          </div>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative z-10">
+      <div className={`flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative z-10 transition-all duration-300 ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
         
         {/* =========================================
-            HEADER
+            HEADER (TOPBAR ĐỒNG BỘ NƯỚC - LỬA - XP)
             ========================================= */}
-        <header className="h-16 bg-white/40 backdrop-blur-xl border-b border-white/40 px-6 flex items-center justify-between sticky top-0 z-30 shrink-0 shadow-sm">
+        <header className="h-[76px] bg-white/60 backdrop-blur-xl border-b border-white/40 px-6 flex items-center justify-between sticky top-0 z-30 shrink-0 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🎭</span>
-            <h2 className="font-bold text-[#172033] hidden sm:block">Phòng Thực Chiến AI</h2>
+            <span className="text-xl">🎬</span>
+            <h2 className="font-bold text-[#1B5E4B] hidden sm:block">Phim Trường Tương Tác AI</h2>
           </div>
-          <div className="flex items-center gap-4">
-            {isLoaded && user ? <UserButton afterSignOutUrl="/" /> : <SignInButton mode="modal"><button className="text-xs font-bold bg-[#172033] text-white px-4 py-2 rounded-lg hover:bg-black transition-colors">Đăng nhập</button></SignInButton>}
+          
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-[#E2E8F0] px-4 py-2.5">
+              <span className="text-lg drop-shadow-sm">☀️</span><span className="text-xs font-black text-[#FFD666] drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">{streak}</span>
+            </div>
+            <div className="flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 shadow-sm border border-[#4FB6C7]/30 px-4 py-2.5">
+              <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7] drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">{water}</span>
+            </div>
+            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5">
+              <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
+            </div>
           </div>
         </header>
 
@@ -360,24 +478,24 @@ export default function RoleplayPage() {
           {phase === "mode_selection" && (
             <div className="max-w-4xl mx-auto px-6 py-12 animate-fade-in">
               <div className="mb-10 text-center">
-                <div className="w-16 h-16 bg-white/80 backdrop-blur-md rounded-2xl mx-auto flex items-center justify-center text-3xl mb-4 shadow-sm border border-white/50">🚀</div>
-                <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">Thực Chiến Bản Xứ</h1>
-                <p className="text-slate-500 font-medium text-sm max-w-md mx-auto">Nhập vai vào tình huống thực tế hoặc tự do trò chuyện cùng AI để rèn luyện phản xạ ngôn ngữ.</p>
+                <div className="w-20 h-20 bg-white/80 backdrop-blur-md rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mx-auto flex items-center justify-center text-4xl mb-4 shadow-sm border border-[#8FD9A8]">🚀</div>
+                <h1 className="text-4xl font-black text-[#1B5E4B] mb-3 tracking-tight">Thực Chiến Bản Xứ</h1>
+                <p className="text-[#2F8F6E] font-medium text-sm max-w-md mx-auto">Nhập vai vào tình huống thực tế hoặc tự do trò chuyện cùng AI để rèn luyện phản xạ ngôn ngữ.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div onClick={startFreeChat} className="bg-white/60 backdrop-blur-xl border border-white/50 hover:border-[#10A66A]/50 p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all group flex flex-col items-center text-center h-[280px]">
-                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform shadow-sm border border-slate-50">💬</div>
-                  <h3 className="text-xl font-black text-slate-800 mb-2 group-hover:text-[#10A66A] transition-colors">Chat Tự Do</h3>
+                <div onClick={startFreeChat} className="bg-white/60 backdrop-blur-xl border border-white/50 hover:border-[#8FD9A8] p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all group flex flex-col items-center text-center h-[280px]">
+                  <div className="w-16 h-16 bg-[#EEF5E9] rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform shadow-sm border border-slate-50">💬</div>
+                  <h3 className="text-xl font-black text-[#1B5E4B] mb-2 group-hover:text-[#2F8F6E] transition-colors">Chat Tự Do</h3>
                   <p className="text-sm text-slate-500 mb-auto">Trò chuyện mở không giới hạn. Mở rộng vốn từ qua những đoạn hội thoại ngẫu hứng.</p>
-                  <span className="text-sm font-bold text-[#10A66A] bg-white px-4 py-2 rounded-xl shadow-sm border border-white">Bắt đầu ngay →</span>
+                  <span className="text-sm font-bold text-[#1B5E4B] bg-[#8FD9A8]/30 border border-[#8FD9A8] px-5 py-2.5 rounded-xl shadow-sm">Bắt đầu ngay →</span>
                 </div>
 
-                <div onClick={() => setPhase("roleplay_levels")} className="bg-white/60 backdrop-blur-xl border border-white/50 hover:border-amber-400/50 p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all group flex flex-col items-center text-center h-[280px]">
-                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform shadow-sm border border-slate-50">🎭</div>
-                  <h3 className="text-xl font-black text-slate-800 mb-2 group-hover:text-amber-500 transition-colors">Nhập Vai Tình Huống</h3>
-                  <p className="text-sm text-slate-500 mb-auto">60 ngữ cảnh HSK bám sát đời sống. Vượt qua thử thách giao tiếp để nhận XP.</p>
-                  <span className="text-sm font-bold text-amber-500 bg-white px-4 py-2 rounded-xl shadow-sm border border-white">Chọn tình huống →</span>
+                <div onClick={() => setPhase("roleplay_levels")} className="bg-white/60 backdrop-blur-xl border border-white/50 hover:border-[#F2765B]/50 p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all group flex flex-col items-center text-center h-[280px]">
+                  <div className="w-16 h-16 bg-[#FFF1F2] rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform shadow-sm border border-slate-50">🎭</div>
+                  <h3 className="text-xl font-black text-[#1B5E4B] mb-2 group-hover:text-[#F2765B] transition-colors">Nhập Vai Tình Huống</h3>
+                  <p className="text-sm text-slate-500 mb-auto">60 ngữ cảnh HSK bám sát đời sống. Vượt qua thử thách giao tiếp để nhận XP và Nước.</p>
+                  <span className="text-sm font-bold text-[#F2765B] bg-white border border-[#FECDD3] px-5 py-2.5 rounded-xl shadow-sm">Chọn tình huống →</span>
                 </div>
               </div>
             </div>
@@ -388,20 +506,20 @@ export default function RoleplayPage() {
               ========================================= */}
           {phase === "roleplay_levels" && (
             <div className="max-w-5xl mx-auto px-6 py-12 animate-fade-in">
-              <button onClick={() => setPhase("mode_selection")} className="text-sm font-bold text-slate-500 hover:text-slate-800 mb-8 flex items-center gap-2 bg-white/60 px-4 py-2 rounded-xl border border-white/50 w-fit backdrop-blur-md"><span>←</span> Quay lại</button>
+              <button onClick={() => setPhase("mode_selection")} className="text-sm font-bold text-[#1B5E4B] hover:text-[#2F8F6E] hover:bg-white mb-8 flex items-center gap-2 bg-white/60 px-4 py-2.5 rounded-xl border border-white/50 w-fit backdrop-blur-md shadow-sm transition-all"><span>←</span> Quay lại</button>
               
               <div className="text-center mb-10">
-                <h2 className="text-3xl font-black text-slate-900 mb-2">Chọn Cấp Độ Nhập Vai</h2>
-                <p className="text-slate-500 font-medium">Mỗi cấp độ có 10 tình huống được biên soạn bám sát thực tế.</p>
+                <h2 className="text-3xl font-black text-[#1B5E4B] mb-2 drop-shadow-sm">Chọn Cấp Độ Nhập Vai</h2>
+                <p className="text-[#2F8F6E] font-medium">Mỗi cấp độ có 10 tình huống được biên soạn bám sát thực tế.</p>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((lvl) => (
-                  <div key={lvl} onClick={() => { setSelectedHskLevel(`HSK ${lvl}`); setPhase("scenario_selection"); }} className="relative bg-white/60 backdrop-blur-xl border border-white/50 hover:border-[#10A66A]/50 p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all flex flex-col items-center group overflow-hidden bg-cover bg-center" style={{ backgroundImage: `url('/hskk/anh${(lvl % 3) + 1}.jpg')` }}>
-                    <div className="absolute inset-0 bg-white/90 group-hover:bg-white/80 transition-all z-0"></div>
+                  <div key={lvl} onClick={() => { setSelectedHskLevel(`HSK ${lvl}`); setPhase("scenario_selection"); }} className="relative bg-white/60 backdrop-blur-xl border border-white/50 hover:border-[#8FD9A8] p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all flex flex-col items-center group overflow-hidden bg-cover bg-center" style={{ backgroundImage: `url('/hskk/anh${(lvl % 3) + 1}.jpg')` }}>
+                    <div className="absolute inset-0 bg-[#EEF5E9]/90 group-hover:bg-[#EEF5E9]/80 transition-all z-0"></div>
                     <div className="relative z-10 text-center">
-                      <h3 className="text-2xl font-black text-slate-800 mb-2 group-hover:text-[#08A66A] transition-colors">HSK {lvl}</h3>
-                      <span className="text-[10px] font-bold text-slate-500 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white uppercase tracking-widest">10 Tình Huống</span>
+                      <h3 className="text-3xl font-black text-[#1B5E4B] mb-3 drop-shadow-sm group-hover:text-[#2F8F6E] transition-colors">HSK {lvl}</h3>
+                      <span className="text-[10px] font-bold text-[#1B5E4B] bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white uppercase tracking-widest shadow-sm">10 Tình Huống</span>
                     </div>
                   </div>
                 ))}
@@ -415,32 +533,32 @@ export default function RoleplayPage() {
           {phase === "scenario_selection" && (
             <div className="max-w-6xl mx-auto px-6 py-12 animate-fade-in">
               <div className="flex justify-between items-center mb-8">
-                <button onClick={() => setPhase("roleplay_levels")} className="text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 bg-white/60 px-4 py-2 rounded-xl border border-white/50 backdrop-blur-md shadow-sm"><span>←</span> Đổi cấp độ</button>
-                <div className="bg-[#172033] text-white px-5 py-2 rounded-xl text-sm font-black shadow-md">{selectedHskLevel}</div>
+                <button onClick={() => setPhase("roleplay_levels")} className="text-sm font-bold text-[#1B5E4B] hover:text-[#2F8F6E] hover:bg-white flex items-center gap-2 bg-white/60 px-4 py-2.5 rounded-xl border border-white/50 backdrop-blur-md shadow-sm transition-all"><span>←</span> Đổi cấp độ</button>
+                <div className="bg-[#1B5E4B] text-[#8FD9A8] px-5 py-2 rounded-xl text-sm font-black shadow-md border border-[#2F8F6E]">{selectedHskLevel}</div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {SCENARIOS.filter(s => s.level === selectedHskLevel).map((scenario) => (
-                  <div key={scenario.id} className="relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-[32px] p-6 shadow-sm hover:border-[#10A66A]/50 hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/thucchien.jpg')" }}>
-                    <div className="absolute inset-0 bg-white/95 group-hover:bg-white/90 transition-all z-0"></div>
+                  <div key={scenario.id} className="relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-[32px] p-6 shadow-sm hover:border-[#8FD9A8] hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/thucchien.jpg')" }}>
+                    <div className="absolute inset-0 bg-[#F4F7F6]/95 group-hover:bg-[#F4F7F6]/90 transition-all z-0"></div>
                     
                     <div className="relative z-10 flex justify-between items-start mb-5">
-                      <div className="text-4xl bg-white/80 p-2 rounded-2xl shadow-sm border border-white group-hover:scale-110 transition-transform">{scenario.icon}</div>
-                      <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-200/50 px-3 py-1.5 rounded-lg shadow-sm">⭐ {scenario.xp} XP</span>
+                      <div className="text-4xl bg-white p-3 rounded-2xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">{scenario.icon}</div>
+                      <span className="text-[10px] font-black text-[#1B5E4B] bg-[#FFD666]/50 border border-[#FFD666] px-3 py-1.5 rounded-lg shadow-sm">⭐ {scenario.xp} XP</span>
                     </div>
                     
                     <div className="relative z-10 mb-5 flex-1">
-                      <h3 className="text-xl font-black text-slate-800 mb-3">{scenario.title}</h3>
-                      <div className="flex gap-2 text-[11px] font-bold text-slate-500 mb-4 bg-white/60 p-2.5 rounded-xl border border-white">
-                        <span className="text-[#08A66A]">{scenario.userRole}</span> <span>vs</span> <span className="text-amber-500">{scenario.aiRole}</span>
+                      <h3 className="text-xl font-black text-[#1B5E4B] mb-3">{scenario.title}</h3>
+                      <div className="flex gap-2 text-[11px] font-bold text-[#2F8F6E] mb-4 bg-white/80 p-2.5 rounded-xl border border-white shadow-sm">
+                        <span className="text-[#1B5E4B]">{scenario.userRole}</span> <span>vs</span> <span className="text-[#F2765B]">{scenario.aiRole}</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5">
-                        {scenario.vocab.slice(0,3).map(v => <span key={v} className="px-2 py-1 bg-white/80 border border-white text-slate-500 text-[10px] font-bold rounded shadow-sm">{v}</span>)}
+                        {scenario.vocab.slice(0,3).map(v => <span key={v} className="px-2 py-1 bg-white border border-[#E2E8F0] text-slate-500 text-[10px] font-bold rounded-md shadow-sm">{v}</span>)}
                       </div>
                     </div>
 
                     <div className="relative z-10 mt-auto">
-                      <button onClick={() => startRoleplay(scenario)} className="w-full text-center text-xs font-black text-[#08A66A] bg-white border border-white py-3 rounded-xl hover:bg-[#08A66A] hover:text-white transition-colors shadow-sm uppercase tracking-widest">
+                      <button onClick={() => startRoleplay(scenario)} className="w-full text-center text-xs font-black text-white bg-[#2F8F6E] border border-[#1B5E4B] py-3.5 rounded-xl hover:bg-[#1B5E4B] transition-colors shadow-sm uppercase tracking-widest">
                         Vào Nhập Vai →
                       </button>
                     </div>
@@ -455,15 +573,15 @@ export default function RoleplayPage() {
               ========================================= */}
           {phase === "free_chat" && (
             <div className="max-w-4xl mx-auto h-[calc(100vh-140px)] flex flex-col pt-6 animate-fade-in px-4">
-              <button onClick={() => setPhase("mode_selection")} className="text-sm font-bold text-slate-500 hover:text-slate-800 flex items-center gap-2 mb-4 w-fit bg-white/60 px-4 py-2 rounded-xl border border-white/50 backdrop-blur-md shadow-sm"><span>←</span> Thoát Chat</button>
+              <button onClick={() => setPhase("mode_selection")} className="text-sm font-bold text-[#1B5E4B] hover:text-[#2F8F6E] hover:bg-white flex items-center gap-2 mb-4 w-fit bg-white/60 px-4 py-2.5 rounded-xl border border-white/50 backdrop-blur-md shadow-sm transition-all"><span>←</span> Thoát Chat</button>
               
               <div className="flex-1 bg-white/80 backdrop-blur-2xl border border-white/50 rounded-[32px] shadow-xl shadow-emerald-900/5 flex flex-col overflow-hidden">
-                <div className="h-16 border-b border-white/50 flex items-center justify-between px-6 bg-white/40 shrink-0">
+                <div className="h-16 border-b border-[#E2E8F0] flex items-center justify-between px-6 bg-white/60 shrink-0">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl bg-white p-1.5 rounded-xl shadow-sm border border-slate-100">🐸</span> 
-                    <span className="font-black text-slate-800 text-sm">Xiao Qingwa</span>
+                    <span className="font-black text-[#1B5E4B] text-sm">Xiao Qingwa</span>
                   </div>
-                  <button onClick={startFreeChat} className="text-xs font-bold text-slate-400 hover:text-rose-500 transition">Làm mới</button>
+                  <button onClick={startFreeChat} className="text-xs font-bold text-slate-400 hover:text-[#F2765B] transition">Làm mới</button>
                 </div>
 
                 <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar scroll-smooth">
@@ -471,7 +589,7 @@ export default function RoleplayPage() {
                     if (msg.role === 'user') {
                       return (
                         <div key={i} className="flex flex-col items-end w-full animate-fade-in">
-                          <div className="bg-gradient-to-br from-[#08A66A] to-[#058252] text-white p-4 rounded-2xl rounded-tr-sm shadow-md shadow-emerald-600/20 max-w-[85%] sm:max-w-[70%]">
+                          <div className="bg-[#2F8F6E] text-white p-4 rounded-2xl rounded-tr-sm shadow-md max-w-[85%] sm:max-w-[70%] border border-[#1B5E4B]">
                             <p className="text-[15px] font-medium whitespace-pre-wrap">{msg.content}</p>
                           </div>
                         </div>
@@ -480,36 +598,36 @@ export default function RoleplayPage() {
                   })}
                   {isChatting && (
                     <div className="flex items-start gap-3 w-full animate-fade-in">
-                      <div className="w-10 h-10 rounded-full bg-white/80 border border-white flex items-center justify-center text-lg grayscale opacity-60 shadow-sm">🐸</div>
-                      <div className="bg-white/80 backdrop-blur-md p-4 rounded-2xl rounded-tl-sm border border-white shadow-sm flex items-center gap-1.5 h-12">
-                        <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      <div className="w-10 h-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] border border-[#8FD9A8] flex items-center justify-center text-lg grayscale opacity-60 shadow-sm">🐸</div>
+                      <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl rounded-tl-sm border border-white shadow-sm flex items-center gap-1.5 h-12">
+                        <div className="w-2 h-2 rounded-full bg-[#8FD9A8] animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-[#2F8F6E] animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-[#1B5E4B] animate-bounce" style={{ animationDelay: '300ms' }}></div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="p-4 md:p-6 border-t border-white/50 bg-white/60 backdrop-blur-md shrink-0 flex flex-col gap-3">
+                <div className="p-4 md:p-6 border-t border-[#E2E8F0] bg-white/80 backdrop-blur-md shrink-0 flex flex-col gap-3">
                   <div className="flex justify-center mb-1">
-                    <div className="bg-white/80 p-1 rounded-full flex gap-1 border border-white shadow-sm">
-                      <button onClick={() => setInputMode("voice")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "voice" ? 'bg-[#DDF7EA] text-[#08A66A] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>🎙️ Giọng nói</button>
-                      <button onClick={() => setInputMode("text")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "text" ? 'bg-[#DDF7EA] text-[#08A66A] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>⌨️ Bàn phím</button>
+                    <div className="bg-white p-1 rounded-full flex gap-1 border border-slate-100 shadow-sm">
+                      <button onClick={() => setInputMode("voice")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "voice" ? 'bg-[#EEF5E9] text-[#2F8F6E] shadow-sm border border-[#8FD9A8]' : 'text-slate-400 hover:text-slate-600'}`}>🎙️ Giọng nói</button>
+                      <button onClick={() => setInputMode("text")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "text" ? 'bg-[#EEF5E9] text-[#2F8F6E] shadow-sm border border-[#8FD9A8]' : 'text-slate-400 hover:text-slate-600'}`}>⌨️ Bàn phím</button>
                     </div>
                   </div>
                   
                   {inputMode === "voice" ? (
                     <div className="flex flex-col items-center justify-center py-2">
-                      <button onMouseDown={handleVoiceHold} onMouseUp={() => {}} className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg transition-all border-4 relative ${isRecording ? 'bg-rose-500 border-rose-200 text-white scale-110 shadow-rose-500/30' : 'bg-[#08A66A] border-[#DDF7EA] text-white hover:bg-[#087A55] hover:scale-105'}`}>
-                        {isRecording && <div className="absolute inset-0 border-4 border-rose-400 rounded-full animate-ping opacity-50"></div>}
+                      <button onMouseDown={handleVoiceHold} onMouseUp={() => {}} className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg transition-all border-4 relative ${isRecording ? 'bg-[#BE123C] border-[#FECDD3] text-white scale-110 shadow-rose-500/30' : 'bg-[#2F8F6E] border-[#8FD9A8] text-white hover:bg-[#1B5E4B] hover:scale-105'}`}>
+                        {isRecording && <div className="absolute inset-0 border-4 border-[#F2765B] rounded-full animate-ping opacity-50"></div>}
                         🎙️
                       </button>
-                      <p className={`mt-3 font-black tracking-widest uppercase text-[10px] ${isRecording ? 'text-rose-500 animate-pulse' : 'text-slate-400'}`}>{isRecording ? "Đang nghe..." : "Nhấn giữ để nói"}</p>
+                      <p className={`mt-3 font-black tracking-widest uppercase text-[10px] ${isRecording ? 'text-[#BE123C] animate-pulse' : 'text-slate-400'}`}>{isRecording ? "Đang nghe..." : "Nhấn giữ để nói"}</p>
                     </div>
                   ) : (
                     <div className="flex gap-3">
-                      <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') submitMessage(); }} placeholder="Gõ tiếng Trung..." className="flex-1 bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#08A66A] outline-none transition-colors shadow-sm disabled:opacity-50" disabled={isChatting} />
-                      <button onClick={() => submitMessage()} disabled={isChatting || !chatInput.trim()} className="px-6 bg-[#172033] hover:bg-black text-white text-xs font-black tracking-widest uppercase rounded-2xl shadow-lg shadow-slate-900/20 disabled:opacity-50 transition-all hover:-translate-y-0.5">GỬI</button>
+                      <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') submitMessage(); }} placeholder="Gõ tiếng Trung..." className="flex-1 min-w-0 bg-white border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#8FD9A8] focus:ring-4 focus:ring-[#8FD9A8]/20 outline-none transition-all shadow-inner disabled:opacity-50 text-[#1B5E4B]" disabled={isChatting} />
+                      <button onClick={() => submitMessage()} disabled={isChatting || !chatInput.trim()} className="px-6 sm:px-8 shrink-0 bg-[#1B5E4B] hover:bg-[#2F8F6E] text-white text-xs font-black tracking-widest uppercase rounded-2xl shadow-md disabled:opacity-50 transition-all hover:-translate-y-0.5">GỬI</button>
                     </div>
                   )}
                 </div>
@@ -525,67 +643,67 @@ export default function RoleplayPage() {
               
               {/* CỘT TRÁI: NHIỆM VỤ */}
               <aside className="w-full lg:w-[340px] flex flex-col gap-4 shrink-0">
-                <button onClick={() => setPhase("scenario_selection")} className="text-sm font-bold text-slate-500 hover:text-rose-500 flex items-center gap-2 w-fit bg-white/60 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/50 shadow-sm transition-colors"><span>←</span> Rời khỏi phòng</button>
+                <button onClick={() => setPhase("scenario_selection")} className="text-sm font-bold text-[#1B5E4B] hover:text-[#2F8F6E] hover:bg-white flex items-center gap-2 w-fit bg-white/60 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/50 shadow-sm transition-all"><span>←</span> Rời khỏi phòng</button>
                 
                 <div className="bg-white/80 backdrop-blur-xl rounded-[32px] p-6 border border-white/50 shadow-sm flex-1 flex flex-col overflow-y-auto custom-scrollbar">
-                  <div className="flex flex-col items-center text-center pb-6 border-b border-white/50 mb-6">
-                    <div className="text-5xl bg-white p-4 rounded-3xl shadow-sm border border-slate-50 mb-4">{activeScenario.icon}</div>
-                    <span className="text-[10px] font-black bg-[#EAF8F1] text-[#08A66A] px-2.5 py-1 rounded-md uppercase tracking-widest border border-emerald-100 mb-2">{activeScenario.level}</span>
-                    <h2 className="text-xl font-black text-slate-800">{activeScenario.title}</h2>
+                  <div className="flex flex-col items-center text-center pb-6 border-b border-[#E2E8F0] mb-6">
+                    <div className="text-5xl bg-white p-4 rounded-3xl shadow-sm border border-slate-100 mb-4">{activeScenario.icon}</div>
+                    <span className="text-[10px] font-black bg-[#EEF5E9] text-[#2F8F6E] px-3 py-1.5 rounded-lg uppercase tracking-widest border border-[#8FD9A8]/50 mb-3">{activeScenario.level}</span>
+                    <h2 className="text-xl font-black text-[#1B5E4B] leading-snug">{activeScenario.title}</h2>
                     
-                    <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-white px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
-                      <span className="text-[#08A66A]">{activeScenario.userRole}</span>
-                      <span className="text-slate-300">vs</span>
-                      <span className="text-amber-500">{activeScenario.aiRole}</span>
+                    <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-[#1B5E4B] bg-[#F4F7F6] px-4 py-2 rounded-xl border border-[#E2E8F0] shadow-sm">
+                      <span className="text-[#2F8F6E]">{activeScenario.userRole}</span>
+                      <span className="text-slate-400">vs</span>
+                      <span className="text-[#F2765B]">{activeScenario.aiRole}</span>
                     </div>
                   </div>
 
-                  <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2"><span>🎯</span> Mục tiêu giao tiếp</h3>
+                  <h3 className="text-xs font-black text-[#1B5E4B] uppercase tracking-wider mb-4 flex items-center gap-2"><span>🎯</span> Mục tiêu giao tiếp</h3>
                   <div className="space-y-3 mb-8">
                     {activeScenario.missions.map((mission, idx) => {
                       const isDone = completedMissions.includes(idx);
                       return (
-                        <div key={idx} className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all shadow-sm ${isDone ? 'bg-[#DDF7EA] border-[#08A66A]/30' : 'bg-white border-white'}`}>
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${isDone ? 'bg-[#08A66A] text-white shadow-md shadow-emerald-500/20' : 'bg-slate-50 border border-slate-200 text-transparent'}`}>{isDone ? '✓' : ''}</div>
-                          <p className={`text-sm font-medium leading-snug ${isDone ? 'text-[#087A55] line-through opacity-70' : 'text-slate-700'}`}>{mission}</p>
+                        <div key={idx} className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-all shadow-sm ${isDone ? 'bg-[#EEF5E9] border-[#8FD9A8]/50' : 'bg-white border-[#E2E8F0]'}`}>
+                          <div className={`w-5 h-5 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-[10px] font-black shrink-0 ${isDone ? 'bg-[#2F8F6E] text-white shadow-md' : 'bg-[#F4F7F6] border border-slate-200 text-transparent'}`}>{isDone ? '✓' : ''}</div>
+                          <p className={`text-sm font-medium leading-snug ${isDone ? 'text-[#2F8F6E] line-through opacity-70' : 'text-[#1B5E4B]'}`}>{mission}</p>
                         </div>
                       );
                     })}
                   </div>
 
-                  <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-2"><span>💡</span> Từ vựng gợi ý</h3>
+                  <h3 className="text-xs font-black text-[#1B5E4B] uppercase tracking-wider mb-3 flex items-center gap-2"><span>💡</span> Từ vựng gợi ý</h3>
                   <div className="flex flex-wrap gap-2 mb-8">
-                    {activeScenario.vocab.map(v => <span key={v} className="px-3 py-1.5 bg-white border border-slate-100 text-slate-600 text-[11px] font-bold rounded-lg shadow-sm">{v}</span>)}
+                    {activeScenario.vocab.map(v => <span key={v} className="px-3 py-1.5 bg-white border border-[#E2E8F0] text-slate-500 text-[11px] font-bold rounded-lg shadow-sm">{v}</span>)}
                   </div>
 
-                  <button onClick={finishRoleplay} className="w-full mt-auto py-4 bg-[#172033] hover:bg-black text-white font-black text-xs rounded-2xl shadow-xl hover:-translate-y-0.5 transition-all uppercase tracking-widest flex flex-col items-center gap-1">
+                  <button onClick={finishRoleplay} className="w-full mt-auto py-4 bg-[#1B5E4B] hover:bg-[#2F8F6E] border-b-[4px] border-[#0F3F31] text-white font-black text-xs rounded-2xl shadow-xl hover:-translate-y-0.5 transition-all uppercase tracking-widest flex flex-col items-center gap-1">
                     <span>Kết thúc & Nhận Thưởng</span>
-                    <span className="text-[9px] text-slate-400 font-bold tracking-normal capitalize">+{activeScenario.xp} XP</span>
+                    <span className="text-[10px] text-[#FFD666] font-black tracking-normal capitalize">+{activeScenario.xp} XP, +5 💧</span>
                   </button>
                 </div>
               </aside>
 
               {/* CỘT PHẢI: CHAT AREA */}
-              <section className="flex-1 bg-white/80 backdrop-blur-2xl border border-white/50 rounded-[32px] shadow-lg shadow-emerald-900/5 flex flex-col overflow-hidden">
-                <div className="h-16 border-b border-white/50 flex items-center justify-between px-6 bg-white/40 shrink-0">
+              <section className="flex-1 bg-white/80 backdrop-blur-2xl border border-[#E2E8F0] rounded-[32px] shadow-lg flex flex-col overflow-hidden">
+                <div className="h-16 border-b border-[#E2E8F0] flex items-center justify-between px-6 bg-white/90 shrink-0 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-xl shadow-sm">{activeScenario.aiAvatar}</div>
+                    <div className="w-10 h-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] border border-[#8FD9A8] flex items-center justify-center text-xl shadow-sm">{activeScenario.aiAvatar}</div>
                     <div>
-                      <span className="font-black text-slate-800 text-sm block">{activeScenario.aiName}</span>
-                      <span className="text-[10px] font-bold text-slate-400">{activeScenario.aiRole}</span>
+                      <span className="font-black text-[#1B5E4B] text-sm block">{activeScenario.aiName}</span>
+                      <span className="text-[10px] font-bold text-[#2F8F6E]">{activeScenario.aiRole}</span>
                     </div>
                   </div>
-                  <button onClick={() => setChatHistory([{ role: 'assistant', content: activeScenario.greeting, showTranslation: false, showCoach: false }])} className="text-xs font-bold text-slate-400 hover:text-rose-500 transition border border-slate-200 bg-white px-3 py-1.5 rounded-lg shadow-sm">
+                  <button onClick={() => setChatHistory([{ role: 'assistant', content: activeScenario.greeting, showTranslation: false, showCoach: false }])} className="text-xs font-bold text-slate-500 hover:text-[#F2765B] hover:bg-[#FFF1F2] hover:border-[#FECDD3] transition-colors border border-slate-200 bg-white px-3 py-2 rounded-xl shadow-sm">
                     Làm mới tình huống
                   </button>
                 </div>
 
-                <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar scroll-smooth">
+                <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar scroll-smooth bg-[#F4F7F6]/50">
                   {chatHistory.map((msg, i) => {
                     if (msg.role === 'user') {
                       return (
                         <div key={i} className="flex flex-col items-end w-full animate-fade-in">
-                          <div className="bg-gradient-to-br from-[#08A66A] to-[#058252] text-white p-4 rounded-2xl rounded-tr-sm shadow-md shadow-emerald-600/20 max-w-[85%] sm:max-w-[70%]">
+                          <div className="bg-[#2F8F6E] text-white p-4 rounded-2xl rounded-tr-sm shadow-md max-w-[85%] sm:max-w-[70%] border border-[#1B5E4B]">
                             <p className="text-[15px] font-medium whitespace-pre-wrap">{msg.content}</p>
                           </div>
                         </div>
@@ -594,41 +712,40 @@ export default function RoleplayPage() {
                   })}
                   {isChatting && (
                     <div className="flex items-start gap-3 w-full animate-fade-in">
-                      <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border border-white/40 flex items-center justify-center text-xl shadow-sm shrink-0 grayscale opacity-60">{activeScenario.aiAvatar}</div>
-                      <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl rounded-tl-sm border border-white/50 shadow-sm flex items-center gap-1.5 h-12">
-                        <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      <div className="w-10 h-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-white border border-[#E2E8F0] flex items-center justify-center text-xl shadow-sm shrink-0 grayscale opacity-60">{activeScenario.aiAvatar}</div>
+                      <div className="bg-white p-4 rounded-2xl rounded-tl-sm border border-[#E2E8F0] shadow-sm flex items-center gap-1.5 h-12">
+                        <div className="w-2 h-2 rounded-full bg-[#8FD9A8] animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-[#2F8F6E] animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-[#1B5E4B] animate-bounce" style={{ animationDelay: '300ms' }}></div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="p-4 md:p-6 border-t border-white/50 bg-white/60 backdrop-blur-md shrink-0 flex flex-col gap-3">
+                <div className="p-4 md:p-6 border-t border-[#E2E8F0] bg-white shrink-0 flex flex-col gap-3 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
                   <div className="flex justify-center mb-1">
-                    <div className="bg-white/80 p-1 rounded-full flex gap-1 border border-white shadow-sm">
-                      <button onClick={() => setInputMode("voice")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "voice" ? 'bg-[#DDF7EA] text-[#08A66A] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>🎙️ Giọng nói</button>
-                      <button onClick={() => setInputMode("text")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "text" ? 'bg-[#DDF7EA] text-[#08A66A] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>⌨️ Bàn phím</button>
+                    <div className="bg-[#F4F7F6] p-1 rounded-full flex gap-1 border border-[#E2E8F0]">
+                      <button onClick={() => setInputMode("voice")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "voice" ? 'bg-white text-[#2F8F6E] shadow-sm border border-[#8FD9A8]' : 'text-slate-400 hover:text-[#1B5E4B]'}`}>🎙️ Giọng nói</button>
+                      <button onClick={() => setInputMode("text")} className={`px-5 py-1.5 rounded-full text-xs font-black transition-all ${inputMode === "text" ? 'bg-white text-[#2F8F6E] shadow-sm border border-[#8FD9A8]' : 'text-slate-400 hover:text-[#1B5E4B]'}`}>⌨️ Bàn phím</button>
                     </div>
                   </div>
                   
                   {inputMode === "voice" ? (
                     <div className="flex flex-col items-center justify-center py-2">
-                      <button onMouseDown={handleVoiceHold} onMouseUp={() => {}} className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg transition-all border-4 relative ${isRecording ? 'bg-rose-500 border-rose-200 text-white scale-110 shadow-rose-500/30' : 'bg-[#08A66A] border-[#DDF7EA] text-white hover:bg-[#087A55] hover:scale-105'}`}>
-                        {isRecording && <div className="absolute inset-0 border-4 border-rose-400 rounded-full animate-ping opacity-50"></div>}
+                      <button onMouseDown={handleVoiceHold} onMouseUp={() => {}} className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-lg transition-all border-4 relative ${isRecording ? 'bg-[#BE123C] border-[#FECDD3] text-white scale-110 shadow-rose-500/30' : 'bg-[#2F8F6E] border-[#EEF5E9] text-white hover:bg-[#1B5E4B] hover:scale-105'}`}>
+                        {isRecording && <div className="absolute inset-0 border-4 border-[#F2765B] rounded-full animate-ping opacity-50"></div>}
                         🎙️
                       </button>
-                      <p className={`mt-3 font-black tracking-widest uppercase text-[10px] ${isRecording ? 'text-rose-500 animate-pulse' : 'text-slate-400'}`}>{isRecording ? "Đang nghe..." : "Nhấn giữ để nói"}</p>
+                      <p className={`mt-3 font-black tracking-widest uppercase text-[10px] ${isRecording ? 'text-[#BE123C] animate-pulse' : 'text-slate-400'}`}>{isRecording ? "Đang nghe..." : "Nhấn giữ để nói"}</p>
                     </div>
                   ) : (
                     <div className="flex gap-3">
-                      <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') submitMessage(); }} placeholder="Gõ tiếng Trung..." className="flex-1 min-w-0 bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#08A66A] outline-none transition-colors shadow-sm disabled:opacity-50" disabled={isChatting} />
-                      <button onClick={() => submitMessage()} disabled={isChatting || !chatInput.trim()} className="px-5 sm:px-8 shrink-0 bg-[#172033] hover:bg-black text-white text-xs font-black tracking-widest uppercase rounded-2xl shadow-lg shadow-slate-900/20 disabled:opacity-50 transition-all hover:-translate-y-0.5">GỬI</button>
+                      <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') submitMessage(); }} placeholder="Gõ tiếng Trung..." className="flex-1 min-w-0 bg-[#F4F7F6] border border-[#E2E8F0] rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#8FD9A8] focus:ring-4 focus:ring-[#8FD9A8]/20 focus:bg-white outline-none transition-all shadow-inner disabled:opacity-50 text-[#1B5E4B]" disabled={isChatting} />
+                      <button onClick={() => submitMessage()} disabled={isChatting || !chatInput.trim()} className="px-6 sm:px-8 shrink-0 bg-[#1B5E4B] hover:bg-[#2F8F6E] text-white text-xs font-black tracking-widest uppercase rounded-2xl shadow-md disabled:opacity-50 transition-all hover:-translate-y-0.5">GỬI</button>
                     </div>
                   )}
                 </div>
               </section>
-
             </div>
           )}
 
@@ -638,37 +755,42 @@ export default function RoleplayPage() {
           {phase === "report" && activeScenario && (
             <div className="max-w-2xl mx-auto mt-12 animate-slide-up-fade px-4">
               <div className="bg-white/90 backdrop-blur-xl rounded-[40px] shadow-2xl border border-white p-8 md:p-14 text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#DDF7EA] to-transparent rounded-bl-full pointer-events-none opacity-50"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#EEF5E9] to-transparent rounded-bl-full pointer-events-none opacity-50"></div>
                 
                 <div className="relative z-10">
-                  <div className="text-6xl mb-4">🎉</div>
-                  <p className="text-[10px] font-black text-[#08A66A] uppercase tracking-widest mb-1">Hoàn thành thử thách</p>
-                  <h2 className="text-3xl font-black text-[#172033] mb-8 tracking-tight">{activeScenario.title}</h2>
+                  <div className="text-6xl mb-4 drop-shadow-sm">🎉</div>
+                  <p className="text-[10px] font-black text-[#2F8F6E] uppercase tracking-widest mb-1">Hoàn thành thử thách</p>
+                  <h2 className="text-3xl font-black text-[#1B5E4B] mb-8 tracking-tight">{activeScenario.title}</h2>
 
-                  <div className="bg-white rounded-[24px] p-6 mb-8 text-left border border-slate-100 shadow-sm">
+                  <div className="bg-white rounded-[24px] p-6 mb-8 text-left border border-[#E2E8F0] shadow-sm">
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-sm font-bold text-slate-500">Nhiệm vụ hoàn thành</span>
-                      <span className={`font-black text-lg ${completedMissions.length === activeScenario.missions.length ? 'text-[#08A66A]' : 'text-amber-500'}`}>
+                      <span className={`font-black text-lg ${completedMissions.length === activeScenario.missions.length ? 'text-[#2F8F6E]' : 'text-[#F2765B]'}`}>
                         {completedMissions.length} / {activeScenario.missions.length}
                       </span>
                     </div>
-                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mb-6">
-                      <div className="h-full bg-gradient-to-r from-[#08A66A] to-emerald-400 transition-all duration-1000" style={{width: `${(completedMissions.length/activeScenario.missions.length)*100}%`}}></div>
+                    <div className="h-3 bg-[#EEF5E9] rounded-full overflow-hidden mb-6 shadow-inner border border-[#8FD9A8]/40">
+                      <div className="h-full bg-gradient-to-r from-[#8FD9A8] to-[#2F8F6E] transition-all duration-1000" style={{width: `${(completedMissions.length/activeScenario.missions.length)*100}%`}}></div>
                     </div>
-                    <div className="flex justify-between items-center text-sm border-t border-slate-100 pt-4">
+                    <div className="flex justify-between items-center text-sm border-t border-[#E2E8F0] pt-4">
                       <span className="font-bold text-slate-500">Tổng lượt hội thoại</span>
-                      <span className="font-black text-slate-800 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">{chatHistory.filter(m => m.role==='user').length} lượt</span>
+                      <span className="font-black text-[#1B5E4B] bg-[#F4F7F6] px-3 py-1.5 rounded-xl border border-[#E2E8F0]">{chatHistory.filter(m => m.role==='user').length} lượt</span>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-[#FFF8E8] to-[#FFF0D4] border border-[#FFC83D]/40 rounded-[24px] p-8 mb-10 shadow-inner">
-                    <p className="text-xs font-black text-amber-700 uppercase tracking-widest mb-2">Thưởng Kinh Nghiệm</p>
-                    <p className="text-5xl font-black text-amber-500 drop-shadow-sm">⭐ +{activeScenario.xp}</p>
+                  <div className="bg-gradient-to-br from-[#FFF8E8] to-[#FFF0D4] border border-[#FFD666]/50 rounded-[32px] p-8 mb-10 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-white/40 rounded-bl-full pointer-events-none"></div>
+                    <p className="text-xs font-black text-amber-700 uppercase tracking-widest mb-3">Thưởng Khu Vườn</p>
+                    <div className="flex justify-center items-center gap-6">
+                      <p className="text-4xl font-black text-[#1B5E4B] drop-shadow-sm">+{activeScenario.xp} <span className="text-xl">XP</span></p>
+                      <div className="w-1 h-10 bg-amber-200 rounded-full"></div>
+                      <p className="text-4xl font-black text-[#4FB6C7] drop-shadow-sm">+5 <span className="text-xl">💧</span></p>
+                    </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <button onClick={() => setPhase("scenario_selection")} className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 font-black rounded-2xl hover:border-slate-300 hover:bg-slate-50 transition-colors text-sm uppercase tracking-widest shadow-sm">Tình huống khác</button>
-                    <button onClick={() => startRoleplay(activeScenario)} className="flex-1 py-4 bg-[#172033] text-white font-black rounded-2xl hover:bg-black transition-all hover:-translate-y-1 shadow-xl text-sm uppercase tracking-widest">Thử lại lần nữa</button>
+                    <button onClick={() => setPhase("scenario_selection")} className="flex-1 py-4.5 bg-white border-2 border-[#E2E8F0] text-slate-600 font-black rounded-2xl hover:border-[#8FD9A8] hover:bg-[#EEF5E9] hover:text-[#2F8F6E] transition-all text-sm uppercase tracking-widest shadow-sm">Tình huống khác</button>
+                    <button onClick={() => startRoleplay(activeScenario)} className="flex-1 py-4.5 bg-[#1B5E4B] border-b-[4px] border-[#0F3F31] text-white font-black rounded-2xl hover:bg-[#2F8F6E] transition-all hover:-translate-y-1 shadow-xl text-sm uppercase tracking-widest">Thử lại lần nữa</button>
                   </div>
                 </div>
               </div>

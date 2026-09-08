@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import Link from "next/link";
 import { logUserError, updateUserProgress } from "../../lib/firebaseUtils";
 
@@ -64,20 +64,20 @@ function ArrangeQuestion({ item, index, onChange }) {
   };
 
   return (
-    <div className="bg-[#F4F8F5] p-6 rounded-[24px] border border-emerald-50">
+    <div className="bg-[#EEF5E9]/50 p-6 rounded-[24px] border border-[#8FD9A8]/40">
       <div className="flex items-start gap-3 mb-4">
-        <span className="w-6 h-6 shrink-0 rounded-full bg-white text-slate-400 text-xs font-bold flex items-center justify-center shadow-sm border border-slate-200">{index + 1}</span>
+        <span className="w-8 h-8 shrink-0 rounded-full bg-white text-[#2F8F6E] text-xs font-black flex items-center justify-center shadow-sm border border-[#8FD9A8]">{index + 1}</span>
         <div className="flex-1 w-full">
-          <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Sắp xếp các từ sau thành câu đúng:</p>
+          <p className="text-xs font-black text-[#1B5E4B] uppercase tracking-widest mb-3">Sắp xếp các từ sau thành câu đúng:</p>
           
           {/* Khu vực ghép câu */}
-          <div className="min-h-[60px] p-4 bg-white border-2 border-dashed border-emerald-200 rounded-2xl mb-4 flex flex-wrap gap-2 items-center transition-all">
-            {selected.length === 0 && <span className="text-slate-300 text-sm italic">Chạm vào từ bên dưới để ghép lên đây...</span>}
+          <div className="min-h-[70px] p-5 bg-white border-2 border-dashed border-[#8FD9A8] rounded-2xl mb-4 flex flex-wrap gap-2 items-center transition-all shadow-inner">
+            {selected.length === 0 && <span className="text-slate-400 text-sm font-medium italic opacity-70">Chạm vào từ bên dưới để ghép lên đây...</span>}
             {selected.map(w => (
               <button 
                 key={w.id} 
                 onClick={() => handleDeselect(w)} 
-                className="px-4 py-2 bg-[#DDF7EA] text-[#08A66A] font-black rounded-xl shadow-sm text-lg hover:bg-rose-50 hover:text-rose-500 hover:line-through transition-all"
+                className="px-4 py-2 bg-[#8FD9A8]/30 text-[#1B5E4B] border border-[#8FD9A8] font-black rounded-xl shadow-sm text-lg hover:bg-[#FFF1F2] hover:text-[#BE123C] hover:border-[#FECDD3] hover:line-through transition-all"
               >
                 {w.text}
               </button>
@@ -85,16 +85,17 @@ function ArrangeQuestion({ item, index, onChange }) {
           </div>
 
           {/* Khu vực từ vựng */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 p-2 bg-[#F4F7F6] rounded-2xl border border-[#E2E8F0]">
             {available.map(w => (
               <button 
                 key={w.id} 
                 onClick={() => handleSelect(w)} 
-                className="px-4 py-2 bg-white border border-emerald-200 text-[#087A55] font-black rounded-xl shadow-[0_2px_8px_rgba(8,166,106,0.08)] text-lg hover:border-[#08A66A] hover:-translate-y-0.5 transition-all"
+                className="px-4 py-2 bg-white border border-[#E2E8F0] text-[#2F8F6E] font-black rounded-xl shadow-sm text-lg hover:border-[#2F8F6E] hover:bg-[#2F8F6E] hover:text-white hover:-translate-y-1 transition-all"
               >
                 {w.text}
               </button>
             ))}
+            {available.length === 0 && <span className="text-slate-400 text-sm font-bold w-full text-center py-2 opacity-60">Bạn đã dùng hết từ</span>}
           </div>
         </div>
       </div>
@@ -105,7 +106,8 @@ function ArrangeQuestion({ item, index, onChange }) {
 
 // --- MAIN COMPONENT ---
 export default function PlacementTestPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+  const { userId } = useAuth();
   
   const [testMode, setTestMode] = useState(null); // 'level' hoặc 'comprehensive'
   const [selectedLevel, setSelectedLevel] = useState(null);
@@ -114,6 +116,49 @@ export default function PlacementTestPage() {
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [showReview, setShowReview] = useState(false);
+
+  // --- STATE ĐỒNG BỘ XP/WATER TOÀN HỆ THỐNG ---
+  const [hskXp, setHskXp] = useState(0);
+  const [water, setWater] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [hearts, setHearts] = useState(5);
+
+  useEffect(() => {
+    async function fetchGlobalData() {
+      if (userId) {
+        try {
+          const userRef = doc(db, "users", userId);
+          const userSnap = await getDoc(userRef);
+          
+          let currentXp = 0;
+          let currentWater = 0;
+          let currentStreak = 0;
+
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            currentXp = data.xp || 0;
+            currentWater = data.water || 0;
+            currentStreak = data.streak || 0;
+          }
+
+          const newStudentRef = doc(db, "user_progress", userId);
+          const newDocSnap = await getDoc(newStudentRef);
+          if (newDocSnap.exists()) {
+            const newData = newDocSnap.data();
+            if (currentXp === 0) currentXp = newData.profile?.hsk_xp || 0;
+            if (currentStreak === 0) currentStreak = newData.profile?.streak_days || 0;
+            setHearts(newData.profile?.hearts ?? 5);
+          }
+
+          setHskXp(currentXp);
+          setWater(currentWater);
+          setStreak(currentStreak);
+
+        } catch (error) { console.error("Lỗi:", error); }
+      }
+    }
+    if (isLoaded) fetchGlobalData();
+  }, [userId, isLoaded, user]);
 
   // 1. TẠO ĐỀ THEO CẤP ĐỘ CỤ THỂ
   const startLevelTest = async (level) => {
@@ -186,7 +231,9 @@ export default function PlacementTestPage() {
     setAnswers(prev => ({ ...prev, [`${section}_${index}`]: value }));
   };
 
-  // 3. CHẤM BÀI VÀ PHÂN TÍCH
+  // ============================================================
+  // CẬP NHẬT XP & NƯỚC (ĐỒNG BỘ TOÀN HỆ THỐNG KHI SUBMIT)
+  // ============================================================
   const handleSubmit = async () => {
     let detailedReview = [];
     let totalScore = 0;
@@ -279,18 +326,31 @@ export default function PlacementTestPage() {
 
       setResult({ mode: 'level', status, message, score: totalScore, maxScore: maxPossible, details: detailedReview });
 
-      // Lưu tiến trình nếu Pass
-      if (totalScore >= passScore && user) {
+      // LƯU TIẾN TRÌNH VÀ CỘNG ĐIỂM + NƯỚC NẾU PASS
+      if (totalScore >= passScore && userId) {
         try {
-          const studentRef = doc(db, "user_progress", user.id);
+          const newXp = hskXp + 100; // Thưởng 100 XP
+          const newWater = water + 10; // Thưởng 10 Nước
+
+          setHskXp(newXp);
+          setWater(newWater);
+
+          const studentRef = doc(db, "user_progress", userId);
           let updateData = {};
           for (let i = 1; i <= selectedLevel; i++) {
             updateData[`unlocked_levels.HSK${i}`] = true;
           }
           await setDoc(studentRef, updateData, { merge: true });
-          await updateUserProgress(user.id, 100); // Thưởng 100 XP khi pass test
+          
+          // Ghi đè vào Users
+          await setDoc(doc(db, "users", userId), {
+            xp: newXp,
+            water: newWater
+          }, { merge: true });
+
+          await updateUserProgress(userId, 100); 
         } catch (error) {
-          console.error(error);
+          console.error("Lỗi đồng bộ Level Test:", error);
         }
       }
 
@@ -356,47 +416,83 @@ export default function PlacementTestPage() {
         details: detailedReview 
       });
       
-      if (user) await updateUserProgress(user.id, 50); // Thưởng 50 XP làm test chẩn đoán
+      // LƯU TIẾN TRÌNH VÀ CỘNG ĐIỂM + NƯỚC BÀI TEST CHẨN ĐOÁN
+      if (userId) {
+        try {
+          const newXp = hskXp + 50; // Thưởng 50 XP
+          const newWater = water + 5; // Thưởng 5 Nước
+
+          setHskXp(newXp);
+          setWater(newWater);
+
+          await setDoc(doc(db, "users", userId), {
+            xp: newXp,
+            water: newWater
+          }, { merge: true });
+
+          await updateUserProgress(userId, 50); 
+        } catch (error) {
+           console.error("Lỗi đồng bộ Diagnostic Test:", error);
+        }
+      }
     }
   };
 
   // --- UI: MÀN HÌNH CHỌN CHẾ ĐỘ THI ---
   if (!testMode && !testData) {
     return (
-      <main className="min-h-screen bg-[#F4F8F5] relative selection:bg-emerald-200">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-40" style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }}></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F4F8F5]/90 to-[#F4F8F5]/40 backdrop-blur-[2px]"></div>
+      <main className="min-h-screen bg-[#F4F7F6] relative selection:bg-[#8FD9A8]/50">
+        
+        {/* LỚP NỀN GLOBAL ĐỒNG BỘ */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+           <div className="absolute inset-0 bg-[url('/hskk/kiemtra.jpg')] bg-cover bg-center opacity-10"></div>
+           <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
+        </div>
+
+        {/* TOPBAR ĐỒNG BỘ */}
+        <header className="relative z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-white/50 px-5 md:px-8 flex items-center justify-between backdrop-blur-xl">
+          <Link href="/">
+            <button className="flex items-center gap-2 rounded-2xl bg-white shadow-sm px-4 py-2.5 text-sm font-black text-[#1B5E4B] hover:bg-[#8FD9A8]/20 transition-all border border-[#E2E8F0] hover:border-[#8FD9A8]">
+              ← Trở về Vườn
+            </button>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm px-4 py-2.5 border border-slate-100">
+              <span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span>
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5">
+              <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span>
+            </div>
+            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5">
+              <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
+            </div>
+            {isLoaded && <UserButton afterSignOutUrl="/" />}
+          </div>
+        </header>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center animate-fade-in">
-          <div className="w-full flex justify-start mb-8">
-             <Link href="/">
-               <button className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl font-bold text-sm text-slate-600 shadow-sm border border-emerald-50 hover:text-[#08A66A] transition-all">
-                 <span>←</span> Trang chủ
-               </button>
-             </Link>
-          </div>
-
           <div className="text-center mb-12">
-            <div className="w-20 h-20 bg-white rounded-3xl mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-emerald-100/50">🎯</div>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Đánh Giá Năng Lực</h1>
-            <p className="text-slate-600 font-medium max-w-lg mx-auto leading-relaxed">
+            <div className="w-20 h-20 bg-white rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#8FD9A8]">🎯</div>
+            <h1 className="text-4xl md:text-5xl font-black text-[#1B5E4B] tracking-tight mb-4 drop-shadow-sm">Đánh Giá Năng Lực</h1>
+            <p className="text-[#2F8F6E] font-medium max-w-lg mx-auto leading-relaxed">
               Thực hiện bài kiểm tra để AI quét lỗi sai và cá nhân hóa lộ trình học tập của bạn trên hệ thống.
             </p>
           </div>
 
           <div 
             onClick={startComprehensiveTest}
-            className="w-full max-w-2xl bg-gradient-to-r from-[#172033] to-slate-800 p-8 rounded-[32px] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer mb-10 flex items-center gap-6 group"
+            className="w-full max-w-2xl bg-[#1B5E4B] p-8 rounded-[32px] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer mb-10 flex items-center gap-6 group border-b-[8px] border-[#2F8F6E]"
           >
-            <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:scale-110 transition-transform">🤖</div>
+            <div className="w-20 h-20 bg-[#EEF5E9]/20 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:scale-110 transition-transform border border-white/20">🤖</div>
             <div className="flex-1 text-left text-white">
-              <h2 className="text-2xl font-black mb-2 flex items-center gap-2">Test Tổng Hợp Toàn Diện <span className="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded uppercase tracking-widest">AI Khuyên dùng</span></h2>
-              <p className="text-slate-300 text-sm font-medium">Hệ thống rút ngẫu nhiên 30 câu từ HSK 1 đến 6 để "chụp X-Quang" điểm yếu và tư vấn chính xác nên bắt đầu từ đâu.</p>
+              <h2 className="text-2xl font-black mb-2 flex items-center gap-2 drop-shadow-sm">Test Chẩn Đoán AI <span className="bg-[#F2765B] text-white text-[10px] px-2 py-0.5 rounded uppercase tracking-widest shadow-sm">+50 XP</span></h2>
+              <p className="text-[#8FD9A8] text-sm font-medium">Hệ thống rút ngẫu nhiên 30 câu từ HSK 1 đến 6 để "chụp X-Quang" điểm yếu và tư vấn lộ trình.</p>
             </div>
           </div>
 
           <div className="w-full max-w-4xl text-left mb-6">
-            <h3 className="font-black text-slate-400 uppercase tracking-widest text-sm ml-2">Hoặc chọn thi để mở khóa cấp độ</h3>
+            <h3 className="font-black text-[#2F8F6E] uppercase tracking-widest text-sm ml-2 bg-[#8FD9A8]/20 px-4 py-2 rounded-xl inline-block border border-[#8FD9A8]/40">Hoặc chọn thi để mở khóa cấp độ</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
@@ -404,10 +500,12 @@ export default function PlacementTestPage() {
               <div
                 key={lvl}
                 onClick={() => startLevelTest(lvl)}
-                className="bg-white p-6 rounded-[32px] shadow-sm border-2 border-transparent hover:border-[#08A66A] hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer group flex flex-col items-center text-center"
+                className="bg-white p-6 rounded-[32px] shadow-sm border border-[#E2E8F0] hover:border-[#8FD9A8] hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center"
               >
-                <h2 className="text-2xl font-black text-slate-800 group-hover:text-[#08A66A] transition-colors mb-2">HSK {lvl}</h2>
-                <p className="text-xs text-slate-500 font-medium">{lvl <= 2 ? "2 Phần (Dịch, Sắp xếp)" : "3 Phần (Dịch, Xếp, Viết)"}</p>
+                <div className="w-14 h-14 bg-[#F4F7F6] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mb-4 flex items-center justify-center text-2xl group-hover:bg-[#EEF5E9] group-hover:border-[#8FD9A8] border border-transparent transition-colors">📘</div>
+                <h2 className="text-2xl font-black text-[#1B5E4B] group-hover:text-[#2F8F6E] transition-colors mb-2">HSK {lvl}</h2>
+                <p className="text-xs text-slate-500 font-bold bg-slate-50 px-3 py-1 rounded-lg">{lvl <= 2 ? "2 Phần (Dịch, Sắp xếp)" : "3 Phần (Dịch, Xếp, Viết)"}</p>
+                <p className="text-[10px] font-black text-[#F2765B] mt-3 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">+100 XP Thưởng</p>
               </div>
             ))}
           </div>
@@ -419,9 +517,9 @@ export default function PlacementTestPage() {
   // --- UI: LOADING ---
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F4F8F5] flex flex-col items-center justify-center relative">
-        <div className="text-6xl mb-6 animate-bounce">🐸</div>
-        <h3 className="text-xl font-black text-[#08A66A] uppercase tracking-widest">Hệ thống đang chuẩn bị đề thi...</h3>
+      <div className="min-h-screen bg-[#EEF5E9] flex flex-col items-center justify-center relative selection:bg-[#8FD9A8]/50">
+        <div className="w-16 h-16 border-[6px] border-[#2F8F6E] border-t-transparent rounded-full animate-spin mb-6"></div>
+        <h3 className="text-xl font-black text-[#1B5E4B] uppercase tracking-widest animate-pulse">Hệ thống đang chuẩn bị đề...</h3>
       </div>
     );
   }
@@ -430,16 +528,16 @@ export default function PlacementTestPage() {
   if (result) {
     if (showReview) {
       return (
-        <main className="min-h-screen bg-[#F4F8F5] flex flex-col items-center py-10 px-4 md:px-6 relative">
-          <div className="w-full max-w-4xl bg-white rounded-[40px] shadow-sm border border-slate-200 p-8 md:p-10 relative overflow-hidden animate-fade-in">
+        <main className="min-h-screen bg-[#F4F7F6] flex flex-col items-center py-10 px-4 md:px-6 relative">
+          <div className="w-full max-w-4xl bg-white rounded-[40px] shadow-sm border border-[#E2E8F0] p-8 md:p-10 relative overflow-hidden animate-fade-in">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-100 pb-6 gap-4">
               <div>
-                <h2 className="text-2xl font-black text-slate-800">Báo Cáo Lỗi Sai Chi Tiết</h2>
-                <p className="text-sm font-bold text-slate-500 mt-1">
+                <h2 className="text-2xl font-black text-[#1B5E4B]">Báo Cáo Phân Tích Lỗi Sai</h2>
+                <p className="text-sm font-bold text-[#2F8F6E] mt-1 bg-[#EEF5E9] px-3 py-1 rounded-lg inline-block">
                   {testMode === 'level' ? `Đề HSK ${selectedLevel}` : `Bài Test Tổng Hợp`} • Đạt {result.score}/{result.maxScore} đ
                 </p>
               </div>
-              <button onClick={() => setShowReview(false)} className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-sm transition-colors shrink-0">
+              <button onClick={() => setShowReview(false)} className="px-5 py-2.5 bg-[#F4F7F6] hover:bg-[#EEF5E9] text-[#1B5E4B] font-black rounded-xl text-sm transition-colors shrink-0 border border-[#E2E8F0] hover:border-[#8FD9A8]">
                 ← Quay lại tổng quan
               </button>
             </div>
@@ -447,38 +545,39 @@ export default function PlacementTestPage() {
             <div className="space-y-6">
               {result.details.map((q, idx) => {
                 let statusStyle = "";
-                if (q.status === "correct") statusStyle = "bg-[#DDF7EA] border-[#08A66A]/30";
-                else if (q.status === "partial") statusStyle = "bg-[#FFF8E8] border-[#FFC83D]/40";
-                else statusStyle = "bg-rose-50 border-rose-200";
+                let bgHeader = "";
+                if (q.status === "correct") { statusStyle = "bg-[#EEF5E9] border-[#8FD9A8]/50"; bgHeader = "bg-white/80"; }
+                else if (q.status === "partial") { statusStyle = "bg-[#FFF8E8] border-[#FFD666]/50"; bgHeader = "bg-white/80"; }
+                else { statusStyle = "bg-[#FFF1F2] border-[#FECDD3]"; bgHeader = "bg-white/80"; }
 
                 return (
-                  <div key={idx} className={`p-6 rounded-[24px] border ${statusStyle}`}>
+                  <div key={idx} className={`p-6 rounded-[32px] border ${statusStyle} shadow-sm`}>
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex gap-3 items-center">
-                        <span className="w-8 h-8 rounded-full bg-white font-black text-slate-500 text-sm flex items-center justify-center shadow-sm shrink-0">{idx + 1}</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/60 px-3 py-1.5 rounded-lg shadow-sm">{q.type}</span>
+                        <span className="w-8 h-8 rounded-full bg-white font-black text-[#1B5E4B] text-sm flex items-center justify-center shadow-sm shrink-0 border border-slate-100">{idx + 1}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest text-slate-600 ${bgHeader} px-3 py-1.5 rounded-lg shadow-sm border border-slate-100/50`}>{q.type}</span>
                       </div>
-                      <span className="font-black text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">{q.score} / {q.maxScore} đ</span>
+                      <span className="font-black text-[#1B5E4B] bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">{q.score} / {q.maxScore} đ</span>
                     </div>
 
-                    <p className="text-base font-bold text-slate-800 mb-5 bg-white/50 p-4 rounded-xl">{q.question}</p>
+                    <p className="text-base font-bold text-[#1B5E4B] mb-5 bg-white/60 p-4 rounded-2xl shadow-inner border border-white leading-relaxed">{q.question}</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-slate-200"></div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Đáp án của bạn</p>
-                        <p className={`font-medium text-lg ${q.status === 'wrong' ? 'text-rose-600' : 'text-slate-800'}`}>{q.userAnswer}</p>
+                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${q.status === 'wrong' ? 'bg-[#F2765B]' : 'bg-slate-300'}`}></div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-2">Đáp án của bạn</p>
+                        <p className={`font-medium text-lg ml-2 ${q.status === 'wrong' ? 'text-[#BE123C]' : 'text-[#1B5E4B]'}`}>{q.userAnswer}</p>
                       </div>
                       <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#08A66A]"></div>
-                        <p className="text-[10px] font-black text-[#08A66A] uppercase tracking-widest mb-2">Đáp án chuẩn</p>
-                        <p className="font-medium text-[#087A55] text-lg">{q.correctAnswer}</p>
+                        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#2F8F6E]"></div>
+                        <p className="text-[10px] font-black text-[#2F8F6E] uppercase tracking-widest mb-2 ml-2">Đáp án chuẩn</p>
+                        <p className="font-medium text-[#1B5E4B] text-lg ml-2">{q.correctAnswer}</p>
                       </div>
                     </div>
 
-                    <div className="mt-5 flex gap-3 items-start bg-white/60 p-4 rounded-xl">
-                      <span className="text-xl">💡</span>
-                      <p className="text-sm font-bold text-slate-600 pt-1 leading-relaxed">AI Nhận xét: <span className="text-slate-800 font-medium">{q.feedback}</span></p>
+                    <div className="mt-5 flex gap-3 items-start bg-white/80 p-4 rounded-2xl shadow-sm border border-white">
+                      <span className="text-xl">🐸</span>
+                      <p className="text-sm font-bold text-[#2F8F6E] pt-1 leading-relaxed">Ếch Canh Phân Tích: <span className="text-[#1B5E4B] font-medium">{q.feedback}</span></p>
                     </div>
                   </div>
                 );
@@ -486,8 +585,8 @@ export default function PlacementTestPage() {
             </div>
             
             <div className="mt-10 flex justify-center">
-               <button onClick={() => setShowReview(false)} className="px-10 py-4 bg-[#172033] text-white font-black rounded-2xl shadow-xl hover:bg-slate-800 transition-colors uppercase tracking-widest">
-                 Xong
+               <button onClick={() => setShowReview(false)} className="px-12 py-4 bg-[#1B5E4B] text-white font-black rounded-2xl shadow-xl hover:bg-[#2F8F6E] hover:-translate-y-1 transition-all uppercase tracking-widest border-b-[4px] border-[#0F3F31]">
+                 Xong, Đã Hiểu
                </button>
             </div>
           </div>
@@ -497,24 +596,25 @@ export default function PlacementTestPage() {
 
     if (result.mode === 'comprehensive') {
       return (
-        <main className="min-h-screen bg-[#F4F8F5] flex flex-col items-center justify-center p-6 relative">
+        <main className="min-h-screen bg-[#F4F7F6] flex flex-col items-center justify-center p-6 relative">
           <div className="bg-white p-10 md:p-14 rounded-[40px] shadow-2xl border border-white max-w-2xl w-full text-center relative z-10 animate-slide-up-fade">
-            <div className="w-28 h-28 rounded-full bg-blue-50 flex items-center justify-center text-5xl shadow-inner border border-blue-100 mb-6 mx-auto">🤖</div>
-            <h2 className="text-3xl font-black mb-2 text-slate-800">Kết Quả Phân Tích AI</h2>
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#8FD9A8]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+            <div className="w-28 h-28 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] flex items-center justify-center text-5xl shadow-inner border border-[#8FD9A8]/50 mb-6 mx-auto">🤖</div>
+            <h2 className="text-3xl font-black mb-2 text-[#1B5E4B] drop-shadow-sm">Kết Quả Phân Tích AI</h2>
             
-            <div className="bg-slate-50 p-8 rounded-[32px] w-full my-8 border border-slate-200">
-              <p className="text-slate-600 font-medium mb-6 leading-relaxed text-sm">{result.message}</p>
-              <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm">
-                <p className="text-[10px] font-black text-[#08A66A] uppercase tracking-widest mb-2">Lộ trình đề xuất cho bạn</p>
-                <p className="text-3xl font-black text-slate-800">Bắt đầu từ <span className="text-[#08A66A]">HSK {result.suggestedLevel}</span></p>
+            <div className="bg-[#F4F7F6] p-8 rounded-[32px] w-full my-8 border border-[#E2E8F0]">
+              <p className="text-[#1B5E4B] font-medium mb-6 leading-relaxed text-sm bg-white p-5 rounded-2xl shadow-sm">{result.message}</p>
+              <div className="bg-[#1B5E4B] p-6 rounded-3xl border border-[#2F8F6E] shadow-xl shadow-[#8FD9A8]/20">
+                <p className="text-[10px] font-black text-[#8FD9A8] uppercase tracking-widest mb-2">Lộ trình đề xuất cho bạn</p>
+                <p className="text-4xl font-black text-white drop-shadow-sm">Bắt đầu từ <span className="text-[#FFD666]">HSK {result.suggestedLevel}</span></p>
               </div>
             </div>
 
-            <button onClick={() => setShowReview(true)} className="w-full mb-4 px-6 py-4 bg-white border-2 border-blue-500 text-blue-600 rounded-2xl font-black text-sm hover:bg-blue-50 transition-colors flex items-center justify-center gap-2">
+            <button onClick={() => setShowReview(true)} className="w-full mb-4 px-6 py-4.5 bg-white border-2 border-[#2F8F6E] text-[#2F8F6E] rounded-2xl font-black text-sm hover:bg-[#EEF5E9] transition-colors flex items-center justify-center gap-2 shadow-sm">
               <span>🔍</span> Xem bảng phân tích lỗi sai
             </button>
-            <button onClick={() => { setResult(null); setTestMode(null); }} className="w-full px-6 py-4 bg-[#172033] text-white rounded-2xl font-black text-sm shadow-xl hover:bg-slate-800 transition-colors uppercase tracking-widest">
-              Xong
+            <button onClick={() => { setResult(null); setTestMode(null); }} className="w-full px-6 py-4.5 bg-[#1B5E4B] text-white rounded-2xl font-black text-sm shadow-xl hover:bg-[#2F8F6E] transition-colors uppercase tracking-widest border-b-[4px] border-[#0F3F31]">
+              Về Danh Mục Chẩn Đoán
             </button>
           </div>
         </main>
@@ -523,45 +623,45 @@ export default function PlacementTestPage() {
 
     const isFailed = result.status === "FAIL";
     const uiConfig = {
-      FAIL: { icon: '💦', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', title: 'Chưa đạt yêu cầu!' },
-      PASS_WARN: { icon: '⚠️', color: 'text-amber-500', bg: 'bg-[#FFF8E8]', border: 'border-[#FFC83D]/30', title: 'Cần cố gắng thêm!' },
-      EXCELLENT: { icon: '🏆', color: 'text-[#08A66A]', bg: 'bg-[#DDF7EA]', border: 'border-[#08A66A]/20', title: 'Chúc mừng bạn!' }
+      FAIL: { icon: '💦', color: 'text-[#BE123C]', bg: 'bg-[#FFF1F2]', border: 'border-[#FECDD3]', title: 'Chưa đạt yêu cầu!' },
+      PASS_WARN: { icon: '⚠️', color: 'text-[#F59E0B]', bg: 'bg-[#FFF8E8]', border: 'border-[#FFD666]/50', title: 'Cần cố gắng thêm!' },
+      EXCELLENT: { icon: '🏆', color: 'text-[#2F8F6E]', bg: 'bg-[#EEF5E9]', border: 'border-[#8FD9A8]', title: 'Chúc mừng bạn!' }
     };
     const ui = uiConfig[result.status];
 
     return (
-      <main className="min-h-screen bg-[#F4F8F5] flex flex-col items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-20" style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }}></div>
-        <div className="absolute inset-0 bg-[#F4F8F5]/80 backdrop-blur-md"></div>
+      <main className="min-h-screen bg-[#F4F7F6] flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-[#8FD9A8]/50">
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-10" style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }}></div>
+        <div className="absolute inset-0 bg-[#F4F7F6]/80 backdrop-blur-md"></div>
         
         <div className="bg-white p-10 md:p-14 rounded-[40px] shadow-2xl border border-white max-w-lg w-full text-center relative z-10 flex flex-col items-center animate-slide-up-fade">
-          <div className="w-28 h-28 rounded-full bg-slate-50 flex items-center justify-center text-5xl shadow-inner border border-slate-100 mb-6 relative">
+          <div className="w-28 h-28 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-slate-50 flex items-center justify-center text-6xl shadow-inner border border-slate-100 mb-6 relative">
             {ui.icon}
           </div>
           
-          <h2 className={`text-3xl font-black mb-2 ${ui.color}`}>{ui.title}</h2>
+          <h2 className={`text-3xl font-black mb-2 drop-shadow-sm ${ui.color}`}>{ui.title}</h2>
           
-          <div className={`p-8 rounded-[32px] w-full my-8 relative overflow-hidden border ${ui.bg} ${ui.border}`}>
-            <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 relative z-10">Điểm tổng kết HSK {selectedLevel}</p>
-            <p className={`text-7xl font-black relative z-10 ${ui.color}`}>
+          <div className={`p-8 rounded-[32px] w-full my-8 relative overflow-hidden border shadow-sm ${ui.bg} ${ui.border}`}>
+            <p className={`text-xs font-black uppercase tracking-widest mb-2 relative z-10 opacity-70 ${ui.color}`}>Điểm tổng kết HSK {selectedLevel}</p>
+            <p className={`text-7xl font-black relative z-10 drop-shadow-sm ${ui.color}`}>
               {result.score} <span className="text-3xl opacity-50 font-bold">/ {result.maxScore}</span>
             </p>
           </div>
 
-          <p className="text-slate-600 font-medium mb-10 leading-relaxed px-2 text-sm">{result.message}</p>
+          <p className="text-[#1B5E4B] font-bold mb-10 leading-relaxed px-2 text-sm bg-[#F4F7F6] p-4 rounded-2xl">{result.message}</p>
           
-          <button onClick={() => setShowReview(true)} className="w-full mb-4 px-6 py-4 bg-white border-2 border-[#08A66A] text-[#08A66A] rounded-2xl font-black text-sm hover:bg-[#DDF7EA]/50 transition-colors flex items-center justify-center gap-2">
-             <span>🔍</span> Xem bảng phân tích lỗi sai
+          <button onClick={() => setShowReview(true)} className={`w-full mb-4 px-6 py-4.5 bg-white border-2 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-sm ${ui.color === 'text-[#2F8F6E]' ? 'border-[#2F8F6E] text-[#2F8F6E] hover:bg-[#EEF5E9]' : ui.color === 'text-[#F59E0B]' ? 'border-[#F59E0B] text-[#F59E0B] hover:bg-[#FFF8E8]' : 'border-[#BE123C] text-[#BE123C] hover:bg-[#FFF1F2]'}`}>
+              <span>🔍</span> Xem bảng phân tích lỗi sai
           </button>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full">
             {(isFailed || result.status === "PASS_WARN") && (
-              <button onClick={() => { setResult(null); startLevelTest(selectedLevel); }} className="flex-1 px-6 py-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-black text-sm hover:border-slate-300 transition-colors">
+              <button onClick={() => { setResult(null); startLevelTest(selectedLevel); }} className="flex-1 px-6 py-4.5 bg-[#F4F7F6] border border-[#E2E8F0] text-slate-600 rounded-2xl font-black text-sm hover:bg-white hover:border-[#8FD9A8] transition-colors shadow-sm">
                 Thử lại lần nữa
               </button>
             )}
             <Link href="/" className="flex-1 w-full">
-              <button className="w-full px-6 py-4 bg-[#172033] text-white rounded-2xl font-black text-sm shadow-xl hover:bg-slate-800 transition-colors uppercase tracking-widest">
+              <button className={`w-full px-6 py-4.5 text-white rounded-2xl font-black text-sm shadow-xl transition-colors uppercase tracking-widest border-b-[4px] ${isFailed ? 'bg-[#BE123C] hover:bg-[#9F1239] border-[#881337]' : 'bg-[#1B5E4B] hover:bg-[#2F8F6E] border-[#0F3F31]'}`}>
                 Về Trang Chủ
               </button>
             </Link>
@@ -575,53 +675,53 @@ export default function PlacementTestPage() {
   const isHSK12 = testMode === 'level' ? selectedLevel <= 2 : true; 
 
   return (
-    <main className="min-h-screen bg-[#F4F8F5] pb-20 relative selection:bg-emerald-200">
-      <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 h-20 flex justify-between items-center">
+    <main className="min-h-screen bg-[#F4F7F6] pb-20 relative selection:bg-[#8FD9A8]/50">
+      <header className="bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] sticky top-0 z-30 shadow-sm">
+        <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#DDF7EA] rounded-2xl flex items-center justify-center text-[#08A66A] text-2xl shadow-inner border border-emerald-50">🎯</div>
+            <div className="w-12 h-12 bg-[#EEF5E9] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-[#2F8F6E] text-2xl shadow-inner border border-[#8FD9A8]">🎯</div>
             <div>
-              <h1 className="font-black text-slate-800 text-lg">
+              <h1 className="font-black text-[#1B5E4B] text-lg drop-shadow-sm">
                 {testMode === 'level' ? `Đánh Giá Năng Lực HSK ${selectedLevel}` : `Bài Test Tổng Hợp Toàn Diện`}
               </h1>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              <p className="text-[10px] font-bold text-[#2F8F6E] uppercase tracking-widest bg-[#8FD9A8]/20 px-2 py-0.5 rounded-md inline-block mt-1 border border-[#8FD9A8]/50">
                 {testMode === 'comprehensive' ? "30 Câu Dịch" : (isHSK12 ? "2 Phần • Tổng 200 điểm" : "3 Phần • Tổng 300 điểm")}
               </p>
             </div>
           </div>
           <button 
             onClick={() => {
-              if (window.confirm("Bạn có chắc chắn muốn hủy bài thi này không?")) {
+              if (window.confirm("Bạn có chắc chắn muốn thoát? Bài thi hiện tại sẽ không được lưu.")) {
                 setTestMode(null);
                 setSelectedLevel(null);
               }
             }} 
-            className="px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl text-xs font-bold transition-colors border border-rose-100"
+            className="px-4 py-2 bg-[#FFF1F2] text-[#BE123C] hover:bg-[#FECDD3] rounded-xl text-xs font-black transition-colors border border-[#FECDD3]/50 shadow-sm"
           >
-            Hủy bài thi
+            Thoát bài thi
           </button>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 mt-8 space-y-8 animate-fade-in">
+      <div className="max-w-5xl mx-auto px-4 mt-10 space-y-10 animate-fade-in">
         
         {/* Phần 1: Dịch Câu */}
         {testData?.sections?.translate && testData.sections.translate.length > 0 && (
-          <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-              <span className="text-2xl">✍️</span>
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+              <span className="text-3xl">✍️</span>
               <div>
-                <h3 className="text-xl font-black text-slate-800">Phần {testMode === 'comprehensive' ? 'Thi' : '1'}: Dịch Câu</h3>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{testData.sections.translate.length} Câu</p>
+                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần {testMode === 'comprehensive' ? 'Thi' : '1'}: Dịch Câu</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testData.sections.translate.length} Câu</p>
               </div>
             </div>
             
             <div className="space-y-6">
               {testData.sections.translate.map((item, idx) => (
-                <div key={`trans-${idx}`} className="bg-[#F4F8F5] p-6 rounded-[24px] border border-emerald-50">
-                  <div className="flex items-start gap-3 mb-4">
-                    <span className="w-6 h-6 shrink-0 rounded-full bg-white text-slate-400 text-xs font-bold flex items-center justify-center shadow-sm border border-slate-200">{idx + 1}</span>
-                    <p className="font-bold text-slate-700 text-lg mt-0.5">
+                <div key={`trans-${idx}`} className="bg-[#F4F7F6] p-6 md:p-8 rounded-[32px] border border-[#E2E8F0] shadow-sm">
+                  <div className="flex items-start gap-4 mb-5">
+                    <span className="w-8 h-8 shrink-0 rounded-full bg-[#1B5E4B] text-white text-sm font-black flex items-center justify-center shadow-md">{idx + 1}</span>
+                    <p className="font-bold text-[#1B5E4B] text-lg mt-0.5 bg-white px-4 py-2 rounded-2xl shadow-sm border border-[#E2E8F0]">
                       {item.vietnamese || item.front}
                     </p>
                   </div>
@@ -630,7 +730,7 @@ export default function PlacementTestPage() {
                     placeholder="Nhập bản dịch tiếng Trung (Chữ Hán)..."
                     value={answers[`translate_${idx}`] || ""}
                     onChange={(e) => handleAnswerChange("translate", idx, e.target.value)}
-                    className="w-full p-4 border-2 border-slate-200 rounded-2xl text-base outline-none focus:border-[#08A66A] focus:ring-4 focus:ring-[#08A66A]/10 bg-white font-medium text-slate-800 transition-all placeholder:text-slate-300"
+                    className="w-full p-5 border-2 border-[#E2E8F0] rounded-2xl text-base outline-none focus:border-[#2F8F6E] focus:ring-4 focus:ring-[#8FD9A8]/20 bg-white font-medium text-[#1B5E4B] transition-all placeholder:text-slate-400 shadow-inner"
                   />
                 </div>
               ))}
@@ -640,12 +740,12 @@ export default function PlacementTestPage() {
 
         {/* Phần 2: Sắp xếp câu (Dùng Component Click-to-Select) */}
         {testMode === 'level' && testData?.sections?.arrange && testData.sections.arrange.length > 0 && (
-          <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-              <span className="text-2xl">🧩</span>
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+              <span className="text-3xl">🧩</span>
               <div>
-                <h3 className="text-xl font-black text-slate-800">Phần 2: Sắp Xếp Câu</h3>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">10 Câu • 100 điểm</p>
+                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần 2: Sắp Xếp Câu</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">10 Câu • 100 điểm</p>
               </div>
             </div>
             
@@ -664,30 +764,31 @@ export default function PlacementTestPage() {
 
         {/* Phần 3: Viết Luận (Chỉ HSK 3-6 Mode Level) */}
         {testMode === 'level' && !isHSK12 && testData?.sections?.essay && testData.sections.essay.length > 0 && (
-          <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-              <span className="text-2xl">📝</span>
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+              <span className="text-3xl">📝</span>
               <div>
-                <h3 className="text-xl font-black text-slate-800">Phần 3: Viết Luận / Phản Xạ</h3>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">2 Câu • 100 điểm</p>
+                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần 3: Viết Luận / Phản Xạ</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">2 Câu • 100 điểm</p>
               </div>
             </div>
             
-            <div className="space-y-6">
+            <div className="space-y-8">
               {testData.sections.essay.map((item, idx) => (
-                <div key={`essay-${idx}`} className="bg-slate-50 p-6 rounded-[24px] border border-slate-100">
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-4">
-                    <p className="font-bold text-slate-800 text-sm leading-relaxed">
-                      <span className="text-rose-500 font-black mr-2">Q{idx + 1}:</span>
+                <div key={`essay-${idx}`} className="bg-[#F4F7F6] p-8 rounded-[32px] border border-[#E2E8F0] shadow-sm">
+                  <div className="bg-[#1B5E4B] p-5 rounded-2xl shadow-md mb-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <p className="font-bold text-white text-base leading-relaxed relative z-10 flex items-start gap-3">
+                      <span className="bg-[#F2765B] text-white px-2 py-0.5 rounded text-sm font-black shrink-0 shadow-sm mt-0.5">Q{idx + 1}</span>
                       {item.prompt}
                     </p>
                   </div>
                   <textarea 
-                    rows={4}
-                    placeholder="Viết câu trả lời bằng tiếng Trung tại đây (Tối thiểu 40 chữ)..."
+                    rows={5}
+                    placeholder="Viết câu trả lời bằng tiếng Trung tại đây (Tối thiểu 40 chữ để lấy điểm tối đa)..."
                     value={answers[`essay_${idx}`] || ""}
                     onChange={(e) => handleAnswerChange("essay", idx, e.target.value)}
-                    className="w-full p-5 border-2 border-slate-200 rounded-2xl text-base outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10 bg-white font-medium text-slate-800 transition-all resize-none placeholder:text-slate-300"
+                    className="w-full p-6 border-2 border-[#E2E8F0] rounded-3xl text-base outline-none focus:border-[#2F8F6E] focus:ring-4 focus:ring-[#8FD9A8]/20 bg-white font-medium text-[#1B5E4B] transition-all resize-none placeholder:text-slate-400 shadow-inner leading-relaxed"
                   />
                 </div>
               ))}
@@ -696,13 +797,13 @@ export default function PlacementTestPage() {
         )}
 
         {/* Nút Submit */}
-        <div className="pt-8 pb-10 flex justify-center">
+        <div className="pt-8 pb-12 flex justify-center">
           <button 
             type="button"
             onClick={handleSubmit}
-            className="w-full md:w-auto md:min-w-[300px] py-5 px-8 bg-[#08A66A] text-white rounded-2xl font-black shadow-xl shadow-emerald-600/20 hover:bg-[#087A55] hover:-translate-y-1 transition-all text-lg tracking-wide flex items-center justify-center gap-3 uppercase"
+            className="w-full md:w-auto md:min-w-[320px] py-5 px-10 bg-[#1B5E4B] text-white rounded-[24px] font-black shadow-xl shadow-[#8FD9A8]/40 hover:bg-[#2F8F6E] hover:-translate-y-1 transition-all text-lg tracking-widest flex items-center justify-center gap-3 uppercase border-b-[6px] border-[#0F3F31]"
           >
-            <span>✓</span> Nộp Bài & Xem Điểm
+            <span>✓</span> Nộp Bài & Nhận Điểm
           </button>
         </div>
 

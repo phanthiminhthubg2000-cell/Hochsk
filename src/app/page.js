@@ -7,11 +7,9 @@ import { doc, setDoc, getDoc, collection, getDocs, query, limit } from "firebase
 
 // ============================================================
 // BẢNG MÀU KHU VỰC VƯỜN (HSK Garden Palette)
-// Lá đậm: #1B5E4B | Lá chính: #2F8F6E | Lá non: #8FD9A8
-// Nắng/XP: #FFD666 | Ao nước: #4FB6C7 | Trái tim: #F2765B | Đất: #A97845 | Nền: #EEF5E9
 // ============================================================
 
-// --- COMPONENT: Ếch Canh Tương Tác (Hỗ trợ ảnh thật fallback về Emoji) ---
+// --- COMPONENT: Ếch xanh Tương Tác ---
 const MascotImage = ({ streak }) => {
   const [imgError, setImgError] = useState(false);
   let data = { img: '/garden/frog-sleep.png', emoji: '😴' };
@@ -23,7 +21,7 @@ const MascotImage = ({ streak }) => {
   return <img src={data.img} alt={data.emoji} onError={() => setImgError(true)} className="w-44 h-44 object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform" />;
 };
 
-// --- COMPONENT: Trạng thái sinh trưởng của cây (Hỗ trợ ảnh thật) ---
+// --- COMPONENT: Trạng thái sinh trưởng của cây ---
 const TreeStageIcon = ({ progress, isCurrent }) => {
   const [imgError, setImgError] = useState(false);
   let stage = { img: '/garden/seed.png', emoji: '🌱' };
@@ -32,8 +30,8 @@ const TreeStageIcon = ({ progress, isCurrent }) => {
   else if (progress >= 60) stage = { img: '/garden/tree.png', emoji: '🌳' };
   else if (progress >= 30) stage = { img: '/garden/young-tree.png', emoji: '🌿' };
 
-  if (imgError) return <span className="text-xl drop-shadow-sm">{stage.emoji}</span>;
-  return <img src={stage.img} alt={stage.emoji} onError={() => setImgError(true)} className="w-8 h-8 object-contain drop-shadow-sm" />;
+  if (imgError) return <span className="text-base drop-shadow-sm">{stage.emoji}</span>;
+  return <img src={stage.img} alt={stage.emoji} onError={() => setImgError(true)} className="w-6 h-6 object-contain drop-shadow-sm" />;
 };
 
 const RadarChart = ({ data }) => {
@@ -53,18 +51,14 @@ const RadarChart = ({ data }) => {
   return (
     <div className="flex items-center justify-center">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
-        {/* Background Grids (Nét đứt) */}
         {[20, 40, 60, 80, 100].map((level) => (
           <polygon key={level} points={data.map((_, index) => `${getPoint(index, level).x},${getPoint(index, level).y}`).join(" ")} fill="none" stroke="#E2E8F0" strokeWidth="1" strokeDasharray="4 4" />
         ))}
-        {/* Axes */}
         {data.map((_, index) => (
           <line key={index} x1={center} y1={center} x2={getPoint(index, 100).x} y2={getPoint(index, 100).y} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="4 4" />
         ))}
-        {/* Data Polygon */}
         <polygon points={polygonPoints} fill="#8FD9A8" fillOpacity="0.4" stroke="#2F8F6E" strokeWidth="2.5" strokeLinejoin="round" className="transition-all duration-1000 drop-shadow-sm" />
         {data.map((item, index) => <circle key={index} cx={getPoint(index, item.value).x} cy={getPoint(index, item.value).y} r="5" fill="#1B5E4B" className="drop-shadow-md" />)}
-        {/* Labels */}
         {data.map((item, index) => (
           <text key={index} x={getPoint(index, 125).x} y={getPoint(index, 125).y} textAnchor="middle" dominantBaseline="middle" className="fill-[#1B5E4B] text-[10px] font-black uppercase tracking-widest">
             {item.label}
@@ -91,12 +85,7 @@ export default function HomePage() {
   const [isTeacher, setIsTeacher] = useState(false); 
 
   const [skillMap, setSkillMap] = useState({
-    vocabulary: 60,
-    grammar: 50,
-    listening: 65,
-    translation: 45,
-    writing: 50,
-    speaking: 55,
+    vocabulary: 60, grammar: 50, listening: 65, translation: 45, writing: 50, speaking: 55,
   });
 
   // --- SEARCH / AI STATES ---
@@ -105,9 +94,6 @@ export default function HomePage() {
   const [aiResponse, setAiResponse] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [showHandwriting, setShowHandwriting] = useState(false);
-  const [handwritingResult, setHandwritingResult] = useState([]);
-  const canvasRef = useRef(null);
-  const drawingRef = useRef(false);
 
   const searchResults = searchQuery.trim() === "" ? [] : [
     { hanzi: "学习", pinyin: "xuéxí", meaning: "học tập", type: "[Động]" },
@@ -148,7 +134,6 @@ export default function HomePage() {
     { label: "NÓI", value: Math.min(skillMap?.speaking || 55, 100), key: "speaking" },
   ];
 
-  // Phân tích điểm mạnh / yếu động
   const sortedSkills = [...realSkillData].sort((a, b) => b.value - a.value);
   const strongSkills = sortedSkills.slice(0, 2);
   const weakSkills = sortedSkills.slice(-2);
@@ -157,7 +142,7 @@ export default function HomePage() {
     const suggestions = [];
     weakest.forEach((s) => {
       if (s.key === "listening") suggestions.push(`Luyện 1 bài nghe ${currentLevel}`);
-      else if (s.key === "speaking") suggestions.push("Thực hành 3 câu giao tiếp AI");
+      else if (s.key === "speaking") suggestions.push("Diễn xuất tại Phim trường");
       else if (s.key === "grammar") suggestions.push("Ôn tập 10 câu sắp xếp ngữ pháp");
       else if (s.key === "translation") suggestions.push("Luyện dịch 5 câu phản xạ");
       else if (s.key === "writing") suggestions.push("Luyện chép chính tả chữ Hán");
@@ -166,14 +151,14 @@ export default function HomePage() {
     return suggestions;
   };
 
-  // Khu vườn cá nhân hóa (Màu trơn)
   const gardenAreas = [
     { name: "Cây Từ vựng", level: Math.floor((skillMap?.vocabulary || 40) / 10) + 1, icon: "🌱", link: "/vocab", bg: "bg-[#2F8F6E]", text: "text-white", bgImg: "/hskk/tuvung.jpg" },
-    { name: "Đầm Chủ đề", level: Math.floor(((skillMap?.vocabulary || 40) + (skillMap?.translation || 40)) / 20) + 1, icon: "🪷", link: "/topic", bg: "bg-[#F2765B]", text: "text-white", bgImg: "/hskk/chude.jpg" },
+    { name: "Đầm Chủ đề", level: Math.floor(((skillMap?.vocabulary || 40) + (skillMap?.translation || 40)) / 20) + 1, icon: "🪷", link: "/topic", bg: "bg-[#F2765B]", text: "text-white", bgImg: "/hskk/topic.jpg" },
     { name: "Hoa Ngữ pháp", level: Math.floor((skillMap?.grammar || 30) / 10) + 1, icon: "☀️", link: "/arrange", bg: "bg-[#FFD666]", text: "text-[#1B5E4B]", bgImg: "/hskk/sapxep.jpg" },
     { name: "Ao Nghe", level: Math.floor((skillMap?.listening || 30) / 10) + 1, icon: "💧", link: "/dictation", bg: "bg-[#4FB6C7]", text: "text-white", bgImg: "/hskk/nghechep.jpg" },
     { name: "Gió Dịch", level: Math.floor((skillMap?.translation || 30) / 10) + 1, icon: "🍃", link: "/translate", bg: "bg-[#8FD9A8]", text: "text-[#1B5E4B]", bgImg: "/hskk/dich.jpg" },
-    { name: "Sân HSKK", level: Math.floor((skillMap?.speaking || 30) / 10) + 1, icon: "🎤", link: "/roleplay", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
+    { name: "Cuộc chiến khẩu ngữ", level: Math.floor((skillMap?.speaking || 30) / 10) + 1, icon: "🎤", link: "/hskk", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
+    { name: "Phim trường", level: Math.floor((skillMap?.speaking || 30) / 10) + 1, icon: "🎬", link: "/roleplay", bg: "bg-[#1B5E4B]", text: "text-white", bgImg: "/hskk/anh2.jpg" },
   ];
 
   const dailyMissions = [
@@ -183,7 +168,7 @@ export default function HomePage() {
   ];
 
   // ============================================================
-  // ĐỒNG BỘ TOÀN DIỆN DỮ LIỆU USER THEO USERID
+  // ĐỒNG BỘ TOÀN DIỆN DỮ LIỆU USER & CLERK SANG FIREBASE
   // ============================================================
   useEffect(() => {
     if (!isSignedIn || !userId) return;
@@ -194,6 +179,14 @@ export default function HomePage() {
         const userSnap = await getDoc(userRef);
         const uData = userSnap.exists() ? userSnap.data() : {};
 
+        // ĐỒNG BỘ THÔNG TIN CLERK VÀO FIREBASE (TÊN VÀ AVATAR)
+        if (user) {
+            await setDoc(userRef, {
+                fullName: user.fullName || user.firstName || "Người làm vườn",
+                avatar: user.imageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`
+            }, { merge: true });
+        }
+
         const upRef = doc(db, "user_progress", userId);
         const upSnap = await getDoc(upRef);
         const upData = upSnap.exists() ? upSnap.data() : {};
@@ -202,7 +195,6 @@ export default function HomePage() {
         const pSnap = await getDoc(pRef);
         const pData = pSnap.exists() ? pSnap.data() : {};
 
-        // Hợp nhất dữ liệu có độ ưu tiên
         const mergedStreak = uData.streak ?? upData.profile?.streak_days ?? pData.streakCount ?? 0;
         const mergedHearts = uData.hearts ?? upData.profile?.hearts ?? 5;
         const mergedXp = uData.xp ?? upData.profile?.hsk_xp ?? pData.xp ?? 0;
@@ -283,16 +275,13 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Cập nhật Cấp độ học tập đồng bộ vào cả users và user_progress
   const handleChangeLevel = async (newLevel) => {
     setCurrentLevel(newLevel);
     if (userId) {
       try {
         await setDoc(doc(db, "users", userId), { currentLevel: newLevel }, { merge: true });
         await setDoc(doc(db, "user_progress", userId), { "profile.level": newLevel }, { merge: true });
-      } catch (error) {
-        console.error("Lỗi cập nhật cấp độ:", error);
-      }
+      } catch (error) {}
     }
   };
 
@@ -307,17 +296,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen font-sans text-[#1B5E4B] relative bg-[#EEF5E9] selection:bg-[#8FD9A8]/50">
       
-      {/* ==========================================
-          LỚP NỀN GLOBAL (Sử dụng ảnh kho data)
-          ========================================== */}
+      {/* LỚP NỀN GLOBAL */}
       <div className="fixed inset-0 z-0 pointer-events-none">
          <div className="absolute inset-0 bg-[url('/hskk/nen.jpg')] bg-cover bg-center opacity-10"></div>
          <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
       </div>
 
-      {/* ==========================================
-          SIDEBAR
-          ========================================== */}
+      {/* SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
         <div className="flex h-full flex-col">
           <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
@@ -342,7 +327,8 @@ export default function HomePage() {
             <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
             <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
             <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
-            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>HSKK AI</span>}</Link>
+            <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
+            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
 
             <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🏆 CỘNG ĐỒNG" : "•"}</div>
             <a href="#leaderboard" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Ao sen</span>}</a>
@@ -366,6 +352,7 @@ export default function HomePage() {
                 {!isSidebarCollapsed && (
                   <div className="min-w-0">
                     <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
+                    <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
                   </div>
                 )}
               </div>
@@ -380,9 +367,7 @@ export default function HomePage() {
         </div>
       </aside>
 
-      {/* ==========================================
-          MAIN CONTENT
-          ========================================== */}
+      {/* MAIN CONTENT */}
       <main className={`min-h-screen transition-all duration-300 relative z-10 ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
         
         {/* TOPBAR */}
@@ -408,11 +393,7 @@ export default function HomePage() {
 
         <div className="mx-auto max-w-6xl space-y-8 px-5 py-8 md:px-8 pb-20">
           
-          {/* ==========================================
-              HERO BANNER - Sử dụng Backcover.jpg tạo Depth
-              ========================================== */}
           <section className="relative rounded-[32px] overflow-hidden shadow-lg bg-[#1B5E4B] p-8 md:p-12 text-white flex flex-col md:flex-row justify-between items-center min-h-[260px]">
-            {/* Image Textures Blended */}
             <div className="absolute inset-0 bg-[url('/hskk/backcover.jpg')] bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none"></div>
             <div className="absolute -left-20 -top-20 w-96 h-96 bg-[#2F8F6E] rounded-full blur-[80px] pointer-events-none opacity-60"></div>
             
@@ -441,7 +422,7 @@ export default function HomePage() {
                       🌱 Học tiếp
                     </button>
                   </Link>
-                  <a href="#quest">
+                  <a href="#dashboard-bottom">
                     <button className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
                       🎯 Xem nhiệm vụ
                     </button>
@@ -455,19 +436,18 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* ==========================================
-              KHU VƯỜN CỦA TÔI (Sử dụng Image Blend)
-              ========================================== */}
           <section>
             <div className="mb-5 flex items-center gap-2">
               <span className="text-2xl">🏡</span>
               <h2 className="text-xl font-black text-[#1B5E4B]">Khu vườn của tôi</h2>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {gardenAreas.map((tool, index) => (
                 <Link href={tool.link} key={index} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
-                  {/* Nhúng hình ảnh kho data làm Texture */}
-                  <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-30 mix-blend-overlay" style={{ backgroundImage: `url(${tool.bgImg})` }}></div>
+                  <div 
+                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.3] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
+                    style={{ backgroundImage: `url(${tool.bgImg})` }}
+                  ></div>
                   
                   <div className={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-white/20 backdrop-blur-md text-xl shadow-sm transition-transform group-hover:scale-110 z-10`}>
                     {tool.icon}
@@ -482,101 +462,55 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* ==========================================
-              HÀNH TRÌNH TRỒNG SEN (HSK 9 CẤP) & NHIỆM VỤ NGÀY
-              ========================================== */}
-          <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]" id="quest">
-            
-            {/* Cột trái: Cây Tiến Hóa HSK 1 - 9 */}
-            <div className="rounded-[32px] bg-white/90 backdrop-blur-sm p-8 shadow-sm border border-white">
-              <div className="mb-8 flex items-center justify-between">
+          {/* LỘ TRÌNH FULL WIDTH HORIZONTAL */}
+          <section className="mb-8 w-full">
+            <div className="rounded-[32px] bg-white p-6 shadow-sm border border-[#E2E8F0]">
+              <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Lộ trình sinh trưởng (HSK 1 - 9)</h2>
-                  <p className="text-xs text-[#2F8F6E] mt-1 font-bold">Bấm vào bất kỳ mốc nào để chuyển mục tiêu học.</p>
+                  <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Lộ trình sinh trưởng (HSK 1 - 9)</h2>
+                  <p className="text-[11px] text-[#2F8F6E] mt-0.5 font-bold">Bấm vào bất kỳ mốc nào để chuyển mục tiêu học.</p>
                 </div>
-                <span className="rounded-xl bg-[#8FD9A8]/20 text-xs font-black text-[#2F8F6E] px-4 py-2 shadow-sm border border-[#8FD9A8]/40">
+                <span className="rounded-xl bg-[#8FD9A8]/20 text-[10px] font-black text-[#2F8F6E] px-3 py-1.5 shadow-sm border border-[#8FD9A8]/40">
                   {currentLevel}
                 </span>
               </div>
 
-              <div className="relative py-4 flex flex-col-reverse gap-4 before:absolute before:left-[23px] before:top-6 before:bottom-6 before:w-[4px] before:bg-[#8FD9A8]/30 before:rounded-full z-0">
-                {hskLevels.map((item) => {
-                  const isCurrent = item.level === currentLevel;
-                  const isCompleted = item.progress === 100;
+              <div className="overflow-x-auto custom-scrollbar pb-4 -mx-2 px-2">
+                <div className="relative py-4 flex items-start gap-4 md:gap-6 w-max md:w-full md:justify-between before:absolute before:top-[40px] before:left-[40px] before:right-[40px] before:h-[2px] before:bg-[#8FD9A8]/50 before:rounded-full z-0">
+                  {hskLevels.map((item) => {
+                    const isCurrent = item.level === currentLevel;
+                    const isCompleted = item.progress === 100;
 
-                  return (
-                    <button key={item.level} onClick={() => handleChangeLevel(item.level)} className="w-full text-left relative z-10 flex items-center gap-5 group cursor-pointer">
-                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center shadow-sm text-lg transition-all ${isCompleted && !isCurrent ? "bg-[#1B5E4B] text-white" : isCurrent ? "bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_6px_rgba(47,143,110,0.2)]" : "bg-[#EEF5E9] text-slate-400 group-hover:bg-[#8FD9A8] group-hover:text-white"}`} style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}>
-                        <TreeStageIcon progress={item.progress} isCurrent={isCurrent} />
-                      </div>
-                      <div className={`flex-1 rounded-[24px] p-4 transition-all ${isCurrent ? "bg-[#FDFBF7] shadow-sm border border-[#FFD666]/40 translate-x-1" : "bg-transparent group-hover:bg-slate-50 group-hover:shadow-sm border border-transparent group-hover:border-[#E2E8F0]"}`}>
-                        <div className="mb-2 flex items-center justify-between">
-                          <div>
-                            <h3 className={`text-sm font-black transition-colors ${isCurrent ? 'text-[#1B5E4B]' : isCompleted ? 'text-[#2F8F6E]' : 'text-slate-400 group-hover:text-[#2F8F6E]'}`}>{item.level}</h3>
-                            <p className="text-[10px] font-bold text-[#2F8F6E]/70 mt-0.5">{item.title} · {item.words.toLocaleString("en-US")} từ vựng</p>
+                    return (
+                      <button key={item.level} onClick={() => handleChangeLevel(item.level)} className="w-[140px] flex-1 min-w-[120px] shrink-0 text-center relative z-10 flex flex-col items-center gap-3 group cursor-pointer">
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center shadow-sm text-base transition-all ${isCompleted && !isCurrent ? "bg-[#1B5E4B] text-white" : isCurrent ? "bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_4px_rgba(47,143,110,0.2)]" : "bg-[#EEF5E9] text-slate-400 group-hover:bg-[#8FD9A8] group-hover:text-white"}`} style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}>
+                          <TreeStageIcon progress={item.progress} isCurrent={isCurrent} />
+                        </div>
+                        <div className={`w-full rounded-[20px] p-3 transition-all ${isCurrent ? "bg-[#FDFBF7] shadow-sm border border-[#FFD666]/40 -translate-y-1" : "bg-transparent group-hover:bg-slate-50 group-hover:shadow-sm border border-transparent group-hover:border-[#E2E8F0]"}`}>
+                          <div className="mb-2">
+                            <h3 className={`text-sm font-black transition-colors mb-0.5 ${isCurrent ? 'text-[#1B5E4B]' : isCompleted ? 'text-[#2F8F6E]' : 'text-slate-400 group-hover:text-[#2F8F6E]'}`}>{item.level}</h3>
+                            <p className="text-[9px] font-bold text-[#2F8F6E]/70 leading-tight">{item.title}<br/>{item.words.toLocaleString("en-US")} từ</p>
                           </div>
-                          <span className={`text-[10px] font-black px-3 py-1 rounded-xl shadow-sm ${isCurrent ? 'bg-[#FFD666] text-[#1B5E4B]' : 'bg-[#F1F5F9] text-slate-400 border border-[#E2E8F0]'}`}>{item.progress}%</span>
+                          <div className="flex items-center gap-2">
+                            <div className="h-1 flex-1 overflow-hidden rounded-full bg-[#E2E8F0]/60 shadow-inner">
+                              <div className={`h-full rounded-full transition-all duration-700 ${isCompleted ? "bg-[#1B5E4B]" : "bg-[#2F8F6E]"}`} style={{ width: `${item.progress}%` }} />
+                            </div>
+                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm ${isCurrent ? 'bg-[#FFD666] text-[#1B5E4B]' : 'bg-[#F1F5F9] text-slate-400 border border-[#E2E8F0]'}`}>{item.progress}%</span>
+                          </div>
                         </div>
-                        <div className="h-1.5 overflow-hidden rounded-full bg-[#E2E8F0]/60 shadow-inner">
-                          <div className={`h-full rounded-full transition-all duration-700 ${isCompleted ? "bg-[#1B5E4B]" : "bg-[#2F8F6E]"}`} style={{ width: `${item.progress}%` }} />
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Cột phải: Nhiệm vụ hôm nay */}
-            <div className="rounded-[32px] bg-white p-8 shadow-sm flex flex-col gap-4 border border-[#E2E8F0]">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
-                <div className="w-10 h-10 rounded-full border-[3px] border-[#8FD9A8] text-[#2F8F6E] flex items-center justify-center text-[11px] font-black bg-white shadow-sm">
-                  {dailyMissions.filter(m => m.progress === m.total).length}/{dailyMissions.length}
-                </div>
-              </div>
-
-              {dailyMissions.map((mission, index) => {
-                const isDone = mission.progress === mission.total;
-                return (
-                  <div key={index} className={`rounded-[24px] border p-4 flex flex-col gap-3 transition-all cursor-pointer group ${isDone ? 'bg-[#EEF5E9]/80 border-[#8FD9A8]/50 shadow-sm' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8] hover:shadow-sm'}`}>
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-colors shadow-sm ${isDone ? 'bg-[#2F8F6E] text-white shadow-inner' : 'bg-[#F4F7F6] text-[#2F8F6E]'}`}>
-                        {isDone ? '✅' : mission.icon}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className={`font-bold text-sm ${isDone ? 'text-[#2F8F6E]' : 'text-[#1B5E4B]'}`}>{mission.title}</h4>
-                        <span className="text-[10px] font-black text-[#F2765B] mt-0.5 inline-block">+{mission.xp} XP</span>
-                      </div>
-                      {!isDone && (
-                        <span className="text-[10px] font-bold bg-[#F4F7F6] text-slate-500 px-2 py-0.5 rounded-lg border border-[#E2E8F0]">
-                          {mission.progress}/{mission.total}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              <div className="mt-auto pt-4">
-                <div className="bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-[24px] p-6 shadow-sm flex items-center gap-4 relative overflow-hidden group">
-                  <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl shadow-inner text-[#4FB6C7] group-hover:scale-110 transition-transform">💧</div>
-                  <div className="relative z-10 text-white">
-                    <h4 className="font-black text-base drop-shadow-sm">Nước tưới: {water} giọt</h4>
-                    <p className="text-xs font-bold opacity-90 mt-1">Hoàn thành nhiệm vụ mỗi ngày để nhận thêm tài nguyên.</p>
-                  </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           </section>
 
-          {/* ==========================================
-              BENTO GRID TẦNG CUỐI: AO SEN & SỨC KHỎE
-              ========================================== */}
-          <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]" id="leaderboard">
+          {/* 3 CỘT BOTTOM: AO SEN, RADAR, NHIỆM VỤ */}
+          <section className="grid gap-6 lg:grid-cols-[1fr_1.5fr_1fr] items-stretch" id="dashboard-bottom">
             
-            {/* Bảng Vàng -> Ao Sen */}
-            <div className="rounded-[32px] bg-white p-8 shadow-sm flex flex-col border border-[#E2E8F0]">
+            {/* Cột 1: Bảng Vàng -> Ao Sen */}
+            <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col border border-[#E2E8F0] h-full">
               <div className="mb-6 flex items-center justify-between border-b border-[#E2E8F0] pb-4">
                 <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Ao sen danh vọng</h2>
                 <div className="flex gap-2">
@@ -589,30 +523,31 @@ export default function HomePage() {
                   <p className="text-center text-xs font-bold text-slate-400 py-6">Đang tải ao sen...</p>
                 ) : (
                   <>
-                    {/* Render danh sách User thật */}
                     {leaderboard.map((person, index) => {
                       const isMe = person.id === userId;
+                      const displayName = isMe ? (user?.fullName || user?.firstName || person.name) : person.name;
+                      const displayAvatar = isMe ? (user?.imageUrl || person.avatar) : person.avatar;
+
                       return (
                         <div key={index} className={`flex items-center justify-between rounded-2xl p-3 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8]/40'}`}>
                           <div className="flex items-center gap-3">
                             <span className="w-8 text-center text-lg font-black text-[#FFD666] drop-shadow-sm">
                               {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : <span className="text-sm text-slate-400">#{index + 1}</span>}
                             </span>
-                            <img src={person.avatar} alt={person.name} className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-white" />
+                            <img src={displayAvatar} alt={displayName} className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-white object-cover" />
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className={`text-sm font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'}`}>{person.name}</h4>
-                                {isMe && <span className="bg-[#8FD9A8]/30 text-[#2F8F6E] text-[9px] px-1.5 py-0.5 rounded font-black">BẠN</span>}
+                                <h4 className={`text-sm font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'} line-clamp-1 max-w-[100px]`}>{displayName}</h4>
+                                {isMe && <span className="bg-[#8FD9A8]/30 text-[#2F8F6E] text-[9px] px-1.5 py-0.5 rounded font-black shrink-0">BẠN</span>}
                               </div>
                               <p className="text-[10px] font-bold text-[#F2765B] mt-0.5">🔥 {person.streak} ngày streak</p>
                             </div>
                           </div>
-                          <span className="text-[11px] font-black text-[#1B5E4B] bg-[#EEF5E9] px-2 py-1 rounded-lg">{person.xp.toLocaleString()} XP</span>
+                          <span className="text-[11px] font-black text-[#1B5E4B] bg-[#EEF5E9] px-2 py-1 rounded-lg shrink-0">{person.xp.toLocaleString()} XP</span>
                         </div>
                       );
                     })}
 
-                    {/* Render các SLOT TRỐNG để lấp đầy không gian (Chỉ hiện tối đa 5 slot) */}
                     {[...Array(Math.max(0, 5 - leaderboard.length))].map((_, i) => (
                       <div key={`empty-${i}`} className="flex items-center justify-between rounded-2xl p-3 border border-dashed border-[#8FD9A8]/40 bg-[#F4F7F6]/50 opacity-70 animate-pulse">
                         <div className="flex items-center gap-3">
@@ -631,14 +566,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Radar -> AI Coach */}
-            <div className="rounded-[32px] bg-white p-8 shadow-sm border border-[#E2E8F0]">
+            {/* Cột 2: Radar -> AI Coach */}
+            <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm border border-[#E2E8F0] h-full flex flex-col">
                <div className="mb-6"><h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                 <div className="flex justify-center scale-90 md:scale-100">
+               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-center flex-1">
+                 <div className="flex justify-center scale-90 lg:scale-100">
                    <RadarChart data={realSkillData} />
                  </div>
-                 <div className="flex flex-col gap-4">
+                 <div className="flex flex-col gap-4 justify-center">
                     <div className="bg-[#EEF5E9] p-4 rounded-2xl border border-[#8FD9A8]/50 shadow-sm">
                        <h4 className="font-black text-[#2F8F6E] text-[10px] mb-1 uppercase tracking-widest">Điểm mạnh nhất</h4>
                        <p className="text-sm font-black text-[#1B5E4B]">
@@ -651,7 +586,7 @@ export default function HomePage() {
                          {weakSkills.map(s => s.label).join(", ")}
                        </p>
                     </div>
-                    <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-[#E2E8F0] shadow-sm">
+                    <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-[#E2E8F0] shadow-sm mt-auto">
                        <h4 className="font-black text-slate-500 text-[10px] mb-2 uppercase tracking-widest">👉 Ếch Canh Đề Xuất Hôm Nay:</h4>
                        <ul className="text-xs font-bold text-[#1B5E4B] space-y-1.5">
                           {getCoachSuggestions(weakSkills).map((sug, i) => (
@@ -661,6 +596,50 @@ export default function HomePage() {
                     </div>
                  </div>
                </div>
+            </div>
+
+            {/* Cột 3: Nhiệm vụ hôm nay */}
+            <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col gap-3 border border-[#E2E8F0] h-full">
+              <div className="mb-2 flex items-center justify-between">
+                <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
+                <div className="w-8 h-8 rounded-full border-2 border-[#8FD9A8] text-[#2F8F6E] flex items-center justify-center text-[10px] font-black bg-white shadow-sm shrink-0">
+                  {dailyMissions.filter(m => m.progress === m.total).length}/{dailyMissions.length}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3 flex-1 justify-center">
+                {dailyMissions.map((mission, index) => {
+                  const isDone = mission.progress === mission.total;
+                  return (
+                    <div key={index} className={`rounded-2xl border p-3 flex flex-col gap-2 transition-all cursor-pointer group ${isDone ? 'bg-[#EEF5E9]/80 border-[#8FD9A8]/50 shadow-sm' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8] hover:shadow-sm'}`}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base transition-colors shadow-sm shrink-0 ${isDone ? 'bg-[#2F8F6E] text-white shadow-inner' : 'bg-[#F4F7F6] text-[#2F8F6E]'}`}>
+                          {isDone ? '✅' : mission.icon}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className={`font-bold text-[13px] ${isDone ? 'text-[#2F8F6E]' : 'text-[#1B5E4B]'}`}>{mission.title}</h4>
+                          <span className="text-[9px] font-black text-[#F2765B] inline-block">+{mission.xp} XP</span>
+                        </div>
+                        {!isDone && (
+                          <span className="text-[9px] font-bold bg-[#F4F7F6] text-slate-500 px-2 py-0.5 rounded-md border border-[#E2E8F0] shrink-0">
+                            {mission.progress}/{mission.total}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 pt-2 border-t border-[#E2E8F0] shrink-0">
+                <div className="bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-2xl p-4 shadow-sm flex items-center gap-3 relative overflow-hidden group">
+                  <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-xl shadow-inner text-[#4FB6C7] group-hover:scale-110 transition-transform shrink-0">💧</div>
+                  <div className="relative z-10 text-white">
+                    <h4 className="font-black text-sm drop-shadow-sm">Nước tưới: {water} giọt</h4>
+                    <p className="text-[11px] font-bold opacity-90 leading-tight mt-0.5">Làm nhiệm vụ để nhận tài nguyên.</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
           </section>

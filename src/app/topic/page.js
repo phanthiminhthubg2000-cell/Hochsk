@@ -53,6 +53,7 @@ export default function TopicFlashcardPage() {
   // --- GLOBAL STATES ---
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [hskXp, setHskXp] = useState(0);
+  const [water, setWater] = useState(0); // THÊM STATE NƯỚC
   const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState(0);
   const [isTeacher, setIsTeacher] = useState(false);
@@ -62,7 +63,7 @@ export default function TopicFlashcardPage() {
   const [selectedCategory, setSelectedCategory] = useState(availableCategories[0] || "");
   
   const [levelsData, setLevelsData] = useState([]);
-  const [userExp, setUserExp] = useState(0);
+  const [userExp, setUserExp] = useState(0); // Dùng để hiển thị thành tựu riêng của chủ đề
   const [viewingLevel, setViewingLevel] = useState(1);
   const [wordProgress, setWordProgress] = useState({}); 
   const [filter, setFilter] = useState("all"); 
@@ -75,27 +76,52 @@ export default function TopicFlashcardPage() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
-  // Fetch dữ liệu chung của hệ thống (XP, Streak, Hearts)
+  // --- SEARCH MODAL STATES (Đã được bổ sung để tránh lỗi crash) ---
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [aiResponse, setAiResponse] = useState(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [showHandwriting, setShowHandwriting] = useState(false);
+  const [handwritingResult, setHandwritingResult] = useState([]);
+  const canvasRef = useRef(null);
+  const searchResults = []; // Data placeholder
+
+  // Fetch dữ liệu chung của hệ thống (XP, Water, Streak, Hearts)
   useEffect(() => {
     async function fetchGlobalData() {
       if (userId) {
         try {
           const userRef = doc(db, "users", userId);
           const userSnap = await getDoc(userRef);
+          
+          let currentXp = 0;
+          let currentWater = 0;
+          let currentStreak = 0;
+
           if (userSnap.exists()) {
             const data = userSnap.data();
+            currentXp = data.xp || 0;
+            currentWater = data.water || 0;
+            currentStreak = data.streak || 0;
+
             if (data.role === "teacher" || data.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
               setIsTeacher(true);
             }
           }
+
           const newStudentRef = doc(db, "user_progress", userId);
           const newDocSnap = await getDoc(newStudentRef);
           if (newDocSnap.exists()) {
             const newData = newDocSnap.data();
-            setHskXp(newData.profile?.hsk_xp || 0);
+            if (currentXp === 0) currentXp = newData.profile?.hsk_xp || 0;
+            if (currentStreak === 0) currentStreak = newData.profile?.streak_days || 0;
             setHearts(newData.profile?.hearts ?? 5);
-            setStreak(newData.profile?.streak_days || 0);
           }
+
+          setHskXp(currentXp);
+          setWater(currentWater);
+          setStreak(currentStreak);
+
         } catch (error) { console.error("Lỗi:", error); }
       }
     }
@@ -189,6 +215,9 @@ export default function TopicFlashcardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
+  // ============================================================
+  // CẬP NHẬT XP & WATER ĐỒNG BỘ TOÀN HỆ THỐNG
+  // ============================================================
   const markWord = async (status) => {
     if (!activeWord) return;
     const wordId = activeWord.front || activeWord.text || activeWord.word;
@@ -197,15 +226,25 @@ export default function TopicFlashcardPage() {
     setWordProgress(prev => ({ ...prev, [wordId]: status }));
     
     if (status === "mastered" && !isAlreadyMastered) {
-      const newExp = userExp + 20;
-      setUserExp(newExp); 
+      // 1. Cộng Exp Nội bộ (Hiển thị phần Thành tựu chủ đề)
+      const newTopicExp = userExp + 5;
+      setUserExp(newTopicExp); 
 
-      if (user) {
+      // 2. Cộng XP và Nước Toàn Hệ Thống (Hiển thị Topbar)
+      const newXp = hskXp + 5;
+      const newWater = water + 1;
+      setHskXp(newXp);
+      setWater(newWater);
+
+      // 3. Đẩy thẳng xuống Firebase
+      if (userId) {
         try {
-          const studentRef = doc(db, "progress", user.id);
-          await setDoc(studentRef, { topicExp: newExp }, { merge: true });
+          await setDoc(doc(db, "users", userId), {
+            xp: newXp,
+            water: newWater
+          }, { merge: true });
         } catch (error) {
-          console.error("Lỗi đồng bộ điểm Chủ đề:", error);
+          console.error("Lỗi đồng bộ XP toàn hệ thống:", error);
         }
       }
     }
@@ -285,6 +324,14 @@ export default function TopicFlashcardPage() {
     }
   };
 
+  // Logic Modal Placeholder
+  const closeSearch = () => { setIsSearchOpen(false); };
+  const handleAskAI = () => { };
+  const startDrawing = () => { };
+  const draw = () => { };
+  const stopDrawing = () => { };
+  const clearCanvas = () => { };
+
   const wordDisplay = activeWord ? (activeWord.front || activeWord.text || activeWord.word) : "";
   const pinyinDisplay = activeWord ? (activeWord.ipa || activeWord.pinyin) : "";
   const meaningDisplay = activeWord ? (activeWord.back || activeWord.meaning) : "";
@@ -359,7 +406,7 @@ export default function TopicFlashcardPage() {
                 <UserButton afterSignOutUrl="/" />
                 {!isSidebarCollapsed && (
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Học viên"}</p>
+                    <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
                     <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
                   </div>
                 )}
@@ -380,7 +427,7 @@ export default function TopicFlashcardPage() {
           ====================================================== */}
       <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
         
-        {/* TOPBAR */}
+        {/* TOPBAR (Có NƯỚC) */}
         <header className="sticky top-0 z-30 h-[76px] border-b border-[#E2E8F0] bg-white/80 px-5 md:px-8 flex items-center justify-between backdrop-blur-xl">
           <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 shadow-sm px-4 text-left text-sm font-medium text-slate-500 hover:bg-white transition-all sm:flex group">
             <span className="text-lg opacity-60">🔍</span>
@@ -389,11 +436,11 @@ export default function TopicFlashcardPage() {
           </button>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-[#E2E8F0] px-4 py-2.5">
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-[#E2E8F0] px-4 py-2.5">
               <span className="text-lg drop-shadow-sm">☀️</span><span className="text-xs font-black text-[#FFD666] drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">{streak}</span>
             </div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-[#E2E8F0] px-4 py-2.5">
-              <span className="text-lg drop-shadow-sm">❤️</span><span className="text-xs font-black text-[#F2765B] drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">{hearts}</span>
+            <div className="flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 shadow-sm border border-[#4FB6C7]/30 px-4 py-2.5">
+              <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7] drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">{water}</span>
             </div>
             <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5">
               <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
@@ -404,9 +451,7 @@ export default function TopicFlashcardPage() {
         <div className="flex-1 p-6 md:p-8 max-w-[1400px] mx-auto w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* ==========================================================
-                CỘT TRÁI: BẢNG ĐIỀU KHIỂN & CHỌN BÀI (4 cols)
-                ========================================================== */}
+            {/* CỘT TRÁI: BẢNG ĐIỀU KHIỂN & CHỌN BÀI (4 cols) */}
             <aside className="lg:col-span-4 w-full flex flex-col gap-6 shrink-0">
               
               {/* KHỐI BENTO GRID - CHỌN CHỦ ĐỀ */}
@@ -453,7 +498,7 @@ export default function TopicFlashcardPage() {
                   </div>
                 )}
 
-                {/* THẺ TỔNG EXP */}
+                {/* THẺ TỔNG EXP ĐỊA PHƯƠNG */}
                 <div className="bg-gradient-to-r from-[#2F8F6E] to-[#8FD9A8] p-5 rounded-[24px] shadow-sm flex justify-between items-center text-white relative overflow-hidden">
                     <div className="absolute right-0 bottom-0 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
                     <div className="relative z-10">
@@ -500,9 +545,7 @@ export default function TopicFlashcardPage() {
 
             </aside>
 
-            {/* ==========================================================
-                CỘT PHẢI: KHU VỰC FLASHCARD CHÍNH (8 cols)
-                ========================================================== */}
+            {/* CỘT PHẢI: KHU VỰC FLASHCARD CHÍNH (8 cols) */}
             <div className="lg:col-span-8 w-full flex flex-col gap-6">
               
               {/* THANH TIẾN ĐỘ BÀI HỌC */}
@@ -527,7 +570,7 @@ export default function TopicFlashcardPage() {
               {filteredWords.length > 0 && activeWord ? (
                 <div className="flex flex-col gap-6 animate-fade-in">
                   
-                  {/* === KHUNG FLASHCARD 3D BENTO === */}
+                  {/* KHUNG FLASHCARD 3D BENTO */}
                   <div 
                     onClick={() => setIsFlipped(!isFlipped)}
                     className="w-full bg-white p-8 md:p-14 rounded-[40px] shadow-sm hover:shadow-xl border border-slate-100 border-b-[8px] border-b-[#2F8F6E] text-center cursor-pointer transition-all hover:-translate-y-1 relative min-h-[460px] flex flex-col justify-center items-center group overflow-hidden"
@@ -567,7 +610,7 @@ export default function TopicFlashcardPage() {
                     )}
                   </div>
 
-                  {/* === KHUNG TƯƠNG TÁC (SHADOWING & NÚT ACTION) === */}
+                  {/* KHUNG TƯƠNG TÁC (SHADOWING & NÚT ACTION) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     
                     {/* Shadowing Box */}
@@ -612,7 +655,7 @@ export default function TopicFlashcardPage() {
                           onClick={() => markWord("mastered")}
                           className="w-full py-5 bg-[#2F8F6E] text-white rounded-[32px] font-black text-sm uppercase tracking-widest hover:bg-[#1B5E4B] shadow-lg shadow-[#8FD9A8] transition-all hover:-translate-y-1 flex justify-center items-center gap-2"
                         >
-                          <span className="text-lg">✓</span> Đã thuộc <span className="bg-white/20 px-2 py-0.5 rounded-md text-[10px]">+20 XP</span>
+                          <span className="text-lg">✓</span> Đã thuộc <span className="bg-white/20 px-2 py-0.5 rounded-md text-[10px]">+5 XP, +1 💧</span>
                         </button>
                     </div>
                   </div>
@@ -680,7 +723,7 @@ export default function TopicFlashcardPage() {
               {searchQuery.trim() !== "" && !aiResponse && !isAiLoading && (
                 <div onClick={handleAskAI} className="group mb-6 flex cursor-pointer items-center gap-4 rounded-2xl border border-[#8FD9A8] bg-white p-4 transition hover:shadow-md">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFD666] text-2xl shadow-sm transition group-hover:scale-110">🤖</div>
-                  <div><h4 className="font-black text-[#1B5E4B]">Hỏi Ếch Canh AI</h4><p className="text-xs font-bold text-[#2F8F6E]">Bấm vào đây để AI giải đáp kiến thức: <span className="font-black text-[#F2765B]">"{searchQuery}"</span></p></div>
+                  <div><h4 className="font-black text-[#1B5E4B]">Hỏi Ếch xanh AI</h4><p className="text-xs font-bold text-[#2F8F6E]">Bấm vào đây để AI giải đáp kiến thức: <span className="font-black text-[#F2765B]">"{searchQuery}"</span></p></div>
                   <div className="ml-auto rounded-lg bg-[#8FD9A8]/30 px-3 py-1 font-black text-[#1B5E4B] opacity-0 transition group-hover:opacity-100">Enter ↵</div>
                 </div>
               )}
@@ -688,7 +731,7 @@ export default function TopicFlashcardPage() {
               {isAiLoading && (
                 <div className="mb-6 flex animate-pulse items-start gap-4 rounded-[24px] border border-[#8FD9A8] bg-white p-6 shadow-sm">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white">🐸</div>
-                  <div className="pt-2"><div className="flex gap-1.5"><div className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#8FD9A8]" style={{ animationDelay: "0ms" }} /><div className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#2F8F6E]" style={{ animationDelay: "150ms" }} /><div className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#1B5E4B]" style={{ animationDelay: "300ms" }} /></div><p className="mt-2 text-xs font-bold text-[#2F8F6E]">Ếch Canh đang suy nghĩ...</p></div>
+                  <div className="pt-2"><div className="flex gap-1.5"><div className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#8FD9A8]" style={{ animationDelay: "0ms" }} /><div className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#2F8F6E]" style={{ animationDelay: "150ms" }} /><div className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#1B5E4B]" style={{ animationDelay: "300ms" }} /></div><p className="mt-2 text-xs font-bold text-[#2F8F6E]">Ếch xanh đang suy nghĩ...</p></div>
                 </div>
               )}
 
@@ -697,7 +740,7 @@ export default function TopicFlashcardPage() {
                   <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-md">🐸</div>
                   <div className="relative z-10 flex-1">
                     <div className="mb-2 flex items-center gap-2">
-                      <h4 className="font-black text-[#1B5E4B]">Ếch Canh AI</h4>
+                      <h4 className="font-black text-[#1B5E4B]">Ếch xanh AI</h4>
                       <span className="rounded-md bg-[#8FD9A8]/30 px-2 py-0.5 text-[9px] font-bold text-[#2F8F6E]">AI ASSISTANT</span>
                     </div>
                     <div className="whitespace-pre-wrap text-sm font-medium leading-relaxed text-[#1B5E4B]">{aiResponse}</div>
