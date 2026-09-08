@@ -3,13 +3,57 @@ import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase";
-import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where } from "firebase/firestore";
+
+// TÍCH HỢP TỪ ĐIỂN LOCAL
+import cardsData from "./cards.json";
+import topicData from "./topics.json";
+
+// ============================================================
+// CHUẨN HÓA DỮ LIỆU TỪ ĐIỂN TỪ LOCAL JSON
+// ============================================================
+const getLocalDictionary = () => {
+  const dict = [];
+  
+  // 1. Quét từ vựng từ cards.json
+  if (Array.isArray(cardsData)) {
+    cardsData.forEach(item => {
+      dict.push({
+        hanzi: item.chinese || item.hanzi || item.front || item.word || "",
+        pinyin: item.pinyin || "",
+        meaning: item.vietnamese || item.meaning || item.back || "",
+        type: item.type || "[Từ vựng]"
+      });
+    });
+  }
+
+  // 2. Quét từ vựng từ topic.json
+  if (Array.isArray(topicData)) {
+    topicData.forEach(topic => {
+      if (Array.isArray(topic.words)) {
+        topic.words.forEach(w => {
+          dict.push({
+            hanzi: w.chinese || w.hanzi || w.word || "",
+            pinyin: w.pinyin || "",
+            meaning: w.vietnamese || w.meaning || "",
+            type: w.type || "[Chủ đề]"
+          });
+        });
+      }
+    });
+  }
+
+  // Lọc bỏ trùng lặp dựa trên chữ Hán
+  const uniqueDict = Array.from(new Map(dict.map(item => [item.hanzi, item])).values());
+  return uniqueDict.filter(item => item.hanzi); // Trả về mảng hợp lệ
+};
+
+const localDictionary = getLocalDictionary();
 
 // ============================================================
 // BẢNG MÀU KHU VỰC VƯỜN (HSK Garden Palette)
 // ============================================================
 
-// --- COMPONENT: Ếch xanh Tương Tác ---
 const MascotImage = ({ streak }) => {
   const [imgError, setImgError] = useState(false);
   let data = { img: '/garden/frog-sleep.png', emoji: '😴' };
@@ -21,7 +65,6 @@ const MascotImage = ({ streak }) => {
   return <img src={data.img} alt={data.emoji} onError={() => setImgError(true)} className="w-44 h-44 object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform" />;
 };
 
-// --- COMPONENT: Trạng thái sinh trưởng của cây ---
 const TreeStageIcon = ({ progress, isCurrent }) => {
   const [imgError, setImgError] = useState(false);
   let stage = { img: '/garden/seed.png', emoji: '🌱' };
@@ -88,8 +131,13 @@ export default function HomePage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [isTeacher, setIsTeacher] = useState(false); 
 
+  // --- THÔNG BÁO CHẤM THI ---
+  const [notifications, setNotifications] = useState([]);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [selectedResult, setSelectedResult] = useState(null); 
+
   const [skillMap, setSkillMap] = useState({
-    vocabulary: 5, grammar: 5, listening: 5, translation: 5, writing: 5, speaking: 5,
+    vocabulary: 0, grammar: 0, listening: 0, translation: 0, writing: 0, speaking: 0,
   });
 
   // --- SEARCH / AI STATES ---
@@ -97,13 +145,42 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [aiResponse, setAiResponse] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [showHandwriting, setShowHandwriting] = useState(false);
 
-  const searchResults = searchQuery.trim() === "" ? [] : [
-    { hanzi: "学习", pinyin: "xuéxí", meaning: "học tập", type: "[Động]" },
-    { hanzi: "学校", pinyin: "xuéxiào", meaning: "trường học", type: "[Danh]" },
-    { hanzi: "朋友", pinyin: "péngyou", meaning: "bạn bè", type: "[Danh]" },
-  ].filter(item => item.hanzi.includes(searchQuery.trim()) || item.pinyin.toLowerCase().includes(searchQuery.trim().toLowerCase()) || item.meaning.toLowerCase().includes(searchQuery.trim().toLowerCase()));
+  // TÌM KIẾM TỪ ĐIỂN LOCAL
+  const searchResults = searchQuery.trim() === "" ? [] : localDictionary.filter(item => 
+    item.hanzi.includes(searchQuery.trim()) || 
+    item.pinyin.toLowerCase().includes(searchQuery.trim().toLowerCase()) || 
+    item.meaning.toLowerCase().includes(searchQuery.trim().toLowerCase())
+  ).slice(0, 10); // Giới hạn 10 kết quả để UI không bị tràn
+
+  // ============================================================
+  // LOGIC GỌI AI GIẢI THÍCH (Tích hợp Groq/Gemini API)
+  // ============================================================
+  const handleAskAI = async () => {
+    if (!searchQuery.trim()) return;
+    setIsAiLoading(true);
+    setAiResponse(null);
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `Hãy giải thích chi tiết về từ vựng, đoạn văn hoặc ngữ pháp này trong tiếng Trung giúp tôi, format rõ ràng: ${searchQuery}` })
+      });
+      const data = await res.json();
+      setAiResponse(data.reply || data.response || "Ếch xanh đang bị mệt, không thể kết nối AI lúc này.");
+    } catch (error) {
+      setAiResponse("Đã xảy ra lỗi khi gọi AI. Vui lòng thử lại sau.");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  const closeSearch = () => { 
+    setIsSearchOpen(false); 
+    setSearchQuery(""); 
+    setAiResponse(null);
+    setIsAiLoading(false);
+  };
 
   // ============================================================
   // ĐỒNG BỘ 9 CẤP ĐỘ HSK (3.0 MỚI)
@@ -130,16 +207,16 @@ export default function HomePage() {
   });
 
   const realSkillData = [
-    { label: "TỪ VỰNG", value: Math.min(skillMap?.vocabulary || 5, 100), key: "vocabulary" },
-    { label: "NGỮ PHÁP", value: Math.min(skillMap?.grammar || 5, 100), key: "grammar" },
-    { label: "NGHE", value: Math.min(skillMap?.listening || 5, 100), key: "listening" },
-    { label: "ĐỌC/DỊCH", value: Math.min(skillMap?.translation || 5, 100), key: "translation" },
-    { label: "VIẾT", value: Math.min(skillMap?.writing || 5, 100), key: "writing" },
-    { label: "NÓI", value: Math.min(skillMap?.speaking || 5, 100), key: "speaking" },
+    { label: "TỪ VỰNG", value: Math.min(skillMap?.vocabulary || 0, 100), key: "vocabulary" },
+    { label: "NGỮ PHÁP", value: Math.min(skillMap?.grammar || 0, 100), key: "grammar" },
+    { label: "NGHE", value: Math.min(skillMap?.listening || 0, 100), key: "listening" },
+    { label: "ĐỌC/DỊCH", value: Math.min(skillMap?.translation || 0, 100), key: "translation" },
+    { label: "VIẾT", value: Math.min(skillMap?.writing || 0, 100), key: "writing" },
+    { label: "NÓI", value: Math.min(skillMap?.speaking || 0, 100), key: "speaking" },
   ];
 
   const sortedSkills = [...realSkillData].sort((a, b) => b.value - a.value);
-  const strongSkills = sortedSkills.slice(0, 2);
+  const strongSkills = sortedSkills.slice(0, 2).filter(s => s.value > 0);
   const weakSkills = sortedSkills.slice(-2);
 
   const getCoachSuggestions = (weakest) => {
@@ -172,7 +249,7 @@ export default function HomePage() {
   ];
 
   // ============================================================
-  // ĐỒNG BỘ TOÀN DIỆN DỮ LIỆU USER & CLERK SANG FIREBASE
+  // ĐỒNG BỘ TOÀN DIỆN DỮ LIỆU USER & QUÉT THÔNG BÁO CHẤM THI
   // ============================================================
   useEffect(() => {
     if (!isSignedIn || !userId) return;
@@ -183,7 +260,6 @@ export default function HomePage() {
         const userSnap = await getDoc(userRef);
         const uData = userSnap.exists() ? userSnap.data() : {};
 
-        // ĐỒNG BỘ THÔNG TIN CLERK VÀO FIREBASE (TÊN VÀ AVATAR)
         if (user) {
             await setDoc(userRef, {
                 fullName: user.fullName || user.firstName || "Người làm vườn",
@@ -209,48 +285,67 @@ export default function HomePage() {
         const mergedTodayListening = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
         const mergedTodayGrammar = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
         
-        // AUTO-CALCULATE DYNAMIC SKILL MAP DỰA TRÊN XP NẾU CHƯA CÓ
-        const baseSkillLevel = Math.min(Math.floor(mergedXp / 20), 40); // Base stats grow with XP
-        const dynamicDefaults = {
-          vocabulary: baseSkillLevel + (mergedTodayVocab * 2) + 5,
-          grammar: baseSkillLevel + (mergedTodayGrammar * 2) + 5,
-          listening: baseSkillLevel + (mergedTodayListening * 5) + 5,
-          translation: baseSkillLevel + 5,
-          writing: baseSkillLevel + 5,
-          speaking: baseSkillLevel + 5
-        };
+        // 1. QUÉT THÔNG BÁO & DỮ LIỆU BÀI TEST
+        let teacherSkills = null;
+        const notifs = [];
 
+        try {
+          const testQ = query(collection(db, "test_submissions"), where("userId", "==", userId), where("status", "==", "graded"));
+          const testSnap = await getDocs(testQ);
+          let latestTest = null;
+          
+          testSnap.forEach(doc => {
+            const tData = doc.data();
+            const timeVal = tData.submittedAt?.toMillis() || 0;
+            notifs.push({
+              id: doc.id, type: "test", title: "Kết quả bài Test Năng lực", score: tData.teacherScore, level: tData.evaluatedLevel, feedback: tData.teacherFeedback, recommendation: tData.recommendation, skills: tData.skillsEvaluation, time: timeVal
+            });
+            if (!latestTest || timeVal > (latestTest.submittedAt?.toMillis() || 0)) latestTest = tData;
+          });
+
+          const hskkQ = query(collection(db, "hskk_exams"), where("userId", "==", userId), where("status", "==", "graded"));
+          const hskkSnap = await getDocs(hskkQ);
+          hskkSnap.forEach(doc => {
+            const data = doc.data();
+            notifs.push({
+              id: doc.id, type: "hskk", title: "Kết quả thi Khẩu Ngữ (HSKK)", score: data.teacherScore, level: data.level, feedback: data.teacherFeedback, time: data.submittedAt?.toMillis() || 0,
+            });
+          });
+
+          notifs.sort((a, b) => b.time - a.time);
+          setNotifications(notifs);
+
+          if (latestTest && latestTest.skillsEvaluation) {
+            const ev = latestTest.skillsEvaluation;
+            teacherSkills = {
+              listening: ev.listening?.score || 0, speaking: ev.speaking?.score || 0, translation: ev.reading?.score || 0, grammar: ev.reading?.score || 0, vocabulary: ev.reading?.score || 0, writing: ev.writing?.score || 0
+            };
+          }
+        } catch (error) { console.error("Lỗi lấy thông báo:", error); }
+
+        // 2. AUTO-CALCULATE DYNAMIC SKILL
+        const baseSkillLevel = mergedXp > 0 ? Math.min(Math.floor(mergedXp / 30), 40) : 0; 
         const dbSkills = uData.skill_map || upData.skill_map || pData.skill_map || {};
         
         const mergedSkills = {
-          vocabulary: dbSkills.vocabulary || dynamicDefaults.vocabulary,
-          grammar: dbSkills.grammar || dynamicDefaults.grammar,
-          listening: dbSkills.listening || dynamicDefaults.listening,
-          translation: dbSkills.translation || dynamicDefaults.translation,
-          writing: dbSkills.writing || dynamicDefaults.writing,
-          speaking: dbSkills.speaking || dynamicDefaults.speaking,
+          vocabulary: teacherSkills ? teacherSkills.vocabulary : (dbSkills.vocabulary !== undefined ? dbSkills.vocabulary : (mergedXp === 0 && mergedTodayVocab === 0 ? 0 : baseSkillLevel + mergedTodayVocab * 2)),
+          grammar: teacherSkills ? teacherSkills.grammar : (dbSkills.grammar !== undefined ? dbSkills.grammar : (mergedXp === 0 && mergedTodayGrammar === 0 ? 0 : baseSkillLevel + mergedTodayGrammar * 2)),
+          listening: teacherSkills ? teacherSkills.listening : (dbSkills.listening !== undefined ? dbSkills.listening : (mergedXp === 0 && mergedTodayListening === 0 ? 0 : baseSkillLevel + mergedTodayListening * 5)),
+          translation: teacherSkills ? teacherSkills.translation : (dbSkills.translation !== undefined ? dbSkills.translation : baseSkillLevel),
+          writing: teacherSkills ? teacherSkills.writing : (dbSkills.writing !== undefined ? dbSkills.writing : baseSkillLevel),
+          speaking: teacherSkills ? teacherSkills.speaking : (dbSkills.speaking !== undefined ? dbSkills.speaking : baseSkillLevel),
         };
 
-        setStreak(mergedStreak);
-        setHearts(mergedHearts);
-        setHskXp(mergedXp);
-        setWater(mergedWater);
-        setCurrentLevel(mergedLevel);
-        
-        setTodayVocabLearned(mergedTodayVocab);
-        setTodayListeningLearned(mergedTodayListening);
-        setTodayGrammarLearned(mergedTodayGrammar);
-        
+        setStreak(mergedStreak); setHearts(mergedHearts); setHskXp(mergedXp);
+        setWater(mergedWater); setCurrentLevel(mergedLevel);
+        setTodayVocabLearned(mergedTodayVocab); setTodayListeningLearned(mergedTodayListening); setTodayGrammarLearned(mergedTodayGrammar);
         setSkillMap(mergedSkills);
 
         if (uData.role === "teacher" || uData.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
           setIsTeacher(true);
         }
-      } catch (err) {
-        console.error("Lỗi đồng bộ dữ liệu người dùng:", err);
-      }
+      } catch (err) { console.error("Lỗi đồng bộ dữ liệu:", err); }
 
-      // Tải bảng xếp hạng Ao Sen (CHÍNH XÁC TOP SERVER)
       try {
         const q = query(collection(db, "users"), orderBy("xp", "desc"), limit(10));
         const qSnap = await getDocs(q);
@@ -258,34 +353,18 @@ export default function HomePage() {
         qSnap.forEach((d) => {
           const dData = d.data();
           if (dData.role !== "teacher" && dData.role !== "admin" && (dData.xp || 0) > 0) {
-            list.push({
-              id: d.id,
-              name: dData.fullName || dData.name || "Người làm vườn",
-              streak: dData.streak || 0,
-              xp: dData.xp || 0,
-              avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}`,
-            });
+            list.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: dData.xp || 0, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
           }
         });
-
-        // Chỉ lấy top 5 người xuất sắc nhất
         setLeaderboard(list.slice(0, 5));
       } catch (err) {
-        console.warn("Chưa tạo Index Firebase, Fallback dùng local sort...");
-        // Fallback nếu Firebase chưa có Index orderBy 'xp'
         const fallbackQ = query(collection(db, "users"), limit(50));
         const fallbackSnap = await getDocs(fallbackQ);
         let fallbackList = [];
         fallbackSnap.forEach((d) => {
           const dData = d.data();
           if (dData.role !== "teacher" && dData.role !== "admin" && (dData.xp || 0) > 0) {
-            fallbackList.push({
-              id: d.id,
-              name: dData.fullName || dData.name || "Người làm vườn",
-              streak: dData.streak || 0,
-              xp: dData.xp || 0,
-              avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}`,
-            });
+            fallbackList.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: dData.xp || 0, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
           }
         });
         fallbackList.sort((a, b) => b.xp - a.xp);
@@ -299,8 +378,7 @@ export default function HomePage() {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setIsSearchOpen(true);
+        event.preventDefault(); setIsSearchOpen(true);
       }
       if (event.key === "Escape") closeSearch();
     };
@@ -318,24 +396,14 @@ export default function HomePage() {
     }
   };
 
-  const closeSearch = () => {
-    setIsSearchOpen(false);
-    setSearchQuery("");
-    setAiResponse(null);
-    setIsAiLoading(false);
-    setShowHandwriting(false);
-  };
-
   return (
     <div className="min-h-screen font-sans text-[#1B5E4B] relative bg-[#EEF5E9] selection:bg-[#8FD9A8]/50">
       
-      {/* LỚP NỀN GLOBAL */}
       <div className="fixed inset-0 z-0 pointer-events-none">
          <div className="absolute inset-0 bg-[url('/hskk/nen.jpg')] bg-cover bg-center opacity-10"></div>
          <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
       </div>
 
-      {/* SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
         <div className="flex h-full flex-col">
           <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
@@ -348,7 +416,7 @@ export default function HomePage() {
             )}
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-3 py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <nav className="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar">
             <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌿 KHU VƯỜN" : "•"}</div>
             <Link href="/" className="mb-6 flex items-center gap-3 rounded-2xl bg-[#8FD9A8]/30 px-3 py-3 text-sm font-bold text-[#1B5E4B] transition-all">
               <span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
@@ -361,7 +429,11 @@ export default function HomePage() {
             <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
             <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
             <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
-            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
+            <Link href="/roleplay" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
+            
+            <Link href="/test" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+              <span className="w-6 text-center text-lg opacity-80">📝</span>{!isSidebarCollapsed && <span>Thi Đánh Giá</span>}
+            </Link>
 
             <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🏆 CỘNG ĐỒNG" : "•"}</div>
             <a href="#leaderboard" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Ao sen</span>}</a>
@@ -400,11 +472,11 @@ export default function HomePage() {
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
       <main className={`min-h-screen transition-all duration-300 relative z-10 ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
         
-        {/* TOPBAR */}
+        {/* TOPBAR CHÍNH */}
         <header className="sticky top-0 z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 px-5 backdrop-blur-xl md:px-8 flex items-center justify-between">
+          
           <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl bg-white/90 shadow-sm px-4 text-left text-sm font-medium text-slate-400 hover:shadow-md transition-all sm:flex group border border-transparent hover:border-[#8FD9A8]">
             <span className="text-lg opacity-60">🔍</span>
             <span className="group-hover:text-[#2F8F6E] transition-colors">Tìm kiếm từ vựng, ngữ pháp...</span>
@@ -412,15 +484,54 @@ export default function HomePage() {
           </button>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="flex items-center gap-1.5 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 border border-slate-100">
-              <span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span>
+            
+            {/* THÔNG BÁO BELL ICON */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsNotifOpen(!isNotifOpen)} 
+                className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm border border-slate-100 hover:border-[#8FD9A8] transition-all"
+              >
+                <span className="text-xl">🔔</span>
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#F43F70] text-[9px] font-black text-white shadow-sm border-2 border-white">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+              
+              {/* DROPDOWN THÔNG BÁO */}
+              {isNotifOpen && (
+                <div className="absolute right-0 mt-3 w-80 bg-white rounded-[24px] shadow-2xl border border-[#E2E8F0] overflow-hidden z-50 animate-slide-up-fade">
+                  <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+                    <h3 className="font-black text-[#142033] text-sm flex items-center gap-2"><span>📫</span> Thông báo của bạn</h3>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto custom-scrollbar p-2">
+                    {notifications.length === 0 ? (
+                      <p className="text-center text-xs text-slate-400 py-8 font-medium">Bạn không có thông báo nào mới.</p>
+                    ) : (
+                      notifications.map(n => (
+                        <div 
+                          key={n.id} 
+                          onClick={() => { setSelectedResult(n); setIsNotifOpen(false); }} 
+                          className="p-4 hover:bg-[#EEF5E9] rounded-2xl cursor-pointer transition-colors mb-1 border border-transparent hover:border-[#8FD9A8]/50"
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <h4 className="text-xs font-black text-[#1B5E4B]">{n.title}</h4>
+                            <span className="text-[9px] font-bold text-[#10B981] bg-[#ECFDF5] px-1.5 py-0.5 rounded uppercase tracking-widest">{n.score} đ</span>
+                          </div>
+                          <p className="text-[11px] text-[#2F8F6E] font-medium mt-1 line-clamp-1">{n.feedback || "Giáo viên đã gửi một nhận xét cho bạn."}</p>
+                          <p className="text-[9px] text-slate-400 mt-2 font-bold uppercase tracking-widest">{new Date(n.time).toLocaleString()}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5">
-              <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5">
-              <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
-            </div>
+
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
+            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
           </div>
         </header>
 
@@ -455,6 +566,11 @@ export default function HomePage() {
                       🌱 Học tiếp
                     </button>
                   </Link>
+                  <Link href="/test">
+                    <button className="bg-[#FFD666] text-[#1B5E4B] px-7 py-3 rounded-[18px] text-sm font-black hover:bg-[#F59E0B] hover:text-white transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1">
+                      📝 Thi Đánh Giá
+                    </button>
+                  </Link>
                   <a href="#dashboard-bottom">
                     <button className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
                       🎯 Xem nhiệm vụ
@@ -478,14 +594,12 @@ export default function HomePage() {
               {gardenAreas.map((tool, index) => (
                 <Link href={tool.link} key={index} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
                   <div 
-                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.45] scale-[1.25] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
+                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.5] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
                     style={{ backgroundImage: `url(${tool.bgImg})` }}
                   ></div>
-                  
                   <div className={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-white/20 backdrop-blur-md text-xl shadow-sm transition-transform group-hover:scale-110 z-10`}>
                     {tool.icon}
                   </div>
-                  
                   <div className="relative z-10 p-5">
                     <h3 className="text-base font-black tracking-wide drop-shadow-md leading-tight">{tool.name}</h3>
                     <p className="mt-1.5 text-[10px] font-bold opacity-100 border border-white/30 bg-white/10 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm shadow-sm">Cấp {tool.level}</p>
@@ -495,7 +609,6 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* LỘ TRÌNH FULL WIDTH HORIZONTAL */}
           <section className="mb-8 w-full">
             <div className="rounded-[32px] bg-white p-6 shadow-sm border border-[#E2E8F0]">
               <div className="mb-5 flex items-center justify-between">
@@ -513,7 +626,6 @@ export default function HomePage() {
                   {hskLevels.map((item) => {
                     const isCurrent = item.level === currentLevel;
                     const isCompleted = item.progress === 100;
-
                     return (
                       <button key={item.level} onClick={() => handleChangeLevel(item.level)} className="w-[110px] flex-1 min-w-[100px] shrink-0 text-center relative z-10 flex flex-col items-center gap-2 group cursor-pointer">
                         <div className={`flex h-10 w-10 shrink-0 items-center justify-center shadow-sm text-sm transition-all ${isCompleted && !isCurrent ? "bg-[#1B5E4B] text-white" : isCurrent ? "bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_4px_rgba(47,143,110,0.2)]" : "bg-[#EEF5E9] text-slate-400 group-hover:bg-[#8FD9A8] group-hover:text-white"}`} style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}>
@@ -539,10 +651,8 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* 3 CỘT BOTTOM: AO SEN, RADAR, NHIỆM VỤ */}
           <section className="grid gap-6 lg:grid-cols-[1fr_1.5fr_1fr] items-stretch" id="dashboard-bottom">
             
-            {/* Cột 1: Bảng Vàng -> Ao Sen */}
             <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col border border-[#E2E8F0] h-full">
               <div className="mb-6 flex items-center justify-between border-b border-[#E2E8F0] pb-4">
                 <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Ao sen danh vọng</h2>
@@ -550,7 +660,6 @@ export default function HomePage() {
                   <span className="text-[9px] font-bold uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-2.5 py-1 rounded-lg border border-[#8FD9A8]">Top Server</span>
                 </div>
               </div>
-
               <div className="space-y-3 flex-1">
                 {leaderboard.length === 0 ? (
                   <p className="text-center text-xs font-bold text-slate-400 py-6">Đang tải ao sen...</p>
@@ -560,7 +669,6 @@ export default function HomePage() {
                       const isMe = person.id === userId;
                       const displayName = isMe ? (user?.fullName || user?.firstName || person.name) : person.name;
                       const displayAvatar = isMe ? (user?.imageUrl || person.avatar) : person.avatar;
-
                       return (
                         <div key={index} className={`flex items-center justify-between rounded-xl p-2.5 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8]/40'}`}>
                           <div className="flex items-center gap-3">
@@ -580,26 +688,11 @@ export default function HomePage() {
                         </div>
                       );
                     })}
-
-                    {[...Array(Math.max(0, 5 - leaderboard.length))].map((_, i) => (
-                      <div key={`empty-${i}`} className="flex items-center justify-between rounded-xl p-2.5 border border-dashed border-[#8FD9A8]/40 bg-[#F4F7F6]/50 opacity-70 animate-pulse">
-                        <div className="flex items-center gap-3">
-                          <span className="w-6 text-center text-xs font-black text-slate-300">-</span>
-                          <div className="h-8 w-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-dashed border-[#8FD9A8]/50 bg-white flex items-center justify-center text-lg grayscale opacity-50">🐸</div>
-                          <div className="flex flex-col gap-1.5">
-                            <div className="h-2.5 w-20 bg-slate-200/60 rounded-full"></div>
-                            <div className="h-1.5 w-12 bg-slate-200/60 rounded-full"></div>
-                          </div>
-                        </div>
-                        <div className="h-4 w-10 bg-slate-200/50 rounded-md"></div>
-                      </div>
-                    ))}
                   </>
                 )}
               </div>
             </div>
 
-            {/* Cột 2: Radar -> AI Coach */}
             <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm border border-[#E2E8F0] h-full flex flex-col">
                <div className="mb-6"><h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-center flex-1">
@@ -607,17 +700,15 @@ export default function HomePage() {
                    <RadarChart data={realSkillData} />
                  </div>
                  <div className="flex flex-col gap-3 justify-center">
-                    <div className="bg-[#EEF5E9] p-3 rounded-2xl border border-[#8FD9A8]/50 shadow-sm">
-                       <h4 className="font-black text-[#2F8F6E] text-[9px] mb-1 uppercase tracking-widest">Điểm mạnh nhất</h4>
-                       <p className="text-xs font-black text-[#1B5E4B]">
-                         {strongSkills.map(s => s.label).join(", ")}
-                       </p>
-                    </div>
+                    {strongSkills.length > 0 && (
+                      <div className="bg-[#EEF5E9] p-3 rounded-2xl border border-[#8FD9A8]/50 shadow-sm">
+                         <h4 className="font-black text-[#2F8F6E] text-[9px] mb-1 uppercase tracking-widest">Điểm mạnh nhất</h4>
+                         <p className="text-xs font-black text-[#1B5E4B]">{strongSkills.map(s => s.label).join(", ")}</p>
+                      </div>
+                    )}
                     <div className="bg-[#F2765B]/10 p-3 rounded-2xl border border-[#F2765B]/30 shadow-sm">
                        <h4 className="font-black text-[#F2765B] text-[9px] mb-1 uppercase tracking-widest">Cần tưới thêm nước</h4>
-                       <p className="text-xs font-black text-[#F2765B]">
-                         {weakSkills.map(s => s.label).join(", ")}
-                       </p>
+                       <p className="text-xs font-black text-[#F2765B]">{weakSkills.map(s => s.label).join(", ")}</p>
                     </div>
                     <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-[#E2E8F0] shadow-sm mt-auto">
                        <h4 className="font-black text-slate-500 text-[9px] mb-2 uppercase tracking-widest">👉 Ếch Canh Đề Xuất Hôm Nay:</h4>
@@ -631,7 +722,6 @@ export default function HomePage() {
                </div>
             </div>
 
-            {/* Cột 3: Nhiệm vụ hôm nay */}
             <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col gap-3 border border-[#E2E8F0] h-full">
               <div className="mb-2 flex items-center justify-between">
                 <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
@@ -639,7 +729,6 @@ export default function HomePage() {
                   {dailyMissions.filter(m => m.progress === m.total).length}/{dailyMissions.length}
                 </div>
               </div>
-
               <div className="flex flex-col gap-3 flex-1 justify-center">
                 {dailyMissions.map((mission, index) => {
                   const isDone = mission.progress === mission.total;
@@ -663,7 +752,6 @@ export default function HomePage() {
                   );
                 })}
               </div>
-
               <div className="mt-4 pt-2 border-t border-[#E2E8F0] shrink-0">
                 <div className="bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-2xl p-4 shadow-sm flex items-center gap-3 relative overflow-hidden group">
                   <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-xl shadow-inner text-[#4FB6C7] group-hover:scale-110 transition-transform shrink-0">💧</div>
@@ -685,20 +773,156 @@ export default function HomePage() {
         <div className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-[8vh]">
           <div className="absolute inset-0 bg-[#1B5E4B]/80 backdrop-blur-sm transition-opacity" onClick={closeSearch} />
           <div className="relative flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
-            <div className="flex flex-col border-b border-[#E2E8F0] p-5">
-              <div className="flex items-center">
-                <span className="mr-4 text-2xl opacity-50">✨</span>
-                <input autoFocus type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tìm kiếm từ vựng, ngữ pháp..." className="flex-1 bg-transparent text-xl font-bold text-[#1B5E4B] outline-none placeholder:text-slate-300" />
-                <button onClick={closeSearch} className="rounded-xl bg-[#F2765B]/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-[#F2765B] hover:bg-[#F2765B] hover:text-white transition-colors">ĐÓNG</button>
+            
+            {/* Thanh Search Input */}
+            <div className="flex flex-col border-b border-[#E2E8F0] p-5 bg-white relative z-10">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">✨</span>
+                <input 
+                  autoFocus 
+                  type="text" 
+                  value={searchQuery} 
+                  onChange={(e) => setSearchQuery(e.target.value)} 
+                  onKeyDown={(e) => e.key === 'Enter' && handleAskAI()}
+                  placeholder="Tìm kiếm từ vựng, ngữ pháp..." 
+                  className="flex-1 bg-transparent text-xl font-bold text-[#1B5E4B] outline-none placeholder:text-slate-300" 
+                />
+                <button 
+                  onClick={handleAskAI}
+                  disabled={isAiLoading || !searchQuery.trim()}
+                  className="bg-[#1B5E4B] text-white px-4 py-2 rounded-xl text-sm font-black hover:bg-[#2F8F6E] disabled:opacity-50 transition-all shadow-sm shrink-0"
+                >
+                  Hỏi AI
+                </button>
+                <button onClick={closeSearch} className="rounded-xl bg-[#FFF1F2] px-3 py-2 text-[10px] font-black uppercase tracking-widest text-[#BE123C] hover:bg-[#FECDD3] transition-colors shrink-0">ĐÓNG</button>
               </div>
             </div>
-            <div className="p-10 text-center opacity-50">
-               <span className="text-6xl mb-4 block">🔍</span>
-               <p className="text-lg font-bold text-[#2F8F6E]">Bạn muốn tra cứu điều gì?</p>
+
+            {/* Vùng hiển thị kết quả */}
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar bg-white relative z-0">
+              {isAiLoading ? (
+                <div className="flex flex-col items-center justify-center py-10 opacity-60">
+                  <div className="w-10 h-10 border-4 border-[#8FD9A8] border-t-transparent rounded-full animate-spin mb-4"></div>
+                  <p className="text-sm font-bold text-[#2F8F6E] animate-pulse">Ếch xanh đang suy nghĩ...</p>
+                </div>
+              ) : aiResponse ? (
+                <div className="bg-[#EEF5E9] p-6 rounded-3xl border border-[#8FD9A8]/40 shadow-sm animate-fade-in">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">🐸</span>
+                    <h3 className="font-black text-[#1B5E4B] text-lg">Ếch Canh giải đáp:</h3>
+                  </div>
+                  <div className="text-[#142033] font-medium leading-relaxed whitespace-pre-wrap text-sm md:text-base">
+                    {aiResponse}
+                  </div>
+                </div>
+              ) : searchResults.length > 0 ? (
+                <div className="space-y-3 animate-fade-in">
+                  <h3 className="text-xs font-black text-[#64748B] uppercase tracking-widest mb-4">Kết quả từ điển</h3>
+                  {searchResults.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0] hover:border-[#8FD9A8] transition-colors cursor-pointer">
+                      <div className="flex items-center gap-4">
+                        <span className="text-2xl font-black text-[#1B5E4B]">{item.hanzi}</span>
+                        <div>
+                          <p className="text-sm font-bold text-[#F2765B]">{item.pinyin}</p>
+                          <p className="text-xs font-medium text-[#64748B]">{item.meaning}</p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black bg-white px-2 py-1 rounded-md text-slate-400 border border-[#E2E8F0]">{item.type}</span>
+                    </div>
+                  ))}
+                  
+                  <div className="mt-6 text-center border-t border-[#E2E8F0] pt-6">
+                     <p className="text-xs text-slate-400 font-medium mb-3">Chưa hiểu rõ? Hãy nhờ AI giải thích sâu hơn.</p>
+                     <button onClick={handleAskAI} className="bg-[#1B5E4B] text-white px-6 py-2.5 rounded-xl text-xs font-black hover:bg-[#2F8F6E] transition-all shadow-sm">
+                       Hỏi AI thêm về "{searchQuery}"
+                     </button>
+                  </div>
+                </div>
+              ) : searchQuery.trim() !== "" ? (
+                 <div className="text-center py-10 animate-fade-in">
+                   <p className="text-slate-400 font-medium mb-4">Không tìm thấy "{searchQuery}" trong từ điển cục bộ.</p>
+                   <button onClick={handleAskAI} className="bg-[#1B5E4B] text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-[#2F8F6E] transition-all shadow-sm">
+                     Nhờ AI giải thích chi tiết
+                   </button>
+                 </div>
+              ) : (
+                <div className="py-16 text-center opacity-40">
+                   <span className="text-6xl mb-4 block">🔍</span>
+                   <p className="text-lg font-bold text-[#1B5E4B]">Bạn muốn tra cứu điều gì?</p>
+                   <p className="text-xs font-medium text-[#2F8F6E] mt-2">Gõ từ vựng tiếng Trung, pinyin hoặc ngữ pháp để AI giải đáp.</p>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* MODAL CHI TIẾT KẾT QUẢ THI */}
+      {selectedResult && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-[#1B5E4B]/60 backdrop-blur-sm" onClick={() => setSelectedResult(null)}></div>
+          <div className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl overflow-hidden animate-slide-up-fade">
+            <div className="bg-[#1B5E4B] p-6 text-white text-center">
+              <div className="text-5xl mb-3">🎓</div>
+              <h2 className="text-2xl font-black">{selectedResult.title}</h2>
+              {selectedResult.level && <p className="text-sm text-[#8FD9A8] font-bold mt-1">Cấp độ đánh giá: {selectedResult.level}</p>}
+            </div>
+            
+            <div className="p-6 md:p-8 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              <div className="text-center">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Điểm số của bạn</span>
+                <div className="text-5xl font-black text-[#F59E0B] mt-1">{selectedResult.score || 0} <span className="text-xl text-slate-300">điểm</span></div>
+              </div>
+
+              {selectedResult.type === 'test' && selectedResult.skills && (
+                <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-[#E2E8F0]">
+                  <h4 className="text-xs font-black text-[#142033] mb-3 uppercase tracking-widest">Chi tiết 4 Kỹ năng</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Nghe</p>
+                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.listening?.score || 0}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Nói</p>
+                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.speaking?.score || 0}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Đọc/Dịch</p>
+                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.reading?.score || 0}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Viết</p>
+                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.writing?.score || 0}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <h4 className="text-xs font-black text-[#1B5E4B] mb-2 uppercase tracking-widest">Giáo viên nhận xét</h4>
+                <div className="bg-[#EEF5E9] p-4 rounded-2xl text-sm font-medium text-[#1B5E4B] leading-relaxed border border-[#8FD9A8]/40 whitespace-pre-wrap">
+                  {selectedResult.feedback || "Chưa có nhận xét."}
+                </div>
+              </div>
+
+              {selectedResult.recommendation && (
+                <div>
+                  <h4 className="text-xs font-black text-[#F2765B] mb-2 uppercase tracking-widest">Lộ trình khuyến nghị</h4>
+                  <div className="bg-[#FFF1F2] p-4 rounded-2xl text-sm font-medium text-[#BE123C] leading-relaxed border border-[#FECDD3] whitespace-pre-wrap">
+                    {selectedResult.recommendation}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t border-[#E2E8F0] text-center bg-[#F8FAFC]">
+              <button onClick={() => setSelectedResult(null)} className="bg-[#1B5E4B] text-white px-8 py-3 rounded-xl font-black text-sm hover:bg-[#2F8F6E] transition-all shadow-md">Đã Hiểu</button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
