@@ -67,11 +67,11 @@ const MascotImage = ({ streak }) => {
 
 const TreeStageIcon = ({ progress, isCurrent }) => {
   const [imgError, setImgError] = useState(false);
-  let stage = { img: '/garden/seed.png', emoji: '🌱' };
-  if (progress === 100 && !isCurrent) stage = { img: '/garden/full-bloom.png', emoji: '🌸' };
-  else if (isCurrent) stage = { img: '/garden/growing.png', emoji: '✨' };
-  else if (progress >= 60) stage = { img: '/garden/tree.png', emoji: '🌳' };
-  else if (progress >= 30) stage = { img: '/garden/young-tree.png', emoji: '🌿' };
+  let stage = { emoji: '🌱' };
+  if (progress === 100 && !isCurrent) stage = { emoji: '🌸' };
+  else if (isCurrent) stage = { emoji: '✨' };
+  else if (progress >= 60) stage = { emoji: '🌳' };
+  else if (progress >= 30) stage = { emoji: '🌿' };
 
   if (imgError) return <span className="text-xl drop-shadow-sm">{stage.emoji}</span>;
   return <img src={stage.img} alt={stage.emoji} onError={() => setImgError(true)} className="w-8 h-8 object-contain drop-shadow-sm" />;
