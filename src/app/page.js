@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase";
-import { doc, setDoc, getDoc, collection, getDocs, query, limit } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy } from "firebase/firestore";
 
 // ============================================================
 // BẢNG MÀU KHU VỰC VƯỜN (HSK Garden Palette)
@@ -30,8 +30,8 @@ const TreeStageIcon = ({ progress, isCurrent }) => {
   else if (progress >= 60) stage = { img: '/garden/tree.png', emoji: '🌳' };
   else if (progress >= 30) stage = { img: '/garden/young-tree.png', emoji: '🌿' };
 
-  if (imgError) return <span className="text-base drop-shadow-sm">{stage.emoji}</span>;
-  return <img src={stage.img} alt={stage.emoji} onError={() => setImgError(true)} className="w-6 h-6 object-contain drop-shadow-sm" />;
+  if (imgError) return <span className="text-xl drop-shadow-sm">{stage.emoji}</span>;
+  return <img src={stage.img} alt={stage.emoji} onError={() => setImgError(true)} className="w-8 h-8 object-contain drop-shadow-sm" />;
 };
 
 const RadarChart = ({ data }) => {
@@ -79,13 +79,17 @@ export default function HomePage() {
   const [hskXp, setHskXp] = useState(0);
   const [water, setWater] = useState(0);
   const [currentLevel, setCurrentLevel] = useState("HSK 1");
+  
   const [todayVocabLearned, setTodayVocabLearned] = useState(0);
+  const [todayListeningLearned, setTodayListeningLearned] = useState(0);
+  const [todayGrammarLearned, setTodayGrammarLearned] = useState(0);
+  
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [leaderboard, setLeaderboard] = useState([]);
   const [isTeacher, setIsTeacher] = useState(false); 
 
   const [skillMap, setSkillMap] = useState({
-    vocabulary: 60, grammar: 50, listening: 65, translation: 45, writing: 50, speaking: 55,
+    vocabulary: 5, grammar: 5, listening: 5, translation: 5, writing: 5, speaking: 5,
   });
 
   // --- SEARCH / AI STATES ---
@@ -126,12 +130,12 @@ export default function HomePage() {
   });
 
   const realSkillData = [
-    { label: "TỪ VỰNG", value: Math.min(skillMap?.vocabulary || 60, 100), key: "vocabulary" },
-    { label: "NGỮ PHÁP", value: Math.min(skillMap?.grammar || 50, 100), key: "grammar" },
-    { label: "NGHE", value: Math.min(skillMap?.listening || 65, 100), key: "listening" },
-    { label: "ĐỌC/DỊCH", value: Math.min(skillMap?.translation || 45, 100), key: "translation" },
-    { label: "VIẾT", value: Math.min(skillMap?.writing || 50, 100), key: "writing" },
-    { label: "NÓI", value: Math.min(skillMap?.speaking || 55, 100), key: "speaking" },
+    { label: "TỪ VỰNG", value: Math.min(skillMap?.vocabulary || 5, 100), key: "vocabulary" },
+    { label: "NGỮ PHÁP", value: Math.min(skillMap?.grammar || 5, 100), key: "grammar" },
+    { label: "NGHE", value: Math.min(skillMap?.listening || 5, 100), key: "listening" },
+    { label: "ĐỌC/DỊCH", value: Math.min(skillMap?.translation || 5, 100), key: "translation" },
+    { label: "VIẾT", value: Math.min(skillMap?.writing || 5, 100), key: "writing" },
+    { label: "NÓI", value: Math.min(skillMap?.speaking || 5, 100), key: "speaking" },
   ];
 
   const sortedSkills = [...realSkillData].sort((a, b) => b.value - a.value);
@@ -152,19 +156,19 @@ export default function HomePage() {
   };
 
   const gardenAreas = [
-    { name: "Cây Từ vựng", level: Math.floor((skillMap?.vocabulary || 40) / 10) + 1, icon: "🌱", link: "/vocab", bg: "bg-[#2F8F6E]", text: "text-white", bgImg: "/hskk/tuvung.jpg" },
-    { name: "Đầm Chủ đề", level: Math.floor(((skillMap?.vocabulary || 40) + (skillMap?.translation || 40)) / 20) + 1, icon: "🪷", link: "/topic", bg: "bg-[#F2765B]", text: "text-white", bgImg: "/hskk/topic.jpg" },
-    { name: "Hoa Ngữ pháp", level: Math.floor((skillMap?.grammar || 30) / 10) + 1, icon: "☀️", link: "/arrange", bg: "bg-[#FFD666]", text: "text-[#1B5E4B]", bgImg: "/hskk/sapxep.jpg" },
-    { name: "Ao Nghe", level: Math.floor((skillMap?.listening || 30) / 10) + 1, icon: "💧", link: "/dictation", bg: "bg-[#4FB6C7]", text: "text-white", bgImg: "/hskk/nghechep.jpg" },
-    { name: "Gió Dịch", level: Math.floor((skillMap?.translation || 30) / 10) + 1, icon: "🍃", link: "/translate", bg: "bg-[#8FD9A8]", text: "text-[#1B5E4B]", bgImg: "/hskk/dich.jpg" },
-    { name: "Cuộc chiến khẩu ngữ", level: Math.floor((skillMap?.speaking || 30) / 10) + 1, icon: "🎤", link: "/hskk", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
-    { name: "Phim trường", level: Math.floor((skillMap?.speaking || 30) / 10) + 1, icon: "🎬", link: "/roleplay", bg: "bg-[#1B5E4B]", text: "text-white", bgImg: "/hskk/anh2.jpg" },
+    { name: "Cây Từ vựng", level: Math.floor((skillMap?.vocabulary || 0) / 10) + 1, icon: "🌱", link: "/vocab", bg: "bg-[#2F8F6E]", text: "text-white", bgImg: "/hskk/tuvung.jpg" },
+    { name: "Đầm Chủ đề", level: Math.floor(((skillMap?.vocabulary || 0) + (skillMap?.translation || 0)) / 20) + 1, icon: "🪷", link: "/topic", bg: "bg-[#F2765B]", text: "text-white", bgImg: "/hskk/chude.jpg" },
+    { name: "Hoa Ngữ pháp", level: Math.floor((skillMap?.grammar || 0) / 10) + 1, icon: "☀️", link: "/arrange", bg: "bg-[#FFD666]", text: "text-[#1B5E4B]", bgImg: "/hskk/sapxep.jpg" },
+    { name: "Ao Nghe", level: Math.floor((skillMap?.listening || 0) / 10) + 1, icon: "💧", link: "/dictation", bg: "bg-[#4FB6C7]", text: "text-white", bgImg: "/hskk/nghechep.jpg" },
+    { name: "Gió Dịch", level: Math.floor((skillMap?.translation || 0) / 10) + 1, icon: "🍃", link: "/translate", bg: "bg-[#8FD9A8]", text: "text-[#1B5E4B]", bgImg: "/hskk/dich.jpg" },
+    { name: "Cuộc chiến khẩu ngữ", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎤", link: "/hskk", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
+    { name: "Phim trường", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎬", link: "/roleplay", bg: "bg-[#1B5E4B]", text: "text-white", bgImg: "/hskk/nen.jpg" },
   ];
 
   const dailyMissions = [
     { title: "Học từ mới", progress: Math.min(todayVocabLearned, 10), total: 10, xp: 20, icon: "🌱" },
-    { title: "Luyện nghe", progress: 0, total: 1, xp: 15, icon: "💧" },
-    { title: "Sắp xếp câu", progress: 0, total: 10, xp: 20, icon: "☀️" },
+    { title: "Luyện nghe", progress: Math.min(todayListeningLearned, 1), total: 1, xp: 15, icon: "💧" },
+    { title: "Sắp xếp câu", progress: Math.min(todayGrammarLearned, 10), total: 10, xp: 20, icon: "☀️" },
   ];
 
   // ============================================================
@@ -200,9 +204,31 @@ export default function HomePage() {
         const mergedXp = uData.xp ?? upData.profile?.hsk_xp ?? pData.xp ?? 0;
         const mergedWater = uData.water ?? upData.water ?? Math.floor(mergedXp / 15);
         const mergedLevel = uData.currentLevel ?? upData.profile?.level ?? "HSK 1";
+        
         const mergedTodayVocab = uData.todayVocabLearned ?? upData.todayVocabLearned ?? 0;
-        const mergedSkills = upData.skill_map || uData.skill_map || {
-          vocabulary: 60, grammar: 50, listening: 65, translation: 45, writing: 50, speaking: 55
+        const mergedTodayListening = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
+        const mergedTodayGrammar = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
+        
+        // AUTO-CALCULATE DYNAMIC SKILL MAP DỰA TRÊN XP NẾU CHƯA CÓ
+        const baseSkillLevel = Math.min(Math.floor(mergedXp / 20), 40); // Base stats grow with XP
+        const dynamicDefaults = {
+          vocabulary: baseSkillLevel + (mergedTodayVocab * 2) + 5,
+          grammar: baseSkillLevel + (mergedTodayGrammar * 2) + 5,
+          listening: baseSkillLevel + (mergedTodayListening * 5) + 5,
+          translation: baseSkillLevel + 5,
+          writing: baseSkillLevel + 5,
+          speaking: baseSkillLevel + 5
+        };
+
+        const dbSkills = uData.skill_map || upData.skill_map || pData.skill_map || {};
+        
+        const mergedSkills = {
+          vocabulary: dbSkills.vocabulary || dynamicDefaults.vocabulary,
+          grammar: dbSkills.grammar || dynamicDefaults.grammar,
+          listening: dbSkills.listening || dynamicDefaults.listening,
+          translation: dbSkills.translation || dynamicDefaults.translation,
+          writing: dbSkills.writing || dynamicDefaults.writing,
+          speaking: dbSkills.speaking || dynamicDefaults.speaking,
         };
 
         setStreak(mergedStreak);
@@ -210,7 +236,11 @@ export default function HomePage() {
         setHskXp(mergedXp);
         setWater(mergedWater);
         setCurrentLevel(mergedLevel);
+        
         setTodayVocabLearned(mergedTodayVocab);
+        setTodayListeningLearned(mergedTodayListening);
+        setTodayGrammarLearned(mergedTodayGrammar);
+        
         setSkillMap(mergedSkills);
 
         if (uData.role === "teacher" || uData.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
@@ -220,14 +250,14 @@ export default function HomePage() {
         console.error("Lỗi đồng bộ dữ liệu người dùng:", err);
       }
 
-      // Tải bảng xếp hạng Ao Sen
+      // Tải bảng xếp hạng Ao Sen (CHÍNH XÁC TOP SERVER)
       try {
-        const q = query(collection(db, "users"), limit(8));
+        const q = query(collection(db, "users"), orderBy("xp", "desc"), limit(10));
         const qSnap = await getDocs(q);
         let list = [];
         qSnap.forEach((d) => {
           const dData = d.data();
-          if (dData.role !== "teacher" && dData.role !== "admin") {
+          if (dData.role !== "teacher" && dData.role !== "admin" && (dData.xp || 0) > 0) {
             list.push({
               id: d.id,
               name: dData.fullName || dData.name || "Người làm vườn",
@@ -238,25 +268,28 @@ export default function HomePage() {
           }
         });
 
-        if (list.length === 0) {
-          const pq = query(collection(db, "progress"), limit(8));
-          const pSnap = await getDocs(pq);
-          pSnap.forEach((d) => {
-            const dData = d.data();
-            list.push({
+        // Chỉ lấy top 5 người xuất sắc nhất
+        setLeaderboard(list.slice(0, 5));
+      } catch (err) {
+        console.warn("Chưa tạo Index Firebase, Fallback dùng local sort...");
+        // Fallback nếu Firebase chưa có Index orderBy 'xp'
+        const fallbackQ = query(collection(db, "users"), limit(50));
+        const fallbackSnap = await getDocs(fallbackQ);
+        let fallbackList = [];
+        fallbackSnap.forEach((d) => {
+          const dData = d.data();
+          if (dData.role !== "teacher" && dData.role !== "admin" && (dData.xp || 0) > 0) {
+            fallbackList.push({
               id: d.id,
-              name: dData.name || "Người làm vườn",
-              streak: dData.streakCount || 0,
+              name: dData.fullName || dData.name || "Người làm vườn",
+              streak: dData.streak || 0,
               xp: dData.xp || 0,
               avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}`,
             });
-          });
-        }
-
-        list.sort((a, b) => b.xp - a.xp);
-        setLeaderboard(list);
-      } catch (err) {
-        console.error("Lỗi tải bảng xếp hạng:", err);
+          }
+        });
+        fallbackList.sort((a, b) => b.xp - a.xp);
+        setLeaderboard(fallbackList.slice(0, 5));
       }
     };
 
@@ -445,7 +478,7 @@ export default function HomePage() {
               {gardenAreas.map((tool, index) => (
                 <Link href={tool.link} key={index} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
                   <div 
-                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.3] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
+                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.45] scale-[1.25] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
                     style={{ backgroundImage: `url(${tool.bgImg})` }}
                   ></div>
                   
@@ -476,26 +509,26 @@ export default function HomePage() {
               </div>
 
               <div className="overflow-x-auto custom-scrollbar pb-4 -mx-2 px-2">
-                <div className="relative py-4 flex items-start gap-4 md:gap-6 w-max md:w-full md:justify-between before:absolute before:top-[40px] before:left-[40px] before:right-[40px] before:h-[2px] before:bg-[#8FD9A8]/50 before:rounded-full z-0">
+                <div className="relative py-4 flex items-start gap-2 md:gap-4 w-max md:w-full md:justify-between before:absolute before:top-[34px] before:left-[30px] before:right-[30px] before:h-[2px] before:bg-[#8FD9A8]/50 before:rounded-full z-0">
                   {hskLevels.map((item) => {
                     const isCurrent = item.level === currentLevel;
                     const isCompleted = item.progress === 100;
 
                     return (
-                      <button key={item.level} onClick={() => handleChangeLevel(item.level)} className="w-[140px] flex-1 min-w-[120px] shrink-0 text-center relative z-10 flex flex-col items-center gap-3 group cursor-pointer">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center shadow-sm text-base transition-all ${isCompleted && !isCurrent ? "bg-[#1B5E4B] text-white" : isCurrent ? "bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_4px_rgba(47,143,110,0.2)]" : "bg-[#EEF5E9] text-slate-400 group-hover:bg-[#8FD9A8] group-hover:text-white"}`} style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}>
+                      <button key={item.level} onClick={() => handleChangeLevel(item.level)} className="w-[110px] flex-1 min-w-[100px] shrink-0 text-center relative z-10 flex flex-col items-center gap-2 group cursor-pointer">
+                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center shadow-sm text-sm transition-all ${isCompleted && !isCurrent ? "bg-[#1B5E4B] text-white" : isCurrent ? "bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_4px_rgba(47,143,110,0.2)]" : "bg-[#EEF5E9] text-slate-400 group-hover:bg-[#8FD9A8] group-hover:text-white"}`} style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}>
                           <TreeStageIcon progress={item.progress} isCurrent={isCurrent} />
                         </div>
-                        <div className={`w-full rounded-[20px] p-3 transition-all ${isCurrent ? "bg-[#FDFBF7] shadow-sm border border-[#FFD666]/40 -translate-y-1" : "bg-transparent group-hover:bg-slate-50 group-hover:shadow-sm border border-transparent group-hover:border-[#E2E8F0]"}`}>
+                        <div className={`w-full rounded-[16px] p-2.5 transition-all ${isCurrent ? "bg-[#FDFBF7] shadow-sm border border-[#FFD666]/40 -translate-y-1" : "bg-transparent group-hover:bg-slate-50 group-hover:shadow-sm border border-transparent group-hover:border-[#E2E8F0]"}`}>
                           <div className="mb-2">
-                            <h3 className={`text-sm font-black transition-colors mb-0.5 ${isCurrent ? 'text-[#1B5E4B]' : isCompleted ? 'text-[#2F8F6E]' : 'text-slate-400 group-hover:text-[#2F8F6E]'}`}>{item.level}</h3>
-                            <p className="text-[9px] font-bold text-[#2F8F6E]/70 leading-tight">{item.title}<br/>{item.words.toLocaleString("en-US")} từ</p>
+                            <h3 className={`text-xs font-black transition-colors mb-0.5 ${isCurrent ? 'text-[#1B5E4B]' : isCompleted ? 'text-[#2F8F6E]' : 'text-slate-400 group-hover:text-[#2F8F6E]'}`}>{item.level}</h3>
+                            <p className="text-[8px] font-bold text-[#2F8F6E]/70 leading-tight">{item.title}<br/>{item.words.toLocaleString("en-US")} từ</p>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             <div className="h-1 flex-1 overflow-hidden rounded-full bg-[#E2E8F0]/60 shadow-inner">
                               <div className={`h-full rounded-full transition-all duration-700 ${isCompleted ? "bg-[#1B5E4B]" : "bg-[#2F8F6E]"}`} style={{ width: `${item.progress}%` }} />
                             </div>
-                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm ${isCurrent ? 'bg-[#FFD666] text-[#1B5E4B]' : 'bg-[#F1F5F9] text-slate-400 border border-[#E2E8F0]'}`}>{item.progress}%</span>
+                            <span className={`text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm ${isCurrent ? 'bg-[#FFD666] text-[#1B5E4B]' : 'bg-[#F1F5F9] text-slate-400 border border-[#E2E8F0]'}`}>{item.progress}%</span>
                           </div>
                         </div>
                       </button>
@@ -512,9 +545,9 @@ export default function HomePage() {
             {/* Cột 1: Bảng Vàng -> Ao Sen */}
             <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col border border-[#E2E8F0] h-full">
               <div className="mb-6 flex items-center justify-between border-b border-[#E2E8F0] pb-4">
-                <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Ao sen danh vọng</h2>
+                <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Ao sen danh vọng</h2>
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-3 py-1.5 rounded-lg border border-[#8FD9A8]">Top Server</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-2.5 py-1 rounded-lg border border-[#8FD9A8]">Top Server</span>
                 </div>
               </div>
 
@@ -529,36 +562,36 @@ export default function HomePage() {
                       const displayAvatar = isMe ? (user?.imageUrl || person.avatar) : person.avatar;
 
                       return (
-                        <div key={index} className={`flex items-center justify-between rounded-2xl p-3 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8]/40'}`}>
+                        <div key={index} className={`flex items-center justify-between rounded-xl p-2.5 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8]/40'}`}>
                           <div className="flex items-center gap-3">
-                            <span className="w-8 text-center text-lg font-black text-[#FFD666] drop-shadow-sm">
-                              {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : <span className="text-sm text-slate-400">#{index + 1}</span>}
+                            <span className="w-6 text-center text-base font-black text-[#FFD666] drop-shadow-sm">
+                              {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : <span className="text-xs text-slate-400">#{index + 1}</span>}
                             </span>
-                            <img src={displayAvatar} alt={displayName} className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-white object-cover" />
+                            <img src={displayAvatar} alt={displayName} className="h-8 w-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-white object-cover" />
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className={`text-sm font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'} line-clamp-1 max-w-[100px]`}>{displayName}</h4>
-                                {isMe && <span className="bg-[#8FD9A8]/30 text-[#2F8F6E] text-[9px] px-1.5 py-0.5 rounded font-black shrink-0">BẠN</span>}
+                                <h4 className={`text-xs font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'} line-clamp-1 max-w-[90px]`}>{displayName}</h4>
+                                {isMe && <span className="bg-[#8FD9A8]/30 text-[#2F8F6E] text-[8px] px-1.5 py-0.5 rounded font-black shrink-0">BẠN</span>}
                               </div>
-                              <p className="text-[10px] font-bold text-[#F2765B] mt-0.5">🔥 {person.streak} ngày streak</p>
+                              <p className="text-[9px] font-bold text-[#F2765B] mt-0.5">🔥 {person.streak} ngày streak</p>
                             </div>
                           </div>
-                          <span className="text-[11px] font-black text-[#1B5E4B] bg-[#EEF5E9] px-2 py-1 rounded-lg shrink-0">{person.xp.toLocaleString()} XP</span>
+                          <span className="text-[10px] font-black text-[#1B5E4B] bg-[#EEF5E9] px-2 py-1 rounded-md shrink-0">{person.xp.toLocaleString()} XP</span>
                         </div>
                       );
                     })}
 
                     {[...Array(Math.max(0, 5 - leaderboard.length))].map((_, i) => (
-                      <div key={`empty-${i}`} className="flex items-center justify-between rounded-2xl p-3 border border-dashed border-[#8FD9A8]/40 bg-[#F4F7F6]/50 opacity-70 animate-pulse">
+                      <div key={`empty-${i}`} className="flex items-center justify-between rounded-xl p-2.5 border border-dashed border-[#8FD9A8]/40 bg-[#F4F7F6]/50 opacity-70 animate-pulse">
                         <div className="flex items-center gap-3">
-                          <span className="w-8 text-center text-sm font-black text-slate-300">-</span>
-                          <div className="h-10 w-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-dashed border-[#8FD9A8]/50 bg-white flex items-center justify-center text-xl grayscale opacity-50">🐸</div>
+                          <span className="w-6 text-center text-xs font-black text-slate-300">-</span>
+                          <div className="h-8 w-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-dashed border-[#8FD9A8]/50 bg-white flex items-center justify-center text-lg grayscale opacity-50">🐸</div>
                           <div className="flex flex-col gap-1.5">
-                            <div className="h-3.5 w-24 bg-slate-200/60 rounded-full"></div>
-                            <div className="h-2 w-16 bg-slate-200/60 rounded-full"></div>
+                            <div className="h-2.5 w-20 bg-slate-200/60 rounded-full"></div>
+                            <div className="h-1.5 w-12 bg-slate-200/60 rounded-full"></div>
                           </div>
                         </div>
-                        <div className="h-5 w-12 bg-slate-200/50 rounded-lg"></div>
+                        <div className="h-4 w-10 bg-slate-200/50 rounded-md"></div>
                       </div>
                     ))}
                   </>
@@ -568,27 +601,27 @@ export default function HomePage() {
 
             {/* Cột 2: Radar -> AI Coach */}
             <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm border border-[#E2E8F0] h-full flex flex-col">
-               <div className="mb-6"><h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
-               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-center flex-1">
-                 <div className="flex justify-center scale-90 lg:scale-100">
+               <div className="mb-6"><h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
+               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-center flex-1">
+                 <div className="flex justify-center scale-75 lg:scale-90 origin-center">
                    <RadarChart data={realSkillData} />
                  </div>
-                 <div className="flex flex-col gap-4 justify-center">
-                    <div className="bg-[#EEF5E9] p-4 rounded-2xl border border-[#8FD9A8]/50 shadow-sm">
-                       <h4 className="font-black text-[#2F8F6E] text-[10px] mb-1 uppercase tracking-widest">Điểm mạnh nhất</h4>
-                       <p className="text-sm font-black text-[#1B5E4B]">
+                 <div className="flex flex-col gap-3 justify-center">
+                    <div className="bg-[#EEF5E9] p-3 rounded-2xl border border-[#8FD9A8]/50 shadow-sm">
+                       <h4 className="font-black text-[#2F8F6E] text-[9px] mb-1 uppercase tracking-widest">Điểm mạnh nhất</h4>
+                       <p className="text-xs font-black text-[#1B5E4B]">
                          {strongSkills.map(s => s.label).join(", ")}
                        </p>
                     </div>
-                    <div className="bg-[#F2765B]/10 p-4 rounded-2xl border border-[#F2765B]/30 shadow-sm">
-                       <h4 className="font-black text-[#F2765B] text-[10px] mb-1 uppercase tracking-widest">Cần tưới thêm nước</h4>
-                       <p className="text-sm font-black text-[#F2765B]">
+                    <div className="bg-[#F2765B]/10 p-3 rounded-2xl border border-[#F2765B]/30 shadow-sm">
+                       <h4 className="font-black text-[#F2765B] text-[9px] mb-1 uppercase tracking-widest">Cần tưới thêm nước</h4>
+                       <p className="text-xs font-black text-[#F2765B]">
                          {weakSkills.map(s => s.label).join(", ")}
                        </p>
                     </div>
-                    <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-[#E2E8F0] shadow-sm mt-auto">
-                       <h4 className="font-black text-slate-500 text-[10px] mb-2 uppercase tracking-widest">👉 Ếch Canh Đề Xuất Hôm Nay:</h4>
-                       <ul className="text-xs font-bold text-[#1B5E4B] space-y-1.5">
+                    <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-[#E2E8F0] shadow-sm mt-auto">
+                       <h4 className="font-black text-slate-500 text-[9px] mb-2 uppercase tracking-widest">👉 Ếch Canh Đề Xuất Hôm Nay:</h4>
+                       <ul className="text-[11px] font-bold text-[#1B5E4B] space-y-1">
                           {getCoachSuggestions(weakSkills).map((sug, i) => (
                             <li key={i}>• {sug}</li>
                           ))}
@@ -601,7 +634,7 @@ export default function HomePage() {
             {/* Cột 3: Nhiệm vụ hôm nay */}
             <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col gap-3 border border-[#E2E8F0] h-full">
               <div className="mb-2 flex items-center justify-between">
-                <h2 className="text-xl font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
+                <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
                 <div className="w-8 h-8 rounded-full border-2 border-[#8FD9A8] text-[#2F8F6E] flex items-center justify-center text-[10px] font-black bg-white shadow-sm shrink-0">
                   {dailyMissions.filter(m => m.progress === m.total).length}/{dailyMissions.length}
                 </div>
@@ -617,7 +650,7 @@ export default function HomePage() {
                           {isDone ? '✅' : mission.icon}
                         </div>
                         <div className="flex-1">
-                          <h4 className={`font-bold text-[13px] ${isDone ? 'text-[#2F8F6E]' : 'text-[#1B5E4B]'}`}>{mission.title}</h4>
+                          <h4 className={`font-bold text-[12px] ${isDone ? 'text-[#2F8F6E]' : 'text-[#1B5E4B]'}`}>{mission.title}</h4>
                           <span className="text-[9px] font-black text-[#F2765B] inline-block">+{mission.xp} XP</span>
                         </div>
                         {!isDone && (
