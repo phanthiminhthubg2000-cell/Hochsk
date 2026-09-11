@@ -14,8 +14,6 @@ import topicData from "./topics.json";
 // ============================================================
 const getLocalDictionary = () => {
   const dict = [];
-  
-  // 1. Quét từ vựng từ cards.json
   if (Array.isArray(cardsData)) {
     cardsData.forEach(item => {
       dict.push({
@@ -26,8 +24,6 @@ const getLocalDictionary = () => {
       });
     });
   }
-
-  // 2. Quét từ vựng từ topic.json
   if (Array.isArray(topicData)) {
     topicData.forEach(topic => {
       if (Array.isArray(topic.words)) {
@@ -42,39 +38,81 @@ const getLocalDictionary = () => {
       }
     });
   }
-
-  // Lọc bỏ trùng lặp dựa trên chữ Hán
   const uniqueDict = Array.from(new Map(dict.map(item => [item.hanzi, item])).values());
-  return uniqueDict.filter(item => item.hanzi); // Trả về mảng hợp lệ
+  return uniqueDict.filter(item => item.hanzi);
 };
 
 const localDictionary = getLocalDictionary();
 
 // ============================================================
-// BẢNG MÀU KHU VỰC VƯỜN (HSK Garden Palette)
+// COMPONENT: BÔNG SEN THẬT (REAL LOTUS)
 // ============================================================
+const RealLotus = ({ progress }) => {
+  let stage = 1;
+  let lotusImg = "https://images.unsplash.com/photo-1620023455113-dcf7cc757ccb?q=80&w=800&auto=format&fit=crop"; // Mầm/Lá non
+  let sizeClass = "w-36 h-36 md:w-44 md:h-44";
 
+  if (progress >= 100) {
+    stage = 4;
+    lotusImg = "https://images.unsplash.com/photo-1543007168-5fa9b3c3e215?q=80&w=800&auto=format&fit=crop"; // Sen nở rộ
+    sizeClass = "w-56 h-56 md:w-72 md:h-72";
+  } else if (progress >= 60) {
+    stage = 3;
+    lotusImg = "https://images.unsplash.com/photo-1621245842827-024f2b1d3d14?q=80&w=800&auto=format&fit=crop"; // Nụ sen
+    sizeClass = "w-48 h-48 md:w-60 md:h-60";
+  } else if (progress >= 30) {
+    stage = 2;
+    lotusImg = "https://images.unsplash.com/photo-1582650123164-96c21e649089?q=80&w=800&auto=format&fit=crop"; // Lá sen
+    sizeClass = "w-40 h-40 md:w-52 md:h-52";
+  }
+
+  return (
+    <div className="relative flex flex-col items-center justify-center w-full mt-4 md:mt-0">
+      <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl transition-all duration-1000 ${
+        stage === 4 ? 'bg-pink-400/40 w-72 h-72' : 'bg-emerald-400/20 w-52 h-52'
+      }`}></div>
+
+      <div className={`relative z-10 transition-all duration-1000 ease-out ${sizeClass} rounded-full border-[6px] border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden animate-[float_4s_ease-in-out_infinite]`}>
+        <img 
+          src={lotusImg} 
+          alt="Sinh trưởng của Sen" 
+          className="w-full h-full object-cover transition-transform duration-1000 hover:scale-110"
+        />
+      </div>
+
+      <div className="absolute -bottom-8 w-48 h-8 bg-emerald-900/40 rounded-[100%] blur-md -z-10"></div>
+    </div>
+  );
+};
+
+// ============================================================
+// COMPONENT PHỤ
+// ============================================================
 const MascotImage = ({ streak }) => {
-  const [imgError, setImgError] = useState(false);
-  let data = { img: '/garden/frog-sleep.png', emoji: '😴' };
-  if (streak >= 15) data = { img: '/garden/frog-king.png', emoji: '👑' };
-  else if (streak >= 7) data = { img: '/garden/frog-cool.png', emoji: '😎' };
-  else if (streak >= 3) data = { img: '/garden/frog-normal.png', emoji: '🐸' };
+  let emoji = '😴';
+  if (streak >= 15) emoji = '👑';
+  else if (streak >= 7) emoji = '😎';
+  else if (streak >= 3) emoji = '🐸';
 
-  if (imgError) return <span className="text-[130px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform">{data.emoji}</span>;
-  return <img src={data.img} alt={data.emoji} onError={() => setImgError(true)} className="w-44 h-44 object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform" />;
+  return (
+    <span className="text-[130px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform block">
+      {emoji}
+    </span>
+  );
 };
 
 const TreeStageIcon = ({ progress, isCurrent }) => {
-  const [imgError, setImgError] = useState(false);
-  let stage = { emoji: '🌱' };
-  if (progress === 100 && !isCurrent) stage = { emoji: '🌸' };
-  else if (isCurrent) stage = { emoji: '✨' };
-  else if (progress >= 60) stage = { emoji: '🌳' };
-  else if (progress >= 30) stage = { emoji: '🌿' };
+  let emoji = '🌱';
+  if (progress === 100 && !isCurrent) emoji = '🌸';
+  else if (isCurrent) emoji = '✨';
+  else if (progress >= 60) emoji = '🌳';
+  else if (progress >= 30) emoji = '🌿';
 
-  if (imgError) return <span className="text-xl drop-shadow-sm">{stage.emoji}</span>;
-  return <img src={stage.img} alt={stage.emoji} onError={() => setImgError(true)} className="w-8 h-8 object-contain drop-shadow-sm" />;
+  return (
+    <span className="text-2xl drop-shadow-sm flex items-center justify-center w-full h-full">
+      {emoji}
+    </span>
+  );
 };
 
 const RadarChart = ({ data }) => {
@@ -131,6 +169,10 @@ export default function HomePage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [isTeacher, setIsTeacher] = useState(false); 
 
+  // --- TRỒNG CÂY TRANG CHỦ STATES ---
+  const [isWatering, setIsWatering] = useState(false);
+  const [showReward, setShowReward] = useState(false);
+
   // --- THÔNG BÁO CHẤM THI ---
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -146,16 +188,12 @@ export default function HomePage() {
   const [aiResponse, setAiResponse] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
-  // TÌM KIẾM TỪ ĐIỂN LOCAL
   const searchResults = searchQuery.trim() === "" ? [] : localDictionary.filter(item => 
     item.hanzi.includes(searchQuery.trim()) || 
     item.pinyin.toLowerCase().includes(searchQuery.trim().toLowerCase()) || 
     item.meaning.toLowerCase().includes(searchQuery.trim().toLowerCase())
-  ).slice(0, 10); // Giới hạn 10 kết quả để UI không bị tràn
+  ).slice(0, 10);
 
-  // ============================================================
-  // LOGIC GỌI AI GIẢI THÍCH (Tích hợp Groq/Gemini API)
-  // ============================================================
   const handleAskAI = async () => {
     if (!searchQuery.trim()) return;
     setIsAiLoading(true);
@@ -182,11 +220,56 @@ export default function HomePage() {
     setIsAiLoading(false);
   };
 
-  // ============================================================
   // ĐỒNG BỘ 9 CẤP ĐỘ HSK (3.0 MỚI)
-  // ============================================================
   const currentLvlNum = parseInt(currentLevel.replace(/\D/g, "")) || 1;
-  const currentLevelProgress = Math.min(99, Math.max(0, Math.round((todayVocabLearned / 20) * 100)));
+  const targetVocab = 20; // Mục tiêu 20 từ vựng = 100%
+  const currentLevelProgress = Math.min(100, Math.max(0, Math.round((todayVocabLearned / targetVocab) * 100)));
+
+  // ============================================================
+  // HÀNH ĐỘNG TƯỚI NƯỚC Ở TRANG CHỦ
+  // ============================================================
+  const handleWaterPlant = async () => {
+    if (water <= 0) {
+      alert("Bạn đã hết nước! Hãy làm bài test hoặc nhiệm vụ để lấy thêm 💧 nhé.");
+      return;
+    }
+    if (currentLevelProgress >= 100) {
+      alert("Sen đã nở rộ rồi! Hãy làm mới chậu để trồng tiếp.");
+      return;
+    }
+
+    setIsWatering(true);
+    
+    setTimeout(async () => {
+      const newWater = water - 1;
+      const newVocab = todayVocabLearned + 2; // Mỗi lần tưới tăng 10%
+      
+      setWater(newWater);
+      setTodayVocabLearned(newVocab);
+      setIsWatering(false);
+
+      if (userId) {
+        await setDoc(doc(db, "users", userId), { water: newWater, todayVocabLearned: newVocab }, { merge: true });
+        await setDoc(doc(db, "user_progress", userId), { water: newWater, todayVocabLearned: newVocab }, { merge: true });
+      }
+
+      if (newVocab >= targetVocab) {
+        setShowReward(true);
+        setTimeout(() => setShowReward(false), 4000);
+        const newXp = hskXp + 50;
+        setHskXp(newXp);
+        if (userId) await setDoc(doc(db, "users", userId), { xp: newXp }, { merge: true });
+      }
+    }, 800);
+  };
+
+  const handleResetPlant = async () => {
+    setTodayVocabLearned(0);
+    if (userId) {
+      await setDoc(doc(db, "users", userId), { todayVocabLearned: 0 }, { merge: true });
+      await setDoc(doc(db, "user_progress", userId), { todayVocabLearned: 0 }, { merge: true });
+    }
+  };
 
   const hskLevels = [
     { level: "HSK 1", title: "Nhập môn", words: 500 },
@@ -243,14 +326,11 @@ export default function HomePage() {
   ];
 
   const dailyMissions = [
-    { title: "Học từ mới", progress: Math.min(todayVocabLearned, 10), total: 10, xp: 20, icon: "🌱" },
+    { title: "Học từ mới", progress: Math.min(todayVocabLearned, 20), total: 20, xp: 20, icon: "🌱" },
     { title: "Luyện nghe", progress: Math.min(todayListeningLearned, 1), total: 1, xp: 15, icon: "💧" },
     { title: "Sắp xếp câu", progress: Math.min(todayGrammarLearned, 10), total: 10, xp: 20, icon: "☀️" },
   ];
 
-  // ============================================================
-  // ĐỒNG BỘ TOÀN DIỆN DỮ LIỆU USER & QUÉT THÔNG BÁO CHẤM THI
-  // ============================================================
   useEffect(() => {
     if (!isSignedIn || !userId) return;
 
@@ -285,7 +365,6 @@ export default function HomePage() {
         const mergedTodayListening = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
         const mergedTodayGrammar = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
         
-        // 1. QUÉT THÔNG BÁO & DỮ LIỆU BÀI TEST
         let teacherSkills = null;
         const notifs = [];
 
@@ -323,7 +402,6 @@ export default function HomePage() {
           }
         } catch (error) { console.error("Lỗi lấy thông báo:", error); }
 
-        // 2. AUTO-CALCULATE DYNAMIC SKILL
         const baseSkillLevel = mergedXp > 0 ? Math.min(Math.floor(mergedXp / 30), 40) : 0; 
         const dbSkills = uData.skill_map || upData.skill_map || pData.skill_map || {};
         
@@ -537,17 +615,21 @@ export default function HomePage() {
 
         <div className="mx-auto max-w-6xl space-y-8 px-5 py-8 md:px-8 pb-20">
           
-          <section className="relative rounded-[32px] overflow-hidden shadow-lg bg-[#1B5E4B] p-8 md:p-12 text-white flex flex-col md:flex-row justify-between items-center min-h-[260px]">
+          {/* ============================================================ */}
+          {/* BANNER: TRỒNG SEN THẬT Ở TRANG CHỦ */}
+          {/* ============================================================ */}
+          <section className="relative rounded-[32px] overflow-hidden shadow-lg bg-[#1B5E4B] p-8 md:p-12 text-white flex flex-col md:flex-row justify-between items-center min-h-[300px]">
             <div className="absolute inset-0 bg-[url('/hskk/backcover.jpg')] bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none"></div>
             <div className="absolute -left-20 -top-20 w-96 h-96 bg-[#2F8F6E] rounded-full blur-[80px] pointer-events-none opacity-60"></div>
             
-            <div className="relative z-10 w-full md:w-2/3">
-               <h2 className="text-[10px] font-black text-[#8FD9A8] uppercase tracking-widest mb-3 drop-shadow-sm">🌿 Hôm nay trong khu vườn</h2>
+            {/* THÔNG TIN & TƯỚI NƯỚC */}
+            <div className="relative z-10 w-full md:w-1/2">
+               <h2 className="text-[10px] font-black text-[#8FD9A8] uppercase tracking-widest mb-3 drop-shadow-sm">🌿 Hồ Sen Của Bạn</h2>
                <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2 leading-[1.2] text-white drop-shadow-md">
                   Chào {user?.firstName || user?.fullName || "bạn"} 👋
                </h1>
                <p className="text-sm md:text-base text-white/90 font-medium max-w-md leading-relaxed mb-6 drop-shadow-sm">
-                 {todayVocabLearned >= 10 ? "🌸 Hôm nay bạn đã tưới xong mầm cây xuất sắc!" : `Bạn chỉ còn ${Math.max(0, 10 - todayVocabLearned)} từ nữa để hoàn thành mục tiêu hôm nay.`}
+                 {currentLevelProgress >= 100 ? "🌸 Chúc mừng! Hoa sen đã nở rộ tuyệt đẹp!" : `Hãy tưới nước thường xuyên để chăm sóc cho mầm sen ${currentLevel} phát triển nhé.`}
                </p>
                
                <div className="mb-8 w-full max-w-sm">
@@ -556,32 +638,51 @@ export default function HomePage() {
                    <span className="text-[#FFD666]">{currentLevelProgress}%</span>
                  </div>
                  <div className="h-2.5 bg-black/20 rounded-full overflow-hidden shadow-inner border border-white/10">
-                   <div className="h-full bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-full transition-all duration-1000 shadow-sm" style={{ width: `${currentLevelProgress}%` }}></div>
+                   <div className="h-full bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-full transition-all duration-1000 shadow-sm relative" style={{ width: `${currentLevelProgress}%` }}>
+                     <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
+                   </div>
                  </div>
                </div>
 
                <div className="flex flex-wrap items-center gap-3">
-                  <Link href="/vocab">
-                    <button className="bg-white text-[#1B5E4B] px-7 py-3 rounded-[18px] text-sm font-black hover:bg-[#8FD9A8] hover:text-[#1B5E4B] transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1">
-                      🌱 Học tiếp
+                  <button 
+                    onClick={handleWaterPlant}
+                    disabled={isWatering || currentLevelProgress >= 100}
+                    className={`px-7 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1 ${
+                      currentLevelProgress >= 100 
+                        ? 'bg-[#E2E8F0] text-slate-500 cursor-not-allowed border border-transparent' 
+                        : 'bg-white text-[#1B5E4B] hover:bg-[#8FD9A8] border border-transparent'
+                    }`}
+                  >
+                    {currentLevelProgress >= 100 ? "🌸 Sen đã nở" : "💧 Tưới Nước (-1)"}
+                  </button>
+                  
+                  {currentLevelProgress >= 100 && (
+                    <button onClick={handleResetPlant} className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
+                      🔄 Trồng Cây Mới
                     </button>
-                  </Link>
+                  )}
+                  
                   <Link href="/test">
                     <button className="bg-[#FFD666] text-[#1B5E4B] px-7 py-3 rounded-[18px] text-sm font-black hover:bg-[#F59E0B] hover:text-white transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1">
                       📝 Thi Đánh Giá
                     </button>
                   </Link>
-                  <a href="#dashboard-bottom">
-                    <button className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
-                      🎯 Xem nhiệm vụ
-                    </button>
-                  </a>
                </div>
             </div>
 
-            <div className="hidden md:flex relative z-10">
-               <MascotImage streak={streak} />
-               <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-24 h-5 bg-black/30 blur-md rounded-full"></div>
+            {/* HOA SEN THẬT (REAL LOTUS) */}
+            <div className="relative z-10 w-full md:w-1/2 flex justify-center mt-10 md:mt-0">
+               <RealLotus progress={currentLevelProgress} />
+               
+               {isWatering && (
+                 <div className="absolute top-10 text-4xl animate-bounce drop-shadow-lg z-50">💧</div>
+               )}
+               {showReward && (
+                 <div className="absolute top-0 text-3xl font-black text-[#F59E0B] animate-fade-in-up drop-shadow-xl z-50 whitespace-nowrap bg-white/80 px-4 py-2 rounded-full border-2 border-white">
+                   +50 XP 🌸
+                 </div>
+               )}
             </div>
           </section>
 
@@ -594,7 +695,7 @@ export default function HomePage() {
               {gardenAreas.map((tool, index) => (
                 <Link href={tool.link} key={index} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
                   <div 
-                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.5] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
+                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.45] scale-[1.25] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
                     style={{ backgroundImage: `url(${tool.bgImg})` }}
                   ></div>
                   <div className={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-white/20 backdrop-blur-md text-xl shadow-sm transition-transform group-hover:scale-110 z-10`}>

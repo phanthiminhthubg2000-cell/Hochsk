@@ -14,7 +14,7 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  // Trạng thái hành trình thi (Exam Journey)
+  // Trạng thái hành trình thi
   const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
   const [hasPrepped, setHasPrepped] = useState(false);
@@ -47,6 +47,7 @@ export default function HskkPage() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const utteranceRef = useRef(null);
+  const currentAudioRef = useRef(null); 
 
   const examConfig = {
     "HSK Cấp 3": { prepTime: 420, repeat: 10, picture: 15, short: 90 },
@@ -56,13 +57,28 @@ export default function HskkPage() {
   };
 
   const introScripts = {
-    "HSK Cấp 3": "欢迎参加汉语水平考试（HSK）三级口语考试！本次考试分为三个部分，共十五题。第一部分是听后重复，共八题。第二部分是看图说话，共五题。第三部分是回答问题，共两题。全部考试时间为十五分钟，其中包含准备时间六分钟。请做好准备。现在，考试开始。",
-    "HSK Cấp 4": "欢迎参加汉语水平考试（HSK）四级口语考试！本次考试分为三个部分，共五题。第一部分是听后复述，共两题。第二部分是看图说话，共一题。第三部分是回答问题，共两题。全部考试时间为二十分钟，其中包含准备时间十分钟。请做好准备。现在，考试开始。",
-    "HSK Cấp 5": "欢迎参加汉语水平考试（HSK）五级口语考试！本次考试分为三个部分，共五题。第一部分是听后复述，共两题。第二部分是看图说话，共一题。第三部分是回答问题，共两题。全部考试时间为二十三分钟，其中包含准备时间十分钟。请做好准备。现在，考试开始。",
-    "HSK Cấp 6": "欢迎参加汉语水平考试（HSK）六级口语考试！本次考试分为三个部分，共五题。第一部分是听后复述，共两题。第二部分是看图说话，共一题。第三部分是回答问题，共两题。全部考试时间为二十三分钟，其中包含准备时间十分钟。请做好准备。现在，考试开始。"
+    "HSK Cấp 3": "欢迎参加汉语水平考试（HSK）三级口语考试！",
+    "HSK Cấp 4": "欢迎参加汉语水平考试（HSK）四级口语考试！",
+    "HSK Cấp 5": "欢迎参加汉语水平考试（HSK）五级口语考试！",
+    "HSK Cấp 6": "欢迎参加汉语水平考试（HSK）六级口语考试！"
   };
 
-  // --- FETCH GLOBAL DATA ---
+  const introAudioUrls = {
+    "HSK Cấp 3": "/hskk3/kaishi.mp3"
+  };
+
+  useEffect(() => {
+    return () => {
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current = null;
+      }
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   useEffect(() => {
     async function fetchGlobalData() {
       if (user?.id) {
@@ -100,7 +116,6 @@ export default function HskkPage() {
     if (isLoaded) fetchGlobalData();
   }, [user?.id, isLoaded]);
 
-  // --- LỊCH SỬ THI ---
   useEffect(() => {
     async function fetchMyHistory() {
       if (!user) return;
@@ -192,8 +207,49 @@ export default function HskkPage() {
     }, 100);
   };
 
+  const playAudioOrSpeak = (audioUrl, text, onEndCallback) => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current = null;
+    }
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      currentAudioRef.current = audio;
+      
+      audio.onended = () => {
+        currentAudioRef.current = null;
+        onEndCallback();
+      };
+      
+      audio.onerror = () => {
+        console.error("Không tải được file âm thanh:", audioUrl, "Chuyển sang TTS.");
+        currentAudioRef.current = null;
+        if (text) speak(text, onEndCallback); 
+        else onEndCallback();
+      };
+      
+      audio.play().catch(err => {
+        console.error("Lỗi trình duyệt block auto-play:", err);
+        currentAudioRef.current = null;
+        if (text) speak(text, onEndCallback); 
+        else onEndCallback();
+      });
+    } else if (text) {
+      speak(text, onEndCallback);
+    } else {
+      setTimeout(onEndCallback, 2000);
+    }
+  };
+
+  // SỬA Ở ĐÂY: DÙNG AUDIO FILE ĐỂ TEST LOA
   const testSpeaker = () => {
-    speak("欢迎参加汉语水平考试。设备测试。");
+    playAudioOrSpeak("/hskk3/kaishi.mp3", "欢迎参加汉语水平考试。设备测试。", () => {
+      console.log("Hoàn tất test loa");
+    });
   };
 
   const testMic = async () => {
@@ -288,8 +344,9 @@ export default function HskkPage() {
 
       setExamPhase("intro");
       const introText = introScripts[hskkLevel] || introScripts["HSK Cấp 3"];
+      const introAudioUrl = introAudioUrls[hskkLevel] || null;
       
-      speak(introText, () => {
+      playAudioOrSpeak(introAudioUrl, introText, () => {
         setExamPhase("intro_countdown");
         setTimeLeft(10);
       });
@@ -312,7 +369,7 @@ export default function HskkPage() {
 
     if (q.type === 'repeat' || q.type === 'short') {
       setExamPhase("reading");
-      speak(q.text, () => {
+      playAudioOrSpeak(q.audio, q.text, () => {
         setExamPhase("speaking");
         setTimeLeft(examConfig[hskkLevel][q.type]);
         startRecording();
@@ -362,11 +419,15 @@ export default function HskkPage() {
 
   const handleNextQuestion = (audioBase64) => {
     const currentQ = examQuestions[currentQIndex];
+    
+    // Gán nhãn cho câu không có text để dễ chấm
+    const fallbackQuestionLabel = currentQ.text ? currentQ.text : `[Audio] Câu hỏi số ${currentQ.id || currentQIndex + 1}`;
+
     const newAnswers = [
       ...examAnswers, 
       { 
         type: currentQ.type, 
-        question: currentQ.text, 
+        question: fallbackQuestionLabel, 
         images: currentQ.images || [], 
         audioBase64 
       }
@@ -382,9 +443,6 @@ export default function HskkPage() {
     }
   };
 
-  // ============================================================
-  // CẬP NHẬT XP & NƯỚC NGAY LẬP TỨC KHI NỘP BÀI THÀNH CÔNG
-  // ============================================================
   const submitFullExam = async (allAnswers) => {
     setExamPhase("submitting");
     if (!user) {
@@ -397,7 +455,6 @@ export default function HskkPage() {
       const fallbackName = user.primaryEmailAddress?.emailAddress?.split('@')[0] || "Học viên ẩn danh";
       const finalUserName = user.fullName || fallbackName;
 
-      // 1. Lưu bản ghi bài thi
       const examsRef = collection(db, "hskk_exams");
       const newExamDoc = await addDoc(examsRef, {
         userId: user.id,
@@ -415,30 +472,26 @@ export default function HskkPage() {
         await addDoc(answersCollectionRef, {
           questionIndex: i + 1,
           type: allAnswers[i].type,
-          question: allAnswers[i].question || "",
+          question: allAnswers[i].question || `[Audio] Câu ${i + 1}`,
           images: allAnswers[i].images || [],
           audioBase64: allAnswers[i].audioBase64 || null,
           teacherComment: "" 
         });
       }
       
-      // 2. CỘNG THƯỞNG: Hoàn thành bài HSKK dài +100 XP, +10 Giọt nước
       const bonusXp = 100;
       const bonusWater = 10;
       const newXp = hskXp + bonusXp;
       const newWater = water + bonusWater;
 
-      // Cập nhật lên Topbar hiện tại
       setHskXp(newXp);
       setWater(newWater);
 
-      // Lưu xuống DB
       await setDoc(doc(db, "users", user.id), {
         xp: newXp,
         water: newWater
       }, { merge: true });
 
-      // Gọi hàm utils log
       await updateUserProgress(user.id, bonusXp, "speaking", 5);
 
       setExamPhase("done");
@@ -452,7 +505,6 @@ export default function HskkPage() {
   return (
     <div className="min-h-screen font-sans text-slate-800 relative overflow-hidden flex flex-col selection:bg-rose-200">
       
-      {/* BACKGROUND GLOBAL VỚI LỚP PHỦ MỜ */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }} 
@@ -460,9 +512,6 @@ export default function HskkPage() {
         <div className="absolute inset-0 bg-[#F4F8F5]/90 backdrop-blur-[4px]"></div>
       </div>
       
-      {/* =========================================
-          HEADER CỐ ĐỊNH ĐỒNG BỘ ☀️ LỬA - 💧 NƯỚC - ⭐ XP
-          ========================================= */}
       <header className="w-full bg-white/80 backdrop-blur-xl border-b border-rose-100/60 sticky top-0 z-30 shadow-sm px-6 h-[76px] flex items-center justify-between">
         
         <div className="flex items-center gap-4">
@@ -479,7 +528,6 @@ export default function HskkPage() {
         </div>
 
         <div className="flex items-center gap-3 pl-4">
-          {/* STATS */}
           <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-slate-100 px-4 py-2.5">
             <span className="text-lg drop-shadow-sm">☀️</span><span className="text-xs font-black text-[#FFD666] drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">{streak}</span>
           </div>
@@ -490,7 +538,6 @@ export default function HskkPage() {
             <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
           </div>
           
-          {/* USER AUTH */}
           {isLoaded && user ? (
             <UserButton afterSignOutUrl="/" />
           ) : (
@@ -501,18 +548,13 @@ export default function HskkPage() {
         </div>
       </header>
 
-      {/* =========================================
-          MAIN WORKSPACE
-          ========================================= */}
       <main className="relative z-10 flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center w-full pb-20 pt-8 px-4">
         
         <div className="w-full max-w-5xl animate-fade-in">
           
-          {/* BƯỚC 1: CHỌN CẤP ĐỘ & XEM LỊCH SỬ */}
           {examPhase === "idle" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              {/* Cột trái: Lịch sử bài thi */}
               <div className="lg:col-span-5 bg-white/95 backdrop-blur-xl p-8 rounded-[32px] shadow-sm border border-white sticky top-28">
                 <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
                   <span>📚</span> Lịch sử bài thi của bạn
@@ -569,7 +611,6 @@ export default function HskkPage() {
                 )}
               </div>
 
-              {/* Cột phải: Chọn đề thi mới */}
               <div className="lg:col-span-7 flex flex-col gap-6">
                 
                 <div className="bg-white/95 backdrop-blur-xl p-8 md:p-10 rounded-[32px] shadow-sm border border-white relative overflow-hidden">
@@ -617,7 +658,6 @@ export default function HskkPage() {
                     })}
                   </div>
 
-                  {/* Box xác nhận */}
                   {levelAvailability[hskkLevel]?.available && (
                     <div className="bg-slate-50 p-6 rounded-[24px] border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
                       <div>
@@ -634,7 +674,6 @@ export default function HskkPage() {
                   )}
                 </div>
 
-                {/* Box Hướng dẫn phòng thi */}
                 <div className="bg-[#FFF8E8]/90 backdrop-blur-xl p-8 rounded-[32px] shadow-sm border border-amber-200/60">
                   <h3 className="text-base font-black text-amber-900 mb-4 flex items-center gap-2">
                     <span>💡</span> Nguyên Tắc Phòng Thi
@@ -678,7 +717,6 @@ export default function HskkPage() {
                 </div>
 
                 {selectedHistoryExam.teacherScore === null ? (
-                  /* GIAO DIỆN KHI ĐANG CHỜ CHẤM */
                   <div className="text-center py-16 bg-[#F4F8F5] rounded-[32px] border border-emerald-100">
                     <div className="text-7xl mb-6">⏳</div>
                     <h3 className="text-2xl font-black text-slate-800 mb-2">Đang chờ giáo viên chấm</h3>
@@ -687,7 +725,6 @@ export default function HskkPage() {
                     </p>
                   </div>
                 ) : (
-                  /* GIAO DIỆN KHI ĐÃ CHẤM XONG */
                   <div className="animate-slide-up-fade">
                     <div className="bg-gradient-to-br from-[#DDF7EA] to-emerald-50 border border-[#08A66A]/20 rounded-[32px] p-8 mb-10 shadow-sm relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-40 h-40 bg-white/40 rounded-bl-full pointer-events-none"></div>
@@ -967,7 +1004,8 @@ export default function HskkPage() {
                 </div>
               )}
               
-              {examQuestions[currentQIndex].type !== 'repeat' && (
+              {/* KHÔNG HIỂN THỊ TEXT Ở PHẦN REPEAT */}
+              {examQuestions[currentQIndex].type !== 'repeat' && examQuestions[currentQIndex].text && (
                 <div className="text-center py-10 px-8 bg-white/95 backdrop-blur-xl rounded-[32px] border border-white shadow-sm mt-2">
                   <h3 className="text-2xl md:text-3xl font-black text-slate-800 leading-snug">{examQuestions[currentQIndex].text}</h3>
                 </div>
