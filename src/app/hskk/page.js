@@ -14,7 +14,7 @@ export default function HskkPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [examAnswers, setExamAnswers] = useState([]); 
   
-  // Trạng thái hành trình thi
+  // Trạng thái hành trình thi (Exam Journey)
   const [examPhase, setExamPhase] = useState("idle"); 
   const [timeLeft, setTimeLeft] = useState(0);
   const [hasPrepped, setHasPrepped] = useState(false);
@@ -67,6 +67,59 @@ export default function HskkPage() {
     "HSK Cấp 3": "/hskk3/kaishi.mp3"
   };
 
+  // ==========================================
+  // BẢO VỆ PHÒNG THI 1: CHẶN F5 / TẢI LẠI TRANG
+  // ==========================================
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (["global_prep", "reading", "speaking", "intro", "intro_countdown", "loading", "submitting"].includes(examPhase)) {
+        e.preventDefault();
+        e.returnValue = "Bạn đang trong phòng thi! Nếu thoát ra, bài thi sẽ bị hủy và bạn phải thi lại từ đầu.";
+        return e.returnValue;
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [examPhase]);
+
+  // ==========================================
+  // BẢO VỆ PHÒNG THI 2: CHỐNG GIAN LẬN CHUYỂN TAB
+  // ==========================================
+  useEffect(() => {
+    const handleCheatDetection = () => {
+      // Chỉ theo dõi khi học sinh đang trong trạng thái làm bài thực sự
+      if (["global_prep", "reading", "speaking", "intro", "intro_countdown"].includes(examPhase)) {
+        // Nếu document.hidden = true (người dùng chuyển tab) hoặc mất focus (chuyển phần mềm)
+        if (document.hidden || !document.hasFocus()) {
+          alert("🚨 CẢNH BÁO VI PHẠM 🚨\n\nHệ thống phát hiện bạn đã chuyển tab hoặc rời khỏi màn hình bài thi. \nBài thi của bạn đã bị hủy ngay lập tức!");
+          
+          // Dọn dẹp âm thanh đang phát
+          if (currentAudioRef.current) {
+            currentAudioRef.current.pause();
+            currentAudioRef.current = null;
+          }
+          if (window.speechSynthesis) window.speechSynthesis.cancel();
+          if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+            mediaRecorderRef.current.stop();
+          }
+
+          // Hủy bài và load lại trang
+          setExamPhase("idle");
+          window.location.reload();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleCheatDetection);
+    window.addEventListener("blur", handleCheatDetection);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleCheatDetection);
+      window.removeEventListener("blur", handleCheatDetection);
+    };
+  }, [examPhase]);
+
+  // Dọn dẹp Audio khi rời trang bình thường
   useEffect(() => {
     return () => {
       if (currentAudioRef.current) {
@@ -79,6 +132,7 @@ export default function HskkPage() {
     };
   }, []);
 
+  // --- FETCH GLOBAL DATA ---
   useEffect(() => {
     async function fetchGlobalData() {
       if (user?.id) {
@@ -116,6 +170,7 @@ export default function HskkPage() {
     if (isLoaded) fetchGlobalData();
   }, [user?.id, isLoaded]);
 
+  // --- LỊCH SỬ THI ---
   useEffect(() => {
     async function fetchMyHistory() {
       if (!user) return;
@@ -245,7 +300,6 @@ export default function HskkPage() {
     }
   };
 
-  // SỬA Ở ĐÂY: DÙNG AUDIO FILE ĐỂ TEST LOA
   const testSpeaker = () => {
     playAudioOrSpeak("/hskk3/kaishi.mp3", "欢迎参加汉语水平考试。设备测试。", () => {
       console.log("Hoàn tất test loa");
@@ -420,7 +474,6 @@ export default function HskkPage() {
   const handleNextQuestion = (audioBase64) => {
     const currentQ = examQuestions[currentQIndex];
     
-    // Gán nhãn cho câu không có text để dễ chấm
     const fallbackQuestionLabel = currentQ.text ? currentQ.text : `[Audio] Câu hỏi số ${currentQ.id || currentQIndex + 1}`;
 
     const newAnswers = [
@@ -698,7 +751,6 @@ export default function HskkPage() {
             </div>
           )}
 
-          {/* MODAL XEM CHI TIẾT BÀI THI */}
           {selectedHistoryExam && (
             <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 animate-fade-in">
               <div className="bg-white rounded-[40px] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8 md:p-10 shadow-2xl relative custom-scrollbar">
@@ -785,7 +837,6 @@ export default function HskkPage() {
             </div>
           )}
 
-          {/* BƯỚC 2: KIỂM TRA THIẾT BỊ (DEVICE CHECK) */}
           {examPhase === "device_check" && (
             <div className="max-w-3xl mx-auto py-8 animate-fade-in bg-white/95 backdrop-blur-xl p-8 md:p-12 rounded-[40px] shadow-sm border border-white relative overflow-hidden mt-6">
               <div className="text-center mb-10 relative z-10 flex flex-col items-center">
@@ -813,7 +864,7 @@ export default function HskkPage() {
                 </div>
               </div>
 
-              <div className={`p-6 md:p-8 rounded-[32px] border-2 mb-10 transition-all relative z-10 ${isMicTested ? 'border-[#08A66A] bg-[#DDF7EA]/30' : 'border-slate-100 bg-slate-50'}`}>
+              <div className={`p-6 md:p-8 rounded-[32px] border-2 mb-8 transition-all relative z-10 ${isMicTested ? 'border-[#08A66A] bg-[#DDF7EA]/30' : 'border-slate-100 bg-slate-50'}`}>
                 <div className="flex items-center gap-4 mb-4">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ${isMicTested ? 'bg-[#08A66A] text-white' : 'bg-white text-slate-400 border border-slate-200'}`}>🎙️</div>
                   <div>
@@ -842,6 +893,17 @@ export default function HskkPage() {
                 </div>
               </div>
 
+              {/* HỘP CẢNH BÁO ĐỎ TRƯỚC KHI VÀO THI */}
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-5 mb-8 text-left flex items-start gap-4 relative z-10 shadow-inner">
+                <div className="text-red-500 text-2xl mt-0.5">⚠️</div>
+                <div>
+                  <h4 className="font-black text-red-700 text-sm uppercase tracking-widest mb-1">Cảnh báo nghiêm trọng</h4>
+                  <p className="text-red-600/90 text-sm font-medium leading-relaxed">
+                    Học sinh tuyệt đối không được tải lại trang, <strong>chuyển sang tab khác hoặc mở ứng dụng khác</strong> khi đang làm bài thi. Nếu vi phạm, hệ thống sẽ tự động hủy bài và bạn phải thi lại từ đầu.
+                  </p>
+                </div>
+              </div>
+
               <div className="flex flex-col md:flex-row justify-between items-center border-t border-slate-100 pt-8 relative z-10 gap-4">
                 <button onClick={() => setExamPhase("idle")} className="w-full md:w-auto px-6 py-4 font-bold text-slate-500 hover:text-slate-700 text-sm transition bg-slate-50 rounded-2xl">
                   ← Hủy và quay lại
@@ -861,7 +923,6 @@ export default function HskkPage() {
             </div>
           )}
 
-          {/* LOADING VÀ SUBMITTING */}
           {(examPhase === "loading" || examPhase === "submitting") && (
              <div className="text-center py-32 flex flex-col items-center animate-fade-in bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white max-w-2xl mx-auto w-full mt-10">
                <div className="w-24 h-24 bg-rose-50 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center mb-6 relative shadow-inner">
@@ -875,7 +936,6 @@ export default function HskkPage() {
              </div>
           )}
 
-          {/* BƯỚC 3: TRONG PHÒNG THI CHÍNH THỨC */}
           {examPhase === "intro" && (
             <div className="text-center py-20 animate-fade-in flex flex-col items-center bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white max-w-4xl mx-auto px-6 w-full mt-10">
               <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-5xl mb-6 shadow-inner border border-blue-100">🐸</div>
@@ -1004,7 +1064,6 @@ export default function HskkPage() {
                 </div>
               )}
               
-              {/* KHÔNG HIỂN THỊ TEXT Ở PHẦN REPEAT */}
               {examQuestions[currentQIndex].type !== 'repeat' && examQuestions[currentQIndex].text && (
                 <div className="text-center py-10 px-8 bg-white/95 backdrop-blur-xl rounded-[32px] border border-white shadow-sm mt-2">
                   <h3 className="text-2xl md:text-3xl font-black text-slate-800 leading-snug">{examQuestions[currentQIndex].text}</h3>
@@ -1013,7 +1072,6 @@ export default function HskkPage() {
             </div>
           )}
 
-          {/* BƯỚC 4: HOÀN THÀNH - CHỜ CHẤM */}
           {examPhase === "done" && (
             <div className="flex flex-col items-center justify-center gap-8 animate-slide-up-fade text-center py-16 px-4 max-w-2xl mx-auto mt-10 bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white">
               

@@ -56,8 +56,35 @@ function ArrangeQuestion({ item, index, onChange }) {
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
-    const words = segmentWords(item.chinese || item.front || "");
-    const initialScrambled = shuffleArray([...words]).map((w, i) => ({ id: i, text: w }));
+    let wordsArray = [];
+    
+    // Ưu tiên 1: Dữ liệu trả về có sẵn mảng words
+    if (Array.isArray(item.words) && item.words.length > 0) {
+      wordsArray = item.words;
+    } 
+    // Ưu tiên 2: Thuộc tính words là chuỗi chứa khoảng trắng
+    else if (typeof item.words === 'string' && item.words.includes(' ')) {
+      wordsArray = item.words.split(' ');
+    }
+    // Ưu tiên 3: Văn bản gốc (chinese/front/sentence) đã gõ cách nhau bằng khoảng trắng
+    else if (typeof item.chinese === 'string' && item.chinese.includes(' ')) {
+      wordsArray = item.chinese.split(' ');
+    }
+    else if (typeof item.front === 'string' && item.front.includes(' ')) {
+      wordsArray = item.front.split(' ');
+    }
+    else if (typeof item.sentence === 'string' && item.sentence.includes(' ')) {
+      wordsArray = item.sentence.split(' ');
+    }
+    // Dự phòng cuối: Dùng hàm cắt chuỗi tự động
+    else {
+      wordsArray = segmentWords(item.chinese || item.front || item.sentence || "");
+    }
+
+    // Lọc bỏ khoảng trắng rỗng dư thừa
+    wordsArray = wordsArray.filter(w => w.trim() !== '');
+
+    const initialScrambled = shuffleArray([...wordsArray]).map((w, i) => ({ id: i, text: w }));
     setAvailable(initialScrambled);
     setSelected([]);
   }, [item]);

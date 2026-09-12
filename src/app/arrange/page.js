@@ -122,11 +122,38 @@ export default function ArrangePage() {
     loadQuestion(sessionQuestions[0]);
   };
 
-  // TẢI CÂU HỎI MỚI
+  // TẢI CÂU HỎI MỚI (ĐÃ CẬP NHẬT THUẬT TOÁN TÁCH TỪ CHUẨN)
   const loadQuestion = (questionObj) => {
-    const text = questionObj.chinese || questionObj.front || "";
-    const words = segmentWords(text);
-    setAvailableWords(shuffleArray([...words]).map((text, i) => ({ id: i, text })));
+    let wordsArray = [];
+    
+    // Ưu tiên 1: Dữ liệu trả về có sẵn mảng words
+    if (Array.isArray(questionObj.words) && questionObj.words.length > 0) {
+      wordsArray = questionObj.words;
+    } 
+    // Ưu tiên 2: Thuộc tính words là chuỗi chứa khoảng trắng
+    else if (typeof questionObj.words === 'string' && questionObj.words.includes(' ')) {
+      wordsArray = questionObj.words.split(' ');
+    }
+    // Ưu tiên 3: Văn bản gốc đã gõ cách nhau bằng khoảng trắng
+    else if (typeof questionObj.chinese === 'string' && questionObj.chinese.includes(' ')) {
+      wordsArray = questionObj.chinese.split(' ');
+    }
+    else if (typeof questionObj.front === 'string' && questionObj.front.includes(' ')) {
+      wordsArray = questionObj.front.split(' ');
+    }
+    else if (typeof questionObj.sentence === 'string' && questionObj.sentence.includes(' ')) {
+      wordsArray = questionObj.sentence.split(' ');
+    }
+    // Dự phòng cuối: Dùng hàm cắt chuỗi tự động
+    else {
+      const text = questionObj.chinese || questionObj.front || questionObj.sentence || "";
+      wordsArray = segmentWords(text);
+    }
+
+    // Lọc bỏ khoảng trắng rỗng dư thừa
+    wordsArray = wordsArray.filter(w => w.trim() !== '');
+
+    setAvailableWords(shuffleArray([...wordsArray]).map((text, i) => ({ id: i, text })));
     setSelectedWords([]);
     setFeedback(null);
     setShowAnswer(false);
@@ -159,6 +186,7 @@ export default function ArrangePage() {
     if (selectedWords.length === 0) return;
     
     const currentQ = questions[currentIndex];
+    // Loại bỏ hết khoảng trắng và dấu câu để so sánh kết quả cuối cùng
     const correctAns = (currentQ.chinese || currentQ.front || "").replace(/[.!?。，？！、\s]/g, '');
     const userAns = selectedWords.map(w => w.text).join('');
     
