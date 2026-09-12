@@ -10,7 +10,7 @@ import cardsData from "./cards.json";
 import topicData from "./topics.json";
 
 // MỐC LÊN CẤP CHO 11 GIAI ĐOẠN CỦA HOA SEN
-const THRESHOLDS = [0, 10, 25, 45, 70, 100, 140, 190, 250, 320, 400];
+const THRESHOLDS = [0, 10, 40, 90, 150, 250, 350, 500, 700, 1000, 1500];
 
 // ============================================================
 // CHUẨN HÓA DỮ LIỆU TỪ ĐIỂN TỪ LOCAL JSON
@@ -226,9 +226,9 @@ export default function HomePage() {
   const currentLevelProgress = Math.min(100, Math.max(0, Math.round((todayVocabLearned / targetVocab) * 100)));
 
   // ============================================================
-  // HÀNH ĐỘNG TƯỚI NƯỚC
+  // HÀNH ĐỘNG TƯỚI NƯỚC (HỖ TRỢ 2 CHẾ ĐỘ: "single" HOẶC "all")
   // ============================================================
-  const handleWaterPlant = async () => {
+  const handleWaterPlant = async (mode = "single") => {
     if (water <= 0) {
       alert("Bạn đã hết nước! Hãy làm bài test hoặc nhiệm vụ để lấy thêm 💧 nhé.");
       return;
@@ -240,11 +240,19 @@ export default function HomePage() {
       return;
     }
 
+    let dropsToUse = 1;
+    if (mode === "all") {
+      const maxGrowthNeeded = THRESHOLDS[THRESHOLDS.length - 1] - lotusGrowth;
+      dropsToUse = Math.min(water, maxGrowthNeeded);
+    }
+
+    if (dropsToUse <= 0) return;
+
     setIsWatering(true);
     
     setTimeout(async () => {
-      const newWater = water - 1;
-      const newGrowth = lotusGrowth + 1;
+      const newWater = water - dropsToUse;
+      const newGrowth = lotusGrowth + dropsToUse;
       
       setWater(newWater);
       setLotusGrowth(newGrowth);
@@ -255,7 +263,7 @@ export default function HomePage() {
         await setDoc(doc(db, "user_progress", userId), { water: newWater, lotus_growth: newGrowth }, { merge: true });
       }
 
-      if (newGrowth === THRESHOLDS[THRESHOLDS.length - 1]) {
+      if (newGrowth >= THRESHOLDS[THRESHOLDS.length - 1]) {
         setShowReward(true);
         setTimeout(() => setShowReward(false), 4000);
         const newXp = hskXp + 500;
@@ -263,6 +271,34 @@ export default function HomePage() {
         if (userId) await setDoc(doc(db, "users", userId), { xp: newXp }, { merge: true });
       }
     }, 600);
+  };
+
+  // ============================================================
+  // ĐỔI XP LẤY NƯỚC (100 XP = 5 GIỌT NƯỚC)
+  // ============================================================
+  const handleExchangeXpForWater = async () => {
+    const costXp = 100;
+    const rewardWater = 5;
+
+    if (hskXp < costXp) {
+      alert(`Bạn cần ít nhất ${costXp} XP để đổi lấy ${rewardWater} giọt nước! Hãy chăm chỉ làm bài tập nhé.`);
+      return;
+    }
+
+    const newXp = hskXp - costXp;
+    const newWater = water + rewardWater;
+
+    setHskXp(newXp);
+    setWater(newWater);
+
+    if (userId) {
+      try {
+        await setDoc(doc(db, "users", userId), { xp: newXp, water: newWater }, { merge: true });
+        await setDoc(doc(db, "user_progress", userId), { water: newWater }, { merge: true });
+      } catch (err) {
+        console.error("Lỗi đổi XP lấy nước:", err);
+      }
+    }
   };
 
   const handleResetPlant = async () => {
@@ -670,27 +706,43 @@ export default function HomePage() {
                  </div>
                </div>
 
+               {/* NÚT TƯỚI NƯỚC VÀ ĐỔI XP LẤY NƯỚC */}
                <div className="flex flex-wrap items-center gap-3">
-                  <button 
-                    onClick={handleWaterPlant}
-                    disabled={isWatering || isLotusMaxLevel}
-                    className={`px-7 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1 ${
-                      isLotusMaxLevel 
-                        ? 'bg-[#E2E8F0] text-slate-500 cursor-not-allowed border border-transparent' 
-                        : 'bg-white text-[#1B5E4B] hover:bg-[#8FD9A8] border border-transparent'
-                    }`}
-                  >
-                    {isLotusMaxLevel ? "🌸 Đã hoàn thành" : "💧 Tưới Nước (-1)"}
-                  </button>
-                  
-                  {isLotusMaxLevel && (
+                  {!isLotusMaxLevel ? (
+                    <>
+                      <button 
+                        onClick={() => handleWaterPlant("single")}
+                        disabled={isWatering || water <= 0}
+                        className="px-5 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 bg-white text-[#1B5E4B] hover:bg-[#8FD9A8] hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        💧 Tưới 1 giọt (-1)
+                      </button>
+
+                      <button 
+                        onClick={() => handleWaterPlant("all")}
+                        disabled={isWatering || water <= 0}
+                        className="px-5 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 bg-[#4FB6C7] text-white hover:bg-[#3FA2B3] hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        💦 Tưới Hết ({water} 💧)
+                      </button>
+                    </>
+                  ) : (
                     <button onClick={handleResetPlant} className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
                       🔄 Trồng Cây Mới
                     </button>
                   )}
+
+                  {/* NÚT ĐỔI XP LẤY NƯỚC (100 XP = 5 💧) */}
+                  <button 
+                    onClick={handleExchangeXpForWater}
+                    className="px-5 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 bg-[#FFD666] text-[#1B5E4B] hover:bg-[#F59E0B] hover:text-white hover:-translate-y-1"
+                    title="Đổi 100 XP lấy 5 giọt nước"
+                  >
+                    ⭐ Đổi 100 XP ➔ 5 💧
+                  </button>
                   
                   <Link href="/test">
-                    <button className="bg-[#FFD666] text-[#1B5E4B] px-7 py-3 rounded-[18px] text-sm font-black hover:bg-[#F59E0B] hover:text-white transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1">
+                    <button className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-7 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1">
                       📝 Thi Đánh Giá
                     </button>
                   </Link>
