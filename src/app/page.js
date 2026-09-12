@@ -9,6 +9,9 @@ import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where 
 import cardsData from "./cards.json";
 import topicData from "./topics.json";
 
+// MỐC LÊN CẤP CHO 11 GIAI ĐOẠN CỦA HOA SEN
+const THRESHOLDS = [0, 10, 25, 45, 70, 100, 140, 190, 250, 320, 400];
+
 // ============================================================
 // CHUẨN HÓA DỮ LIỆU TỪ ĐIỂN TỪ LOCAL JSON
 // ============================================================
@@ -45,42 +48,50 @@ const getLocalDictionary = () => {
 const localDictionary = getLocalDictionary();
 
 // ============================================================
-// COMPONENT: BÔNG SEN THẬT (REAL LOTUS)
+// COMPONENT: BÔNG SEN TRÒN DÙNG 11 ẢNH + HIỆU ỨNG RUNG RINH SINH ĐỘNG
 // ============================================================
-const RealLotus = ({ progress }) => {
-  let stage = 1;
-  let lotusImg = "https://images.unsplash.com/photo-1620023455113-dcf7cc757ccb?q=80&w=800&auto=format&fit=crop"; // Mầm/Lá non
-  let sizeClass = "w-36 h-36 md:w-44 md:h-44";
-
-  if (progress >= 100) {
-    stage = 4;
-    lotusImg = "https://images.unsplash.com/photo-1543007168-5fa9b3c3e215?q=80&w=800&auto=format&fit=crop"; // Sen nở rộ
-    sizeClass = "w-56 h-56 md:w-72 md:h-72";
-  } else if (progress >= 60) {
-    stage = 3;
-    lotusImg = "https://images.unsplash.com/photo-1621245842827-024f2b1d3d14?q=80&w=800&auto=format&fit=crop"; // Nụ sen
-    sizeClass = "w-48 h-48 md:w-60 md:h-60";
-  } else if (progress >= 30) {
-    stage = 2;
-    lotusImg = "https://images.unsplash.com/photo-1582650123164-96c21e649089?q=80&w=800&auto=format&fit=crop"; // Lá sen
-    sizeClass = "w-40 h-40 md:w-52 md:h-52";
+const RealLotus = ({ plantGrowth, isWatering }) => {
+  let currentFrame = 0;
+  for (let i = THRESHOLDS.length - 1; i >= 0; i--) {
+    if (plantGrowth >= THRESHOLDS[i]) {
+      currentFrame = i;
+      break;
+    }
   }
 
-  return (
-    <div className="relative flex flex-col items-center justify-center w-full mt-4 md:mt-0">
-      <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl transition-all duration-1000 ${
-        stage === 4 ? 'bg-pink-400/40 w-72 h-72' : 'bg-emerald-400/20 w-52 h-52'
-      }`}></div>
+  // Đổi index từ 0 -> 10 thành định dạng chuỗi từ "01" -> "11"
+  const stageNumber = String(currentFrame + 1).padStart(2, '0');
+  const imagePath = `/lotus/lotus_stage_${stageNumber}.png`;
 
-      <div className={`relative z-10 transition-all duration-1000 ease-out ${sizeClass} rounded-full border-[6px] border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden animate-[float_4s_ease-in-out_infinite]`}>
-        <img 
-          src={lotusImg} 
-          alt="Sinh trưởng của Sen" 
-          className="w-full h-full object-cover transition-transform duration-1000 hover:scale-110"
-        />
+  return (
+    <div className="relative flex flex-col items-center justify-center">
+      {/* Khung tròn bồng bềnh nhẹ nhàng với animate-[bounce_6s_ease-in-out_infinite] */}
+      <div className={`relative z-10 w-44 h-44 md:w-56 md:h-56 rounded-full border-[6px] border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden bg-gradient-to-b from-[#E0F7FA]/40 to-[#8FD9A8]/30 backdrop-blur-sm flex items-center justify-center transition-transform duration-500 animate-[bounce_6s_ease-in-out_infinite] ${isWatering ? 'scale-105' : 'scale-100'}`}>
+        
+        {/* Hiệu ứng hạt mưa rơi khi tưới */}
+        {isWatering && (
+          <div className="absolute inset-0 z-30 pointer-events-none flex justify-center">
+             <div className="w-2.5 h-5 bg-[#4FB6C7] rounded-full animate-bounce mt-6 shadow-sm"></div>
+             <div className="w-2 h-4 bg-blue-300 rounded-full animate-bounce mt-10 ml-6 delay-100"></div>
+             <div className="w-2 h-4 bg-[#4FB6C7] rounded-full animate-bounce mt-8 mr-6 delay-75"></div>
+          </div>
+        )}
+
+        {/* Cây sen rung rinh, co giãn nhẹ và nghiêng khi rê chuột */}
+        <div className="w-full h-full relative overflow-hidden flex items-center justify-center p-3 animate-[pulse_4s_ease-in-out_infinite]">
+          <img 
+            src={imagePath} 
+            alt={`Giai đoạn ${currentFrame + 1}`} 
+            className="max-h-full max-w-full object-contain mix-blend-multiply transition-all duration-700 ease-in-out drop-shadow-md hover:rotate-1 hover:scale-105"
+            onError={(e) => {
+               e.target.style.display = 'none';
+               e.target.parentElement.innerHTML = `<div class="text-center p-2 text-[10px] text-red-500 font-bold">Thiếu file: lotus_stage_${stageNumber}.png trong /public/lotus/</div>`;
+            }}
+          />
+        </div>
       </div>
 
-      <div className="absolute -bottom-8 w-48 h-8 bg-emerald-900/40 rounded-[100%] blur-md -z-10"></div>
+      <div className="absolute -bottom-4 w-32 h-6 bg-emerald-950/30 rounded-[100%] blur-md -z-10"></div>
     </div>
   );
 };
@@ -88,19 +99,6 @@ const RealLotus = ({ progress }) => {
 // ============================================================
 // COMPONENT PHỤ
 // ============================================================
-const MascotImage = ({ streak }) => {
-  let emoji = '😴';
-  if (streak >= 15) emoji = '👑';
-  else if (streak >= 7) emoji = '😎';
-  else if (streak >= 3) emoji = '🐸';
-
-  return (
-    <span className="text-[130px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform block">
-      {emoji}
-    </span>
-  );
-};
-
 const TreeStageIcon = ({ progress, isCurrent }) => {
   let emoji = '🌱';
   if (progress === 100 && !isCurrent) emoji = '🌸';
@@ -172,6 +170,7 @@ export default function HomePage() {
   // --- TRỒNG CÂY TRANG CHỦ STATES ---
   const [isWatering, setIsWatering] = useState(false);
   const [showReward, setShowReward] = useState(false);
+  const [lotusGrowth, setLotusGrowth] = useState(0);
 
   // --- THÔNG BÁO CHẤM THI ---
   const [notifications, setNotifications] = useState([]);
@@ -220,21 +219,22 @@ export default function HomePage() {
     setIsAiLoading(false);
   };
 
-  // ĐỒNG BỘ 9 CẤP ĐỘ HSK (3.0 MỚI)
   const currentLvlNum = parseInt(currentLevel.replace(/\D/g, "")) || 1;
-  const targetVocab = 20; // Mục tiêu 20 từ vựng = 100%
+  const targetVocab = 20; 
   const currentLevelProgress = Math.min(100, Math.max(0, Math.round((todayVocabLearned / targetVocab) * 100)));
 
   // ============================================================
-  // HÀNH ĐỘNG TƯỚI NƯỚC Ở TRANG CHỦ
+  // HÀNH ĐỘNG TƯỚI NƯỚC
   // ============================================================
   const handleWaterPlant = async () => {
     if (water <= 0) {
       alert("Bạn đã hết nước! Hãy làm bài test hoặc nhiệm vụ để lấy thêm 💧 nhé.");
       return;
     }
-    if (currentLevelProgress >= 100) {
-      alert("Sen đã nở rộ rồi! Hãy làm mới chậu để trồng tiếp.");
+
+    const isMaxLevel = lotusGrowth >= THRESHOLDS[THRESHOLDS.length - 1];
+    if (isMaxLevel) {
+      alert("Sen đã hoàn thành chu kỳ! Hãy làm mới chậu để trồng tiếp.");
       return;
     }
 
@@ -242,34 +242,55 @@ export default function HomePage() {
     
     setTimeout(async () => {
       const newWater = water - 1;
-      const newVocab = todayVocabLearned + 2; // Mỗi lần tưới tăng 10%
+      const newGrowth = lotusGrowth + 1;
       
       setWater(newWater);
-      setTodayVocabLearned(newVocab);
+      setLotusGrowth(newGrowth);
       setIsWatering(false);
 
       if (userId) {
-        await setDoc(doc(db, "users", userId), { water: newWater, todayVocabLearned: newVocab }, { merge: true });
-        await setDoc(doc(db, "user_progress", userId), { water: newWater, todayVocabLearned: newVocab }, { merge: true });
+        await setDoc(doc(db, "users", userId), { water: newWater, lotus_growth: newGrowth }, { merge: true });
+        await setDoc(doc(db, "user_progress", userId), { water: newWater, lotus_growth: newGrowth }, { merge: true });
       }
 
-      if (newVocab >= targetVocab) {
+      if (newGrowth === THRESHOLDS[THRESHOLDS.length - 1]) {
         setShowReward(true);
         setTimeout(() => setShowReward(false), 4000);
-        const newXp = hskXp + 50;
+        const newXp = hskXp + 500;
         setHskXp(newXp);
         if (userId) await setDoc(doc(db, "users", userId), { xp: newXp }, { merge: true });
       }
-    }, 800);
+    }, 600);
   };
 
   const handleResetPlant = async () => {
-    setTodayVocabLearned(0);
+    setLotusGrowth(0);
     if (userId) {
-      await setDoc(doc(db, "users", userId), { todayVocabLearned: 0 }, { merge: true });
-      await setDoc(doc(db, "user_progress", userId), { todayVocabLearned: 0 }, { merge: true });
+      await setDoc(doc(db, "users", userId), { lotus_growth: 0 }, { merge: true });
+      await setDoc(doc(db, "user_progress", userId), { lotus_growth: 0 }, { merge: true });
     }
   };
+
+  let currentLotusFrame = 0;
+  for (let i = THRESHOLDS.length - 1; i >= 0; i--) {
+    if (lotusGrowth >= THRESHOLDS[i]) {
+      currentLotusFrame = i;
+      break;
+    }
+  }
+  const isLotusMaxLevel = currentLotusFrame >= THRESHOLDS.length - 1;
+  let lotusProgressPercent = 100;
+  let lotusDropsNeeded = 0;
+
+  if (!isLotusMaxLevel) {
+    const currentLvlDrops = THRESHOLDS[currentLotusFrame];
+    const nextLvlDrops = THRESHOLDS[currentLotusFrame + 1];
+    const dropsInCurrentLvl = lotusGrowth - currentLvlDrops;
+    const totalDropsForNextLvl = nextLvlDrops - currentLvlDrops;
+    
+    lotusProgressPercent = (dropsInCurrentLvl / totalDropsForNextLvl) * 100;
+    lotusDropsNeeded = nextLvlDrops - lotusGrowth;
+  }
 
   const hskLevels = [
     { level: "HSK 1", title: "Nhập môn", words: 500 },
@@ -364,6 +385,7 @@ export default function HomePage() {
         const mergedTodayVocab = uData.todayVocabLearned ?? upData.todayVocabLearned ?? 0;
         const mergedTodayListening = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
         const mergedTodayGrammar = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
+        const mergedLotusGrowth = uData.lotus_growth ?? upData.lotus_growth ?? 0;
         
         let teacherSkills = null;
         const notifs = [];
@@ -417,6 +439,7 @@ export default function HomePage() {
         setStreak(mergedStreak); setHearts(mergedHearts); setHskXp(mergedXp);
         setWater(mergedWater); setCurrentLevel(mergedLevel);
         setTodayVocabLearned(mergedTodayVocab); setTodayListeningLearned(mergedTodayListening); setTodayGrammarLearned(mergedTodayGrammar);
+        setLotusGrowth(mergedLotusGrowth);
         setSkillMap(mergedSkills);
 
         if (uData.role === "teacher" || uData.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
@@ -626,19 +649,20 @@ export default function HomePage() {
             <div className="relative z-10 w-full md:w-1/2">
                <h2 className="text-[10px] font-black text-[#8FD9A8] uppercase tracking-widest mb-3 drop-shadow-sm">🌿 Hồ Sen Của Bạn</h2>
                <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2 leading-[1.2] text-white drop-shadow-md">
-                  Chào {user?.firstName || user?.fullName || "bạn"} 👋
+                 Chào {user?.firstName || user?.fullName || "bạn"} 👋
                </h1>
                <p className="text-sm md:text-base text-white/90 font-medium max-w-md leading-relaxed mb-6 drop-shadow-sm">
-                 {currentLevelProgress >= 100 ? "🌸 Chúc mừng! Hoa sen đã nở rộ tuyệt đẹp!" : `Hãy tưới nước thường xuyên để chăm sóc cho mầm sen ${currentLevel} phát triển nhé.`}
+                 {isLotusMaxLevel ? "🌸 Chúc mừng! Hoa sen đã hoàn thành trọn vẹn chu kỳ sinh trưởng!" : `Hãy tưới nước thường xuyên để chăm sóc cho mầm sen phát triển nhé. Tổng đã tưới: ${lotusGrowth} 💧`}
                </p>
                
+               {/* THANH TIẾN ĐỘ THEO SỐ NƯỚC */}
                <div className="mb-8 w-full max-w-sm">
                  <div className="flex justify-between text-[11px] font-black text-white mb-2 uppercase tracking-widest drop-shadow-sm">
-                   <span>Tiến độ {currentLevel}</span>
-                   <span className="text-[#FFD666]">{currentLevelProgress}%</span>
+                   <span>Giai đoạn {currentLotusFrame + 1}/11</span>
+                   <span className="text-[#FFD666]">{isLotusMaxLevel ? "Đã hoàn tất" : `Cần thêm ${lotusDropsNeeded} 💧`}</span>
                  </div>
                  <div className="h-2.5 bg-black/20 rounded-full overflow-hidden shadow-inner border border-white/10">
-                   <div className="h-full bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-full transition-all duration-1000 shadow-sm relative" style={{ width: `${currentLevelProgress}%` }}>
+                   <div className="h-full bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-full transition-all duration-1000 shadow-sm relative" style={{ width: `${lotusProgressPercent}%` }}>
                      <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
                    </div>
                  </div>
@@ -647,17 +671,17 @@ export default function HomePage() {
                <div className="flex flex-wrap items-center gap-3">
                   <button 
                     onClick={handleWaterPlant}
-                    disabled={isWatering || currentLevelProgress >= 100}
+                    disabled={isWatering || isLotusMaxLevel}
                     className={`px-7 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1 ${
-                      currentLevelProgress >= 100 
+                      isLotusMaxLevel 
                         ? 'bg-[#E2E8F0] text-slate-500 cursor-not-allowed border border-transparent' 
                         : 'bg-white text-[#1B5E4B] hover:bg-[#8FD9A8] border border-transparent'
                     }`}
                   >
-                    {currentLevelProgress >= 100 ? "🌸 Sen đã nở" : "💧 Tưới Nước (-1)"}
+                    {isLotusMaxLevel ? "🌸 Đã hoàn thành" : "💧 Tưới Nước (-1)"}
                   </button>
                   
-                  {currentLevelProgress >= 100 && (
+                  {isLotusMaxLevel && (
                     <button onClick={handleResetPlant} className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
                       🔄 Trồng Cây Mới
                     </button>
@@ -671,16 +695,13 @@ export default function HomePage() {
                </div>
             </div>
 
-            {/* HOA SEN THẬT (REAL LOTUS) */}
+            {/* HOA SEN TRÒN DÙNG 11 ẢNH RIÊNG BIỆT + HIỆU ỨNG RUNG RINH */}
             <div className="relative z-10 w-full md:w-1/2 flex justify-center mt-10 md:mt-0">
-               <RealLotus progress={currentLevelProgress} />
+               <RealLotus plantGrowth={lotusGrowth} isWatering={isWatering} />
                
-               {isWatering && (
-                 <div className="absolute top-10 text-4xl animate-bounce drop-shadow-lg z-50">💧</div>
-               )}
                {showReward && (
                  <div className="absolute top-0 text-3xl font-black text-[#F59E0B] animate-fade-in-up drop-shadow-xl z-50 whitespace-nowrap bg-white/80 px-4 py-2 rounded-full border-2 border-white">
-                   +50 XP 🌸
+                   +500 XP 🌸
                  </div>
                )}
             </div>
@@ -794,7 +815,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm border border-[#E2E8F0] h-full flex flex-col">
+            <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col border border-[#E2E8F0] h-full">
                <div className="mb-6"><h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-center flex-1">
                  <div className="flex justify-center scale-75 lg:scale-90 origin-center">
