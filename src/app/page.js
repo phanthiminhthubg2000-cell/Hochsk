@@ -48,7 +48,7 @@ const getLocalDictionary = () => {
 const localDictionary = getLocalDictionary();
 
 // ============================================================
-// COMPONENT: BÔNG SEN TRÒN DÙNG 11 ẢNH + HIỆU ỨNG RUNG RINH SINH ĐỘNG
+// COMPONENT: BÔNG SEN TRÒN DÙNG 11 ẢNH + CÂY LUNG LAY BÊN TRONG
 // ============================================================
 const RealLotus = ({ plantGrowth, isWatering }) => {
   let currentFrame = 0;
@@ -59,14 +59,13 @@ const RealLotus = ({ plantGrowth, isWatering }) => {
     }
   }
 
-  // Đổi index từ 0 -> 10 thành định dạng chuỗi từ "01" -> "11"
   const stageNumber = String(currentFrame + 1).padStart(2, '0');
   const imagePath = `/lotus/lotus_stage_${stageNumber}.png`;
 
   return (
     <div className="relative flex flex-col items-center justify-center">
-      {/* Khung tròn bồng bềnh nhẹ nhàng với animate-[bounce_6s_ease-in-out_infinite] */}
-      <div className={`relative z-10 w-44 h-44 md:w-56 md:h-56 rounded-full border-[6px] border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden bg-gradient-to-b from-[#E0F7FA]/40 to-[#8FD9A8]/30 backdrop-blur-sm flex items-center justify-center transition-transform duration-500 animate-[bounce_6s_ease-in-out_infinite] ${isWatering ? 'scale-105' : 'scale-100'}`}>
+      {/* Khung tròn đứng yên vững chắc */}
+      <div className={`relative z-10 w-44 h-44 md:w-56 md:h-56 rounded-full border-[6px] border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden bg-gradient-to-b from-[#E0F7FA]/40 to-[#8FD9A8]/30 backdrop-blur-sm flex items-center justify-center transition-transform duration-500 ${isWatering ? 'scale-105' : 'scale-100'}`}>
         
         {/* Hiệu ứng hạt mưa rơi khi tưới */}
         {isWatering && (
@@ -77,12 +76,15 @@ const RealLotus = ({ plantGrowth, isWatering }) => {
           </div>
         )}
 
-        {/* Cây sen rung rinh, co giãn nhẹ và nghiêng khi rê chuột */}
-        <div className="w-full h-full relative overflow-hidden flex items-center justify-center p-3 animate-[pulse_4s_ease-in-out_infinite]">
+        {/* RIÊNG CÁI CÂY BÊN TRONG SẼ LUNG LAY QUA LẠI */}
+        <div className="w-full h-full relative overflow-hidden flex items-center justify-center p-3">
           <img 
             src={imagePath} 
             alt={`Giai đoạn ${currentFrame + 1}`} 
-            className="max-h-full max-w-full object-contain mix-blend-multiply transition-all duration-700 ease-in-out drop-shadow-md hover:rotate-1 hover:scale-105"
+            className="max-h-full max-w-full object-contain mix-blend-multiply transition-all duration-700 ease-in-out drop-shadow-md origin-bottom hover:scale-105"
+            style={{
+              animation: 'swing 4s ease-in-out infinite'
+            }}
             onError={(e) => {
                e.target.style.display = 'none';
                e.target.parentElement.innerHTML = `<div class="text-center p-2 text-[10px] text-red-500 font-bold">Thiếu file: lotus_stage_${stageNumber}.png trong /public/lotus/</div>`;
@@ -695,7 +697,7 @@ export default function HomePage() {
                </div>
             </div>
 
-            {/* HOA SEN TRÒN DÙNG 11 ẢNH RIÊNG BIỆT + HIỆU ỨNG RUNG RINH */}
+            {/* HOA SEN TRÒN DÙNG 11 ẢNH RIÊNG BIỆT + CÂY LUNG LAY */}
             <div className="relative z-10 w-full md:w-1/2 flex justify-center mt-10 md:mt-0">
                <RealLotus plantGrowth={lotusGrowth} isWatering={isWatering} />
                

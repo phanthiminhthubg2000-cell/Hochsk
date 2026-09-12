@@ -340,20 +340,32 @@ export default function FlashcardPage() {
               </div>
             </header>
 
-            {/* THANH CHỌN LESSON / BÀI HỌC (NẾU Ở CHẾ ĐỘ HỌC) */}
-            {mode === "learn" && levelsData.length > 1 && (
+            {/* THANH CHỌN LESSON / BÀI HỌC (ĐÃ CẬP NHẬT MÀU XANH KHI ĐÃ HỌC XONG, XÁM KHI CHƯA) */}
+            {mode === "learn" && levelsData.length > 0 && (
               <div className="mb-6 bg-white/80 backdrop-blur-md p-4 rounded-[24px] border border-[#E2E8F0] shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Chọn bài học ({selectedHsk}):</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">CHỌN BÀI HỌC ({selectedHsk.toUpperCase()}):</p>
                 <div className="flex flex-wrap gap-2">
-                  {levelsData.map((lvlObj) => (
-                    <button
-                      key={lvlObj.level}
-                      onClick={() => setViewingLevel(lvlObj.level)}
-                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all shadow-sm ${viewingLevel === lvlObj.level ? 'bg-[#1B5E4B] text-white' : 'bg-[#F4F7F6] text-[#2F8F6E] hover:bg-[#8FD9A8]/30'}`}
-                    >
-                      Bài {lvlObj.level} ({lvlObj.words.length} từ)
-                    </button>
-                  ))}
+                  {levelsData.map((lvlObj) => {
+                    // Kiểm tra xem bài học này đã học xong tất cả các từ chưa
+                    const isAllMastered = lvlObj.words.length > 0 && lvlObj.words.every(w => wordProgress[w.front] === "mastered");
+                    const isCurrent = viewingLevel === lvlObj.level;
+
+                    return (
+                      <button
+                        key={lvlObj.level}
+                        onClick={() => setViewingLevel(lvlObj.level)}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all shadow-sm border ${
+                          isCurrent 
+                            ? 'ring-2 ring-offset-2 ring-[#2F8F6E] ' + (isAllMastered ? 'bg-[#1B5E4B] text-white border-[#1B5E4B]' : 'bg-[#1B5E4B] text-white border-[#1B5E4B]')
+                            : isAllMastered 
+                              ? 'bg-[#1B5E4B] text-white border-[#1B5E4B] hover:opacity-90' 
+                              : 'bg-[#F4F7F6] text-slate-500 border-[#E2E8F0] hover:bg-slate-100'
+                        }`}
+                      >
+                        Bài {lvlObj.level} ({lvlObj.words.length} từ) {isAllMastered ? '✓' : ''}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -497,7 +509,7 @@ export default function FlashcardPage() {
                         <div className={`mt-6 p-5 rounded-2xl border animate-fade-in flex gap-4 shadow-inner ${sentenceResult.isPass ? 'bg-[#EEF5E9] border-[#8FD9A8]/50' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
                             <div className="text-3xl shrink-0 mt-1">{sentenceResult.isPass ? '🐸' : '💦'}</div>
                             <div>
-                              <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#1B5E4B]' : 'text-[#BE123C]'}`}>{sentenceResult.isPass ? "太棒了！Tuyệt vời! (+10 XP)" : "再试一次！Chưa chính xác:"}</h4>
+                              <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#1B5E4B] ' : 'text-[#BE123C]'}`}>{sentenceResult.isPass ? "太棒了！Tuyệt vời! (+10 XP)" : "再试一次！Chưa chính xác:"}</h4>
                               <p className="text-xs font-medium text-[#1B5E4B]/80 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
                               {!sentenceResult.isPass && sentenceResult.suggestion && (
                                   <p className="text-xs text-[#1B5E4B] bg-white p-3 rounded-xl border border-slate-200/60 leading-relaxed shadow-sm"><span className="font-black text-[#FFC83D]">💡 Gợi ý:</span> {sentenceResult.suggestion}</p>
