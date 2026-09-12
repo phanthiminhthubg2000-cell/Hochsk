@@ -6,22 +6,6 @@ import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit } from "firebase/firestore";
 
-// ============================================================
-// BẢNG MÀU KHU VỰC VƯỜN (HSK Garden Palette)
-// ============================================================
-
-// --- COMPONENT: Ếch xanh Tương Tác ---
-const MascotImage = ({ streak }) => {
-  const [imgError, setImgError] = useState(false);
-  let data = { img: '/garden/frog-sleep.png', emoji: '😴' };
-  if (streak >= 15) data = { img: '/garden/frog-king.png', emoji: '👑' };
-  else if (streak >= 7) data = { img: '/garden/frog-cool.png', emoji: '😎' };
-  else if (streak >= 3) data = { img: '/garden/frog-normal.png', emoji: '🐸' };
-
-  if (imgError) return <span className="text-[130px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform">{data.emoji}</span>;
-  return <img src={data.img} alt={data.emoji} onError={() => setImgError(true)} className="w-44 h-44 object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite] cursor-pointer hover:scale-105 transition-transform" />;
-};
-
 // --- HÀM HỖ TRỢ ---
 const generateLevelsFromData = (data, wordsPerLevel = 10) => {
   const levels = [];
@@ -56,13 +40,11 @@ export default function FlashcardPage() {
   const [aiError, setAiError] = useState(null); 
   
   // STATE: USER & FIREBASE
-  const [userData, setUserData] = useState(null);
   const [hskXp, setHskXp] = useState(0);
   const [water, setWater] = useState(0);
   const [streak, setStreak] = useState(0);
   const [loadingUser, setLoadingUser] = useState(true);
   const [errorDna, setErrorDna] = useState({}); 
-  const [isTeacher, setIsTeacher] = useState(false); 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   // STATE: MỚI SPRINT 2 (LEARN vs REVIEW)
@@ -89,10 +71,6 @@ export default function FlashcardPage() {
             currentXp = uData.xp || 0;
             currentWater = uData.water || 0;
             currentStreak = uData.streak || 0;
-            
-            if (uData.role === "teacher" || uData.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
-              setIsTeacher(true);
-            }
           }
 
           setHskXp(currentXp);
@@ -101,7 +79,6 @@ export default function FlashcardPage() {
 
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setUserData(data);
             setErrorDna(data.error_dna || {});
             
             if (data.learnedVocab && Array.isArray(data.learnedVocab)) {
@@ -118,7 +95,7 @@ export default function FlashcardPage() {
     fetchUserData();
   }, [user, userId]);
 
-  // --- LOGIC PHÂN TRANG THEO BÀI HỌC ---
+  // --- LOGIC PHÂN TRANG THEO BÀI HỌC VÀ CẤP ĐỘ HSK ---
   useEffect(() => {
     const dataForHsk = selectedHsk ? myCustomData.filter(item => item.level === selectedHsk) : myCustomData;
     const uniqueData = dataForHsk.filter((item, index, self) => index === self.findIndex((t) => t.front === item.front));
@@ -202,7 +179,6 @@ export default function FlashcardPage() {
       
       setSentenceResult(data);
 
-      // NẾU PASS THỬ THÁCH -> CỘNG XP & WATER BONUS NGAY LẬP TỨC
       if (data.isPass && userId) {
         const bonusXp = 10;
         const bonusWater = 2;
@@ -226,13 +202,12 @@ export default function FlashcardPage() {
   };
 
   // ============================================================
-  // 2. HỌC THUỘC TỪ (+5 XP, +1 NƯỚC) KHÔNG CẦN QUA THỬ THÁCH
+  // 2. HỌC THUỘC TỪ (+5 XP, +1 NƯỚC)
   // ============================================================
   const handleMarkMasteredAndNext = async () => {
     if (!activeWord) return;
     const isAlreadyMastered = wordProgress[activeWord.front] === "mastered";
     
-    // Nếu chưa thuộc, cập nhật state và cộng điểm
     if (!isAlreadyMastered) {
       const wordId = activeWord.front;
       const newProgress = { ...wordProgress, [wordId]: "mastered" };
@@ -262,11 +237,9 @@ export default function FlashcardPage() {
       }
     }
 
-    // Chuyển sang từ tiếp theo
     setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0);
   };
 
-  // Skip
   const handleSkipWord = () => {
     setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0);
   };
@@ -319,38 +292,73 @@ export default function FlashcardPage() {
         <div className="relative z-10 flex-1 overflow-y-auto scrollbar-hide pb-20">
           <div className="max-w-4xl mx-auto w-full px-4 md:px-8 pt-6 md:pt-10">
 
-            {/* HEADER: TOGGLE HỌC / ÔN TẬP VÀ HIỂN THỊ CHỈ SỐ */}
+            {/* HEADER: CHỌN CẤP ĐỘ HSK VÀ CHẾ ĐỘ HỌC */}
             <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-              <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-[20px] border border-white shadow-sm backdrop-blur-md">
-                <button 
-                  onClick={() => setMode("learn")}
-                  className={`px-5 py-2.5 rounded-[16px] font-black text-sm transition-all ${mode === "learn" ? 'bg-[#1B5E4B] text-white shadow-md' : 'text-slate-500 hover:text-[#2F8F6E]'}`}
-                >
-                  🌱 Học Từ Mới
-                </button>
-                <button 
-                  onClick={() => setMode("review")}
-                  className={`px-5 py-2.5 rounded-[16px] font-black text-sm transition-all flex items-center gap-2 ${mode === "review" ? 'bg-[#F2765B] text-white shadow-md' : 'text-slate-500 hover:text-[#F2765B]'}`}
-                >
-                  💦 Ôn Tập
-                  {Object.keys(errorDna).length > 0 && <span className={`w-5 h-5 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex justify-center items-center text-[10px] ${mode === "review" ? 'bg-white text-[#F2765B]' : 'bg-[#FFF1F2] text-[#BE123C]'}`}>{Object.keys(errorDna).length}</span>}
-                </button>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* THANH CHỌN HSK LEVEL */}
+                <div className="flex bg-white/80 backdrop-blur-md p-1.5 rounded-[20px] border border-white shadow-sm overflow-x-auto">
+                  {availableHskLevels.map(lvl => (
+                    <button
+                      key={lvl}
+                      onClick={() => setSelectedHsk(lvl)}
+                      className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all whitespace-nowrap ${selectedHsk === lvl ? 'bg-[#2F8F6E] text-white shadow-sm' : 'text-slate-500 hover:text-[#1B5E4B]'}`}
+                    >
+                      {lvl.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+
+                {/* NÚT TOGGLE LEARN / REVIEW */}
+                <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-[20px] border border-white shadow-sm backdrop-blur-md">
+                  <button 
+                    onClick={() => setMode("learn")}
+                    className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all ${mode === "learn" ? 'bg-[#1B5E4B] text-white shadow-md' : 'text-slate-500 hover:text-[#2F8F6E]'}`}
+                  >
+                    🌱 Học Từ Mới
+                  </button>
+                  <button 
+                    onClick={() => setMode("review")}
+                    className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all flex items-center gap-1.5 ${mode === "review" ? 'bg-[#F2765B] text-white shadow-md' : 'text-slate-500 hover:text-[#F2765B]'}`}
+                  >
+                    💦 Ôn Tập
+                    {Object.keys(errorDna).length > 0 && <span className={`w-4 h-4 rounded-full flex justify-center items-center text-[9px] ${mode === "review" ? 'bg-white text-[#F2765B]' : 'bg-[#FFF1F2] text-[#BE123C]'}`}>{Object.keys(errorDna).length}</span>}
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 rounded-2xl border border-slate-100">
-                  <span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span>
+              {/* CHỈ SỐ GÓC PHẢI */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 bg-white/90 shadow-sm px-3 py-2 rounded-2xl border border-slate-100 text-xs">
+                  <span>🔥</span><span className="font-black text-[#F2765B]">{streak}</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5 rounded-2xl">
-                  <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span>
+                <div className="flex items-center gap-1 bg-[#4FB6C7]/10 border border-[#4FB6C7]/30 shadow-sm px-3 py-2 rounded-2xl text-xs">
+                  <span>💧</span><span className="font-black text-[#4FB6C7]">{water}</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5 rounded-2xl">
-                  <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
+                <div className="flex items-center gap-1 bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-3 py-2 rounded-2xl text-xs">
+                  <span>⭐</span><span className="font-black text-[#1B5E4B]">{hskXp.toLocaleString()}</span>
                 </div>
               </div>
             </header>
 
-            {/* TIẾN ĐỘ BÀI HỌC */}
+            {/* THANH CHỌN LESSON / BÀI HỌC (NẾU Ở CHẾ ĐỘ HỌC) */}
+            {mode === "learn" && levelsData.length > 1 && (
+              <div className="mb-6 bg-white/80 backdrop-blur-md p-4 rounded-[24px] border border-[#E2E8F0] shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Chọn bài học ({selectedHsk}):</p>
+                <div className="flex flex-wrap gap-2">
+                  {levelsData.map((lvlObj) => (
+                    <button
+                      key={lvlObj.level}
+                      onClick={() => setViewingLevel(lvlObj.level)}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all shadow-sm ${viewingLevel === lvlObj.level ? 'bg-[#1B5E4B] text-white' : 'bg-[#F4F7F6] text-[#2F8F6E] hover:bg-[#8FD9A8]/30'}`}
+                    >
+                      Bài {lvlObj.level} ({lvlObj.words.length} từ)
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TIẾN ĐỘ BÀI HỌC HIỆN TẠI */}
             {mode === "learn" && (
               <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 md:p-8 shadow-sm border border-[#E2E8F0] mb-10">
                 <div className="flex items-center justify-between mb-5">
@@ -360,7 +368,7 @@ export default function FlashcardPage() {
                     </div>
                     <span className="font-black text-[#2F8F6E] text-lg shrink-0">{progressPercent}%</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-400 shrink-0 bg-[#F4F7F6] px-3 py-1.5 rounded-xl">{masteredCount} / {allCount} từ đã thuộc</span>
+                  <span className="text-xs font-bold text-slate-400 shrink-0 bg-[#F4F7F6] px-3 py-1.5 rounded-xl">Bài {viewingLevel}: {masteredCount} / {allCount} từ đã thuộc</span>
                 </div>
 
                 <div className="flex flex-wrap items-center bg-[#F4F7F6] p-1.5 rounded-2xl w-fit border border-[#E2E8F0]">
@@ -500,7 +508,6 @@ export default function FlashcardPage() {
                     </div>
                   </div>
                 </div>
-
               </>
             )}
 
