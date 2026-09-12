@@ -486,13 +486,19 @@ export default function HomePage() {
       } catch (err) { console.error("Lỗi đồng bộ dữ liệu:", err); }
 
       try {
-        const q = query(collection(db, "users"), orderBy("xp", "desc"), limit(10));
+        const q = query(collection(db, "users"), orderBy("xp", "desc"), limit(15));
         const qSnap = await getDocs(q);
         let list = [];
         qSnap.forEach((d) => {
           const dData = d.data();
-          if (dData.role !== "teacher" && dData.role !== "admin" && (dData.xp || 0) > 0) {
-            list.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: dData.xp || 0, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
+          const xpVal = dData.xp || 0;
+          if (
+            dData.role !== "teacher" && 
+            dData.role !== "admin" && 
+            xpVal <= 10000 && 
+            xpVal > 0
+          ) {
+            list.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: xpVal, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
           }
         });
         setLeaderboard(list.slice(0, 5));
@@ -502,8 +508,14 @@ export default function HomePage() {
         let fallbackList = [];
         fallbackSnap.forEach((d) => {
           const dData = d.data();
-          if (dData.role !== "teacher" && dData.role !== "admin" && (dData.xp || 0) > 0) {
-            fallbackList.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: dData.xp || 0, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
+          const xpVal = dData.xp || 0;
+          if (
+            dData.role !== "teacher" && 
+            dData.role !== "admin" && 
+            xpVal <= 10000 && 
+            xpVal > 0
+          ) {
+            fallbackList.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: xpVal, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
           }
         });
         fallbackList.sort((a, b) => b.xp - a.xp);
