@@ -45,10 +45,31 @@ export async function POST(req) {
         const pictureArray = getQuestionsArray(pictureData);
         const shortArray = getQuestionsArray(shortData);
 
-        // Bọc chuỗi văn bản thuần túy vào Object để Frontend hiển thị được, đồng thời gán 'type'
+        // Bọc chuỗi văn bản thuần túy vào Object, đồng thời chuẩn hóa đường dẫn ảnh sang /hskk/hskk3/
         const formatQuestion = (q, type) => {
-          if (typeof q === 'string') return { text: q, type };
-          return { ...q, type };
+          let formatted = typeof q === 'string' ? { text: q, type } : { ...q, type };
+
+          if (type === 'picture') {
+            let imgPath = formatted.image || (formatted.images && formatted.images[0]) || "";
+            
+            // Xử lý chuẩn hóa đường dẫn để khớp với thư mục public/hskk/hskk3/
+            if (imgPath.includes('/hskk/hskk3/')) {
+              // Đã đúng định dạng
+            } else if (imgPath.includes('/hskk3/')) {
+              imgPath = imgPath.replace('/hskk3/', '/hskk/hskk3/');
+            } else if (imgPath.includes('/hskk/')) {
+              imgPath = imgPath.replace('/hskk/', '/hskk/hskk3/');
+            } else if (imgPath && !imgPath.startsWith('/')) {
+              imgPath = `/hskk/hskk3/${imgPath}`;
+            } else if (!imgPath) {
+              imgPath = "/hskk/hskk3/hsk3_pic_001.jpg"; // Fallback an toàn nếu thiếu ảnh
+            }
+            
+            formatted.images = [imgPath];
+            formatted.image = imgPath;
+          }
+
+          return formatted;
         };
 
         // Chuẩn HSKK 3: Bốc ngẫu nhiên 8 câu nhắc lại, 5 câu tranh, 2 câu trả lời ngắn

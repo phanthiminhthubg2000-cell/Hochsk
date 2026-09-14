@@ -64,7 +64,7 @@ export default function HskkPage() {
   };
 
   const introAudioUrls = {
-    "HSK Cấp 3": "/hskk3/kaishi.mp3"
+    "HSK Cấp 3": "/hskk/kaishi.mp3"
   };
 
   // ==========================================
@@ -83,17 +83,16 @@ export default function HskkPage() {
   }, [examPhase]);
 
   // ==========================================
-  // BẢO VỆ PHÒNG THI 2: CHỐNG GIAN LẬN CHUYỂN TAB
+  // BẢO VỆ PHÒNG THI 2: CHỐNG GIAN LẬN (CHỈ BẮT SỰ KIỆN ĐỔI TAB / ẨN TRANG)
   // ==========================================
   useEffect(() => {
     const handleCheatDetection = () => {
-      // Chỉ theo dõi khi học sinh đang trong trạng thái làm bài thực sự
       if (["global_prep", "reading", "speaking", "intro", "intro_countdown"].includes(examPhase)) {
-        // Nếu document.hidden = true (người dùng chuyển tab) hoặc mất focus (chuyển phần mềm)
-        if (document.hidden || !document.hasFocus()) {
+        // Chỉ kích hoạt khi người dùng thực sự ẩn tab trình duyệt (document.hidden === true)
+        // Bỏ qua các thông báo hệ thống, pin yếu (vì không làm ẩn tab document.hidden)
+        if (document.hidden) {
           alert("🚨 CẢNH BÁO VI PHẠM 🚨\n\nHệ thống phát hiện bạn đã chuyển tab hoặc rời khỏi màn hình bài thi. \nBài thi của bạn đã bị hủy ngay lập tức!");
           
-          // Dọn dẹp âm thanh đang phát
           if (currentAudioRef.current) {
             currentAudioRef.current.pause();
             currentAudioRef.current = null;
@@ -103,7 +102,6 @@ export default function HskkPage() {
             mediaRecorderRef.current.stop();
           }
 
-          // Hủy bài và load lại trang
           setExamPhase("idle");
           window.location.reload();
         }
@@ -111,11 +109,8 @@ export default function HskkPage() {
     };
 
     document.addEventListener("visibilitychange", handleCheatDetection);
-    window.addEventListener("blur", handleCheatDetection);
-
     return () => {
       document.removeEventListener("visibilitychange", handleCheatDetection);
-      window.removeEventListener("blur", handleCheatDetection);
     };
   }, [examPhase]);
 
@@ -301,7 +296,7 @@ export default function HskkPage() {
   };
 
   const testSpeaker = () => {
-    playAudioOrSpeak("/hskk3/kaishi.mp3", "欢迎参加汉语水平考试。设备测试。", () => {
+    playAudioOrSpeak("/hskk/kaishi.mp3", "欢迎参加汉语水平考试。设备测试。", () => {
       console.log("Hoàn tất test loa");
     });
   };
@@ -814,6 +809,15 @@ export default function HskkPage() {
                               <p className="font-bold text-slate-800 text-base">{item.question}</p>
                             </div>
                           </div>
+
+                          {/* Hiển thị ảnh trong lịch sử nếu có */}
+                          {item.images && item.images.length > 0 && (
+                            <div className="flex gap-2 flex-wrap">
+                              {item.images.map((imgUrl, imgIdx) => (
+                                <img key={imgIdx} src={imgUrl} alt="Tranh minh họa" className="h-28 w-auto object-contain rounded-xl border border-slate-200 bg-slate-50" />
+                              ))}
+                            </div>
+                          )}
                           
                           {item.audioUrl && (
                             <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
@@ -993,11 +997,16 @@ export default function HskkPage() {
                           <span className={`inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mb-3 ${q.type === 'picture' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
                             {q.type === 'picture' ? "🖼️ Nhìn Tranh" : "❓ Trả Lời C.Hỏi"}
                           </span>
+                          
+                          {/* ĐÃ SỬA: Hiển thị đúng ảnh thực tế thay vì (Hình ảnh ẩn) */}
                           {q.images && q.images.length > 0 && (
-                            <div className="flex gap-2 mb-3">
-                               <div className="h-24 w-32 bg-slate-200 rounded-xl overflow-hidden flex items-center justify-center text-slate-400 text-xs font-bold border border-slate-300">(Hình ảnh ẩn)</div>
+                            <div className="flex gap-2 mb-3 flex-wrap">
+                               {q.images.map((imgUrl, imgIdx) => (
+                                 <img key={imgIdx} src={imgUrl} alt="Tranh minh họa" className="h-28 w-auto object-contain rounded-xl border border-slate-200 shadow-sm bg-white" />
+                               ))}
                             </div>
                           )}
+                          
                           <p className="font-bold text-slate-800 text-base">{q.text}</p>
                         </div>
                      ))}

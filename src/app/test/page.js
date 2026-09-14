@@ -42,7 +42,6 @@ const playAudio = (item) => {
   } else if (item.audio) {
     new Audio(item.audio).play();
   } else {
-    // Dùng Text-to-Speech đọc trường chinese lấy từ arrange.json
     const textToSpeak = item.chinese || item.front || item.text || item.sentence || "没有文本";
     const ut = new SpeechSynthesisUtterance(textToSpeak);
     ut.lang = 'zh-CN';
@@ -58,30 +57,20 @@ function ArrangeQuestion({ item, index, onChange }) {
   useEffect(() => {
     let wordsArray = [];
     
-    // Ưu tiên 1: Dữ liệu trả về có sẵn mảng words
     if (Array.isArray(item.words) && item.words.length > 0) {
       wordsArray = item.words;
-    } 
-    // Ưu tiên 2: Thuộc tính words là chuỗi chứa khoảng trắng
-    else if (typeof item.words === 'string' && item.words.includes(' ')) {
+    } else if (typeof item.words === 'string' && item.words.includes(' ')) {
       wordsArray = item.words.split(' ');
-    }
-    // Ưu tiên 3: Văn bản gốc (chinese/front/sentence) đã gõ cách nhau bằng khoảng trắng
-    else if (typeof item.chinese === 'string' && item.chinese.includes(' ')) {
+    } else if (typeof item.chinese === 'string' && item.chinese.includes(' ')) {
       wordsArray = item.chinese.split(' ');
-    }
-    else if (typeof item.front === 'string' && item.front.includes(' ')) {
+    } else if (typeof item.front === 'string' && item.front.includes(' ')) {
       wordsArray = item.front.split(' ');
-    }
-    else if (typeof item.sentence === 'string' && item.sentence.includes(' ')) {
+    } else if (typeof item.sentence === 'string' && item.sentence.includes(' ')) {
       wordsArray = item.sentence.split(' ');
-    }
-    // Dự phòng cuối: Dùng hàm cắt chuỗi tự động
-    else {
+    } else {
       wordsArray = segmentWords(item.chinese || item.front || item.sentence || "");
     }
 
-    // Lọc bỏ khoảng trắng rỗng dư thừa
     wordsArray = wordsArray.filter(w => w.trim() !== '');
 
     const initialScrambled = shuffleArray([...wordsArray]).map((w, i) => ({ id: i, text: w }));
@@ -286,7 +275,7 @@ export default function PlacementTestPage() {
     let pictureQuestions = [];
     const essayQuestions = [];
 
-    // 1 & 2 & 3. Dịch, Sắp xếp, Nghe (HSK 1 - 6)
+    // Duyệt qua 6 cấp độ để bốc đều mỗi cấp 1 câu cho các kỹ năng
     for (let i = 1; i <= 6; i++) {
       let lvlStr = `HSK ${i}`; let lvlStr2 = `HSK${i}`;
       
@@ -298,27 +287,61 @@ export default function PlacementTestPage() {
       const arrData = sentencesData.filter(item => item.level === lvlStr || item.level === lvlStr2 || item.level == i);
       if (arrData.length > 0) arrangeQuestions.push({...getRandomItems(arrData, 1)[0], originLevel: i});
       
-      // Bốc 1 câu Nghe từ arrangeData thay vì dictation.json
+      // Bốc 1 câu Nghe
       if (transData.length > 0) {
          dictationQuestions.push({...getRandomItems(transData, 1)[0], originLevel: i});
       } else {
          dictationQuestions.push({ chinese: `这是第${i}级的听力测试。`, vietnamese: `Đây là câu test nghe cấp độ ${i}.`, originLevel: i});
       }
-    }
 
-    // 4. Nhìn tranh nói (HSKK 3)
-    try {
-      const picData = await import(`@/app/data/hskk/hskk3/picture.json`).catch(()=>({default:[]}));
-      if (picData.default && picData.default.length > 0) {
-         pictureQuestions.push(...picData.default.map(item => ({...item, originLevel: 3})));
-      } else {
-         pictureQuestions.push({ images: ["https://placehold.co/400x300?text=Picture+Test"], originLevel: 3 });
+      // Tạm thời lấy xoay vòng 6 ảnh từ hskk3 cho cả 6 cấp độ HSK 1-6 để tránh thiếu file json
+      let fallbackPicIndex = (i - 1) % 6 + 1;
+      let paddedIndex = String(fallbackPicIndex).padStart(3, '0');
+      let fallbackImgPath = `/hskk/hskk3/hsk3_pic_${paddedIndex}.jpg`;
+
+      try {
+        const picData = await import(`@/app/data/hskk/hskk${i}/picture.json`).catch(() => ({ default: [] }));
+        let picArr = picData.default || [];
+        if (!Array.isArray(picArr) && picArr.questions) picArr = picArr.questions;
+
+        if (Array.isArray(picArr) && picArr.length > 0) {
+           let picked = getRandomItems(picArr, 1)[0];
+           let imgPath = picked.image || (picked.images && picked.images[0]) || "";
+           
+           if (imgPath.includes(`/hskk/hskk${i}/`)) {
+             // Đã đúng chuẩn
+           } else if (imgPath.includes(`/hskk${i}/`)) {
+             imgPath = imgPath.replace(`/hskk${i}/`, `/hskk/hskk${i}/`);
+           } else if (imgPath.includes('/hskk/')) {
+             imgPath = imgPath.replace('/hskk/', `/hskk/hskk${i}/`);
+           } else if (imgPath && !imgPath.startsWith('/')) {
+             imgPath = `/hskk/hskk${i}/${imgPath}`;
+           } else {
+             imgPath = fallbackImgPath;
+           }
+
+           pictureQuestions.push({
+             ...picked,
+             images: [imgPath],
+             originLevel: i
+           });
+        } else {
+           pictureQuestions.push({
+             text: `请结合这张图片，说一段话。（HSK ${i}）`,
+             images: [fallbackImgPath],
+             originLevel: i
+           });
+        }
+      } catch(e) {
+        pictureQuestions.push({ 
+          text: `请结合这张图片，说一段话。（HSK ${i}）`,
+          images: [fallbackImgPath], 
+          originLevel: i 
+        });
       }
-    } catch(e) {
-      pictureQuestions.push({ images: ["https://placehold.co/400x300?text=Picture+Test"], originLevel: 3 });
     }
 
-    // 5. Viết luận (HSKK 3 và HSKK 5)
+    // Viết luận (HSKK 3 và HSKK 5)
     try {
       const essay3 = await import(`@/app/data/hskk/hskk3/short.json`).catch(()=>({default:[]}));
       if (essay3.default && essay3.default.length > 0) {
@@ -342,7 +365,7 @@ export default function PlacementTestPage() {
         translate: translateQuestions,
         arrange: arrangeQuestions,
         dictation: dictationQuestions,
-        picture: pictureQuestions,
+        picture: pictureQuestions, // Giới hạn chính xác đúng 6 câu
         essay: essayQuestions
       }
     });
@@ -393,7 +416,6 @@ export default function PlacementTestPage() {
     }
   };
 
-  // --- UI: MÀN HÌNH CHỌN CHẾ ĐỘ THI ---
   if (!testMode && !testData) {
     return (
       <main className="min-h-screen bg-[#F4F7F6] relative selection:bg-[#8FD9A8]/50">
@@ -411,7 +433,7 @@ export default function PlacementTestPage() {
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
             <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
+            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
             {isLoaded && <UserButton afterSignOutUrl="/"/>}
           </div>
         </header>
@@ -449,7 +471,6 @@ export default function PlacementTestPage() {
     );
   }
 
-  // --- UI: LOADING ---
   if (loading || isSubmitting) {
     return (
       <div className="min-h-screen bg-[#EEF5E9] flex flex-col items-center justify-center relative selection:bg-[#8FD9A8]/50">
@@ -461,7 +482,6 @@ export default function PlacementTestPage() {
     );
   }
 
-  // --- UI: KẾT QUẢ ĐÃ NỘP (PENDING) ---
   if (result && result.status === "PENDING") {
     return (
       <main className="min-h-screen bg-[#F4F7F6] flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-[#8FD9A8]/50">
@@ -482,7 +502,6 @@ export default function PlacementTestPage() {
     );
   }
 
-  // --- MÀN HÌNH LÀM BÀI CHÍNH ---
   const isHSK12 = testMode === 'level' ? selectedLevel <= 2 : true; 
 
   return (
@@ -515,9 +534,6 @@ export default function PlacementTestPage() {
 
       <div className="max-w-5xl mx-auto px-4 mt-10 space-y-10 animate-fade-in">
         
-        {/* ========================================================
-            PHẦN 1: ĐỌC DỊCH (TRANSLATE)
-            ======================================================== */}
         {testData?.sections?.translate && testData.sections.translate.length > 0 && (
           <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
             <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
@@ -549,9 +565,6 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* ========================================================
-            PHẦN 2: NGỮ PHÁP (ARRANGE)
-            ======================================================== */}
         {testData?.sections?.arrange && testData.sections.arrange.length > 0 && (
           <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
             <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
@@ -575,9 +588,6 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* ========================================================
-            PHẦN 3: KỸ NĂNG NGHE (DICTATION / REPEAT) 
-            ======================================================== */}
         {testMode === 'comprehensive' && testData?.sections?.dictation && testData.sections.dictation.length > 0 && (
           <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
             <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
@@ -610,9 +620,6 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* ========================================================
-            PHẦN 4: KỸ NĂNG NÓI (PICTURE)
-            ======================================================== */}
         {testMode === 'comprehensive' && testData?.sections?.picture && testData.sections.picture.length > 0 && (
           <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
             <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
@@ -648,9 +655,6 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* ========================================================
-            PHẦN 5: KỸ NĂNG VIẾT (ESSAY)
-            ======================================================== */}
         {testData?.sections?.essay && testData.sections.essay.length > 0 && (
           <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
             <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
@@ -684,7 +688,6 @@ export default function PlacementTestPage() {
           </div>
         )}
 
-        {/* Nút Submit */}
         <div className="pt-8 pb-12 flex justify-center">
           <button 
             type="button"
