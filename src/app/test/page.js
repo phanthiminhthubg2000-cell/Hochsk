@@ -275,73 +275,71 @@ export default function PlacementTestPage() {
     let pictureQuestions = [];
     const essayQuestions = [];
 
-    // Duyệt qua 6 cấp độ để bốc đều mỗi cấp 1 câu cho các kỹ năng
+    // 1, 2, 3. Dịch, Sắp xếp, Nghe (duyệt từ HSK 1 đến 6)
     for (let i = 1; i <= 6; i++) {
       let lvlStr = `HSK ${i}`; let lvlStr2 = `HSK${i}`;
       
-      // Bốc 1 câu Dịch
       const transData = arrangeData.filter(item => item.level === lvlStr || item.level === lvlStr2 || item.level == i);
       if (transData.length > 0) translateQuestions.push({...getRandomItems(transData, 1)[0], originLevel: i});
       
-      // Bốc 1 câu Sắp xếp
       const arrData = sentencesData.filter(item => item.level === lvlStr || item.level === lvlStr2 || item.level == i);
       if (arrData.length > 0) arrangeQuestions.push({...getRandomItems(arrData, 1)[0], originLevel: i});
       
-      // Bốc 1 câu Nghe
       if (transData.length > 0) {
          dictationQuestions.push({...getRandomItems(transData, 1)[0], originLevel: i});
       } else {
          dictationQuestions.push({ chinese: `这是第${i}级的听力测试。`, vietnamese: `Đây là câu test nghe cấp độ ${i}.`, originLevel: i});
       }
-
-      // Tạm thời lấy xoay vòng 6 ảnh từ hskk3 cho cả 6 cấp độ HSK 1-6 để tránh thiếu file json
-      let fallbackPicIndex = (i - 1) % 6 + 1;
-      let paddedIndex = String(fallbackPicIndex).padStart(3, '0');
-      let fallbackImgPath = `/hskk/hskk3/hsk3_pic_${paddedIndex}.jpg`;
-
-      try {
-        const picData = await import(`@/app/data/hskk/hskk${i}/picture.json`).catch(() => ({ default: [] }));
-        let picArr = picData.default || [];
-        if (!Array.isArray(picArr) && picArr.questions) picArr = picArr.questions;
-
-        if (Array.isArray(picArr) && picArr.length > 0) {
-           let picked = getRandomItems(picArr, 1)[0];
-           let imgPath = picked.image || (picked.images && picked.images[0]) || "";
-           
-           if (imgPath.includes(`/hskk/hskk${i}/`)) {
-             // Đã đúng chuẩn
-           } else if (imgPath.includes(`/hskk${i}/`)) {
-             imgPath = imgPath.replace(`/hskk${i}/`, `/hskk/hskk${i}/`);
-           } else if (imgPath.includes('/hskk/')) {
-             imgPath = imgPath.replace('/hskk/', `/hskk/hskk${i}/`);
-           } else if (imgPath && !imgPath.startsWith('/')) {
-             imgPath = `/hskk/hskk${i}/${imgPath}`;
-           } else {
-             imgPath = fallbackImgPath;
-           }
-
-           pictureQuestions.push({
-             ...picked,
-             images: [imgPath],
-             originLevel: i
-           });
-        } else {
-           pictureQuestions.push({
-             text: `请结合这张图片，说一段话。（HSK ${i}）`,
-             images: [fallbackImgPath],
-             originLevel: i
-           });
-        }
-      } catch(e) {
-        pictureQuestions.push({ 
-          text: `请结合这张图片，说一段话。（HSK ${i}）`,
-          images: [fallbackImgPath], 
-          originLevel: i 
-        });
-      }
     }
 
-    // Viết luận (HSKK 3 và HSKK 5)
+    // 4. Nhìn tranh: Lấy đúng 3 tranh từ HSKK 3 và 3 tranh từ HSKK 4
+    let hsk3Pictures = [];
+    let hsk4Pictures = [];
+
+    try {
+      const pic3Data = await import(`@/app/data/hskk/hskk3/picture.json`).catch(() => ({ default: [] }));
+      let arr3 = pic3Data.default || [];
+      if (!Array.isArray(arr3) && arr3.questions) arr3 = arr3.questions;
+      if (Array.isArray(arr3) && arr3.length > 0) {
+        hsk3Pictures = getRandomItems(arr3, 3).map(picked => {
+          let imgPath = picked.image || (picked.images && picked.images[0]) || "";
+          if (imgPath.includes('/hskk3/')) {
+            imgPath = imgPath.replace('/hskk3/', '/hsk/hskk3/');
+          } else if (imgPath && !imgPath.startsWith('/')) {
+            imgPath = `/hskk/hskk3/${imgPath}`;
+          }
+          return { ...picked, images: [imgPath], originLevel: 3 };
+        });
+      }
+    } catch (e) { console.error("Lỗi tải tranh HSKK3:", e); }
+
+    try {
+      const pic4Data = await import(`@/app/data/hskk/hskk4/picture.json`).catch(() => ({ default: [] }));
+      let arr4 = pic4Data.default || [];
+      if (!Array.isArray(arr4) && arr4.questions) arr4 = arr4.questions;
+      if (Array.isArray(arr4) && arr4.length > 0) {
+        hsk4Pictures = getRandomItems(arr4, 3).map(picked => {
+          let imgPath = picked.image || (picked.images && picked.images[0]) || "";
+          if (imgPath.includes('/hskk4/')) {
+            imgPath = imgPath.replace('/hskk4/', '/hskk/hskk4/');
+          } else if (imgPath && !imgPath.startsWith('/')) {
+            imgPath = `/hskk/hskk4/${imgPath}`;
+          }
+          return { ...picked, images: [imgPath], originLevel: 4 };
+        });
+      }
+    } catch (e) { console.error("Lỗi tải tranh HSKK4:", e); }
+
+    while (hsk3Pictures.length < 3) {
+      hsk3Pictures.push({ text: "请结合这张图片，说一段话。", images: [`/hskk/hskk3/hsk3_pic_00${hsk3Pictures.length + 1}.jpg`], originLevel: 3 });
+    }
+    while (hsk4Pictures.length < 3) {
+      hsk4Pictures.push({ text: "请结合这张图片，说一段话。", images: [`/hskk/hskk4/hsk4_pic_00${hsk4Pictures.length + 1}.jpg`], originLevel: 4 });
+    }
+
+    pictureQuestions = [...hsk3Pictures, ...hsk4Pictures];
+
+    // 5. Viết luận (HSKK 3 và HSKK 5)
     try {
       const essay3 = await import(`@/app/data/hskk/hskk3/short.json`).catch(()=>({default:[]}));
       if (essay3.default && essay3.default.length > 0) {
@@ -365,7 +363,7 @@ export default function PlacementTestPage() {
         translate: translateQuestions,
         arrange: arrangeQuestions,
         dictation: dictationQuestions,
-        picture: pictureQuestions, // Giới hạn chính xác đúng 6 câu
+        picture: pictureQuestions,
         essay: essayQuestions
       }
     });
