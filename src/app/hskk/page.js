@@ -34,7 +34,7 @@ export default function HskkPage() {
 
   const [levelAvailability, setLevelAvailability] = useState({
     "HSK Cấp 3": { available: true, desc: "Sơ cấp • 15 câu hỏi (Đủ 3 phần)" },
-    "HSK Cấp 4": { available: false, desc: "Trung cấp • Đang cập nhật ngân hàng đề" },
+    "HSK Cấp 4": { available: true, desc: "Trung cấp • Đang cập nhật ngân hàng đề" },
     "HSK Cấp 5": { available: false, desc: "Cao cấp • Đang cập nhật ngân hàng đề" },
     "HSK Cấp 6": { available: false, desc: "Cao cấp • Đang cập nhật ngân hàng đề" }
   });
