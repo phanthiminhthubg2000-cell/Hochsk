@@ -463,15 +463,16 @@ export default function HomePage() {
         } catch (error) { console.error("Lỗi lấy thông báo:", error); }
 
         const baseSkillLevel = mergedXp > 0 ? Math.min(Math.floor(mergedXp / 30), 40) : 0; 
+// Lấy trực tiếp dữ liệu skill_map thực tế từ Database của học viên nếu có
         const dbSkills = uData.skill_map || upData.skill_map || pData.skill_map || {};
         
         const mergedSkills = {
-          vocabulary: teacherSkills ? teacherSkills.vocabulary : (dbSkills.vocabulary !== undefined ? dbSkills.vocabulary : (mergedXp === 0 && mergedTodayVocab === 0 ? 0 : baseSkillLevel + mergedTodayVocab * 2)),
-          grammar: teacherSkills ? teacherSkills.grammar : (dbSkills.grammar !== undefined ? dbSkills.grammar : (mergedXp === 0 && mergedTodayGrammar === 0 ? 0 : baseSkillLevel + mergedTodayGrammar * 2)),
-          listening: teacherSkills ? teacherSkills.listening : (dbSkills.listening !== undefined ? dbSkills.listening : (mergedXp === 0 && mergedTodayListening === 0 ? 0 : baseSkillLevel + mergedTodayListening * 5)),
-          translation: teacherSkills ? teacherSkills.translation : (dbSkills.translation !== undefined ? dbSkills.translation : baseSkillLevel),
-          writing: teacherSkills ? teacherSkills.writing : (dbSkills.writing !== undefined ? dbSkills.writing : baseSkillLevel),
-          speaking: teacherSkills ? teacherSkills.speaking : (dbSkills.speaking !== undefined ? dbSkills.speaking : baseSkillLevel),
+          vocabulary: teacherSkills?.vocabulary !== undefined ? teacherSkills.vocabulary : (dbSkills.vocabulary ?? Math.min(todayVocabLearned * 5, 100)),
+          grammar: teacherSkills?.grammar !== undefined ? teacherSkills.grammar : (dbSkills.grammar ?? Math.min(todayGrammarLearned * 10, 100)),
+          listening: teacherSkills?.listening !== undefined ? teacherSkills.listening : (dbSkills.listening ?? Math.min(todayListeningLearned * 20, 100)),
+          translation: teacherSkills?.translation !== undefined ? teacherSkills.translation : (dbSkills.translation ?? Math.min((dbSkills.vocabulary || 0) * 0.8, 100)),
+          writing: teacherSkills?.writing !== undefined ? teacherSkills.writing : (dbSkills.writing ?? Math.min((dbSkills.grammar || 0) * 0.8, 100)),
+          speaking: teacherSkills?.speaking !== undefined ? teacherSkills.speaking : (dbSkills.speaking ?? 0),
         };
 
         setStreak(mergedStreak); setHearts(mergedHearts); setHskXp(mergedXp);
@@ -782,7 +783,7 @@ export default function HomePage() {
               {gardenAreas.map((tool, index) => (
                 <Link href={tool.link} key={index} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
                   <div 
-                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.45] scale-[1.25] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
+                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.5] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
                     style={{ backgroundImage: `url(${tool.bgImg})` }}
                   ></div>
                   <div className={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-white/20 backdrop-blur-md text-xl shadow-sm transition-transform group-hover:scale-110 z-10`}>
