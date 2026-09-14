@@ -302,13 +302,9 @@ export default function PlacementTestPage() {
       if (!Array.isArray(arr3) && arr3.questions) arr3 = arr3.questions;
       if (Array.isArray(arr3) && arr3.length > 0) {
         hsk3Pictures = getRandomItems(arr3, 3).map(picked => {
-          let imgPath = picked.image || (picked.images && picked.images[0]) || "";
-          if (imgPath.includes('/hskk3/')) {
-            imgPath = imgPath.replace('/hskk3/', '/hsk/hskk3/');
-          } else if (imgPath && !imgPath.startsWith('/')) {
-            imgPath = `/hskk/hskk3/${imgPath}`;
-          }
-          return { ...picked, images: [imgPath], originLevel: 3 };
+          let rawImg = picked.image || (picked.images && picked.images[0]) || "";
+          if (!rawImg.startsWith('/')) rawImg = `/${rawImg}`;
+          return { ...picked, images: [rawImg], originLevel: 3 };
         });
       }
     } catch (e) { console.error("Lỗi tải tranh HSKK3:", e); }
@@ -319,22 +315,20 @@ export default function PlacementTestPage() {
       if (!Array.isArray(arr4) && arr4.questions) arr4 = arr4.questions;
       if (Array.isArray(arr4) && arr4.length > 0) {
         hsk4Pictures = getRandomItems(arr4, 3).map(picked => {
-          let imgPath = picked.image || (picked.images && picked.images[0]) || "";
-          if (imgPath.includes('/hskk4/')) {
-            imgPath = imgPath.replace('/hskk4/', '/hskk/hskk4/');
-          } else if (imgPath && !imgPath.startsWith('/')) {
-            imgPath = `/hskk/hskk4/${imgPath}`;
-          }
-          return { ...picked, images: [imgPath], originLevel: 4 };
+          let rawImg = picked.image || (picked.images && picked.images[0]) || "";
+          if (!rawImg.startsWith('/')) rawImg = `/${rawImg}`;
+          return { ...picked, images: [rawImg], originLevel: 4 };
         });
       }
     } catch (e) { console.error("Lỗi tải tranh HSKK4:", e); }
 
     while (hsk3Pictures.length < 3) {
-      hsk3Pictures.push({ text: "请结合这张图片，说一段话。", images: [`/hskk/hskk3/hsk3_pic_00${hsk3Pictures.length + 1}.jpg`], originLevel: 3 });
+      let num = String(hsk3Pictures.length + 1).padStart(3, '0');
+      hsk3Pictures.push({ text: "请结合这张图片，说一段话。", images: [`/hskk/hskk3/hsk3_pic_${num}.jpg`], originLevel: 3 });
     }
     while (hsk4Pictures.length < 3) {
-      hsk4Pictures.push({ text: "请结合这张图片，说一段话。", images: [`/hskk/hskk4/hsk4_pic_00${hsk4Pictures.length + 1}.jpg`], originLevel: 4 });
+      let num = String(hsk4Pictures.length + 1).padStart(3, '0');
+      hsk4Pictures.push({ text: "请结合这张图片，说一段话。", images: [`/hskk/hskk4/hsk4_pic_${num}.jpg`], originLevel: 4 });
     }
 
     pictureQuestions = [...hsk3Pictures, ...hsk4Pictures];
@@ -431,7 +425,7 @@ export default function PlacementTestPage() {
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
             <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
+            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
             {isLoaded && <UserButton afterSignOutUrl="/"/>}
           </div>
         </header>
