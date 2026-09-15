@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
-import { collection, query, where, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { db } from "../../firebase";
+import { doc, getDoc, collection, getDocs, query, where, updateDoc } from "firebase/firestore";
 
 export default function TeacherDashboard() {
   const { isSignedIn, userId } = useAuth();
@@ -134,7 +134,7 @@ export default function TeacherDashboard() {
 
         const getSkill = (key) => {
           if (dbSkills[key] !== undefined) return Math.min(dbSkills[key], 100);
-          return mergedXp === 0 ? 0 : baseSkillLevel; // FIX: Nếu XP = 0 thì kỹ năng = 0%
+          return mergedXp === 0 ? 0 : baseSkillLevel;
         };
 
         studentsMap.set(id, {
@@ -649,14 +649,14 @@ export default function TeacherDashboard() {
                       )}
 
                       {/* PHẦN 3: NGHE NHẮC LẠI (NGHE) */}
-                      {selectedTest.testData?.sections?.repeat?.length > 0 && (
+                      {selectedTest.testData?.sections?.dictation?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
                             <span className="text-xl">🎧</span> 3. Kỹ năng Nghe (6 câu)
                           </h3>
                           <div className="space-y-4 pl-2 border-l-2 border-[#E2E8F0] ml-2">
-                            {selectedTest.testData.sections.repeat.map((item, idx) => {
-                              const qId = `repeat_${idx}`;
+                            {selectedTest.testData.sections.dictation.map((item, idx) => {
+                              const qId = `dictation_${idx}`;
                               return (
                                 <div key={qId} className="bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-sm ml-4 relative">
                                   <span className="absolute -left-[30px] top-5 w-4 h-4 rounded-full bg-white border-2 border-[#10B981] z-10"></span>
@@ -687,7 +687,7 @@ export default function TeacherDashboard() {
                       {selectedTest.testData?.sections?.picture?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
-                            <span className="text-xl">🗣️</span> 4. Kỹ năng Nói (1 câu)
+                            <span className="text-xl">🗣️</span> 4. Kỹ năng Nói ({selectedTest.testData.sections.picture.length} câu)
                           </h3>
                           <div className="space-y-4 pl-2 border-l-2 border-[#E2E8F0] ml-2">
                             {selectedTest.testData.sections.picture.map((item, idx) => {
@@ -724,7 +724,7 @@ export default function TeacherDashboard() {
                       {selectedTest.testData?.sections?.essay?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
-                            <span className="text-xl">📝</span> 5. Kỹ năng Viết (2 câu)
+                            <span className="text-xl">📝</span> 5. Kỹ năng Viết ({selectedTest.testData.sections.essay.length} câu)
                           </h3>
                           <div className="space-y-4 pl-2 border-l-2 border-[#E2E8F0] ml-2">
                             {selectedTest.testData.sections.essay.map((item, idx) => {
