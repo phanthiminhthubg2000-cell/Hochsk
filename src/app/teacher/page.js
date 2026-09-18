@@ -3,16 +3,75 @@ import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
-import { doc, getDoc, collection, getDocs, query, where, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
+
+const LEVEL_OPTIONS = [
+  "Msutong HSK1",
+  "Msutong HSK2",
+  "Msutong HSK3",
+  "HSK4 2.0",
+  "HSK5 2.0",
+  "HSK1 3.0",
+  "HSK2 3.0",
+  "HSK3 3.0",
+  "HSK4 3.0",
+  "HSK5 3.0"
+];
 
 export default function TeacherDashboard() {
   const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
 
   // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("students"); // 'students' | 'grading' | 'grading_test'
+  const [activeTab, setActiveTab] = useState("students"); // 'students' | 'grading' | 'grading_test' | 'review_manager'
 
-  // --- STATES CHẤM THI HSKK ---
+  // --- STATES QUẢN LÝ LỚP HỌC & KHO BÀI KIỂM TRA ---
+  const [classesList, setClassesList] = useState([]);
+  const [isAddClassModalOpen, setIsAddClassModalOpen] = useState(false);
+  const [newClassName, setNewClassName] = useState("");
+  const [newClassStudents, setNewClassStudents] = useState("");
+  const [newClassLevel, setNewClassLevel] = useState("Msutong HSK1");
+
+  // State chỉnh sửa lớp học
+  const [editingClass, setEditingClass] = useState(null);
+  const [editClassName, setEditClassName] = useState("");
+  const [editClassStudents, setEditClassStudents] = useState("");
+  const [editClassLevel, setEditClassLevel] = useState("Msutong HSK1");
+
+  const [testsBank, setTestsBank] = useState([]);
+  const [isAddTestModalOpen, setIsAddTestModalOpen] = useState(false);
+  const [newTestName, setNewTestName] = useState("");
+  const [newTestLevel, setNewTestLevel] = useState("Msutong HSK1");
+  const [newTestContent, setNewTestContent] = useState("");
+
+  // State chỉnh sửa bài test
+  const [editingTest, setEditingTest] = useState(null);
+  const [editTestName, setEditTestName] = useState("");
+  const [editTestLevel, setEditTestLevel] = useState("Msutong HSK1");
+  const [editTestContent, setEditTestContent] = useState("");
+
+  // --- STATES THỰC HIỆN KIỂM TRA TRỰC TIẾP ---
+  const [isTestSelectModalOpen, setIsTestSelectModalOpen] = useState(false);
+  const [targetStudentForTest, setTargetStudentForTest] = useState(null);
+  const [targetClassForTest, setTargetClassForTest] = useState(null);
+  const [selectedLevelFilter, setSelectedLevelFilter] = useState("Msutong HSK1");
+  const [selectedTestId, setSelectedTestId] = useState("");
+
+  const [isLiveTesting, setIsLiveTesting] = useState(false);
+  const [selectedClassForTest, setSelectedClassForTest] = useState(null);
+  const [selectedStudentForTest, setSelectedStudentForTest] = useState(null);
+  const [selectedTestBankItem, setSelectedTestBankItem] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(4);
+  const [testResultsLog, setTestResultsLog] = useState([]);
+  const [isTestCompleted, setIsTestCompleted] = useState(false);
+  
+  // State quản lý xem hồ sơ học sinh và mở rộng bài test chi tiết
+  const [selectedStudentHistory, setSelectedStudentHistory] = useState(null);
+  const [selectedClassForHistory, setSelectedClassForHistory] = useState(null);
+  const [activeTestDetail, setActiveTestDetail] = useState(null);
+
+  // --- STATES CHẤM THI HSKK & TEST ---
   const [pendingExams, setPendingExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
   const [examAnswers, setExamAnswers] = useState([]);
@@ -22,35 +81,28 @@ export default function TeacherDashboard() {
   const [itemScores, setItemScores] = useState({}); 
   const [isLoadingExams, setIsLoadingExams] = useState(true);
 
-  // --- STATES CHẤM BÀI TEST NĂNG LỰC TOÀN DIỆN ---
   const [pendingTests, setPendingTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [questionScores, setQuestionScores] = useState({}); 
   const [questionComments, setQuestionComments] = useState({}); 
   const [isLoadingTests, setIsLoadingTests] = useState(true);
   
-  // States Form Đánh giá Năng lực
-  const [testEvalLevel, setTestEvalLevel] = useState("HSK 1");
+  const [testEvalLevel, setTestEvalLevel] = useState("Msutong HSK1");
   const [testSkillScores, setTestSkillScores] = useState({ listening: "", speaking: "", reading: "", writing: "" });
   const [testSkillFeedbacks, setTestSkillFeedbacks] = useState({ listening: "", speaking: "", reading: "", writing: "" });
   const [testGeneralFeedback, setTestGeneralFeedback] = useState("");
   const [testRecommendation, setTestRecommendation] = useState("");
   const [testTotalScore, setTestTotalScore] = useState(0);
 
-  // --- STATES CHUNG ---
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // --- STATES QUẢN LÝ HỌC VIÊN ---
   const [studentsProgress, setStudentsProgress] = useState([]);
   const [isLoadingStudents, setIsLoadingStudents] = useState(true);
 
-  // --- STATES BỐ CỤC ---
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [hskXp, setHskXp] = useState(0);
   const [hearts, setHearts] = useState(5);
   const [streak, setStreak] = useState(0);
 
-  // Lấy dữ liệu cá nhân của Admin/Giáo viên
   useEffect(() => {
     async function fetchUserData() {
       if (userId) {
@@ -69,7 +121,6 @@ export default function TeacherDashboard() {
     if (isLoaded) fetchUserData();
   }, [userId, isLoaded]);
 
-  // TỰ ĐỘNG CỘNG ĐIỂM TỔNG HSKK
   useEffect(() => {
     if (activeTab === "grading" && selectedExam) {
       const total = Object.values(itemScores).reduce((sum, val) => sum + (Number(val) || 0), 0);
@@ -77,7 +128,6 @@ export default function TeacherDashboard() {
     }
   }, [itemScores, activeTab, selectedExam]);
 
-  // TỰ ĐỘNG CỘNG ĐIỂM TỔNG BÀI TEST 4 KỸ NĂNG
   useEffect(() => {
     if (activeTab === "grading_test" && selectedTest) {
       const total = (Number(testSkillScores.listening) || 0) +
@@ -88,7 +138,264 @@ export default function TeacherDashboard() {
     }
   }, [testSkillScores, activeTab, selectedTest]);
 
-  // FETCH BÀI THI HSKK
+  useEffect(() => {
+    let timer;
+    if (isLiveTesting && !isTestCompleted && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (isLiveTesting && !isTestCompleted && timeLeft === 0) {
+      handleRecordAnswer(false);
+    }
+    return () => clearInterval(timer);
+  }, [isLiveTesting, timeLeft, isTestCompleted]);
+
+  const openTestSelectModal = (cls, student) => {
+    setTargetClassForTest(cls);
+    setTargetStudentForTest(student);
+    setSelectedLevelFilter("Msutong HSK1");
+    setSelectedTestId("");
+    setIsTestSelectModalOpen(true);
+  };
+
+  const handleConfirmStartTest = () => {
+    const chosenTest = testsBank.find(t => t.id === selectedTestId);
+    if (!chosenTest) return alert("Vui lòng chọn bài kiểm tra từ kho!");
+    setIsTestSelectModalOpen(false);
+    
+    let timePerItem = 4;
+    const lvlLower = (chosenTest.level || "").toLowerCase();
+    if (lvlLower.includes("hsk4") || lvlLower.includes("hsk5")) {
+      timePerItem = 3;
+    }
+
+    setSelectedClassForTest(targetClassForTest);
+    setSelectedStudentForTest(targetStudentForTest);
+    setSelectedTestBankItem(chosenTest);
+    setCurrentQuestionIndex(0);
+    setTestResultsLog([]);
+    setIsTestCompleted(false);
+    setIsLiveTesting(true);
+    setTimeLeft(timePerItem);
+  };
+
+  const handleRecordAnswer = (isCorrect) => {
+    const currentQuestion = selectedTestBankItem.questions[currentQuestionIndex];
+    const updatedLog = [...testResultsLog, { question: currentQuestion, correct: isCorrect }];
+    setTestResultsLog(updatedLog);
+
+    let timePerItem = 4;
+    const lvlLower = (selectedTestBankItem.level || "").toLowerCase();
+    if (lvlLower.includes("hsk4") || lvlLower.includes("hsk5")) {
+      timePerItem = 3;
+    }
+
+    if (currentQuestionIndex + 1 < selectedTestBankItem.questions.length) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setTimeLeft(timePerItem);
+    } else {
+      setIsTestCompleted(true);
+      saveTestResultToStudentHistory(updatedLog);
+    }
+  };
+
+  const saveTestResultToStudentHistory = async (finalLog) => {
+    const correctCount = finalLog.filter(item => item.correct).length;
+    const totalCount = finalLog.length;
+    
+    try {
+      const classRef = doc(db, "classes", selectedClassForTest.id);
+      const updatedStudents = selectedClassForTest.students.map(st => {
+        if (st.id === selectedStudentForTest.id) {
+          const newHistoryItem = {
+            testName: selectedTestBankItem.testName,
+            level: selectedTestBankItem.level,
+            date: new Date().toLocaleDateString('vi-VN'),
+            correct: correctCount,
+            total: totalCount,
+            score: Math.round((correctCount / totalCount) * 100),
+            logs: finalLog
+          };
+          return { ...st, history: [...(st.history || []), newHistoryItem] };
+        }
+        return st;
+      });
+
+      await updateDoc(classRef, { students: updatedStudents });
+      fetchClasses();
+    } catch (err) {
+      console.error("Lỗi lưu kết quả kiểm tra:", err);
+    }
+  };
+
+  const fetchClasses = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "classes"));
+      const list = [];
+      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      setClassesList(list);
+    } catch (err) { console.error("Lỗi tải danh sách lớp:", err); }
+  };
+
+  const fetchTestsBank = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "tests_bank"));
+      const list = [];
+      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      setTestsBank(list);
+    } catch (err) { console.error("Lỗi tải kho bài kiểm tra:", err); }
+  };
+
+  const handleCreateClass = async (e) => {
+    e.preventDefault();
+    if (!newClassName.trim() || !newClassStudents.trim()) {
+      return alert("Vui lòng nhập tên lớp và danh sách học sinh!");
+    }
+    const studentsArray = newClassStudents
+      .split("\n")
+      .map(name => name.trim())
+      .filter(name => name !== "")
+      .map((name, index) => ({ id: `st_${Date.now()}_${index}`, name, history: [] }));
+
+    try {
+      await addDoc(collection(db, "classes"), {
+        className: newClassName.trim(),
+        level: newClassLevel,
+        students: studentsArray,
+        createdAt: serverTimestamp()
+      });
+      alert("✅ Đã tạo lớp học thành công!");
+      setIsAddClassModalOpen(false);
+      setNewClassName("");
+      setNewClassStudents("");
+      fetchClasses();
+    } catch (err) { alert("Lỗi khi tạo lớp: " + err.message); }
+  };
+
+  const handleOpenEditClass = (cls) => {
+    setEditingClass(cls);
+    setEditClassName(cls.className);
+    setEditClassLevel(cls.level);
+    const namesString = cls.students ? cls.students.map(s => s.name).join("\n") : "";
+    setEditClassStudents(namesString);
+  };
+
+  const handleUpdateClass = async (e) => {
+    e.preventDefault();
+    if (!editClassName.trim() || !editClassStudents.trim()) {
+      return alert("Vui lòng nhập đầy đủ thông tin lớp!");
+    }
+
+    const oldStudentsMap = new Map();
+    if (editingClass.students) {
+      editingClass.students.forEach(st => oldStudentsMap.set(st.name.trim(), st.history || []));
+    }
+
+    const updatedStudentsArray = editClassStudents
+      .split("\n")
+      .map(name => name.trim())
+      .filter(name => name !== "")
+      .map((name, index) => ({
+        id: `st_${Date.now()}_${index}`,
+        name,
+        history: oldStudentsMap.get(name) || []
+      }));
+
+    try {
+      const classRef = doc(db, "classes", editingClass.id);
+      await updateDoc(classRef, {
+        className: editClassName.trim(),
+        level: editClassLevel,
+        students: updatedStudentsArray
+      });
+      alert("✅ Đã cập nhật danh sách lớp thành công!");
+      setEditingClass(null);
+      fetchClasses();
+    } catch (err) {
+      alert("Lỗi cập nhật lớp: " + err.message);
+    }
+  };
+
+  const handleDeleteClass = async (classId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa lớp học này không?")) return;
+    try {
+      await deleteDoc(doc(db, "classes", classId));
+      alert("Đã xóa lớp học!");
+      fetchClasses();
+    } catch (err) {
+      alert("Lỗi khi xóa lớp: " + err.message);
+    }
+  };
+
+  const handleCreateTest = async (e) => {
+    e.preventDefault();
+    if (!newTestName.trim() || !newTestContent.trim()) {
+      return alert("Vui lòng nhập tên bài và nội dung câu hỏi/từ vựng!");
+    }
+    const questionsArray = newTestContent
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line !== "");
+
+    try {
+      await addDoc(collection(db, "tests_bank"), {
+        testName: newTestName.trim(),
+        level: newTestLevel,
+        questions: questionsArray,
+        createdAt: serverTimestamp()
+      });
+      alert("✅ Đã thêm bài kiểm tra vào kho thành công!");
+      setIsAddTestModalOpen(false);
+      setNewTestName("");
+      setNewTestContent("");
+      fetchTestsBank();
+    } catch (err) { alert("Lỗi khi thêm bài kiểm tra: " + err.message); }
+  };
+
+  const handleOpenEditTest = (test) => {
+    setEditingTest(test);
+    setEditTestName(test.testName);
+    setEditTestLevel(test.level);
+    const contentString = test.questions ? test.questions.join("\n") : "";
+    setEditTestContent(contentString);
+  };
+
+  const handleUpdateTest = async (e) => {
+    e.preventDefault();
+    if (!editTestName.trim() || !editTestContent.trim()) {
+      return alert("Vui lòng nhập tên bài và nội dung câu hỏi!");
+    }
+    const questionsArray = editTestContent
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line !== "");
+
+    try {
+      const testRef = doc(db, "tests_bank", editingTest.id);
+      await updateDoc(testRef, {
+        testName: editTestName.trim(),
+        level: editTestLevel,
+        questions: questionsArray
+      });
+      alert("✅ Đã cập nhật bài kiểm tra!");
+      setEditingTest(null);
+      fetchTestsBank();
+    } catch (err) {
+      alert("Lỗi cập nhật bài test: " + err.message);
+    }
+  };
+
+  const handleDeleteTest = async (testId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa bài kiểm tra này khỏi kho không?")) return;
+    try {
+      await deleteDoc(doc(db, "tests_bank", testId));
+      alert("Đã xóa bài kiểm tra!");
+      fetchTestsBank();
+    } catch (err) {
+      alert("Lỗi khi xóa bài test: " + err.message);
+    }
+  };
+
   const fetchPendingExams = async () => {
     setIsLoadingExams(true);
     try {
@@ -101,7 +408,6 @@ export default function TeacherDashboard() {
     } catch (error) { console.error("Lỗi lấy danh sách bài thi HSKK:", error); } finally { setIsLoadingExams(false); }
   };
 
-  // FETCH BÀI TEST NĂNG LỰC
   const fetchPendingTests = async () => {
     setIsLoadingTests(true);
     try {
@@ -114,7 +420,6 @@ export default function TeacherDashboard() {
     } catch (error) { console.error("Lỗi lấy danh sách bài Test:", error); } finally { setIsLoadingTests(false); }
   };
 
-  // FETCH DỮ LIỆU TẤT CẢ HỌC VIÊN
   const fetchAllStudentsProgress = async () => {
     setIsLoadingStudents(true);
     try {
@@ -164,12 +469,13 @@ export default function TeacherDashboard() {
   };
 
   useEffect(() => {
+    fetchClasses();
+    fetchTestsBank();
     fetchPendingExams();
     fetchPendingTests();
     fetchAllStudentsProgress();
   }, []);
 
-  // --- LOGIC CHẤM THI HSKK ---
   const handleSelectExam = async (exam) => {
     setSelectedExam(exam);
     setExamAnswers([]); setScoreInput(""); setFeedbackInput(""); setCommentInputs({}); setItemScores({});
@@ -205,11 +511,10 @@ export default function TeacherDashboard() {
     } catch (error) { alert("Lỗi: " + error.message); } finally { setIsSubmitting(false); }
   };
 
-  // --- LOGIC CHẤM BÀI TEST NĂNG LỰC TOÀN DIỆN ---
   const handleSelectTest = (test) => {
     setSelectedTest(test);
     setQuestionScores({}); setQuestionComments({});
-    setTestEvalLevel("HSK 1");
+    setTestEvalLevel("Msutong HSK1");
     setTestSkillScores({ listening: "", speaking: "", reading: "", writing: "" });
     setTestSkillFeedbacks({ listening: "", speaking: "", reading: "", writing: "" });
     setTestGeneralFeedback(""); setTestRecommendation("");
@@ -311,9 +616,13 @@ export default function TeacherDashboard() {
                 {!isSidebarCollapsed && pendingExams.length > 0 && <span className="bg-[#F43F70] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingExams.length}</span>}
               </button>
 
-              <button onClick={() => setActiveTab("grading_test")} className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'grading_test' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+              <button onClick={() => setActiveTab("grading_test")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'grading_test' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
                 <div className="flex items-center gap-3"><span className="text-lg">📝</span>{!isSidebarCollapsed && <span>Chấm bài Test</span>}</div>
                 {!isSidebarCollapsed && pendingTests.length > 0 && <span className="bg-[#10B981] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingTests.length}</span>}
+              </button>
+
+              <button onClick={() => setActiveTab("review_manager")} className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'review_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+                <div className="flex items-center gap-3"><span className="text-lg">🔄</span>{!isSidebarCollapsed && <span>Kiểm tra bài cũ</span>}</div>
               </button>
             </div>
           </nav>
@@ -354,7 +663,8 @@ export default function TeacherDashboard() {
             <p className="text-[#64748B] font-medium mt-1">
               {activeTab === 'students' ? "Quản lý dữ liệu và theo dõi tiến độ của toàn bộ học viên trong hệ thống." : 
                activeTab === 'grading' ? "Đánh giá kết quả phần thi kỹ năng nói (HSKK) của học viên." : 
-               "Chấm bài kiểm tra Năng lực (4 Kỹ Năng) của học viên."}
+               activeTab === 'grading_test' ? "Chấm bài kiểm tra Năng lực (4 Kỹ Năng) của học viên." :
+               "Quản lý lớp học và kho bài kiểm tra bài cũ cho học sinh."}
             </p>
           </div>
 
@@ -798,7 +1108,7 @@ export default function TeacherDashboard() {
                                 value={testEvalLevel} onChange={(e) => setTestEvalLevel(e.target.value)}
                                 className="w-full p-4 rounded-xl bg-white/10 border border-white/20 text-white font-black outline-none focus:border-[#10B981] cursor-pointer"
                               >
-                                {[1,2,3,4,5,6,7,8,9].map(l => <option key={l} value={`HSK ${l}`} className="text-black">HSK {l}</option>)}
+                                {LEVEL_OPTIONS.map(l => <option key={l} value={l} className="text-black">{l}</option>)}
                               </select>
                             </div>
                             <div className="w-1/3">
@@ -845,8 +1155,446 @@ export default function TeacherDashboard() {
             </div>
           )}
 
+          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP GOM THEO CẤP ĐỘ) */}
+          {activeTab === "review_manager" && (
+            <div className="space-y-10 animate-fade-in">
+              {/* KHU VỰC 1: DANH SÁCH LỚP */}
+              <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-xl font-black text-[#142033]">1. Danh Sách Lớp Học</h3>
+                    <p className="text-xs font-medium text-[#64748B] mt-1">Quản lý các lớp, học sinh và thực hiện bài Test.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAddClassModalOpen(true)}
+                    className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition"
+                  >
+                    + Thêm lớp
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {classesList.length === 0 ? (
+                    <p className="text-slate-400 text-xs py-6">Chưa có lớp học nào được tạo.</p>
+                  ) : (
+                    classesList.map(cls => (
+                      <div key={cls.id} className="p-6 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] flex flex-col justify-between">
+                        <div>
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-black text-base text-[#142033]">{cls.className}</h4>
+                            <span className="inline-block bg-[#ECFDF5] text-[#10B981] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-[#A7F3D0]">{cls.level}</span>
+                          </div>
+                          <p className="text-xs text-[#64748B] font-medium mb-3">Sĩ số: <strong className="text-[#142033]">{cls.students?.length || 0}</strong> học sinh</p>
+                          
+                          <div className="flex gap-2 mb-4">
+                            <button onClick={() => handleOpenEditClass(cls)} className="px-3 py-1.5 bg-white border border-[#E2E8F0] rounded-xl text-[10px] font-bold text-slate-600 hover:bg-slate-50">✏️ Sửa lớp</button>
+                            <button onClick={() => handleDeleteClass(cls.id)} className="px-3 py-1.5 bg-rose-50 border border-rose-200 rounded-xl text-[10px] font-bold text-rose-600 hover:bg-rose-100">🗑️ Xóa lớp</button>
+                          </div>
+
+                          <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1 mb-4">
+                            {cls.students?.map(st => (
+                              <div key={st.id} className="p-3 bg-white rounded-xl border border-[#E2E8F0] flex justify-between items-center shadow-sm">
+                                <div>
+                                  <p className="font-bold text-xs text-[#142033]">{st.name}</p>
+                                  <p className="text-[10px] text-slate-400">{st.history?.length || 0} bài đã kiểm tra</p>
+                                </div>
+                                <div className="flex gap-1">
+                                  <button 
+                                    onClick={() => { setSelectedStudentHistory(st); setSelectedClassForHistory(cls); setActiveTestDetail(null); }}
+                                    className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm"
+                                    title="Xem hồ sơ"
+                                  >
+                                    📜 Hồ sơ
+                                  </button>
+                                  <button 
+                                    onClick={() => openTestSelectModal(cls, st)}
+                                    className="px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm"
+                                    title="Bắt đầu Test"
+                                  >
+                                    ▶ Test
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* KHU VỰC 2: KHO BÀI KIỂM TRA (GOM THEO CẤP ĐỘ) */}
+              <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-xl font-black text-[#142033]">2. Kho Bài Kiểm Tra (Theo Cấp Độ)</h3>
+                    <p className="text-xs font-medium text-[#64748B] mt-1">Các bài kiểm tra từ vựng được gom nhóm theo từng cấp độ học.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAddTestModalOpen(true)}
+                    className="px-5 py-2.5 bg-[#142033] text-white rounded-xl font-black text-xs shadow-md hover:bg-black transition"
+                  >
+                    + Thêm bài
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {LEVEL_OPTIONS.map(lvl => {
+                    const testsInLevel = testsBank.filter(t => t.level === lvl);
+                    if (testsInLevel.length === 0) return null;
+
+                    return (
+                      <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0]">
+                        <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest mb-4 flex items-center gap-2">
+                          <span>📁</span> {lvl} <span className="text-xs font-bold text-slate-400">({testsInLevel.length} bài)</span>
+                        </h4>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {testsInLevel.map(test => (
+                            <div key={test.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
+                              <div>
+                                <h5 className="font-black text-sm text-[#142033] mb-1">{test.testName}</h5>
+                                <p className="text-xs text-[#64748B] font-medium mb-3">Số lượng câu hỏi: <strong className="text-[#142033]">{test.questions?.length || 0}</strong> từ/câu</p>
+                              </div>
+                              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                                <button onClick={() => handleOpenEditTest(test)} className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200">✏️ Sửa</button>
+                                <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200">🗑️ Xóa</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {testsBank.length === 0 && (
+                    <p className="text-slate-400 text-xs py-6 text-center">Chưa có bài kiểm tra nào trong kho. Hãy bấm "+ Thêm bài" để bắt đầu.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
+
+      {/* MODAL THÊM LỚP */}
+      {isAddClassModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <form onSubmit={handleCreateClass} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Tạo Lớp Học Mới</h3>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên lớp học</label>
+              <input type="text" value={newClassName} onChange={e => setNewClassName(e.target.value)} placeholder="VD: Lớp Tiếng Trung Msutong 1" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn cấp độ</label>
+              <select value={newClassLevel} onChange={e => setNewClassLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
+                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Danh sách học sinh (Mỗi bạn 1 dòng)</label>
+              <textarea rows="5" value={newClassStudents} onChange={e => setNewClassStudents(e.target.value)} placeholder="Nguyễn Văn A&#10;Trần Thị B&#10;Lê Văn C" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setIsAddClassModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Tạo lớp</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL CHỈNH SỬA LỚP */}
+      {editingClass && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <form onSubmit={handleUpdateClass} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Sửa Danh Sách Lớp</h3>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên lớp học</label>
+              <input type="text" value={editClassName} onChange={e => setEditClassName(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn cấp độ</label>
+              <select value={editClassLevel} onChange={e => setEditClassLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
+                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Danh sách học sinh (Mỗi bạn 1 dòng)</label>
+              <textarea rows="5" value={editClassStudents} onChange={e => setEditClassStudents(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setEditingClass(null)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Lưu thay đổi</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL THÊM BÀI KIỂM TRA */}
+      {isAddTestModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <form onSubmit={handleCreateTest} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Thêm Bài Kiểm Tra Mới</h3>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên bài kiểm tra</label>
+              <input type="text" value={newTestName} onChange={e => setNewTestName(e.target.value)} placeholder="VD: Kiểm tra từ vựng bài 1" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Cấp độ</label>
+              <select value={newTestLevel} onChange={e => setNewTestLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
+                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Nội dung từ/câu hỏi (Mỗi từ 1 dòng)</label>
+              <textarea rows="6" value={newTestContent} onChange={e => setNewTestContent(e.target.value)} placeholder="你好&#10;谢谢&#10;再见" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setIsAddTestModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="submit" className="flex-1 py-3 bg-[#142033] text-white rounded-xl font-bold text-xs shadow-md">Thêm bài</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL CHỈNH SỬA BÀI KIỂM TRA */}
+      {editingTest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <form onSubmit={handleUpdateTest} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Chỉnh Sửa Bài Kiểm Tra</h3>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên bài kiểm tra</label>
+              <input type="text" value={editTestName} onChange={e => setEditTestName(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Cấp độ</label>
+              <select value={editTestLevel} onChange={e => setEditTestLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
+                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Nội dung từ/câu hỏi (Mỗi từ 1 dòng)</label>
+              <textarea rows="6" value={editTestContent} onChange={e => setEditTestContent(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setEditingTest(null)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Lưu thay đổi</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL CHỌN CẤP ĐỘ -> CHỌN BÀI KHI BẤM TEST */}
+      {isTestSelectModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Bắt đầu kiểm tra cho: <span className="text-[#10B981]">{targetStudentForTest?.name}</span></h3>
+            
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">1. Chọn cấp độ</label>
+              <select 
+                value={selectedLevelFilter} 
+                onChange={(e) => {
+                  setSelectedLevelFilter(e.target.value);
+                  setSelectedTestId("");
+                }} 
+                className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]"
+              >
+                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">2. Chọn bài kiểm tra</label>
+              <select 
+                value={selectedTestId} 
+                onChange={(e) => setSelectedTestId(e.target.value)} 
+                className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]"
+              >
+                <option value="">-- Chọn bài trong kho --</option>
+                {testsBank
+                  .filter(t => t.level === selectedLevelFilter)
+                  .map(t => (
+                    <option key={t.id} value={t.id}>{t.testName} ({t.questions?.length || 0} câu)</option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setIsTestSelectModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button 
+                type="button" 
+                onClick={handleConfirmStartTest}
+                className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md hover:bg-[#059669]"
+              >
+                Bắt đầu Test
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PHÒNG KIỂM TRA TRỰC TIẾP (LIVE TEST) */}
+      {isLiveTesting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#142033]/90 backdrop-blur-md animate-fade-in">
+          <div className="bg-white rounded-[40px] p-8 md:p-12 max-w-xl w-full shadow-2xl text-center relative overflow-hidden flex flex-col items-center">
+            
+            {!isTestCompleted ? (
+              <>
+                <div className="w-full flex justify-between items-center mb-6">
+                  <span className="bg-[#ECFDF5] text-[#10B981] font-black text-xs px-3 py-1 rounded-full uppercase tracking-widest border border-[#A7F3D0]">
+                    {selectedStudentForTest?.name} • Câu {currentQuestionIndex + 1}/{selectedTestBankItem?.questions.length}
+                  </span>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-base shadow-inner ${timeLeft <= 2 ? 'bg-rose-100 text-rose-600 animate-pulse' : 'bg-slate-100 text-[#142033]'}`}>
+                    {timeLeft}s
+                  </div>
+                </div>
+
+                <div className="my-10 w-full py-12 bg-[#F8FAFC] rounded-3xl border-2 border-[#E2E8F0] shadow-inner flex items-center justify-center">
+                  <h2 className="text-6xl md:text-7xl font-black text-[#142033] tracking-wider">
+                    {selectedTestBankItem?.questions[currentQuestionIndex]}
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 w-full">
+                  <button 
+                    onClick={() => handleRecordAnswer(false)}
+                    className="py-5 bg-rose-50 text-rose-600 border border-rose-200 rounded-2xl font-black text-base shadow-sm hover:bg-rose-100 transition active:scale-95"
+                  >
+                    ❌ Sai / Chưa đạt
+                  </button>
+                  <button 
+                    onClick={() => handleRecordAnswer(true)}
+                    className="py-5 bg-[#10B981] text-white rounded-2xl font-black text-base shadow-lg hover:bg-[#059669] transition active:scale-95"
+                  >
+                    ✓ Đúng (OK)
+                  </button>
+                </div>
+
+                <button onClick={() => setIsLiveTesting(false)} className="mt-6 text-xs font-bold text-slate-400 hover:text-slate-600">
+                  Thoát phiên kiểm tra
+                </button>
+              </>
+            ) : (
+              <div className="space-y-6 w-full animate-slide-up-fade">
+                <div className="text-6xl mb-2">🏆</div>
+                <h2 className="text-3xl font-black text-[#142033]">Hoàn Thành Kiểm Tra!</h2>
+                <p className="text-slate-500 font-medium text-sm">Học viên: <strong className="text-[#142033]">{selectedStudentForTest?.name}</strong></p>
+                
+                <div className="bg-[#ECFDF5] border border-[#A7F3D0] p-6 rounded-3xl my-6">
+                  <p className="text-xs font-black text-[#10B981] uppercase tracking-widest mb-1">Kết quả đạt được</p>
+                  <p className="text-4xl font-black text-[#047857]">
+                    {testResultsLog.filter(i => i.correct).length} / {testResultsLog.length} <span className="text-lg">câu đúng</span>
+                  </p>
+                </div>
+
+                <button 
+                  onClick={() => setIsLiveTesting(false)}
+                  className="w-full py-4 bg-[#142033] text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg hover:bg-black transition"
+                >
+                  Đóng & Quay lại Quản lý Lớp
+                </button>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+
+      {/* MODAL HỒ SƠ HỌC SINH (RỘNG 98% MÀN HÌNH, HIỂN THỊ BẢNG HOÀN CHỈNH KHI CLICK VÀO BÀI TEST) */}
+      {selectedStudentHistory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-[40px] p-6 md:p-10 w-[98vw] max-w-[1400px] shadow-2xl space-y-6 animate-slide-up-fade max-h-[95vh] flex flex-col">
+            
+            <div className="flex justify-between items-center border-b border-[#E2E8F0] pb-4 shrink-0">
+              <div>
+                <h3 className="text-2xl font-black text-[#142033]">Hồ sơ học viên</h3>
+                <p className="text-xs font-bold text-[#10B981] mt-0.5">
+                  Học sinh: {selectedStudentHistory.name} • Lớp: {selectedClassForHistory?.className || "Chưa rõ"}
+                </p>
+              </div>
+              <button onClick={() => setSelectedStudentHistory(null)} className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold transition">✕</button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+              {selectedStudentHistory.history?.length === 0 ? (
+                <p className="text-sm text-slate-400 py-12 text-center font-medium">Học sinh chưa có bài kiểm tra bài cũ nào.</p>
+              ) : (
+                selectedStudentHistory.history?.map((h, i) => {
+                  const isDetailOpen = activeTestDetail === i;
+
+                  return (
+                    <div key={i} className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm overflow-hidden transition-all">
+                      
+                      <div 
+                        onClick={() => setActiveTestDetail(isDetailOpen ? null : i)}
+                        className="p-5 bg-[#F8FAFC] hover:bg-slate-100 cursor-pointer flex justify-between items-center transition"
+                      >
+                        <div>
+                          <span className="bg-[#142033] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded mb-1 inline-block">{h.level}</span>
+                          <h4 className="font-black text-base text-[#142033]">{h.testName}</h4>
+                          <p className="text-xs font-medium text-slate-400">Ngày kiểm tra: {h.date}</p>
+                        </div>
+                        <div className="flex items-center gap-4 text-right">
+                          <div>
+                            <p className="font-black text-lg text-[#10B981]">{h.score}%</p>
+                            <p className="text-xs font-bold text-slate-500">{h.correct}/{h.total} câu đúng</p>
+                          </div>
+                          <span className="text-slate-400 font-bold text-lg">{isDetailOpen ? "▲" : "▼"}</span>
+                        </div>
+                      </div>
+
+                      {/* BẢNG HOÀN CHỈNH: TÊN HỌC SINH - TÊN BÀI - DANH SÁCH TỪ VỰNG */}
+                      {isDetailOpen && (
+                        <div className="p-6 bg-white border-t border-[#E2E8F0] space-y-5 animate-fade-in">
+                          <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-bold text-[#64748B]">
+                            <p>👤 <strong className="text-[#142033]">Học sinh:</strong> {selectedStudentHistory.name}</p>
+                            <p>📚 <strong className="text-[#142033]">Bài test:</strong> {h.testName} ({h.level})</p>
+                            <p>🎯 <strong className="text-[#142033]">Kết quả:</strong> {h.correct}/{h.total} câu đúng ({h.score}%)</p>
+                          </div>
+
+                          <div>
+                            <p className="text-xs font-black text-[#142033] uppercase tracking-widest mb-3">Danh sách từ vựng kiểm tra (Đúng / Sai):</p>
+                            {h.logs && h.logs.length > 0 ? (
+                              <div className="flex flex-wrap gap-2.5">
+                                {h.logs.map((logItem, idx) => (
+                                  <span 
+                                    key={idx} 
+                                    className={`px-4 py-2 rounded-xl text-sm font-black border flex items-center gap-2 ${logItem.correct ? 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]' : 'bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]'}`}
+                                  >
+                                    {logItem.question} {logItem.correct ? "✓" : "✗"}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-xs text-slate-400 italic">Không có chi tiết từng từ cho bài kiểm tra này.</p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="pt-2 shrink-0">
+              <button 
+                onClick={() => setSelectedStudentHistory(null)} 
+                className="w-full py-4 bg-[#142033] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition shadow-md"
+              >
+                Đóng
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
