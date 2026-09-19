@@ -1,21 +1,26 @@
 "use client";
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 
 const LEVEL_OPTIONS = [
   "Msutong HSK1",
   "Msutong HSK2",
-  "Msutong HSK3",
-  "HSK4 2.0",
-  "HSK5 2.0",
+  "Msutong HSK3.1",
+  "Msutong HSK3.2",
+  "HSK4.1 2.0",
+  "HSK4.2 2.0",
+  "HSK5.1 2.0",
+  "HSK5.2 2.0",
   "HSK1 3.0",
   "HSK2 3.0",
   "HSK3 3.0",
-  "HSK4 3.0",
-  "HSK5 3.0"
+  "HSK4.1 3.0",
+  "HSK4.2 3.0",
+  "HSK5.1 3.0",
+  "HSK5.2 3.0"
 ];
 
 export default function TeacherDashboard() {
@@ -23,7 +28,7 @@ export default function TeacherDashboard() {
   const { user, isLoaded } = useUser();
 
   // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("students"); // 'students' | 'grading' | 'grading_test' | 'review_manager'
+  const [activeTab, setActiveTab] = useState("students"); // 'students' | 'grading' | 'grading_test' | 'review_manager' | 'lecture_manager'
 
   // --- STATES QUẢN LÝ LỚP HỌC & KHO BÀI KIỂM TRA ---
   const [classesList, setClassesList] = useState([]);
@@ -32,7 +37,6 @@ export default function TeacherDashboard() {
   const [newClassStudents, setNewClassStudents] = useState("");
   const [newClassLevel, setNewClassLevel] = useState("Msutong HSK1");
 
-  // State chỉnh sửa lớp học
   const [editingClass, setEditingClass] = useState(null);
   const [editClassName, setEditClassName] = useState("");
   const [editClassStudents, setEditClassStudents] = useState("");
@@ -44,11 +48,19 @@ export default function TeacherDashboard() {
   const [newTestLevel, setNewTestLevel] = useState("Msutong HSK1");
   const [newTestContent, setNewTestContent] = useState("");
 
-  // State chỉnh sửa bài test
   const [editingTest, setEditingTest] = useState(null);
   const [editTestName, setEditTestName] = useState("");
   const [editTestLevel, setEditTestLevel] = useState("Msutong HSK1");
   const [editTestContent, setEditTestContent] = useState("");
+
+  // --- STATES QUẢN LÝ KHO BÀI GIẢNG ---
+  const [lecturesBank, setLecturesBank] = useState([]);
+  const [isAddLectureModalOpen, setIsAddLectureModalOpen] = useState(false);
+  const [newLectureName, setNewLectureName] = useState("");
+  const [newLectureLevel, setNewLectureLevel] = useState("Msutong HSK1");
+  const [newLectureHtmlContent, setNewLectureHtmlContent] = useState("");
+  const [activeLectureView, setActiveLectureView] = useState(null);
+  const lectureContainerRef = useRef(null);
 
   // --- STATES THỰC HIỆN KIỂM TRA TRỰC TIẾP ---
   const [isTestSelectModalOpen, setIsTestSelectModalOpen] = useState(false);
@@ -66,7 +78,6 @@ export default function TeacherDashboard() {
   const [testResultsLog, setTestResultsLog] = useState([]);
   const [isTestCompleted, setIsTestCompleted] = useState(false);
   
-  // State quản lý xem hồ sơ học sinh và mở rộng bài test chi tiết
   const [selectedStudentHistory, setSelectedStudentHistory] = useState(null);
   const [selectedClassForHistory, setSelectedClassForHistory] = useState(null);
   const [activeTestDetail, setActiveTestDetail] = useState(null);
@@ -163,6 +174,7 @@ export default function TeacherDashboard() {
     if (!chosenTest) return alert("Vui lòng chọn bài kiểm tra từ kho!");
     setIsTestSelectModalOpen(false);
     
+    // Quy tắc đếm giờ: H1-H3.2 (4s/từ), H4 trở lên (3s/từ)
     let timePerItem = 4;
     const lvlLower = (chosenTest.level || "").toLowerCase();
     if (lvlLower.includes("hsk4") || lvlLower.includes("hsk5")) {
@@ -245,6 +257,24 @@ export default function TeacherDashboard() {
       setTestsBank(list);
     } catch (err) { console.error("Lỗi tải kho bài kiểm tra:", err); }
   };
+
+  const fetchLecturesBank = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "lectures_bank"));
+      const list = [];
+      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      setLecturesBank(list);
+    } catch (err) { console.error("Lỗi tải kho bài giảng:", err); }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+    fetchTestsBank();
+    fetchLecturesBank();
+    fetchPendingExams();
+    fetchPendingTests();
+    fetchAllStudentsProgress();
+  }, []);
 
   const handleCreateClass = async (e) => {
     e.preventDefault();
@@ -396,6 +426,64 @@ export default function TeacherDashboard() {
     }
   };
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+      return alert("Vui lòng tải lên tệp định dạng .html!");
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setNewLectureHtmlContent(event.target.result);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleCreateLecture = async (e) => {
+    e.preventDefault();
+    if (!newLectureName.trim() || !newLectureHtmlContent.trim()) {
+      return alert("Vui lòng nhập tên bài giảng và chọn tệp .html hợp lệ!");
+    }
+
+    try {
+      await addDoc(collection(db, "lectures_bank"), {
+        lectureName: newLectureName.trim(),
+        level: newLectureLevel,
+        htmlContent: newLectureHtmlContent,
+        createdAt: serverTimestamp()
+      });
+      alert("✅ Đã tải lên bài giảng thành công!");
+      setIsAddLectureModalOpen(false);
+      setNewLectureName("");
+      setNewLectureHtmlContent("");
+      fetchLecturesBank();
+    } catch (err) {
+      alert("Lỗi khi tải lên bài giảng: " + err.message);
+    }
+  };
+
+  const handleDeleteLecture = async (lectureId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa bài giảng này không?")) return;
+    try {
+      await deleteDoc(doc(db, "lectures_bank", lectureId));
+      alert("Đã xóa bài giảng!");
+      fetchLecturesBank();
+    } catch (err) {
+      alert("Lỗi khi xóa bài giảng: " + err.message);
+    }
+  };
+
+  const toggleFullScreenLecture = () => {
+    if (!lectureContainerRef.current) return;
+    if (!document.fullscreenElement) {
+      lectureContainerRef.current.requestFullscreen().catch(err => {
+        alert(`Không thể bật chế độ toàn màn hình: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   const fetchPendingExams = async () => {
     setIsLoadingExams(true);
     try {
@@ -467,14 +555,6 @@ export default function TeacherDashboard() {
       setStudentsProgress(studentsList);
     } catch (error) { console.error("Lỗi lấy dữ liệu học sinh:", error); } finally { setIsLoadingStudents(false); }
   };
-
-  useEffect(() => {
-    fetchClasses();
-    fetchTestsBank();
-    fetchPendingExams();
-    fetchPendingTests();
-    fetchAllStudentsProgress();
-  }, []);
 
   const handleSelectExam = async (exam) => {
     setSelectedExam(exam);
@@ -621,8 +701,12 @@ export default function TeacherDashboard() {
                 {!isSidebarCollapsed && pendingTests.length > 0 && <span className="bg-[#10B981] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingTests.length}</span>}
               </button>
 
-              <button onClick={() => setActiveTab("review_manager")} className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'review_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+              <button onClick={() => setActiveTab("review_manager")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'review_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
                 <div className="flex items-center gap-3"><span className="text-lg">🔄</span>{!isSidebarCollapsed && <span>Kiểm tra bài cũ</span>}</div>
+              </button>
+
+              <button onClick={() => setActiveTab("lecture_manager")} className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'lecture_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+                <div className="flex items-center gap-3"><span className="text-lg">📚</span>{!isSidebarCollapsed && <span>Kho Bài Giảng</span>}</div>
               </button>
             </div>
           </nav>
@@ -664,7 +748,8 @@ export default function TeacherDashboard() {
               {activeTab === 'students' ? "Quản lý dữ liệu và theo dõi tiến độ của toàn bộ học viên trong hệ thống." : 
                activeTab === 'grading' ? "Đánh giá kết quả phần thi kỹ năng nói (HSKK) của học viên." : 
                activeTab === 'grading_test' ? "Chấm bài kiểm tra Năng lực (4 Kỹ Năng) của học viên." :
-               "Quản lý lớp học và kho bài kiểm tra bài cũ cho học sinh."}
+               activeTab === 'review_manager' ? "Quản lý lớp học và kho bài kiểm tra bài cũ cho học sinh." :
+               "Quản lý kho bài giảng điện tử hỗ trợ giảng dạy tương tác."}
             </p>
           </div>
 
@@ -1155,7 +1240,7 @@ export default function TeacherDashboard() {
             </div>
           )}
 
-          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP GOM THEO CẤP ĐỘ) */}
+          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP) */}
           {activeTab === "review_manager" && (
             <div className="space-y-10 animate-fade-in">
               {/* KHU VỰC 1: DANH SÁCH LỚP */}
@@ -1276,6 +1361,70 @@ export default function TeacherDashboard() {
             </div>
           )}
 
+          {/* TAB 5: KHO BÀI GIẢNG (QUẢN LÝ VÀ GIẢNG DẠY FILE .HTML) */}
+          {activeTab === "lecture_manager" && (
+            <div className="space-y-10 animate-fade-in">
+              <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-xl font-black text-[#142033]">📚 Kho Bài Giảng Điện Tử</h3>
+                    <p className="text-xs font-medium text-[#64748B] mt-1">Tải lên và quản lý các bài giảng dạng tệp .html theo từng cấp độ giáo trình.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAddLectureModalOpen(true)}
+                    className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition"
+                  >
+                    + Thêm bài giảng (.html)
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {LEVEL_OPTIONS.map(lvl => {
+                    const lecturesInLevel = lecturesBank.filter(l => l.level === lvl);
+                    if (lecturesInLevel.length === 0) return null;
+
+                    return (
+                      <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0]">
+                        <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest mb-4 flex items-center gap-2">
+                          <span>📖</span> {lvl} <span className="text-xs font-bold text-slate-400">({lecturesInLevel.length} bài)</span>
+                        </h4>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {lecturesInLevel.map(lec => (
+                            <div key={lec.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
+                              <div>
+                                <h5 className="font-black text-sm text-[#142033] mb-1">{lec.lectureName}</h5>
+                                <span className="inline-block bg-[#ECFDF5] text-[#10B981] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-[#A7F3D0] mb-3">Tệp HTML</span>
+                              </div>
+                              <div className="flex gap-2 pt-2 border-t border-slate-100">
+                                <button 
+                                  onClick={() => setActiveLectureView(lec)}
+                                  className="flex-1 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold shadow-sm"
+                                >
+                                  🖥️ Giảng dạy
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteLecture(lec.id)} 
+                                  className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
+                                >
+                                  🗑️ Xóa
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {lecturesBank.length === 0 && (
+                    <p className="text-slate-400 text-xs py-6 text-center">Chưa có bài giảng nào trong kho. Hãy bấm "+ Thêm bài giảng" để tải tệp .html lên.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
@@ -1328,6 +1477,33 @@ export default function TeacherDashboard() {
             <div className="flex gap-3 pt-2">
               <button type="button" onClick={() => setEditingClass(null)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
               <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Lưu thay đổi</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* MODAL THÊM BÀI GIẢNG (.HTML) */}
+      {isAddLectureModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <form onSubmit={handleCreateLecture} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Tải Lên Bài Giảng Mới</h3>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên bài giảng</label>
+              <input type="text" value={newLectureName} onChange={e => setNewLectureName(e.target.value)} placeholder="VD: Bài 1: 你好 - Giáo trình Msutong" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn cấp độ giáo trình</label>
+              <select value={newLectureLevel} onChange={e => setNewLectureLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
+                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn tệp bài giảng (.html)</label>
+              <input type="file" accept=".html,.htm" onChange={handleFileUpload} className="w-full p-2.5 rounded-xl border border-[#E2E8F0] text-xs font-bold text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#10B981] file:text-white hover:file:bg-[#059669] cursor-pointer" required />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setIsAddLectureModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Tải lên</button>
             </div>
           </form>
         </div>
@@ -1433,6 +1609,41 @@ export default function TeacherDashboard() {
                 Bắt đầu Test
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL XEM & GIẢNG DẠY BÀI GIẢNG (HỖ TRỢ TOÀN MÀN HÌNH) */}
+      {activeLectureView && (
+        <div ref={lectureContainerRef} className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
+          <div className="h-16 px-6 bg-[#142033] text-white flex justify-between items-center shrink-0 shadow-md">
+            <div>
+              <h3 className="font-black text-base">{activeLectureView.lectureName}</h3>
+              <p className="text-[10px] text-[#10B981] font-bold uppercase tracking-widest">{activeLectureView.level}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={toggleFullScreenLecture}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black transition border border-white/20"
+              >
+                ⛶ Toàn màn hình
+              </button>
+              <button 
+                onClick={() => setActiveLectureView(null)}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition shadow-sm"
+              >
+                ✕ Đóng bài giảng
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
+            <iframe 
+              srcDoc={activeLectureView.htmlContent}
+              title={activeLectureView.lectureName}
+              className="w-full h-full border-0"
+              sandbox="allow-scripts allow-same-origin"
+            />
           </div>
         </div>
       )}
