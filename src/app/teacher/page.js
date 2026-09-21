@@ -62,7 +62,7 @@ export default function TeacherDashboard() {
   const [activeLectureView, setActiveLectureView] = useState(null);
   const lectureContainerRef = useRef(null);
 
-  // --- STATES THỰC HIỆN KIỂM TRA TRỰC TIẾP ---
+  // --- STATES THỰC HIỆN KIỂM TRA TRỰC TIẾP (ĐẾM NGƯỢC THỜI GIAN TỔNG) ---
   const [isTestSelectModalOpen, setIsTestSelectModalOpen] = useState(false);
   const [targetStudentForTest, setTargetStudentForTest] = useState(null);
   const [targetClassForTest, setTargetClassForTest] = useState(null);
@@ -74,13 +74,17 @@ export default function TeacherDashboard() {
   const [selectedStudentForTest, setSelectedStudentForTest] = useState(null);
   const [selectedTestBankItem, setSelectedTestBankItem] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(4);
+  const [totalTimeLeft, setTotalTimeLeft] = useState(0); // Thời gian tổng của cả bài
   const [testResultsLog, setTestResultsLog] = useState([]);
   const [isTestCompleted, setIsTestCompleted] = useState(false);
   
   const [selectedStudentHistory, setSelectedStudentHistory] = useState(null);
   const [selectedClassForHistory, setSelectedClassForHistory] = useState(null);
   const [activeTestDetail, setActiveTestDetail] = useState(null);
+
+  // State xem tổng hợp cả lớp theo từng bài test
+  const [classSummaryModalClass, setClassSummaryModalClass] = useState(null);
+  const [classSummaryTestName, setClassSummaryTestName] = useState("");
 
   // --- STATES CHẤM THI HSKK & TEST ---
   const [pendingExams, setPendingExams] = useState([]);
@@ -149,17 +153,19 @@ export default function TeacherDashboard() {
     }
   }, [testSkillScores, activeTab, selectedTest]);
 
+  // Bộ đếm thời gian tổng cho bài kiểm tra
   useEffect(() => {
     let timer;
-    if (isLiveTesting && !isTestCompleted && timeLeft > 0) {
+    if (isLiveTesting && !isTestCompleted && totalTimeLeft > 0) {
       timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
+        setTotalTimeLeft(prev => prev - 1);
       }, 1000);
-    } else if (isLiveTesting && !isTestCompleted && timeLeft === 0) {
-      handleRecordAnswer(false);
+    } else if (isLiveTesting && !isTestCompleted && totalTimeLeft === 0) {
+      // Hết thời gian tổng: Các từ còn lại tự động tính là chưa thuộc (false)
+      handleTimeOutFinish();
     }
     return () => clearInterval(timer);
-  }, [isLiveTesting, timeLeft, isTestCompleted]);
+  }, [isLiveTesting, totalTimeLeft, isTestCompleted]);
 
   const openTestSelectModal = (cls, student) => {
     setTargetClassForTest(cls);
@@ -174,12 +180,14 @@ export default function TeacherDashboard() {
     if (!chosenTest) return alert("Vui lòng chọn bài kiểm tra từ kho!");
     setIsTestSelectModalOpen(false);
     
-    // Quy tắc đếm giờ: H1-H3.2 (4s/từ), H4 trở lên (3s/từ)
+    // Quy tắc thời gian: H1-H3.1 (4s/từ), H4 trở lên (3s/từ)
     let timePerItem = 4;
     const lvlLower = (chosenTest.level || "").toLowerCase();
     if (lvlLower.includes("hsk4") || lvlLower.includes("hsk5")) {
       timePerItem = 3;
     }
+
+    const totalDuration = (chosenTest.questions?.length || 0) * timePerItem;
 
     setSelectedClassForTest(targetClassForTest);
     setSelectedStudentForTest(targetStudentForTest);
@@ -188,7 +196,7 @@ export default function TeacherDashboard() {
     setTestResultsLog([]);
     setIsTestCompleted(false);
     setIsLiveTesting(true);
-    setTimeLeft(timePerItem);
+    setTotalTimeLeft(totalDuration);
   };
 
   const handleRecordAnswer = (isCorrect) => {
@@ -196,19 +204,26 @@ export default function TeacherDashboard() {
     const updatedLog = [...testResultsLog, { question: currentQuestion, correct: isCorrect }];
     setTestResultsLog(updatedLog);
 
-    let timePerItem = 4;
-    const lvlLower = (selectedTestBankItem.level || "").toLowerCase();
-    if (lvlLower.includes("hsk4") || lvlLower.includes("hsk5")) {
-      timePerItem = 3;
-    }
-
     if (currentQuestionIndex + 1 < selectedTestBankItem.questions.length) {
       setCurrentQuestionIndex(prev => prev + 1);
-      setTimeLeft(timePerItem);
     } else {
       setIsTestCompleted(true);
       saveTestResultToStudentHistory(updatedLog);
     }
+  };
+
+  const handleTimeOutFinish = () => {
+    // Tự động gán các từ chưa kiểm tra đến là sai (false)
+    const questions = selectedTestBankItem.questions;
+    const currentLog = [...testResultsLog];
+    
+    for (let i = currentLog.length; i < questions.length; i++) {
+      currentLog.push({ question: questions[i], correct: false });
+    }
+
+    setTestResultsLog(currentLog);
+    setIsTestCompleted(true);
+    saveTestResultToStudentHistory(currentLog);
   };
 
   const saveTestResultToStudentHistory = async (finalLog) => {
@@ -426,6 +441,29 @@ export default function TeacherDashboard() {
     }
   };
 
+  // Xuất Excel (CSV) các từ chưa thuộc của cả lớp cho bài test cụ thể
+  const exportClassSummaryExcel = (cls, testName) => {
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+    csvContent += "Học sinh,Bài test,Cấp độ,Từ chưa thuộc\r\n";
+
+    cls.students?.forEach(st => {
+      st.history?.forEach(h => {
+        if (h.testName === testName) {
+          const unlearnedWords = h.logs?.filter(l => !l.correct).map(l => l.question).join(", ") || "Không có";
+          csvContent += `"${st.name}","${h.testName}","${h.level}","${unlearnedWords}"\r\n`;
+        }
+      });
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Bao_cao_tu_chua_thuoc_${cls.className}_${testName}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -555,6 +593,15 @@ export default function TeacherDashboard() {
       setStudentsProgress(studentsList);
     } catch (error) { console.error("Lỗi lấy dữ liệu học sinh:", error); } finally { setIsLoadingStudents(false); }
   };
+
+  useEffect(() => {
+    fetchClasses();
+    fetchTestsBank();
+    fetchLecturesBank();
+    fetchPendingExams();
+    fetchPendingTests();
+    fetchAllStudentsProgress();
+  }, []);
 
   const handleSelectExam = async (exam) => {
     setSelectedExam(exam);
@@ -1303,6 +1350,24 @@ export default function TeacherDashboard() {
                             ))}
                           </div>
                         </div>
+
+                        {/* Nút xem tổng hợp cả lớp theo bài test */}
+                        <div className="pt-3 border-t border-slate-200 space-y-2">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Báo cáo tổng hợp lớp:</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {testsBank.map(t => (
+                              <button
+                                key={t.id}
+                                onClick={() => { setClassSummaryModalClass(cls); setClassSummaryTestName(t.testName); }}
+                                className="px-2.5 py-1 bg-white hover:bg-[#10B981] hover:text-white border border-[#E2E8F0] text-[#142033] rounded-lg text-[10px] font-bold transition shadow-xs"
+                                title={`Xuất Excel từ chưa thuộc bài ${t.testName}`}
+                              >
+                                📊 {t.testName}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
                       </div>
                     ))
                   )}
@@ -1648,7 +1713,7 @@ export default function TeacherDashboard() {
         </div>
       )}
 
-      {/* MODAL PHÒNG KIỂM TRA TRỰC TIẾP (LIVE TEST) */}
+      {/* MODAL PHÒNG KIỂM TRA TRỰC TIẾP (LIVE TEST - ĐẾM NGƯỢC THỜI GIAN TỔNG & THUỘC/CHƯA THUỘC) */}
       {isLiveTesting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#142033]/90 backdrop-blur-md animate-fade-in">
           <div className="bg-white rounded-[40px] p-8 md:p-12 max-w-xl w-full shadow-2xl text-center relative overflow-hidden flex flex-col items-center">
@@ -1659,8 +1724,8 @@ export default function TeacherDashboard() {
                   <span className="bg-[#ECFDF5] text-[#10B981] font-black text-xs px-3 py-1 rounded-full uppercase tracking-widest border border-[#A7F3D0]">
                     {selectedStudentForTest?.name} • Câu {currentQuestionIndex + 1}/{selectedTestBankItem?.questions.length}
                   </span>
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-base shadow-inner ${timeLeft <= 2 ? 'bg-rose-100 text-rose-600 animate-pulse' : 'bg-slate-100 text-[#142033]'}`}>
-                    {timeLeft}s
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center font-black text-sm shadow-inner ${totalTimeLeft <= 5 ? 'bg-rose-100 text-rose-600 animate-pulse' : 'bg-slate-100 text-[#142033]'}`}>
+                    ⏱️ {totalTimeLeft}s
                   </div>
                 </div>
 
@@ -1675,13 +1740,13 @@ export default function TeacherDashboard() {
                     onClick={() => handleRecordAnswer(false)}
                     className="py-5 bg-rose-50 text-rose-600 border border-rose-200 rounded-2xl font-black text-base shadow-sm hover:bg-rose-100 transition active:scale-95"
                   >
-                    ❌ Sai / Chưa đạt
+                    ❌ Chưa thuộc
                   </button>
                   <button 
                     onClick={() => handleRecordAnswer(true)}
                     className="py-5 bg-[#10B981] text-white rounded-2xl font-black text-base shadow-lg hover:bg-[#059669] transition active:scale-95"
                   >
-                    ✓ Đúng (OK)
+                    ✓ Thuộc
                   </button>
                 </div>
 
@@ -1698,7 +1763,7 @@ export default function TeacherDashboard() {
                 <div className="bg-[#ECFDF5] border border-[#A7F3D0] p-6 rounded-3xl my-6">
                   <p className="text-xs font-black text-[#10B981] uppercase tracking-widest mb-1">Kết quả đạt được</p>
                   <p className="text-4xl font-black text-[#047857]">
-                    {testResultsLog.filter(i => i.correct).length} / {testResultsLog.length} <span className="text-lg">câu đúng</span>
+                    {testResultsLog.filter(i => i.correct).length} / {testResultsLog.length} <span className="text-lg">thuộc</span>
                   </p>
                 </div>
 
@@ -1710,6 +1775,80 @@ export default function TeacherDashboard() {
                 </button>
               </div>
             )}
+
+          </div>
+        </div>
+      )}
+
+      {/* MODAL BÁO CÁO TỔNG HỢP CẢ LỚP THEO TỪNG BÀI TEST & NÚT XUẤT EXCEL */}
+      {classSummaryModalClass && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-[40px] p-6 md:p-10 w-[95vw] max-w-3xl shadow-2xl space-y-6 animate-slide-up-fade max-h-[90vh] flex flex-col">
+            
+            <div className="flex justify-between items-center border-b border-[#E2E8F0] pb-4 shrink-0">
+              <div>
+                <h3 className="text-xl font-black text-[#142033]">Báo Cáo Tổng Hợp Từ Chưa Thuộc</h3>
+                <p className="text-xs font-bold text-[#10B981] mt-0.5">
+                  Lớp: {classSummaryModalClass.className} • Bài: {classSummaryTestName}
+                </p>
+              </div>
+              <button onClick={() => setClassSummaryModalClass(null)} className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold transition">✕</button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider">
+                    <th className="p-3 rounded-l-xl">Học sinh</th>
+                    <th className="p-3">Điểm số</th>
+                    <th className="p-3 rounded-r-xl">Các từ chưa thuộc (Sai)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0] text-xs">
+                  {classSummaryModalClass.students?.map(st => {
+                    const testHistory = st.history?.find(h => h.testName === classSummaryTestName);
+                    const unlearned = testHistory?.logs?.filter(l => !l.correct) || [];
+
+                    return (
+                      <tr key={st.id} className="hover:bg-slate-50">
+                        <td className="p-3 font-bold text-[#142033]">{st.name}</td>
+                        <td className="p-3 font-black text-[#10B981]">
+                          {testHistory ? `${testHistory.score}% (${testHistory.correct}/${testHistory.total})` : "Chưa kiểm tra"}
+                        </td>
+                        <td className="p-3">
+                          {unlearned.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {unlearned.map((u, idx) => (
+                                <span key={idx} className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-md font-bold">
+                                  {u.question} ✗
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-[#10B981] font-bold">Thuộc hết 🎉</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="pt-3 border-t border-[#E2E8F0] flex gap-3 shrink-0">
+              <button 
+                onClick={() => exportClassSummaryExcel(classSummaryModalClass, classSummaryTestName)}
+                className="flex-1 py-3.5 bg-[#10B981] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#059669] transition shadow-md flex items-center justify-center gap-2"
+              >
+                📥 Xuất File Excel (Từ Chưa Thuộc)
+              </button>
+              <button 
+                onClick={() => setClassSummaryModalClass(null)} 
+                className="py-3.5 px-6 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs hover:bg-slate-200 transition"
+              >
+                Đóng
+              </button>
+            </div>
 
           </div>
         </div>
