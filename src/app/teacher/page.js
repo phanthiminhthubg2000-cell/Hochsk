@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 
@@ -28,7 +28,7 @@ export default function TeacherDashboard() {
   const { user, isLoaded } = useUser();
 
   // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("students"); // 'students' | 'grading' | 'grading_test' | 'review_manager' | 'lecture_manager'
+  const [activeTab, setActiveTab] = useState("students");
 
   // --- STATES QUẢN LÝ LỚP HỌC & KHO BÀI KIỂM TRA ---
   const [classesList, setClassesList] = useState([]);
@@ -81,7 +81,7 @@ export default function TeacherDashboard() {
   const [selectedStudentForTest, setSelectedStudentForTest] = useState(null);
   const [selectedTestBankItem, setSelectedTestBankItem] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(4);
+  const [totalTimeLeft, setTotalTimeLeft] = useState(0);
   const [testResultsLog, setTestResultsLog] = useState([]);
   const [isTestCompleted, setIsTestCompleted] = useState(false);
   
@@ -170,6 +170,9 @@ export default function TeacherDashboard() {
   const handleConfirmStartTest = () => {
     const chosenTest = testsBank.find(t => t.id === selectedTestId);
     if (!chosenTest) return alert("Vui lòng chọn bài kiểm tra từ kho!");
+    if (!chosenTest.questions || chosenTest.questions.length === 0) {
+      return alert("Bài kiểm tra này không có câu hỏi nào!");
+    }
     setIsTestSelectModalOpen(false);
     
     let timePerItem = 4;
@@ -178,7 +181,7 @@ export default function TeacherDashboard() {
       timePerItem = 3;
     }
 
-    const totalDuration = (chosenTest.questions?.length || 0) * timePerItem;
+    const totalDuration = chosenTest.questions.length * timePerItem;
 
     setSelectedClassForTest(targetClassForTest);
     setSelectedStudentForTest(targetStudentForTest);
@@ -186,12 +189,11 @@ export default function TeacherDashboard() {
     setCurrentQuestionIndex(0);
     setTestResultsLog([]);
     setIsTestCompleted(false);
-    setIsLiveTesting(true);
     setTotalTimeLeft(totalDuration);
+    setIsLiveTesting(true);
   };
 
-  const [totalTimeLeft, setTotalTimeLeft] = useState(0);
-
+  // Quản lý đếm ngược thời gian tổng
   useEffect(() => {
     let timer;
     if (isLiveTesting && !isTestCompleted && totalTimeLeft > 0) {
@@ -205,6 +207,7 @@ export default function TeacherDashboard() {
   }, [isLiveTesting, totalTimeLeft, isTestCompleted]);
 
   const handleRecordAnswer = (isCorrect) => {
+    if (!selectedTestBankItem) return;
     const currentQuestion = selectedTestBankItem.questions[currentQuestionIndex];
     const updatedLog = [...testResultsLog, { question: currentQuestion, correct: isCorrect }];
     setTestResultsLog(updatedLog);
@@ -218,6 +221,7 @@ export default function TeacherDashboard() {
   };
 
   const handleTimeOutFinish = () => {
+    if (!selectedTestBankItem) return;
     const questions = selectedTestBankItem.questions;
     const currentLog = [...testResultsLog];
     
@@ -230,13 +234,21 @@ export default function TeacherDashboard() {
     saveTestResultToStudentHistory(currentLog);
   };
 
+  // An toàn dữ liệu: Lấy dữ liệu mới nhất của lớp trước khi ghi nhận kết quả để tránh ghi đè dữ liệu cũ
   const saveTestResultToStudentHistory = async (finalLog) => {
+    if (!selectedClassForTest || !selectedStudentForTest || !selectedTestBankItem) return;
     const correctCount = finalLog.filter(item => item.correct).length;
     const totalCount = finalLog.length;
     
     try {
       const classRef = doc(db, "classes", selectedClassForTest.id);
-      const updatedStudents = selectedClassForTest.students.map(st => {
+      const classSnap = await getDoc(classRef);
+      if (!classSnap.exists()) return;
+
+      const classData = classSnap.data();
+      const currentStudents = classData.students || [];
+
+      const updatedStudents = currentStudents.map(st => {
         if (st.id === selectedStudentForTest.id) {
           const newHistoryItem = {
             testName: selectedTestBankItem.testName,
@@ -259,16 +271,16 @@ export default function TeacherDashboard() {
     }
   };
 
-  const fetchClasses = async () => {
+  const fetchClasses = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "classes"));
       const list = [];
       snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
       setClassesList(list);
     } catch (err) { console.error("Lỗi tải danh sách lớp:", err); }
-  };
+  }, []);
 
-  const fetchTestsBank = async () => {
+  const fetchTestsBank = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "tests_bank"));
       const list = [];
@@ -276,9 +288,9 @@ export default function TeacherDashboard() {
       list.sort((a, b) => a.testName.localeCompare(b.testName, undefined, { numeric: true, sensitivity: 'base' }));
       setTestsBank(list);
     } catch (err) { console.error("Lỗi tải kho bài kiểm tra:", err); }
-  };
+  }, []);
 
-  const fetchLecturesBank = async () => {
+  const fetchLecturesBank = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
       const list = [];
@@ -286,7 +298,7 @@ export default function TeacherDashboard() {
       list.sort((a, b) => a.lectureName.localeCompare(b.lectureName, undefined, { numeric: true, sensitivity: 'base' }));
       setLecturesBank(list);
     } catch (err) { console.error("Lỗi tải kho bài giảng:", err); }
-  };
+  }, []);
 
   useEffect(() => {
     fetchClasses();
@@ -295,7 +307,7 @@ export default function TeacherDashboard() {
     fetchPendingExams();
     fetchPendingTests();
     fetchAllStudentsProgress();
-  }, []);
+  }, [fetchClasses, fetchTestsBank, fetchLecturesBank]);
 
   const handleCreateClass = async (e) => {
     e.preventDefault();
@@ -337,20 +349,26 @@ export default function TeacherDashboard() {
       return alert("Vui lòng nhập đầy đủ thông tin lớp!");
     }
 
+    // Tránh xung đột trùng tên bằng cách lưu lịch sử theo ID học sinh nếu có sẵn
     const oldStudentsMap = new Map();
     if (editingClass.students) {
-      editingClass.students.forEach(st => oldStudentsMap.set(st.name.trim(), st.history || []));
+      editingClass.students.forEach(st => oldStudentsMap.set(st.id, st.history || []));
     }
 
     const updatedStudentsArray = editClassStudents
       .split("\n")
       .map(name => name.trim())
       .filter(name => name !== "")
-      .map((name, index) => ({
-        id: `st_${Date.now()}_${index}`,
-        name,
-        history: oldStudentsMap.get(name) || []
-      }));
+      .map((name, index) => {
+        // Tìm xem học sinh này đã có lịch sử cũ chưa (dựa theo tên nếu không khớp ID)
+        const existingSt = editingClass.students?.find(s => s.name.trim() === name);
+        const existingHistory = existingSt ? existingSt.history : [];
+        return {
+          id: existingSt ? existingSt.id : `st_${Date.now()}_${index}`,
+          name,
+          history: existingHistory
+        };
+      });
 
     try {
       const classRef = doc(db, "classes", editingClass.id);
@@ -464,8 +482,8 @@ export default function TeacherDashboard() {
     cls.students?.forEach(st => {
       st.history?.forEach(h => {
         if (h.testName === testName) {
-          const unlearnedWords = h.logs?.filter(l => !l.correct).map(l => l.question).join(", ") || "Không có";
-          csvContent += `"${st.name}","${h.testName}","${h.level}","${unlearnedWords}"\r\n`;
+          const unlearnedWords = h.logs?.filter(l => !l.correct).map(l => `"${l.question.replace(/"/g, '""')}"`).join(", ") || "Không có";
+          csvContent += `"${st.name.replace(/"/g, '""')}","${h.testName.replace(/"/g, '""')}","${h.level}","${unlearnedWords}"\r\n`;
         }
       });
     });
@@ -608,15 +626,6 @@ export default function TeacherDashboard() {
       setStudentsProgress(studentsList);
     } catch (error) { console.error("Lỗi lấy dữ liệu học sinh:", error); } finally { setIsLoadingStudents(false); }
   };
-
-  useEffect(() => {
-    fetchClasses();
-    fetchTestsBank();
-    fetchLecturesBank();
-    fetchPendingExams();
-    fetchPendingTests();
-    fetchAllStudentsProgress();
-  }, []);
 
   const handleSelectExam = async (exam) => {
     setSelectedExam(exam);
