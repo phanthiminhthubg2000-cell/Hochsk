@@ -62,6 +62,13 @@ export default function TeacherDashboard() {
   const [activeLectureView, setActiveLectureView] = useState(null);
   const lectureContainerRef = useRef(null);
 
+  // State quản lý việc ẩn/hiện (thu gọn/mở rộng) theo từng cấp độ
+  const [collapsedLevels, setCollapsedLevels] = useState({});
+
+  const toggleLevelCollapse = (lvl) => {
+    setCollapsedLevels(prev => ({ ...prev, [lvl]: !prev[lvl] }));
+  };
+
   // --- STATES THỰC HIỆN KIỂM TRA TRỰC TIẾP ---
   const [isTestSelectModalOpen, setIsTestSelectModalOpen] = useState(false);
   const [targetStudentForTest, setTargetStudentForTest] = useState(null);
@@ -82,7 +89,6 @@ export default function TeacherDashboard() {
   const [selectedClassForHistory, setSelectedClassForHistory] = useState(null);
   const [activeTestDetail, setActiveTestDetail] = useState(null);
 
-  // State xem tổng hợp cả lớp theo từng bài test
   const [classSummaryModalClass, setClassSummaryModalClass] = useState(null);
   const [classSummaryTestName, setClassSummaryTestName] = useState("");
 
@@ -152,18 +158,6 @@ export default function TeacherDashboard() {
       setTestTotalScore(total);
     }
   }, [testSkillScores, activeTab, selectedTest]);
-
-  useEffect(() => {
-    let timer;
-    if (isLiveTesting && !isTestCompleted && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (isLiveTesting && !isTestCompleted && timeLeft === 0) {
-      handleRecordAnswer(false);
-    }
-    return () => clearInterval(timer);
-  }, [isLiveTesting, timeLeft, isTestCompleted]);
 
   const openTestSelectModal = (cls, student) => {
     setTargetClassForTest(cls);
@@ -279,6 +273,10 @@ export default function TeacherDashboard() {
       const snapshot = await getDocs(collection(db, "tests_bank"));
       const list = [];
       snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      
+      // Sắp xếp các bài test theo tên (hỗ trợ sắp xếp chuẩn bài học Lesson 1, Lesson 2...)
+      list.sort((a, b) => a.testName.localeCompare(b.testName, undefined, { numeric: true, sensitivity: 'base' }));
+
       setTestsBank(list);
     } catch (err) { console.error("Lỗi tải kho bài kiểm tra:", err); }
   };
@@ -288,6 +286,10 @@ export default function TeacherDashboard() {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
       const list = [];
       snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      
+      // Sắp xếp bài giảng theo tên chuẩn thứ tự
+      list.sort((a, b) => a.lectureName.localeCompare(b.lectureName, undefined, { numeric: true, sensitivity: 'base' }));
+
       setLecturesBank(list);
     } catch (err) { console.error("Lỗi tải kho bài giảng:", err); }
   };
@@ -451,7 +453,6 @@ export default function TeacherDashboard() {
     }
   };
 
-  // Lấy danh sách các bài test thực tế mà học sinh trong lớp ĐÃ ĐƯỢC KIỂM TRA (có trong lịch sử)
   const getTestedNamesForClass = (cls) => {
     const testedSet = new Set();
     cls.students?.forEach(st => {
@@ -1307,7 +1308,7 @@ export default function TeacherDashboard() {
             </div>
           )}
 
-          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP) */}
+          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP THU GỌN THEO CẤP ĐỘ) */}
           {activeTab === "review_manager" && (
             <div className="space-y-10 animate-fade-in">
               {/* KHU VỰC 1: DANH SÁCH LỚP */}
@@ -1330,7 +1331,6 @@ export default function TeacherDashboard() {
                     <p className="text-slate-400 text-xs py-6">Chưa có lớp học nào được tạo.</p>
                   ) : (
                     classesList.map(cls => {
-                      // Chỉ lấy danh sách các bài test thực tế học sinh trong lớp đã làm
                       const testedNames = getTestedNamesForClass(cls);
 
                       return (
@@ -1375,7 +1375,6 @@ export default function TeacherDashboard() {
                             </div>
                           </div>
 
-                          {/* BÁO CÁO TỔNG HỢP LỚP (CHỈ HIỆN BÀI ĐÃ TEST) */}
                           <div className="pt-3 border-t border-slate-200 space-y-2">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Báo cáo tổng hợp lớp (Đã test):</p>
                             {testedNames.length === 0 ? (
@@ -1403,7 +1402,7 @@ export default function TeacherDashboard() {
                 </div>
               </div>
 
-              {/* KHU VỰC 2: KHO BÀI KIỂM TRA (GOM THEO CẤP ĐỘ) */}
+              {/* KHU VỰC 2: KHO BÀI KIỂM TRA (CÓ NÚT THU GỌN / MỞ RỘNG TỪNG CẤP ĐỘ) */}
               <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <div>
@@ -1423,26 +1422,40 @@ export default function TeacherDashboard() {
                     const testsInLevel = testsBank.filter(t => t.level === lvl);
                     if (testsInLevel.length === 0) return null;
 
+                    const isCollapsed = collapsedLevels[lvl]; // Mặc định thu gọn (true/false)
+
                     return (
-                      <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0]">
-                        <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest mb-4 flex items-center gap-2">
-                          <span>📁</span> {lvl} <span className="text-xs font-bold text-slate-400">({testsInLevel.length} bài)</span>
-                        </h4>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                          {testsInLevel.map(test => (
-                            <div key={test.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
-                              <div>
-                                <h5 className="font-black text-sm text-[#142033] mb-1">{test.testName}</h5>
-                                <p className="text-xs text-[#64748B] font-medium mb-3">Số lượng câu hỏi: <strong className="text-[#142033]">{test.questions?.length || 0}</strong> từ/câu</p>
-                              </div>
-                              <div className="flex gap-2 pt-2 border-t border-slate-100">
-                                <button onClick={() => handleOpenEditTest(test)} className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200">✏️ Sửa</button>
-                                <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-slate-200">🗑️ Xóa</button>
-                              </div>
-                            </div>
-                          ))}
+                      <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0] transition-all">
+                        {/* Tiêu đề cấp độ có thể bấm để Thu gọn / Mở rộng */}
+                        <div 
+                          onClick={() => toggleLevelCollapse(lvl)}
+                          className="flex justify-between items-center cursor-pointer select-none"
+                        >
+                          <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest flex items-center gap-2">
+                            <span>📁</span> {lvl} <span className="text-xs font-bold text-slate-400">({testsInLevel.length} bài)</span>
+                          </h4>
+                          <span className="text-xs font-bold text-slate-500 bg-white px-3 py-1 rounded-xl border border-[#E2E8F0]">
+                            {isCollapsed ? "▼ Mở rộng" : "▲ Thu gọn"}
+                          </span>
                         </div>
+                        
+                        {/* Danh sách bài test chỉ hiển thị khi mở rộng */}
+                        {!isCollapsed && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fade-in">
+                            {testsInLevel.map(test => (
+                              <div key={test.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
+                                <div>
+                                  <h5 className="font-black text-sm text-[#142033] mb-1">{test.testName}</h5>
+                                  <p className="text-xs text-[#64748B] font-medium mb-3">Số lượng câu hỏi: <strong className="text-[#142033]">{test.questions?.length || 0}</strong> từ/câu</p>
+                                </div>
+                                <div className="flex gap-2 pt-2 border-t border-slate-100">
+                                  <button onClick={() => handleOpenEditTest(test)} className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200">✏️ Sửa</button>
+                                  <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200">🗑️ Xóa</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -1455,7 +1468,7 @@ export default function TeacherDashboard() {
             </div>
           )}
 
-          {/* TAB 5: KHO BÀI GIẢNG (QUẢN LÝ VÀ GIẢNG DẠY FILE .HTML) */}
+          {/* TAB 5: KHO BÀI GIẢNG (CÓ NÚT THU GỌN / MỞ RỘNG TỪNG CẤP ĐỘ) */}
           {activeTab === "lecture_manager" && (
             <div className="space-y-10 animate-fade-in">
               <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
@@ -1477,36 +1490,48 @@ export default function TeacherDashboard() {
                     const lecturesInLevel = lecturesBank.filter(l => l.level === lvl);
                     if (lecturesInLevel.length === 0) return null;
 
+                    const isCollapsed = collapsedLevels[`lec_${lvl}`];
+
                     return (
                       <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0]">
-                        <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest mb-4 flex items-center gap-2">
-                          <span>📖</span> {lvl} <span className="text-xs font-bold text-slate-400">({lecturesInLevel.length} bài)</span>
-                        </h4>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                          {lecturesInLevel.map(lec => (
-                            <div key={lec.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
-                              <div>
-                                <h5 className="font-black text-sm text-[#142033] mb-1">{lec.lectureName}</h5>
-                                <span className="inline-block bg-[#ECFDF5] text-[#10B981] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-[#A7F3D0] mb-3">Tệp HTML</span>
-                              </div>
-                              <div className="flex gap-2 pt-2 border-t border-slate-100">
-                                <button 
-                                  onClick={() => setActiveLectureView(lec)}
-                                  className="flex-1 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold shadow-sm"
-                                >
-                                  🖥️ Giảng dạy
-                                </button>
-                                <button 
-                                  onClick={() => handleDeleteLecture(lec.id)} 
-                                  className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
-                                >
-                                  🗑️ Xóa
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                        <div 
+                          onClick={() => toggleLevelCollapse(`lec_${lvl}`)}
+                          className="flex justify-between items-center cursor-pointer select-none"
+                        >
+                          <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest flex items-center gap-2">
+                            <span>📖</span> {lvl} <span className="text-xs font-bold text-slate-400">({lecturesInLevel.length} bài)</span>
+                          </h4>
+                          <span className="text-xs font-bold text-slate-500 bg-white px-3 py-1 rounded-xl border border-[#E2E8F0]">
+                            {isCollapsed ? "▼ Mở rộng" : "▲ Thu gọn"}
+                          </span>
                         </div>
+                        
+                        {!isCollapsed && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fade-in">
+                            {lecturesInLevel.map(lec => (
+                              <div key={lec.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
+                                <div>
+                                  <h5 className="font-black text-sm text-[#142033] mb-1">{lec.lectureName}</h5>
+                                  <span className="inline-block bg-[#ECFDF5] text-[#10B981] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-[#A7F3D0] mb-3">Tệp HTML</span>
+                                </div>
+                                <div className="flex gap-2 pt-2 border-t border-slate-100">
+                                  <button 
+                                    onClick={() => setActiveLectureView(lec)}
+                                    className="flex-1 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold shadow-sm"
+                                  >
+                                    🖥️ Giảng dạy
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDeleteLecture(lec.id)} 
+                                    className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
+                                  >
+                                    🗑️ Xóa
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
