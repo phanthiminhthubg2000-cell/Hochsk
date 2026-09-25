@@ -273,10 +273,7 @@ export default function TeacherDashboard() {
       const snapshot = await getDocs(collection(db, "tests_bank"));
       const list = [];
       snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-      
-      // Sắp xếp các bài test theo tên (hỗ trợ sắp xếp chuẩn bài học Lesson 1, Lesson 2...)
       list.sort((a, b) => a.testName.localeCompare(b.testName, undefined, { numeric: true, sensitivity: 'base' }));
-
       setTestsBank(list);
     } catch (err) { console.error("Lỗi tải kho bài kiểm tra:", err); }
   };
@@ -286,10 +283,7 @@ export default function TeacherDashboard() {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
       const list = [];
       snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-      
-      // Sắp xếp bài giảng theo tên chuẩn thứ tự
       list.sort((a, b) => a.lectureName.localeCompare(b.lectureName, undefined, { numeric: true, sensitivity: 'base' }));
-
       setLecturesBank(list);
     } catch (err) { console.error("Lỗi tải kho bài giảng:", err); }
   };
@@ -1308,7 +1302,7 @@ export default function TeacherDashboard() {
             </div>
           )}
 
-          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP THU GỌN THEO CẤP ĐỘ) */}
+          {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP) */}
           {activeTab === "review_manager" && (
             <div className="space-y-10 animate-fade-in">
               {/* KHU VỰC 1: DANH SÁCH LỚP */}
@@ -1402,7 +1396,7 @@ export default function TeacherDashboard() {
                 </div>
               </div>
 
-              {/* KHU VỰC 2: KHO BÀI KIỂM TRA (CÓ NÚT THU GỌN / MỞ RỘNG TỪNG CẤP ĐỘ) */}
+              {/* KHU VỰC 2: KHO BÀI KIỂM TRA (THU GỌN / MỞ RỘNG THEO CẤP ĐỘ) */}
               <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <div>
@@ -1422,11 +1416,10 @@ export default function TeacherDashboard() {
                     const testsInLevel = testsBank.filter(t => t.level === lvl);
                     if (testsInLevel.length === 0) return null;
 
-                    const isCollapsed = collapsedLevels[lvl]; // Mặc định thu gọn (true/false)
+                    const isCollapsed = collapsedLevels[lvl];
 
                     return (
                       <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0] transition-all">
-                        {/* Tiêu đề cấp độ có thể bấm để Thu gọn / Mở rộng */}
                         <div 
                           onClick={() => toggleLevelCollapse(lvl)}
                           className="flex justify-between items-center cursor-pointer select-none"
@@ -1439,7 +1432,6 @@ export default function TeacherDashboard() {
                           </span>
                         </div>
                         
-                        {/* Danh sách bài test chỉ hiển thị khi mở rộng */}
                         {!isCollapsed && (
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fade-in">
                             {testsInLevel.map(test => (
@@ -1450,7 +1442,7 @@ export default function TeacherDashboard() {
                                 </div>
                                 <div className="flex gap-2 pt-2 border-t border-slate-100">
                                   <button onClick={() => handleOpenEditTest(test)} className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200">✏️ Sửa</button>
-                                  <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200">🗑️ Xóa</button>
+                                  <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-slate-200">🗑️ Xóa</button>
                                 </div>
                               </div>
                             ))}
@@ -1468,7 +1460,7 @@ export default function TeacherDashboard() {
             </div>
           )}
 
-          {/* TAB 5: KHO BÀI GIẢNG (CÓ NÚT THU GỌN / MỞ RỘNG TỪNG CẤP ĐỘ) */}
+          {/* TAB 5: KHO BÀI GIẢNG (THU GỌN / MỞ RỘNG THEO CẤP ĐỘ) */}
           {activeTab === "lecture_manager" && (
             <div className="space-y-10 animate-fade-in">
               <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
