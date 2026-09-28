@@ -181,11 +181,23 @@ export default function TeacherDashboard() {
       timePerItem = 3;
     }
 
-    const totalDuration = chosenTest.questions.length * timePerItem;
+    // Xáo trộn ngẫu nhiên thứ tự các từ vựng mỗi khi bắt đầu test
+    const shuffledQuestions = [...chosenTest.questions];
+    for (let i = shuffledQuestions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
+    }
+
+    const randomizedTestItem = {
+      ...chosenTest,
+      questions: shuffledQuestions
+    };
+
+    const totalDuration = randomizedTestItem.questions.length * timePerItem;
 
     setSelectedClassForTest(targetClassForTest);
     setSelectedStudentForTest(targetStudentForTest);
-    setSelectedTestBankItem(chosenTest);
+    setSelectedTestBankItem(randomizedTestItem);
     setCurrentQuestionIndex(0);
     setTestResultsLog([]);
     setIsTestCompleted(false);
@@ -349,7 +361,6 @@ export default function TeacherDashboard() {
       return alert("Vui lòng nhập đầy đủ thông tin lớp!");
     }
 
-    // Tránh xung đột trùng tên bằng cách lưu lịch sử theo ID học sinh nếu có sẵn
     const oldStudentsMap = new Map();
     if (editingClass.students) {
       editingClass.students.forEach(st => oldStudentsMap.set(st.id, st.history || []));
@@ -360,7 +371,6 @@ export default function TeacherDashboard() {
       .map(name => name.trim())
       .filter(name => name !== "")
       .map((name, index) => {
-        // Tìm xem học sinh này đã có lịch sử cũ chưa (dựa theo tên nếu không khớp ID)
         const existingSt = editingClass.students?.find(s => s.name.trim() === name);
         const existingHistory = existingSt ? existingSt.history : [];
         return {
@@ -1451,7 +1461,7 @@ export default function TeacherDashboard() {
                                 </div>
                                 <div className="flex gap-2 pt-2 border-t border-slate-100">
                                   <button onClick={() => handleOpenEditTest(test)} className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200">✏️ Sửa</button>
-                                  <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-slate-200">🗑️ Xóa</button>
+                                  <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200">🗑️ Xóa</button>
                                 </div>
                               </div>
                             ))}
