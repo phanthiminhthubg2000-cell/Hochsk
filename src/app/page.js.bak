@@ -294,15 +294,6 @@ export default function HomePage() {
     }, 600);
   };
 
-  const handleChangeLevel = async (lvl) => {
-    setCurrentLevel(lvl);
-    if (userId) {
-      try {
-        await setDoc(doc(db, "users", userId), { currentLevel: lvl }, { merge: true });
-      } catch (err) { console.error("Lỗi đổi cấp độ:", err); }
-    }
-  };
-
   const handleExchangeXpForWater = async () => {
     const costXp = 100;
     const rewardWater = 5;
@@ -968,42 +959,35 @@ export default function HomePage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {HSK3_LEVELS.map(lvl => {
-                  const exams = hsk3ExamsList
-                    .filter(e => e.level === lvl)
-                    .sort((a, b) => (a.examName || "").localeCompare(b.examName || "", undefined, { numeric: true }));
-                  const hasExam = exams.length > 0;
+                  const examForLevel = hsk3ExamsList.find(e => e.level === lvl);
+                  const hasExam = Boolean(examForLevel);
 
                   return (
-                    <div key={lvl} className={`p-6 rounded-3xl border-2 transition-all flex flex-col ${hasExam ? 'bg-white border-[#8FD9A8] shadow-md hover:shadow-lg' : 'bg-white/50 border-[#E2E8F0] opacity-80'}`}>
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="bg-[#1B5E4B] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{lvl}</span>
-                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${hasExam ? 'bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
-                          {hasExam ? `✓ ${exams.length} đề` : "⏳ Đang update"}
-                        </span>
+                    <div key={lvl} className={`p-6 rounded-3xl border-2 transition-all flex flex-col justify-between ${hasExam ? 'bg-white border-[#8FD9A8] shadow-md hover:shadow-lg' : 'bg-white/50 border-[#E2E8F0] opacity-80'}`}>
+                      <div>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="bg-[#1B5E4B] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{lvl}</span>
+                          <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${hasExam ? 'bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
+                            {hasExam ? "✓ Sẵn sàng" : "⏳ Đang update"}
+                          </span>
+                        </div>
+                        <h4 className="font-black text-lg text-[#1B5E4B] mb-1">{hasExam ? examForLevel.examName : "Chưa có đề thi"}</h4>
+                        <p className="text-xs text-slate-500 font-medium mb-6">
+                          {hasExam ? "Đề thi đã sẵn sàng. Bấm vào bên dưới để bắt đầu làm bài." : "Giáo viên đang cập nhật nội dung cho cấp độ này."}
+                        </p>
                       </div>
 
                       {hasExam ? (
-                        <div className="space-y-2.5">
-                          {exams.map(ex => (
-                            <div key={ex.id} className="flex items-center gap-3 p-3 rounded-2xl bg-[#F7FAF3] border border-[#8FD9A8]/40 hover:border-[#2F8F6E] transition-colors">
-                              <p className="flex-1 min-w-0 font-black text-sm text-[#1B5E4B] truncate">{ex.examName}</p>
-                              <button
-                                onClick={() => setActiveHskExamView(ex)}
-                                className="shrink-0 px-4 py-2 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-xl font-black text-[11px] shadow-sm transition"
-                              >
-                                🚀 Vào thi
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                        <button 
+                          onClick={() => setActiveHskExamView(examForLevel)}
+                          className="w-full py-3.5 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-2xl font-black text-xs shadow-md transition flex items-center justify-center gap-2"
+                        >
+                          🚀 Vào phòng thi ngay
+                        </button>
                       ) : (
-                        <>
-                          <h4 className="font-black text-lg text-[#1B5E4B] mb-1">Chưa có đề thi</h4>
-                          <p className="text-xs text-slate-500 font-medium mb-6">Giáo viên đang cập nhật nội dung cho cấp độ này.</p>
-                          <button disabled className="mt-auto w-full py-3.5 bg-slate-200 text-slate-400 rounded-2xl font-bold text-xs cursor-not-allowed">
-                            Sắp ra mắt
-                          </button>
-                        </>
+                        <button disabled className="w-full py-3.5 bg-slate-200 text-slate-400 rounded-2xl font-bold text-xs cursor-not-allowed">
+                          Sắp ra mắt
+                        </button>
                       )}
                     </div>
                   );
@@ -1065,7 +1049,7 @@ export default function HomePage() {
 
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
             <iframe 
-              {...(activeHskExamView?.htmlContent ? { srcDoc: activeHskExamView.htmlContent } : { src: activeHskExamView?.fileUrl })}
+              src={activeHskExamView.fileUrl}
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
