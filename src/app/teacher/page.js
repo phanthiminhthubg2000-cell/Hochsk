@@ -4,7 +4,6 @@ import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
-
 const LEVEL_OPTIONS = [
   "Msutong HSK1",
   "Msutong HSK2",
@@ -23,12 +22,23 @@ const LEVEL_OPTIONS = [
   "HSK5.2 3.0"
 ];
 
+// 6 CẤP ĐỘ HSK 3.0 CHUẨN
+const HSK3_LEVELS = [
+  "HSK 3.0 - Cấp độ 1",
+  "HSK 3.0 - Cấp độ 2",
+  "HSK 3.0 - Cấp độ 3",
+  "HSK 3.0 - Cấp độ 4",
+  "HSK 3.0 - Cấp độ 5",
+  "HSK 3.0 - Cấp độ 6"
+];
+
 export default function TeacherDashboard() {
   const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
 
   // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("students");
+  const [activeTab, setActiveTab] = useState("students"); 
+  // 'students' | 'grading' | 'grading_test' | 'hsk3_exam_manager' | 'hsk3_grading' | 'review_manager' | 'lecture_manager'
 
   // --- STATES QUẢN LÝ LỚP HỌC & KHO BÀI KIỂM TRA ---
   const [classesList, setClassesList] = useState([]);
@@ -61,6 +71,21 @@ export default function TeacherDashboard() {
   const [newLectureHtmlContent, setNewLectureHtmlContent] = useState("");
   const [activeLectureView, setActiveLectureView] = useState(null);
   const lectureContainerRef = useRef(null);
+
+  // --- STATES QUẢN LÝ HSK 3.0 EXAMS ---
+  const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
+  const [isAddHskExamModalOpen, setIsAddHskExamModalOpen] = useState(false);
+  const [newHskExamName, setNewHskExamName] = useState("");
+  const [newHskExamLevel, setNewHskExamLevel] = useState("HSK 3.0 - Cấp độ 1");
+  const [selectedHskExamFile, setSelectedHskExamFile] = useState(null);
+  const [activeHskExamView, setActiveHskExamView] = useState(null);
+
+  // --- STATES CHẤM BÀI HSK 3.0 ---
+  const [pendingHsk3Submissions, setPendingHsk3Submissions] = useState([]);
+  const [selectedHsk3Submission, setSelectedHsk3Submission] = useState(null);
+  const [hsk3ScoreInput, setHsk3ScoreInput] = useState("");
+  const [hsk3FeedbackInput, setHsk3FeedbackInput] = useState("");
+  const [isLoadingHsk3Submissions, setIsLoadingHsk3Submissions] = useState(true);
 
   // State quản lý việc ẩn/hiện (thu gọn/mở rộng) theo từng cấp độ
   const [collapsedLevels, setCollapsedLevels] = useState({});
@@ -181,7 +206,6 @@ export default function TeacherDashboard() {
       timePerItem = 3;
     }
 
-    // Xáo trộn ngẫu nhiên thứ tự các từ vựng mỗi khi bắt đầu test
     const shuffledQuestions = [...chosenTest.questions];
     for (let i = shuffledQuestions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -205,7 +229,6 @@ export default function TeacherDashboard() {
     setIsLiveTesting(true);
   };
 
-  // Quản lý đếm ngược thời gian tổng
   useEffect(() => {
     let timer;
     if (isLiveTesting && !isTestCompleted && totalTimeLeft > 0) {
@@ -246,7 +269,6 @@ export default function TeacherDashboard() {
     saveTestResultToStudentHistory(currentLog);
   };
 
-  // An toàn dữ liệu: Lấy dữ liệu mới nhất của lớp trước khi ghi nhận kết quả để tránh ghi đè dữ liệu cũ
   const saveTestResultToStudentHistory = async (finalLog) => {
     if (!selectedClassForTest || !selectedStudentForTest || !selectedTestBankItem) return;
     const correctCount = finalLog.filter(item => item.correct).length;
@@ -312,14 +334,117 @@ export default function TeacherDashboard() {
     } catch (err) { console.error("Lỗi tải kho bài giảng:", err); }
   }, []);
 
+  const fetchHsk3Exams = useCallback(async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "hsk3_exams_bank"));
+      const list = [];
+      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      setHsk3ExamsList(list);
+    } catch (err) { console.error("Lỗi tải kho đề HSK 3.0:", err); }
+  }, []);
+
+  const fetchPendingHsk3Submissions = useCallback(async () => {
+    setIsLoadingHsk3Submissions(true);
+    try {
+      const q = query(collection(db, "hsk3_submissions"), where("status", "==", "pending_teacher"));
+      const snapshot = await getDocs(q);
+      const list = [];
+      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      list.sort((a, b) => (a.submittedAt?.toMillis() || 0) - (b.submittedAt?.toMillis() || 0));
+      setPendingHsk3Submissions(list);
+    } catch (err) {
+      console.error("Lỗi tải bài nộp HSK 3.0:", err);
+    } finally {
+      setIsLoadingHsk3Submissions(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchClasses();
     fetchTestsBank();
     fetchLecturesBank();
+    fetchHsk3Exams();
+    fetchPendingHsk3Submissions();
     fetchPendingExams();
     fetchPendingTests();
     fetchAllStudentsProgress();
-  }, [fetchClasses, fetchTestsBank, fetchLecturesBank]);
+  }, [fetchClasses, fetchTestsBank, fetchLecturesBank, fetchHsk3Exams, fetchPendingHsk3Submissions]);
+
+  const handleHskExamFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+      return alert("Vui lòng tải lên tệp định dạng .html của đề thi!");
+    }
+    setSelectedHskExamFile(file);
+  };
+
+  const handleCreateHskExam = async (e) => {
+    e.preventDefault();
+    if (!newHskExamName.trim() || !selectedHskExamFile) {
+      return alert("Vui lòng nhập tên đề thi và chọn tệp .html!");
+    }
+    if (selectedHskExamFile.size > 900 * 1024) {
+      return alert("Tệp quá lớn (>900KB). Hãy dùng bản HTML đã tách ảnh/audio ra public/.");
+    }
+
+    try {
+      setIsSubmitting(true);
+      const htmlContent = await selectedHskExamFile.text();
+
+      await addDoc(collection(db, "hsk3_exams_bank"), {
+        examName: newHskExamName.trim(),
+        level: newHskExamLevel,
+        htmlContent,
+        createdAt: serverTimestamp()
+      });
+
+      alert("✅ Đã tải lên đề thi HSK 3.0 thành công!");
+      setIsAddHskExamModalOpen(false);
+      setNewHskExamName("");
+      setSelectedHskExamFile(null);
+      fetchHsk3Exams();
+    } catch (err) {
+      alert("Lỗi khi tải lên đề thi: " + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteHskExam = async (examId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa đề thi này không?")) return;
+    try {
+      await deleteDoc(doc(db, "hsk3_exams_bank", examId));
+      alert("Đã xóa đề thi!");
+      fetchHsk3Exams();
+    } catch (err) {
+      alert("Lỗi khi xóa đề thi: " + err.message);
+    }
+  };
+
+  const handleSubmitHsk3Grade = async () => {
+    if (!hsk3ScoreInput || !hsk3FeedbackInput.trim()) {
+      return alert("Vui lòng nhập điểm số và nhận xét bài thi!");
+    }
+    setIsSubmitting(true);
+    try {
+      await updateDoc(doc(db, "hsk3_submissions", selectedHsk3Submission.id), {
+        status: "graded",
+        teacherScore: Number(hsk3ScoreInput),
+        teacherFeedback: hsk3FeedbackInput,
+        evaluatedLevel: selectedHsk3Submission.level
+      });
+      alert("✅ Đã chấm điểm và gửi kết quả về cho học viên thành công!");
+      setSelectedHsk3Submission(null);
+      setHsk3ScoreInput("");
+      setHsk3FeedbackInput("");
+      fetchPendingHsk3Submissions();
+    } catch (err) {
+      alert("Lỗi khi lưu điểm: " + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleCreateClass = async (e) => {
     e.preventDefault();
@@ -359,11 +484,6 @@ export default function TeacherDashboard() {
     e.preventDefault();
     if (!editClassName.trim() || !editClassStudents.trim()) {
       return alert("Vui lòng nhập đầy đủ thông tin lớp!");
-    }
-
-    const oldStudentsMap = new Map();
-    if (editingClass.students) {
-      editingClass.students.forEach(st => oldStudentsMap.set(st.id, st.history || []));
     }
 
     const updatedStudentsArray = editClassStudents
@@ -782,6 +902,17 @@ export default function TeacherDashboard() {
                 {!isSidebarCollapsed && pendingTests.length > 0 && <span className="bg-[#10B981] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingTests.length}</span>}
               </button>
 
+              {/* TAB QUẢN LÝ ĐỀ THI HSK 3.0 */}
+              <button onClick={() => setActiveTab("hsk3_exam_manager")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'hsk3_exam_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+                <div className="flex items-center gap-3"><span className="text-lg">🏆</span>{!isSidebarCollapsed && <span>Quản lý Đề HSK 3.0</span>}</div>
+              </button>
+
+              {/* TAB CHẤM BÀI HSK 3.0 */}
+              <button onClick={() => setActiveTab("hsk3_grading")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'hsk3_grading' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+                <div className="flex items-center gap-3"><span className="text-lg">🎖️</span>{!isSidebarCollapsed && <span>Chấm bài HSK 3.0</span>}</div>
+                {!isSidebarCollapsed && pendingHsk3Submissions.length > 0 && <span className="bg-[#F43F70] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingHsk3Submissions.length}</span>}
+              </button>
+
               <button onClick={() => setActiveTab("review_manager")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'review_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
                 <div className="flex items-center gap-3"><span className="text-lg">🔄</span>{!isSidebarCollapsed && <span>Kiểm tra bài cũ</span>}</div>
               </button>
@@ -829,6 +960,8 @@ export default function TeacherDashboard() {
               {activeTab === 'students' ? "Quản lý dữ liệu và theo dõi tiến độ của toàn bộ học viên trong hệ thống." : 
                activeTab === 'grading' ? "Đánh giá kết quả phần thi kỹ năng nói (HSKK) của học viên." : 
                activeTab === 'grading_test' ? "Chấm bài kiểm tra Năng lực (4 Kỹ Năng) của học viên." :
+               activeTab === 'hsk3_exam_manager' ? "Quản lý, tải lên và cập nhật đề thi HSK 3.0 (Cấp độ 1 - 6)." :
+               activeTab === 'hsk3_grading' ? "Chấm điểm và gửi nhận xét cho các bài thi HSK 3.0 của học viên." :
                activeTab === 'review_manager' ? "Quản lý lớp học và kho bài kiểm tra bài cũ cho học sinh." :
                "Quản lý kho bài giảng điện tử hỗ trợ giảng dạy tương tác."}
             </p>
@@ -906,6 +1039,147 @@ export default function TeacherDashboard() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {/* TAB QUẢN LÝ ĐỀ THI HSK 3.0 (CẤP ĐỘ 1 - 6) */}
+          {activeTab === "hsk3_exam_manager" && (
+            <div className="space-y-8 animate-fade-in">
+              <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-xl font-black text-[#142033]">🏆 Quản Lý Kho Đề Thi HSK 3.0</h3>
+                    <p className="text-xs font-medium text-[#64748B] mt-1">Tải lên và quản lý các đề thi HSK 3.0 theo 6 cấp độ chuẩn.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAddHskExamModalOpen(true)}
+                    className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition"
+                  >
+                    + Thêm / Up đề thi mới (.html)
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {HSK3_LEVELS.map(lvl => {
+                    const exams = hsk3ExamsList
+                      .filter(e => e.level === lvl)
+                      .sort((a, b) => (a.examName || "").localeCompare(b.examName || "", undefined, { numeric: true }));
+                    return (
+                      <div key={lvl} className={`p-6 rounded-3xl border-2 flex flex-col ${exams.length ? 'bg-white border-[#10B981]/30 shadow-sm' : 'bg-[#F8FAFC] border-[#E2E8F0]'}`}>
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="bg-[#142033] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{lvl}</span>
+                          <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${exams.length ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
+                            {exams.length ? `✓ ${exams.length} đề` : "⏳ Đang update"}
+                          </span>
+                        </div>
+                        {exams.length === 0 ? (
+                          <p className="text-xs text-[#64748B] font-medium">Chưa có đề thi cho cấp độ này.</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {exams.map(ex => (
+                              <div key={ex.id} className="flex items-center gap-2 p-2 rounded-xl border border-slate-100">
+                                <p className="flex-1 text-sm font-bold text-[#142033] truncate">{ex.examName}</p>
+                                <button onClick={() => setActiveHskExamView(ex)} className="px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg font-black text-[10px]">🖥️ Xem</button>
+                                <button onClick={() => handleDeleteHskExam(ex.id)} className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg font-black text-[10px] border border-rose-200">🗑</button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB CHẤM BÀI HSK 3.0 */}
+          {activeTab === "hsk3_grading" && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in">
+              <aside className="lg:col-span-4 w-full bg-white rounded-[24px] border border-[#E2E8F0] shadow-sm flex flex-col overflow-hidden shrink-0 max-h-[calc(100vh-200px)]">
+                <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex justify-between items-center">
+                  <div>
+                    <h3 className="font-black text-[#142033] text-base">Bài nộp HSK 3.0</h3>
+                    <p className="text-xs font-medium text-[#64748B] mt-0.5">Cần chấm điểm</p>
+                  </div>
+                  <span className="bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0] px-3 py-1 rounded-full text-xs font-bold shadow-sm">{pendingHsk3Submissions.length} bài</span>
+                </div>
+
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+                  {isLoadingHsk3Submissions ? (
+                    <div className="flex justify-center items-center py-10 opacity-50"><div className="w-8 h-8 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin"></div></div>
+                  ) : pendingHsk3Submissions.length === 0 ? (
+                    <div className="text-center py-12 flex flex-col items-center justify-center opacity-60">
+                      <span className="text-5xl mb-4 grayscale opacity-50">🎉</span><p className="text-[#142033] font-bold text-sm">Tuyệt vời!</p><p className="text-xs text-[#64748B] font-medium">Không có bài thi HSK 3.0 nào đang chờ chấm.</p>
+                    </div>
+                  ) : (
+                    pendingHsk3Submissions.map(sub => {
+                      const isSelected = selectedHsk3Submission?.id === sub.id;
+                      return (
+                        <button key={sub.id} onClick={() => { setSelectedHsk3Submission(sub); setHsk3ScoreInput(""); setHsk3FeedbackInput(""); }} className={`w-full text-left p-4 rounded-2xl border-2 transition-all group ${isSelected ? 'border-[#10B981] bg-[#ECFDF5] shadow-sm' : 'border-transparent bg-white hover:border-[#E2E8F0] hover:bg-[#F8FAFC]'}`}>
+                          <div className="flex justify-between items-start mb-2">
+                            <p className={`font-black text-sm ${isSelected ? 'text-[#065F46]' : 'text-[#142033]'}`}>{sub.userName}</p>
+                            <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md ${isSelected ? 'bg-[#10B981] text-white shadow-sm' : 'bg-[#E2E8F0] text-[#64748B]'}`}>{sub.level}</span>
+                          </div>
+                          <p className={`text-xs font-medium ${isSelected ? 'text-[#047857]' : 'text-[#94A3B8]'} truncate`}>{sub.examName}</p>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </aside>
+
+              <section className="lg:col-span-8 w-full">
+                {!selectedHsk3Submission ? (
+                  <div className="bg-white/60 border border-[#E2E8F0] border-dashed rounded-[32px] h-[calc(100vh-200px)] flex flex-col items-center justify-center text-center p-8">
+                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl mb-4 shadow-sm border border-[#E2E8F0]">🎖️</div>
+                    <h3 className="text-lg font-black text-[#142033] mb-1">Chọn một bài nộp</h3>
+                    <p className="text-[#64748B] text-sm font-medium">Bấm vào một học viên ở danh sách bên trái để nhập điểm và nhận xét.</p>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-[32px] border border-[#E2E8F0] shadow-xl overflow-hidden animate-fade-in flex flex-col">
+                    <div className="bg-[#142033] p-6 text-white flex justify-between items-center">
+                      <div>
+                        <h2 className="text-2xl font-black mb-1">{selectedHsk3Submission.userName}</h2>
+                        <p className="text-sm font-medium text-slate-300">{selectedHsk3Submission.examName} ({selectedHsk3Submission.level})</p>
+                      </div>
+                      <span className="bg-[#10B981] text-white px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-md">Đang chấm bài</span>
+                    </div>
+
+                    <div className="p-6 md:p-8 space-y-6 bg-white">
+                      <div>
+                        <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Điểm số tổng (0 - 100)</label>
+                        <input 
+                          type="number" min="0" max="100" 
+                          value={hsk3ScoreInput} 
+                          onChange={(e) => setHsk3ScoreInput(e.target.value)} 
+                          placeholder="VD: 85" 
+                          className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] text-xl font-black text-[#10B981] outline-none focus:border-[#10B981]" 
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Nhận xét của giáo viên</label>
+                        <textarea 
+                          rows="4" 
+                          value={hsk3FeedbackInput} 
+                          onChange={(e) => setHsk3FeedbackInput(e.target.value)} 
+                          placeholder="Đánh giá kết quả làm bài của học viên..." 
+                          className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] text-sm font-medium outline-none focus:border-[#10B981] resize-none" 
+                        ></textarea>
+                      </div>
+
+                      <button 
+                        onClick={handleSubmitHsk3Grade}
+                        disabled={isSubmitting}
+                        className="w-full py-4 bg-[#10B981] hover:bg-[#059669] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-md transition"
+                      >
+                        {isSubmitting ? "Đang gửi kết quả..." : "Hoàn tất chấm điểm & Gửi cho học viên"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </section>
             </div>
           )}
 
@@ -1074,7 +1348,6 @@ export default function TeacherDashboard() {
 
                     <div className="p-6 md:p-8 bg-[#F8FAFC] max-h-[500px] overflow-y-auto custom-scrollbar border-b border-[#E2E8F0] space-y-8">
                       
-                      {/* PHẦN 1: DỊCH CÂU (ĐỌC HIỂU) */}
                       {selectedTest.testData?.sections?.translate?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
@@ -1099,7 +1372,6 @@ export default function TeacherDashboard() {
                         </div>
                       )}
 
-                      {/* PHẦN 2: SẮP XẾP CÂU (NGỮ PHÁP) */}
                       {selectedTest.testData?.sections?.arrange?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
@@ -1124,7 +1396,6 @@ export default function TeacherDashboard() {
                         </div>
                       )}
 
-                      {/* PHẦN 3: NGHE NHẮC LẠI (NGHE) */}
                       {selectedTest.testData?.sections?.dictation?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
@@ -1143,7 +1414,7 @@ export default function TeacherDashboard() {
                                     {selectedTest.answers[qId] ? (
                                       <audio src={selectedTest.answers[qId]} controls className="w-full h-10 outline-none" />
                                     ) : (
-                                      <p className="text-[#F43F70] text-sm font-bold">⚠️ Bỏ qua không ghi âm.</p>
+                                      <p className="text-[#F43F70] text-sm font-bold">⚠️️ Bỏ qua không ghi âm.</p>
                                     )}
                                   </div>
                                   <div className="bg-[#ECFDF5] p-4 rounded-xl border border-[#A7F3D0]">
@@ -1159,7 +1430,6 @@ export default function TeacherDashboard() {
                         </div>
                       )}
 
-                      {/* PHẦN 4: NHÌN TRANH NÓI (NÓI) */}
                       {selectedTest.testData?.sections?.picture?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
@@ -1196,7 +1466,6 @@ export default function TeacherDashboard() {
                         </div>
                       )}
 
-                      {/* PHẦN 5: VIẾT LUẬN (VIẾT) */}
                       {selectedTest.testData?.sections?.essay?.length > 0 && (
                         <div>
                           <h3 className="font-black text-[#142033] mb-4 flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-[#E2E8F0] w-fit">
@@ -1223,7 +1492,6 @@ export default function TeacherDashboard() {
                       
                     </div>
 
-                    {/* FORM TỔNG KẾT VÀ TƯ VẤN LỘ TRÌNH */}
                     <div className="p-6 md:p-8 bg-[#142033] text-white flex flex-col gap-6">
                       <div className="flex items-center gap-3 border-b border-white/20 pb-4">
                         <span className="text-3xl">🧑‍🏫</span>
@@ -1234,8 +1502,6 @@ export default function TeacherDashboard() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        {/* 4 KỸ NĂNG */}
                         <div className="bg-white/5 p-5 rounded-2xl border border-white/10 space-y-4">
                           <h4 className="text-sm font-black text-[#10B981] uppercase tracking-widest mb-2 border-b border-white/10 pb-2">Điểm 4 Kỹ Năng</h4>
                           
@@ -1265,7 +1531,6 @@ export default function TeacherDashboard() {
                           ))}
                         </div>
 
-                        {/* ĐÁNH GIÁ CHUNG */}
                         <div className="flex flex-col gap-5">
                           <div className="flex gap-4">
                             <div className="flex-1">
@@ -1324,19 +1589,13 @@ export default function TeacherDashboard() {
           {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP) */}
           {activeTab === "review_manager" && (
             <div className="space-y-10 animate-fade-in">
-              {/* KHU VỰC 1: DANH SÁCH LỚP */}
               <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <h3 className="text-xl font-black text-[#142033]">1. Danh Sách Lớp Học</h3>
                     <p className="text-xs font-medium text-[#64748B] mt-1">Quản lý các lớp, học sinh và thực hiện bài Test.</p>
                   </div>
-                  <button 
-                    onClick={() => setIsAddClassModalOpen(true)}
-                    className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition"
-                  >
-                    + Thêm lớp
-                  </button>
+                  <button onClick={() => setIsAddClassModalOpen(true)} className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition">+ Thêm lớp</button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -1345,7 +1604,6 @@ export default function TeacherDashboard() {
                   ) : (
                     classesList.map(cls => {
                       const testedNames = getTestedNamesForClass(cls);
-
                       return (
                         <div key={cls.id} className="p-6 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] flex flex-col justify-between">
                           <div>
@@ -1368,118 +1626,23 @@ export default function TeacherDashboard() {
                                     <p className="text-[10px] text-slate-400">{st.history?.length || 0} bài đã kiểm tra</p>
                                   </div>
                                   <div className="flex gap-1">
-                                    <button 
-                                      onClick={() => { setSelectedStudentHistory(st); setSelectedClassForHistory(cls); setActiveTestDetail(null); }}
-                                      className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm"
-                                      title="Xem hồ sơ"
-                                    >
-                                      📜 Hồ sơ
-                                    </button>
-                                    <button 
-                                      onClick={() => openTestSelectModal(cls, st)}
-                                      className="px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm"
-                                      title="Bắt đầu Test"
-                                    >
-                                      ▶ Test
-                                    </button>
+                                    <button onClick={() => { setSelectedStudentHistory(st); setSelectedClassForHistory(cls); setActiveTestDetail(null); }} className="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm">📜 Hồ sơ</button>
+                                    <button onClick={() => openTestSelectModal(cls, st)} className="px-3 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm">▶ Test</button>
                                   </div>
                                 </div>
                               ))}
                             </div>
                           </div>
-
-                          <div className="pt-3 border-t border-slate-200 space-y-2">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Báo cáo tổng hợp lớp (Đã test):</p>
-                            {testedNames.length === 0 ? (
-                              <p className="text-[10px] text-slate-400 italic">Chưa có bài test nào được thực hiện.</p>
-                            ) : (
-                              <div className="flex flex-wrap gap-1.5">
-                                {testedNames.map(tName => (
-                                  <button
-                                    key={tName}
-                                    onClick={() => { setClassSummaryModalClass(cls); setClassSummaryTestName(tName); }}
-                                    className="px-2.5 py-1 bg-white hover:bg-[#10B981] hover:text-white border border-[#E2E8F0] text-[#142033] rounded-lg text-[10px] font-bold transition shadow-xs"
-                                    title={`Xuất Excel từ chưa thuộc bài ${tName}`}
-                                  >
-                                    📊 {tName}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-
                         </div>
                       );
                     })
                   )}
                 </div>
               </div>
-
-              {/* KHU VỰC 2: KHO BÀI KIỂM TRA (THU GỌN / MỞ RỘNG THEO CẤP ĐỘ) */}
-              <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <h3 className="text-xl font-black text-[#142033]">2. Kho Bài Kiểm Tra (Theo Cấp Độ)</h3>
-                    <p className="text-xs font-medium text-[#64748B] mt-1">Các bài kiểm tra từ vựng được gom nhóm theo từng cấp độ học.</p>
-                  </div>
-                  <button 
-                    onClick={() => setIsAddTestModalOpen(true)}
-                    className="px-5 py-2.5 bg-[#142033] text-white rounded-xl font-black text-xs shadow-md hover:bg-black transition"
-                  >
-                    + Thêm bài
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  {LEVEL_OPTIONS.map(lvl => {
-                    const testsInLevel = testsBank.filter(t => t.level === lvl);
-                    if (testsInLevel.length === 0) return null;
-
-                    const isCollapsed = collapsedLevels[lvl];
-
-                    return (
-                      <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0] transition-all">
-                        <div 
-                          onClick={() => toggleLevelCollapse(lvl)}
-                          className="flex justify-between items-center cursor-pointer select-none"
-                        >
-                          <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest flex items-center gap-2">
-                            <span>📁</span> {lvl} <span className="text-xs font-bold text-slate-400">({testsInLevel.length} bài)</span>
-                          </h4>
-                          <span className="text-xs font-bold text-slate-500 bg-white px-3 py-1 rounded-xl border border-[#E2E8F0]">
-                            {isCollapsed ? "▼ Mở rộng" : "▲ Thu gọn"}
-                          </span>
-                        </div>
-                        
-                        {!isCollapsed && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fade-in">
-                            {testsInLevel.map(test => (
-                              <div key={test.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
-                                <div>
-                                  <h5 className="font-black text-sm text-[#142033] mb-1">{test.testName}</h5>
-                                  <p className="text-xs text-[#64748B] font-medium mb-3">Số lượng câu hỏi: <strong className="text-[#142033]">{test.questions?.length || 0}</strong> từ/câu</p>
-                                </div>
-                                <div className="flex gap-2 pt-2 border-t border-slate-100">
-                                  <button onClick={() => handleOpenEditTest(test)} className="flex-1 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200">✏️ Sửa</button>
-                                  <button onClick={() => handleDeleteTest(test.id)} className="flex-1 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200">🗑️ Xóa</button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-
-                  {testsBank.length === 0 && (
-                    <p className="text-slate-400 text-xs py-6 text-center">Chưa có bài kiểm tra nào trong kho. Hãy bấm "+ Thêm bài" để bắt đầu.</p>
-                  )}
-                </div>
-              </div>
             </div>
           )}
 
-          {/* TAB 5: KHO BÀI GIẢNG (THU GỌN / MỞ RỘNG THEO CẤP ĐỘ) */}
+          {/* TAB 5: KHO BÀI GIẢNG */}
           {activeTab === "lecture_manager" && (
             <div className="space-y-10 animate-fade-in">
               <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-6 md:p-8 shadow-sm">
@@ -1488,68 +1651,7 @@ export default function TeacherDashboard() {
                     <h3 className="text-xl font-black text-[#142033]">📚 Kho Bài Giảng Điện Tử</h3>
                     <p className="text-xs font-medium text-[#64748B] mt-1">Tải lên và quản lý các bài giảng dạng tệp .html theo từng cấp độ giáo trình.</p>
                   </div>
-                  <button 
-                    onClick={() => setIsAddLectureModalOpen(true)}
-                    className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition"
-                  >
-                    + Thêm bài giảng (.html)
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  {LEVEL_OPTIONS.map(lvl => {
-                    const lecturesInLevel = lecturesBank.filter(l => l.level === lvl);
-                    if (lecturesInLevel.length === 0) return null;
-
-                    const isCollapsed = collapsedLevels[`lec_${lvl}`];
-
-                    return (
-                      <div key={lvl} className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0]">
-                        <div 
-                          onClick={() => toggleLevelCollapse(`lec_${lvl}`)}
-                          className="flex justify-between items-center cursor-pointer select-none"
-                        >
-                          <h4 className="font-black text-sm text-[#10B981] uppercase tracking-widest flex items-center gap-2">
-                            <span>📖</span> {lvl} <span className="text-xs font-bold text-slate-400">({lecturesInLevel.length} bài)</span>
-                          </h4>
-                          <span className="text-xs font-bold text-slate-500 bg-white px-3 py-1 rounded-xl border border-[#E2E8F0]">
-                            {isCollapsed ? "▼ Mở rộng" : "▲ Thu gọn"}
-                          </span>
-                        </div>
-                        
-                        {!isCollapsed && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fade-in">
-                            {lecturesInLevel.map(lec => (
-                              <div key={lec.id} className="p-4 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm flex flex-col justify-between">
-                                <div>
-                                  <h5 className="font-black text-sm text-[#142033] mb-1">{lec.lectureName}</h5>
-                                  <span className="inline-block bg-[#ECFDF5] text-[#10B981] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-[#A7F3D0] mb-3">Tệp HTML</span>
-                                </div>
-                                <div className="flex gap-2 pt-2 border-t border-slate-100">
-                                  <button 
-                                    onClick={() => setActiveLectureView(lec)}
-                                    className="flex-1 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold shadow-sm"
-                                  >
-                                    🖥️ Giảng dạy
-                                  </button>
-                                  <button 
-                                    onClick={() => handleDeleteLecture(lec.id)} 
-                                    className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
-                                  >
-                                    🗑️ Xóa
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-
-                  {lecturesBank.length === 0 && (
-                    <p className="text-slate-400 text-xs py-6 text-center">Chưa có bài giảng nào trong kho. Hãy bấm "+ Thêm bài giảng" để tải tệp .html lên.</p>
-                  )}
+                  <button onClick={() => setIsAddLectureModalOpen(true)} className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition">+ Thêm bài giảng (.html)</button>
                 </div>
               </div>
             </div>
@@ -1558,454 +1660,47 @@ export default function TeacherDashboard() {
         </div>
       </main>
 
-      {/* MODAL THÊM LỚP */}
-      {isAddClassModalOpen && (
+      {/* MODAL TẢI LÊN ĐỀ THI HSK 3.0 */}
+      {isAddHskExamModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <form onSubmit={handleCreateClass} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
-            <h3 className="text-xl font-black text-[#142033]">Tạo Lớp Học Mới</h3>
+          <form onSubmit={handleCreateHskExam} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
+            <h3 className="text-xl font-black text-[#142033]">Tải Lên Đề Thi HSK 3.0</h3>
             <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên lớp học</label>
-              <input type="text" value={newClassName} onChange={e => setNewClassName(e.target.value)} placeholder="VD: Lớp Tiếng Trung Msutong 1" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên đề thi</label>
+              <input type="text" value={newHskExamName} onChange={e => setNewHskExamName(e.target.value)} placeholder="VD: Đề thi thử HSK 3 - Cấp độ 3" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
             </div>
             <div>
               <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn cấp độ</label>
-              <select value={newClassLevel} onChange={e => setNewClassLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
-                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+              <select value={newHskExamLevel} onChange={e => setNewHskExamLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
+                {HSK3_LEVELS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Danh sách học sinh (Mỗi bạn 1 dòng)</label>
-              <textarea rows="5" value={newClassStudents} onChange={e => setNewClassStudents(e.target.value)} placeholder="Nguyễn Văn A&#10;Trần Thị B&#10;Lê Văn C" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
+              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn tệp đề thi (.html)</label>
+              <input type="file" accept=".html,.htm" onChange={handleHskExamFileUpload} className="w-full p-2.5 rounded-xl border border-[#E2E8F0] text-xs font-bold text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#10B981] file:text-white hover:file:bg-[#059669] cursor-pointer" required />
             </div>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setIsAddClassModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
-              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Tạo lớp</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* MODAL CHỈNH SỬA LỚP */}
-      {editingClass && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <form onSubmit={handleUpdateClass} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
-            <h3 className="text-xl font-black text-[#142033]">Sửa Danh Sách Lớp</h3>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên lớp học</label>
-              <input type="text" value={editClassName} onChange={e => setEditClassName(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn cấp độ</label>
-              <select value={editClassLevel} onChange={e => setEditClassLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
-                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Danh sách học sinh (Mỗi bạn 1 dòng)</label>
-              <textarea rows="5" value={editClassStudents} onChange={e => setEditClassStudents(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
-            </div>
-            <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setEditingClass(null)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
-              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Lưu thay đổi</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* MODAL THÊM BÀI GIẢNG (.HTML) */}
-      {isAddLectureModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <form onSubmit={handleCreateLecture} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
-            <h3 className="text-xl font-black text-[#142033]">Tải Lên Bài Giảng Mới</h3>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên bài giảng</label>
-              <input type="text" value={newLectureName} onChange={e => setNewLectureName(e.target.value)} placeholder="VD: Bài 1: 你好 - Giáo trình Msutong" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn cấp độ giáo trình</label>
-              <select value={newLectureLevel} onChange={e => setNewLectureLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
-                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn tệp bài giảng (.html)</label>
-              <input type="file" accept=".html,.htm" onChange={handleFileUpload} className="w-full p-2.5 rounded-xl border border-[#E2E8F0] text-xs font-bold text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#10B981] file:text-white hover:file:bg-[#059669] cursor-pointer" required />
-            </div>
-            <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setIsAddLectureModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
-              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Tải lên</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* MODAL THÊM BÀI KIỂM TRA */}
-      {isAddTestModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <form onSubmit={handleCreateTest} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
-            <h3 className="text-xl font-black text-[#142033]">Thêm Bài Kiểm Tra Mới</h3>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên bài kiểm tra</label>
-              <input type="text" value={newTestName} onChange={e => setNewTestName(e.target.value)} placeholder="VD: Kiểm tra từ vựng bài 1" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Cấp độ</label>
-              <select value={newTestLevel} onChange={e => setNewTestLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
-                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Nội dung từ/câu hỏi (Mỗi từ 1 dòng)</label>
-              <textarea rows="6" value={newTestContent} onChange={e => setNewTestContent(e.target.value)} placeholder="你好&#10;谢谢&#10;再见" className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
-            </div>
-            <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setIsAddTestModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
-              <button type="submit" className="flex-1 py-3 bg-[#142033] text-white rounded-xl font-bold text-xs shadow-md">Thêm bài</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* MODAL CHỈNH SỬA BÀI KIỂM TRA */}
-      {editingTest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <form onSubmit={handleUpdateTest} className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
-            <h3 className="text-xl font-black text-[#142033]">Chỉnh Sửa Bài Kiểm Tra</h3>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Tên bài kiểm tra</label>
-              <input type="text" value={editTestName} onChange={e => setEditTestName(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]" required />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Cấp độ</label>
-              <select value={editTestLevel} onChange={e => setEditTestLevel(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]">
-                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Nội dung từ/câu hỏi (Mỗi từ 1 dòng)</label>
-              <textarea rows="6" value={editTestContent} onChange={e => setEditTestContent(e.target.value)} className="w-full p-3 rounded-xl border border-[#E2E8F0] font-medium text-sm outline-none focus:border-[#10B981] resize-none" required></textarea>
-            </div>
-            <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setEditingTest(null)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
-              <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Lưu thay đổi</button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* MODAL CHỌN CẤP ĐỘ -> CHỌN BÀI KHI BẤM TEST */}
-      {isTestSelectModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl space-y-5 animate-slide-up-fade">
-            <h3 className="text-xl font-black text-[#142033]">Bắt đầu kiểm tra cho: <span className="text-[#10B981]">{targetStudentForTest?.name}</span></h3>
-            
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">1. Chọn cấp độ</label>
-              <select 
-                value={selectedLevelFilter} 
-                onChange={(e) => {
-                  setSelectedLevelFilter(e.target.value);
-                  setSelectedTestId("");
-                }} 
-                className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]"
-              >
-                {LEVEL_OPTIONS.map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">2. Chọn bài kiểm tra</label>
-              <select 
-                value={selectedTestId} 
-                onChange={(e) => setSelectedTestId(e.target.value)} 
-                className="w-full p-3 rounded-xl border border-[#E2E8F0] font-bold text-sm outline-none focus:border-[#10B981]"
-              >
-                <option value="">-- Chọn bài trong kho --</option>
-                {testsBank
-                  .filter(t => t.level === selectedLevelFilter)
-                  .map(t => (
-                    <option key={t.id} value={t.id}>{t.testName} ({t.questions?.length || 0} câu)</option>
-                  ))}
-              </select>
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setIsTestSelectModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
-              <button 
-                type="button" 
-                onClick={handleConfirmStartTest}
-                className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md hover:bg-[#059669]"
-              >
-                Bắt đầu Test
+              <button type="button" onClick={() => setIsAddHskExamModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="submit" disabled={isSubmitting} className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">
+                {isSubmitting ? "Đang tải lên..." : "Tải lên"}
               </button>
             </div>
-          </div>
+          </form>
         </div>
       )}
 
-      {/* MODAL XEM & GIẢNG DẠY BÀI GIẢNG (HỖ TRỢ TOÀN MÀN HÌNH) */}
-      {activeLectureView && (
-        <div ref={lectureContainerRef} className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
+      {/* MODAL XEM THỬ ĐỀ THI HSK 3.0 CHO GIÁO VIÊN */}
+      {activeHskExamView && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
           <div className="h-16 px-6 bg-[#142033] text-white flex justify-between items-center shrink-0 shadow-md">
             <div>
-              <h3 className="font-black text-base">{activeLectureView.lectureName}</h3>
-              <p className="text-[10px] text-[#10B981] font-bold uppercase tracking-widest">{activeLectureView.level}</p>
+              <h3 className="font-black text-base">Xem thử đề thi: {activeHskExamView.examName}</h3>
+              <p className="text-[10px] text-[#10B981] font-bold uppercase tracking-widest">{activeHskExamView.level}</p>
             </div>
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={toggleFullScreenLecture}
-                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black transition border border-white/20"
-              >
-                ⛶ Toàn màn hình
-              </button>
-              <button 
-                onClick={() => setActiveLectureView(null)}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition shadow-sm"
-              >
-                ✕ Đóng bài giảng
-              </button>
-            </div>
+            <button onClick={() => setActiveHskExamView(null)} className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition text-white">✕ Đóng</button>
           </div>
-
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
-            <iframe 
-              srcDoc={activeLectureView.htmlContent}
-              title={activeLectureView.lectureName}
-              className="w-full h-full border-0"
-              sandbox="allow-scripts allow-same-origin"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* MODAL PHÒNG KIỂM TRA TRỰC TIẾP (LIVE TEST) */}
-      {isLiveTesting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#142033]/90 backdrop-blur-md animate-fade-in">
-          <div className="bg-white rounded-[40px] p-8 md:p-12 max-w-xl w-full shadow-2xl text-center relative overflow-hidden flex flex-col items-center">
-            
-            {!isTestCompleted ? (
-              <>
-                <div className="w-full flex justify-between items-center mb-6">
-                  <span className="bg-[#ECFDF5] text-[#10B981] font-black text-xs px-3 py-1 rounded-full uppercase tracking-widest border border-[#A7F3D0]">
-                    {selectedStudentForTest?.name} • Câu {currentQuestionIndex + 1}/{selectedTestBankItem?.questions.length}
-                  </span>
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center font-black text-sm shadow-inner ${totalTimeLeft <= 5 ? 'bg-rose-100 text-rose-600 animate-pulse' : 'bg-slate-100 text-[#142033]'}`}>
-                    ⏱️ {totalTimeLeft}s
-                  </div>
-                </div>
-
-                <div className="my-10 w-full py-12 bg-[#F8FAFC] rounded-3xl border-2 border-[#E2E8F0] shadow-inner flex items-center justify-center">
-                  <h2 className="text-6xl md:text-7xl font-black text-[#142033] tracking-wider">
-                    {selectedTestBankItem?.questions[currentQuestionIndex]}
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 w-full">
-                  <button 
-                    onClick={() => handleRecordAnswer(false)}
-                    className="py-5 bg-rose-50 text-rose-600 border border-rose-200 rounded-2xl font-black text-base shadow-sm hover:bg-rose-100 transition active:scale-95"
-                  >
-                    ❌ Chưa thuộc
-                  </button>
-                  <button 
-                    onClick={() => handleRecordAnswer(true)}
-                    className="py-5 bg-[#10B981] text-white rounded-2xl font-black text-base shadow-lg hover:bg-[#059669] transition active:scale-95"
-                  >
-                    ✓ Thuộc
-                  </button>
-                </div>
-
-                <button onClick={() => setIsLiveTesting(false)} className="mt-6 text-xs font-bold text-slate-400 hover:text-slate-600">
-                  Thoát phiên kiểm tra
-                </button>
-              </>
-            ) : (
-              <div className="space-y-6 w-full animate-slide-up-fade">
-                <div className="text-6xl mb-2">🏆</div>
-                <h2 className="text-3xl font-black text-[#142033]">Hoàn Thành Kiểm Tra!</h2>
-                <p className="text-slate-500 font-medium text-sm">Học viên: <strong className="text-[#142033]">{selectedStudentForTest?.name}</strong></p>
-                
-                <div className="bg-[#ECFDF5] border border-[#A7F3D0] p-6 rounded-3xl my-6">
-                  <p className="text-xs font-black text-[#10B981] uppercase tracking-widest mb-1">Kết quả đạt được</p>
-                  <p className="text-4xl font-black text-[#047857]">
-                    {testResultsLog.filter(i => i.correct).length} / {testResultsLog.length} <span className="text-lg">thuộc</span>
-                  </p>
-                </div>
-
-                <button 
-                  onClick={() => setIsLiveTesting(false)}
-                  className="w-full py-4 bg-[#142033] text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg hover:bg-black transition"
-                >
-                  Đóng & Quay lại Quản lý Lớp
-                </button>
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
-
-      {/* MODAL BÁO CÁO TỔNG HỢP CẢ LỚP THEO BÀI TEST & NÚT XUẤT EXCEL */}
-      {classSummaryModalClass && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-[40px] p-6 md:p-10 w-[95vw] max-w-3xl shadow-2xl space-y-6 animate-slide-up-fade max-h-[90vh] flex flex-col">
-            
-            <div className="flex justify-between items-center border-b border-[#E2E8F0] pb-4 shrink-0">
-              <div>
-                <h3 className="text-xl font-black text-[#142033]">Báo Cáo Tổng Hợp Từ Chưa Thuộc</h3>
-                <p className="text-xs font-bold text-[#10B981] mt-0.5">
-                  Lớp: {classSummaryModalClass.className} • Bài: {classSummaryTestName}
-                </p>
-              </div>
-              <button onClick={() => setClassSummaryModalClass(null)} className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold transition">✕</button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider">
-                    <th className="p-3 rounded-l-xl">Học sinh</th>
-                    <th className="p-3">Điểm số</th>
-                    <th className="p-3 rounded-r-xl">Các từ chưa thuộc (Sai)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E2E8F0] text-xs">
-                  {classSummaryModalClass.students?.map(st => {
-                    const testHistory = st.history?.find(h => h.testName === classSummaryTestName);
-                    const unlearned = testHistory?.logs?.filter(l => !l.correct) || [];
-
-                    return (
-                      <tr key={st.id} className="hover:bg-slate-50">
-                        <td className="p-3 font-bold text-[#142033]">{st.name}</td>
-                        <td className="p-3 font-black text-[#10B981]">
-                          {testHistory ? `${testHistory.score}% (${testHistory.correct}/${testHistory.total})` : "Chưa kiểm tra"}
-                        </td>
-                        <td className="p-3">
-                          {unlearned.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {unlearned.map((u, idx) => (
-                                <span key={idx} className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-md font-bold">
-                                  {u.question} ✗
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className="text-[#10B981] font-bold">Thuộc hết 🎉</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="pt-3 border-t border-[#E2E8F0] flex gap-3 shrink-0">
-              <button 
-                onClick={() => exportClassSummaryExcel(classSummaryModalClass, classSummaryTestName)}
-                className="flex-1 py-3.5 bg-[#10B981] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#059669] transition shadow-md flex items-center justify-center gap-2"
-              >
-                📥 Xuất File Excel (Từ Chưa Thuộc)
-              </button>
-              <button 
-                onClick={() => setClassSummaryModalClass(null)} 
-                className="py-3.5 px-6 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs hover:bg-slate-200 transition"
-              >
-                Đóng
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* MODAL HỒ SƠ HỌC SINH (RỘNG 98% MÀN HÌNH, HIỂN THỊ BẢNG HOÀN CHỈNH KHI CLICK VÀO BÀI TEST) */}
-      {selectedStudentHistory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-[40px] p-6 md:p-10 w-[98vw] max-w-[1400px] shadow-2xl space-y-6 animate-slide-up-fade max-h-[95vh] flex flex-col">
-            
-            <div className="flex justify-between items-center border-b border-[#E2E8F0] pb-4 shrink-0">
-              <div>
-                <h3 className="text-2xl font-black text-[#142033]">Hồ sơ học viên</h3>
-                <p className="text-xs font-bold text-[#10B981] mt-0.5">
-                  Học sinh: {selectedStudentHistory.name} • Lớp: {selectedClassForHistory?.className || "Chưa rõ"}
-                </p>
-              </div>
-              <button onClick={() => setSelectedStudentHistory(null)} className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold transition">✕</button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
-              {selectedStudentHistory.history?.length === 0 ? (
-                <p className="text-sm text-slate-400 py-12 text-center font-medium">Học sinh chưa có bài kiểm tra bài cũ nào.</p>
-              ) : (
-                selectedStudentHistory.history?.map((h, i) => {
-                  const isDetailOpen = activeTestDetail === i;
-
-                  return (
-                    <div key={i} className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm overflow-hidden transition-all">
-                      
-                      <div 
-                        onClick={() => setActiveTestDetail(isDetailOpen ? null : i)}
-                        className="p-5 bg-[#F8FAFC] hover:bg-slate-100 cursor-pointer flex justify-between items-center transition"
-                      >
-                        <div>
-                          <span className="bg-[#142033] text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded mb-1 inline-block">{h.level}</span>
-                          <h4 className="font-black text-base text-[#142033]">{h.testName}</h4>
-                          <p className="text-xs font-medium text-slate-400">Ngày kiểm tra: {h.date}</p>
-                        </div>
-                        <div className="flex items-center gap-4 text-right">
-                          <div>
-                            <p className="font-black text-lg text-[#10B981]">{h.score}%</p>
-                            <p className="text-xs font-bold text-slate-500">{h.correct}/{h.total} câu đúng</p>
-                          </div>
-                          <span className="text-slate-400 font-bold text-lg">{isDetailOpen ? "▲" : "▼"}</span>
-                        </div>
-                      </div>
-
-                      {/* BẢNG HOÀN CHỈNH: TÊN HỌC SINH - TÊN BÀI - DANH SÁCH TỪ VỰNG */}
-                      {isDetailOpen && (
-                        <div className="p-6 bg-white border-t border-[#E2E8F0] space-y-5 animate-fade-in">
-                          <div className="bg-[#F8FAFC] p-5 rounded-2xl border border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-bold text-[#64748B]">
-                            <p>👤 <strong className="text-[#142033]">Học sinh:</strong> {selectedStudentHistory.name}</p>
-                            <p>📚 <strong className="text-[#142033]">Bài test:</strong> {h.testName} ({h.level})</p>
-                            <p>🎯 <strong className="text-[#142033]">Kết quả:</strong> {h.correct}/{h.total} câu đúng ({h.score}%)</p>
-                          </div>
-
-                          <div>
-                            <p className="text-xs font-black text-[#142033] uppercase tracking-widest mb-3">Danh sách từ vựng kiểm tra (Đúng / Sai):</p>
-                            {h.logs && h.logs.length > 0 ? (
-                              <div className="flex flex-wrap gap-2.5">
-                                {h.logs.map((logItem, idx) => (
-                                  <span 
-                                    key={idx} 
-                                    className={`px-4 py-2 rounded-xl text-sm font-black border flex items-center gap-2 ${logItem.correct ? 'bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]' : 'bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]'}`}
-                                  >
-                                    {logItem.question} {logItem.correct ? "✓" : "✗"}
-                                  </span>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-slate-400 italic">Không có chi tiết từng từ cho bài kiểm tra này.</p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                    </div>
-                  );
-                })
-              )}
-            </div>
-
-            <div className="pt-2 shrink-0">
-              <button 
-                onClick={() => setSelectedStudentHistory(null)} 
-                className="w-full py-4 bg-[#142033] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition shadow-md"
-              >
-                Đóng
-              </button>
-            </div>
-
+            <iframe {...(activeHskExamView.htmlContent ? { srcDoc: activeHskExamView.htmlContent } : { src: activeHskExamView.fileUrl })} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" />
           </div>
         </div>
       )}
