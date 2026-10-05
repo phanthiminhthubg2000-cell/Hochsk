@@ -605,140 +605,144 @@ export default function HomePage() {
          <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
       </div>
 
-      {/* SIDEBAR */}
-      <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
-        <div className="flex h-full flex-col">
-          <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-sm">🐸</div>
-            {!isSidebarCollapsed && (
-              <div className="min-w-0">
-                <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">HSK Garden</h2>
-                <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Khu vườn học tập</p>
-              </div>
-            )}
-          </div>
-
-          <nav className="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar">
-            <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌿 KHU VƯỜN" : "•"}</div>
-            <button onClick={() => setActiveTab("home")} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'home' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-              <span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
-            </button>
-
-            {/* TAB HỌC HSK (KHO BÀI GIẢNG) MỚI */}
-            <button onClick={() => { setActiveTab("student_lectures"); setSelectedLectureLevel(null); setSelectedLecture(null); }} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'student_lectures' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-              <span className="w-6 text-center text-lg">📖</span>{!isSidebarCollapsed && <span>Học HSK</span>}
-            </button>
-
-            {/* TAB THI HSK 3.0 */}
-            <button onClick={() => setActiveTab("hsk3_exam")} className={`w-full mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hsk3_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-              <span className="w-6 text-center text-lg">🏆</span>{!isSidebarCollapsed && <span>Thi HSK 3.0</span>}
-            </button>
-
-            <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌱 KHU RÈN LUYỆN" : "•"}</div>
-            <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🌱</span>{!isSidebarCollapsed && <span>Từ vựng</span>}</Link>
-            <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Chủ đề</span>}</Link>
-            <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
-            <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
-            <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
-            <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
-            <Link href="/roleplay" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
-            
-            <Link href="/test" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">📝</span>{!isSidebarCollapsed && <span>Thi Đánh Giá</span>}
-            </Link>
-
-            {isTeacher && (
-              <div className="mt-6 mb-2 border-t border-[#8FD9A8]/20 pt-4">
-                <Link href="/teacher" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1B5E4B] bg-[#FFD666]/20 hover:bg-[#FFD666]/40 transition-all shadow-sm">
-                  <span className="w-6 text-center text-lg">🛡</span>{!isSidebarCollapsed && <span>Trang Quản Lý</span>}
-                </Link>
-              </div>
-            )}
-          </nav>
-
-          <div className="border-t border-[#8FD9A8]/20 p-4">
-            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-white/50 py-2.5 text-xs font-bold text-slate-500 hover:bg-white transition-colors shadow-sm">
-              {isSidebarCollapsed ? "→" : "← Thu gọn"}
-            </button>
-            {isSignedIn ? (
-              <div className={`flex items-center rounded-2xl bg-white shadow-sm p-2.5 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-                <UserButton afterSignOutUrl="/" />
-                {!isSidebarCollapsed && (
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
-                    <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <SignInButton mode="modal">
-                <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1B5E4B] py-3 text-xs font-bold text-white hover:bg-[#2F8F6E] shadow-md transition-all">
-                  👤 {!isSidebarCollapsed && "Đăng nhập"}
-                </button>
-              </SignInButton>
-            )}
-          </div>
-        </div>
-      </aside>
-
-      <main className={`min-h-screen transition-all duration-300 relative z-10 ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
-        
-        {/* TOPBAR CHÍNH */}
-        <header className="sticky top-0 z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 px-5 backdrop-blur-xl md:px-8 flex items-center justify-between">
-          <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl bg-white/90 shadow-sm px-4 text-left text-sm font-medium text-slate-400 hover:shadow-md transition-all sm:flex group border border-transparent hover:border-[#8FD9A8]">
-            <span className="text-lg opacity-60">🔍</span>
-            <span className="group-hover:text-[#2F8F6E] transition-colors">Tìm kiếm từ vựng, ngữ pháp...</span>
-            <span className="ml-auto rounded-lg bg-[#F4F7F6] px-2 py-1 text-[10px] font-bold text-slate-400 group-hover:text-[#2F8F6E]">Ctrl K</span>
-          </button>
-
-          <div className="ml-auto flex items-center gap-3">
-            <div className="relative">
-              <button 
-                onClick={() => setIsNotifOpen(!isNotifOpen)} 
-                className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm border border-slate-100 hover:border-[#8FD9A8] transition-all"
-              >
-                <span className="text-xl">🔔</span>
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#F43F70] text-[9px] font-black text-white shadow-sm border-2 border-white">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-              
-              {isNotifOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-white rounded-[24px] shadow-2xl border border-[#E2E8F0] overflow-hidden z-50 animate-slide-up-fade">
-                  <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                    <h3 className="font-black text-[#142033] text-sm flex items-center gap-2"><span>📫</span> Thông báo của bạn</h3>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto custom-scrollbar p-2">
-                    {notifications.length === 0 ? (
-                      <p className="text-center text-xs text-slate-400 py-8 font-medium">Bạn không có thông báo nào mới.</p>
-                    ) : (
-                      notifications.map(n => (
-                        <div 
-                          key={n.id} 
-                          onClick={() => { setSelectedResult(n); setIsNotifOpen(false); }} 
-                          className="p-4 hover:bg-[#EEF5E9] rounded-2xl cursor-pointer transition-colors mb-1 border border-transparent hover:border-[#8FD9A8]/50"
-                        >
-                          <div className="flex justify-between items-start mb-1">
-                            <h4 className="text-xs font-black text-[#1B5E4B]">{n.title}</h4>
-                            <span className="text-[9px] font-bold text-[#10B981] bg-[#ECFDF5] px-1.5 py-0.5 rounded uppercase tracking-widest">{n.score} đ</span>
-                          </div>
-                          <p className="text-[11px] text-[#2F8F6E] font-medium mt-1 line-clamp-1">{n.feedback || "Giáo viên đã gửi một nhận xét cho bạn."}</p>
-                          <p className="text-[9px] text-slate-400 mt-2 font-bold uppercase tracking-widest">{new Date(n.time).toLocaleString()}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
+      {/* SIDEBAR - TỰ ĐỘNG ẨN HẲN KHI VÀO HỌC HOẶC THI */}
+      {(!selectedLecture && !activeHskExamView) && (
+        <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
+          <div className="flex h-full flex-col">
+            <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-sm">🐸</div>
+              {!isSidebarCollapsed && (
+                <div className="min-w-0">
+                  <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">HSK Garden</h2>
+                  <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Khu vườn học tập</p>
                 </div>
               )}
             </div>
 
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
+            <nav className="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar">
+              <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌿 KHU VƯỜN" : "•"}</div>
+              <button onClick={() => setActiveTab("home")} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'home' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
+                <span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
+              </button>
+
+              {/* TAB HỌC HSK */}
+              <button onClick={() => { setActiveTab("student_lectures"); setSelectedLectureLevel(null); setSelectedLecture(null); }} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'student_lectures' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
+                <span className="w-6 text-center text-lg">📖</span>{!isSidebarCollapsed && <span>Học HSK</span>}
+              </button>
+
+              {/* TAB THI HSK 3.0 */}
+              <button onClick={() => setActiveTab("hsk3_exam")} className={`w-full mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hsk3_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
+                <span className="w-6 text-center text-lg">🏆</span>{!isSidebarCollapsed && <span>Thi HSK 3.0</span>}
+              </button>
+
+              <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌱 KHU RÈN LUYỆN" : "•"}</div>
+              <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🌱</span>{!isSidebarCollapsed && <span>Từ vựng</span>}</Link>
+              <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Chủ đề</span>}</Link>
+              <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
+              <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
+              <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
+              <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
+              <Link href="/roleplay" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
+              
+              <Link href="/test" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
+                <span className="w-6 text-center text-lg opacity-80">📝</span>{!isSidebarCollapsed && <span>Thi Đánh Giá</span>}
+              </Link>
+
+              {isTeacher && (
+                <div className="mt-6 mb-2 border-t border-[#8FD9A8]/20 pt-4">
+                  <Link href="/teacher" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1B5E4B] bg-[#FFD666]/20 hover:bg-[#FFD666]/40 transition-all shadow-sm">
+                    <span className="w-6 text-center text-lg">🛡</span>{!isSidebarCollapsed && <span>Trang Quản Lý</span>}
+                  </Link>
+                </div>
+              )}
+            </nav>
+
+            <div className="border-t border-[#8FD9A8]/20 p-4">
+              <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-white/50 py-2.5 text-xs font-bold text-slate-500 hover:bg-white transition-colors shadow-sm">
+                {isSidebarCollapsed ? "→" : "← Thu gọn"}
+              </button>
+              {isSignedIn ? (
+                <div className={`flex items-center rounded-2xl bg-white shadow-sm p-2.5 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
+                  <UserButton afterSignOutUrl="/" />
+                  {!isSidebarCollapsed && (
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
+                      <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <SignInButton mode="modal">
+                  <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1B5E4B] py-3 text-xs font-bold text-white hover:bg-[#2F8F6E] shadow-md transition-all">
+                    👤 {!isSidebarCollapsed && "Đăng nhập"}
+                  </button>
+                </SignInButton>
+              )}
+            </div>
           </div>
-        </header>
+        </aside>
+      )}
+
+      <main className={`min-h-screen transition-all duration-300 relative z-10 ${(selectedLecture || activeHskExamView) ? "pl-0" : (isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]")}`}>
+        
+        {/* TOPBAR CHÍNH - ẨN KHI ĐANG VÀO BÀI HỌC HOẶC THI */}
+        {(!selectedLecture && !activeHskExamView) && (
+          <header className="sticky top-0 z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 px-5 backdrop-blur-xl md:px-8 flex items-center justify-between">
+            <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl bg-white/90 shadow-sm px-4 text-left text-sm font-medium text-slate-400 hover:shadow-md transition-all sm:flex group border border-transparent hover:border-[#8FD9A8]">
+              <span className="text-lg opacity-60">🔍</span>
+              <span className="group-hover:text-[#2F8F6E] transition-colors">Tìm kiếm từ vựng, ngữ pháp...</span>
+              <span className="ml-auto rounded-lg bg-[#F4F7F6] px-2 py-1 text-[10px] font-bold text-slate-400 group-hover:text-[#2F8F6E]">Ctrl K</span>
+            </button>
+
+            <div className="ml-auto flex items-center gap-3">
+              <div className="relative">
+                <button 
+                  onClick={() => setIsNotifOpen(!isNotifOpen)} 
+                  className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm border border-slate-100 hover:border-[#8FD9A8] transition-all"
+                >
+                  <span className="text-xl">🔔</span>
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#F43F70] text-[9px] font-black text-white shadow-sm border-2 border-white">
+                      {notifications.length}
+                    </span>
+                  )}
+                </button>
+                
+                {isNotifOpen && (
+                  <div className="absolute right-0 mt-3 w-80 bg-white rounded-[24px] shadow-2xl border border-[#E2E8F0] overflow-hidden z-50 animate-slide-up-fade">
+                    <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+                      <h3 className="font-black text-[#142033] text-sm flex items-center gap-2"><span>📫</span> Thông báo của bạn</h3>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto custom-scrollbar p-2">
+                      {notifications.length === 0 ? (
+                        <p className="text-center text-xs text-slate-400 py-8 font-medium">Bạn không có thông báo nào mới.</p>
+                      ) : (
+                        notifications.map(n => (
+                          <div 
+                            key={n.id} 
+                            onClick={() => { setSelectedResult(n); setIsNotifOpen(false); }} 
+                            className="p-4 hover:bg-[#EEF5E9] rounded-2xl cursor-pointer transition-colors mb-1 border border-transparent hover:border-[#8FD9A8]/50"
+                          >
+                            <div className="flex justify-between items-start mb-1">
+                              <h4 className="text-xs font-black text-[#1B5E4B]">{n.title}</h4>
+                              <span className="text-[9px] font-bold text-[#10B981] bg-[#ECFDF5] px-1.5 py-0.5 rounded uppercase tracking-widest">{n.score} đ</span>
+                            </div>
+                            <p className="text-[11px] text-[#2F8F6E] font-medium mt-1 line-clamp-1">{n.feedback || "Giáo viên đã gửi một nhận xét cho bạn."}</p>
+                            <p className="text-[9px] text-slate-400 mt-2 font-bold uppercase tracking-widest">{new Date(n.time).toLocaleString()}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
+              <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
+              <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
+            </div>
+          </header>
+        )}
 
         <div className="mx-auto max-w-6xl space-y-8 px-5 py-8 md:px-8 pb-20">
           
