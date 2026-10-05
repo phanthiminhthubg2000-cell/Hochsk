@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { db } from "../firebase";
+import { db } from "../../firebase";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where, addDoc, serverTimestamp } from "firebase/firestore";
 
 // TÍCH HỢP TỪ ĐIỂN LOCAL
@@ -20,6 +20,24 @@ const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 4",
   "HSK 3.0 - Cấp độ 5",
   "HSK 3.0 - Cấp độ 6"
+];
+
+const LEVEL_OPTIONS = [
+  "Msutong HSK1",
+  "Msutong HSK2",
+  "Msutong HSK3.1",
+  "Msutong HSK3.2",
+  "HSK4.1 2.0",
+  "HSK4.2 2.0",
+  "HSK5.1 2.0",
+  "HSK5.2 2.0",
+  "HSK1 3.0",
+  "HSK2 3.0",
+  "HSK3 3.0",
+  "HSK4.1 3.0",
+  "HSK4.2 3.0",
+  "HSK5.1 3.0",
+  "HSK5.2 3.0"
 ];
 
 // ============================================================
@@ -159,7 +177,7 @@ export default function HomePage() {
   const { user, isLoaded } = useUser();
 
   // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("home"); // 'home' | 'hsk3_exam'
+  const [activeTab, setActiveTab] = useState("home"); // 'home' | 'hsk3_exam' | 'student_lectures'
 
   // --- USER STATES ---
   const [streak, setStreak] = useState(0);
@@ -190,6 +208,11 @@ export default function HomePage() {
   const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
   const [activeHskExamView, setActiveHskExamView] = useState(null);
 
+  // --- HỌC HSK (KHO BÀI GIẢNG) STATES ---
+  const [lecturesBankList, setLecturesBankList] = useState([]);
+  const [selectedLectureLevel, setSelectedLectureLevel] = useState(null);
+  const [selectedLecture, setSelectedLecture] = useState(null);
+
   const fetchHsk3Exams = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "hsk3_exams_bank"));
@@ -199,9 +222,20 @@ export default function HomePage() {
     } catch (err) { console.error("Lỗi tải kho đề thi HSK 3.0:", err); }
   }, []);
 
+  const fetchLecturesForStudent = useCallback(async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "lectures_bank"));
+      const list = [];
+      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      list.sort((a, b) => a.lectureName.localeCompare(b.lectureName, undefined, { numeric: true, sensitivity: 'base' }));
+      setLecturesBankList(list);
+    } catch (err) { console.error("Lỗi tải bài giảng:", err); }
+  }, []);
+
   useEffect(() => {
     fetchHsk3Exams();
-  }, [fetchHsk3Exams]);
+    fetchLecturesForStudent();
+  }, [fetchHsk3Exams, fetchLecturesForStudent]);
 
   const [skillMap, setSkillMap] = useState({
     vocabulary: 0, grammar: 0, listening: 0, translation: 0, writing: 0, speaking: 0,
@@ -590,7 +624,12 @@ export default function HomePage() {
               <span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
             </button>
 
-            {/* TAB THI HSK 3.0 MỚI TRONG SIDEBAR */}
+            {/* TAB HỌC HSK (KHO BÀI GIẢNG) MỚI */}
+            <button onClick={() => { setActiveTab("student_lectures"); setSelectedLectureLevel(null); setSelectedLecture(null); }} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'student_lectures' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
+              <span className="w-6 text-center text-lg">📖</span>{!isSidebarCollapsed && <span>Học HSK</span>}
+            </button>
+
+            {/* TAB THI HSK 3.0 */}
             <button onClick={() => setActiveTab("hsk3_exam")} className={`w-full mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hsk3_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
               <span className="w-6 text-center text-lg">🏆</span>{!isSidebarCollapsed && <span>Thi HSK 3.0</span>}
             </button>
@@ -611,7 +650,7 @@ export default function HomePage() {
             {isTeacher && (
               <div className="mt-6 mb-2 border-t border-[#8FD9A8]/20 pt-4">
                 <Link href="/teacher" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1B5E4B] bg-[#FFD666]/20 hover:bg-[#FFD666]/40 transition-all shadow-sm">
-                  <span className="w-6 text-center text-lg">🛡️️</span>{!isSidebarCollapsed && <span>Trang Quản Lý</span>}
+                  <span className="w-6 text-center text-lg">🛡</span>{!isSidebarCollapsed && <span>Trang Quản Lý</span>}
                 </Link>
               </div>
             )}
@@ -1012,6 +1051,109 @@ export default function HomePage() {
             </div>
           )}
 
+          {/* TAB 3: HỌC HSK (KHO BÀI GIẢNG PHÂN TẦNG: CẤP ĐỘ -> BÀI HỌC) */}
+          {activeTab === "student_lectures" && (
+            <div className="space-y-8 animate-fade-in max-w-[1200px] mx-auto">
+              {!selectedLectureLevel ? (
+                <div>
+                  <div className="mb-6">
+                    <h2 className="text-3xl font-black text-[#1B5E4B]">📖 Kho Bài Giảng HSK</h2>
+                    <p className="text-[#2F8F6E] text-sm font-medium mt-1">Chọn cấp độ giáo trình để bắt đầu học tập.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {LEVEL_OPTIONS.map(lvl => {
+                      const count = lecturesBankList.filter(l => l.level === lvl).length;
+                      return (
+                        <div 
+                          key={lvl} 
+                          onClick={() => setSelectedLectureLevel(lvl)}
+                          className="bg-white p-6 rounded-3xl border-2 border-[#8FD9A8]/40 shadow-sm hover:shadow-md hover:border-[#2F8F6E] cursor-pointer transition-all flex flex-col justify-between group"
+                        >
+                          <div>
+                            <span className="inline-block bg-[#1B5E4B] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mb-3">Giáo trình</span>
+                            <h4 className="font-black text-lg text-[#1B5E4B] mb-1 group-hover:text-[#2F8F6E] transition-colors">{lvl}</h4>
+                            <p className="text-xs text-slate-500 font-medium">{count > 0 ? `${count} bài học sẵn sàng` : "Chưa có bài học"}</p>
+                          </div>
+                          <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-100">
+                            <span className="text-xs font-black text-[#2F8F6E]">Khám phá ngay</span>
+                            <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : !selectedLecture ? (
+                <div>
+                  <div className="mb-6 flex items-center justify-between">
+                    <div>
+                      <button 
+                        onClick={() => setSelectedLectureLevel(null)}
+                        className="text-xs font-bold text-[#2F8F6E] hover:underline mb-2 flex items-center gap-1"
+                      >
+                        ← Quay lại chọn cấp độ
+                      </button>
+                      <h2 className="text-2xl font-black text-[#1B5E4B]">📚 {selectedLectureLevel}</h2>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">Danh sách các bài học tương tác.</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {lecturesBankList.filter(l => l.level === selectedLectureLevel).length === 0 ? (
+                      <div className="col-span-full py-16 text-center text-slate-400 font-medium bg-white rounded-3xl border border-[#E2E8F0]">
+                        Chưa có bài giảng nào được giáo viên cập nhật cho cấp độ này.
+                      </div>
+                    ) : (
+                      lecturesBankList
+                        .filter(l => l.level === selectedLectureLevel)
+                        .map(lec => (
+                          <div 
+                            key={lec.id} 
+                            onClick={() => setSelectedLecture(lec)}
+                            className="p-5 bg-white rounded-2xl border-2 border-[#E2E8F0] hover:border-[#8FD9A8] shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col justify-between group"
+                          >
+                            <div>
+                              <span className="text-[9px] font-black uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-2 py-0.5 rounded inline-block mb-2">Bài học tương tác</span>
+                              <h5 className="font-black text-sm text-[#1B5E4B] group-hover:text-[#2F8F6E] transition-colors mb-2">{lec.lectureName}</h5>
+                            </div>
+                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#10B981]">
+                              <span>Vào học</span>
+                              <span>▶</span>
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
+                  <div className="h-16 px-6 bg-[#1B5E4B] text-white flex justify-between items-center shrink-0 shadow-md">
+                    <div>
+                      <h3 className="font-black text-base">{selectedLecture.lectureName}</h3>
+                      <p className="text-[10px] text-[#8FD9A8] font-bold uppercase tracking-widest">{selectedLecture.level}</p>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedLecture(null)}
+                      className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition text-white shadow-sm"
+                    >
+                      ✕ Quay lại danh sách bài
+                    </button>
+                  </div>
+
+                  <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
+                    <iframe 
+                      srcDoc={selectedLecture.htmlContent}
+                      title={selectedLecture.lectureName}
+                      className="w-full h-full border-0"
+                      sandbox="allow-scripts allow-same-origin allow-forms"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
       </main>
 
@@ -1065,7 +1207,7 @@ export default function HomePage() {
 
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
             <iframe 
-              {...(activeHskExamView?.htmlContent ? { srcDoc: activeHskExamView.htmlContent } : { src: activeHskExamView?.fileUrl })}
+              src={activeHskExamView.fileUrl}
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
