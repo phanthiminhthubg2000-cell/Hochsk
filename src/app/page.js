@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { db } from "../../firebase";
+import { db } from "../firebase";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where, addDoc, serverTimestamp } from "firebase/firestore";
 
 // TÍCH HỢP TỪ ĐIỂN LOCAL
