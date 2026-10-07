@@ -4,6 +4,7 @@ import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { db } from "../firebase";
 import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
+import { useHskkResultSaver } from "../hskkResultSaver";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where, addDoc, serverTimestamp } from "firebase/firestore";
 
 // TÍCH HỢP TỪ ĐIỂN LOCAL
@@ -21,6 +22,14 @@ const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 4",
   "HSK 3.0 - Cấp độ 5",
   "HSK 3.0 - Cấp độ 6"
+];
+
+// ĐỀ THI KHẨU NGỮ HSKK 3.0 (file tĩnh đặt trong /public/hskk-exam/)
+const HSKK_EXAMS = [
+  { level: 3, title: "HSK（三级）口语", label: "HSKK 3", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
+  { level: 4, title: "HSK（四级）口语", label: "HSKK 4", file: "/hskk-exam/HSK4_KHAU_NGU.html", questions: 5, minutes: 20, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
+  { level: 5, title: "HSK（五级）口语", label: "HSKK 5", file: "/hskk-exam/HSK5_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
+  { level: 6, title: "HSK（六级）口语", label: "HSKK 6", file: "/hskk-exam/HSK6_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
 ];
 
 const LEVEL_OPTIONS = [
@@ -180,8 +189,11 @@ export default function HomePage() {
   // Nhận kết quả bài kiểm tra / đề thi ngữ âm do bài giảng (iframe) gửi lên → lưu về trang Chấm bài của giáo viên
   usePhoneticsResultSaver({ role: "student", userId, userName: user?.fullName || "" });
 
+  // Nhận bài thi Khẩu ngữ HSKK 3.0 (iframe /hskk-exam) → lưu vào "hskk_exams" để giáo viên chấm ở /teacher
+  useHskkResultSaver({ userId, userName: user?.fullName || "", userEmail: user?.primaryEmailAddress?.emailAddress || "" });
+
   // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("home"); // 'home' | 'hsk3_exam' | 'student_lectures'
+  const [activeTab, setActiveTab] = useState("home"); // 'home' | 'hsk3_exam' | 'hskk_exam' | 'student_lectures'
 
   // --- USER STATES ---
   const [streak, setStreak] = useState(0);
@@ -211,6 +223,9 @@ export default function HomePage() {
   // --- HSK 3.0 EXAM STATES ---
   const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
   const [activeHskExamView, setActiveHskExamView] = useState(null);
+
+  // --- HSKK 3.0 (THI KHẨU NGỮ) STATES ---
+  const [activeHskkExam, setActiveHskkExam] = useState(null);
 
   // --- HỌC HSK (KHO BÀI GIẢNG) STATES ---
   const [lecturesBankList, setLecturesBankList] = useState([]);
@@ -445,7 +460,8 @@ export default function HomePage() {
     { name: "Hoa Ngữ pháp", level: Math.floor((skillMap?.grammar || 0) / 10) + 1, icon: "☀️", link: "/arrange", bg: "bg-[#FFD666]", text: "text-[#1B5E4B]", bgImg: "/hskk/sapxep.jpg" },
     { name: "Ao Nghe", level: Math.floor((skillMap?.listening || 0) / 10) + 1, icon: "💧", link: "/dictation", bg: "bg-[#4FB6C7]", text: "text-white", bgImg: "/hskk/nghechep.jpg" },
     { name: "Gió Dịch", level: Math.floor((skillMap?.translation || 0) / 10) + 1, icon: "🍃", link: "/translate", bg: "bg-[#8FD9A8]", text: "text-[#1B5E4B]", bgImg: "/hskk/dich.jpg" },
-    { name: "Cuộc chiến khẩu ngữ", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎤", link: "/hskk", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
+    // { name: "Cuộc chiến khẩu ngữ", ... link: "/hskk" } — ĐÃ ẨN, thay bằng Phòng thi HSKK 3.0
+    { name: "Thi Khẩu ngữ HSKK", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎙", link: "#hskk", tab: "hskk_exam", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
     { name: "Phim trường", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎬", link: "/roleplay", bg: "bg-[#1B5E4B]", text: "text-white", bgImg: "/hskk/nen.jpg" },
   ];
 
@@ -610,7 +626,7 @@ export default function HomePage() {
       </div>
 
       {/* SIDEBAR - TỰ ĐỘNG ẨN HẲN KHI VÀO HỌC HOẶC THI */}
-      {(!selectedLecture && !activeHskExamView) && (
+      {(!selectedLecture && !activeHskExamView && !activeHskkExam) && (
         <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
           <div className="flex h-full flex-col">
             <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
@@ -635,8 +651,13 @@ export default function HomePage() {
               </button>
 
               {/* TAB THI HSK 3.0 */}
-              <button onClick={() => setActiveTab("hsk3_exam")} className={`w-full mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hsk3_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
+              <button onClick={() => setActiveTab("hsk3_exam")} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hsk3_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
                 <span className="w-6 text-center text-lg">🏆</span>{!isSidebarCollapsed && <span>Thi HSK 3.0</span>}
+              </button>
+
+              {/* TAB THI KHẨU NGỮ HSKK 3.0 */}
+              <button onClick={() => setActiveTab("hskk_exam")} className={`w-full mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hskk_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
+                <span className="w-6 text-center text-lg">🎙</span>{!isSidebarCollapsed && <span>Thi Khẩu ngữ HSKK</span>}
               </button>
 
               <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌱 KHU RÈN LUYỆN" : "•"}</div>
@@ -645,7 +666,7 @@ export default function HomePage() {
               <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
               <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
               <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
-              <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
+              {/* ĐÃ ẨN: Cuộc chiến khẩu ngữ cũ (/hskk) — thay bằng tab "Thi Khẩu ngữ HSKK" */}
               <Link href="/roleplay" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
               
               <Link href="/test" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
@@ -687,10 +708,10 @@ export default function HomePage() {
         </aside>
       )}
 
-      <main className={`min-h-screen transition-all duration-300 relative z-10 ${(selectedLecture || activeHskExamView) ? "pl-0" : (isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]")}`}>
+      <main className={`min-h-screen transition-all duration-300 relative z-10 ${(selectedLecture || activeHskExamView || activeHskkExam) ? "pl-0" : (isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]")}`}>
         
         {/* TOPBAR CHÍNH - ẨN KHI ĐANG VÀO BÀI HỌC HOẶC THI */}
-        {(!selectedLecture && !activeHskExamView) && (
+        {(!selectedLecture && !activeHskExamView && !activeHskkExam) && (
           <header className="sticky top-0 z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 px-5 backdrop-blur-xl md:px-8 flex items-center justify-between">
             <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl bg-white/90 shadow-sm px-4 text-left text-sm font-medium text-slate-400 hover:shadow-md transition-all sm:flex group border border-transparent hover:border-[#8FD9A8]">
               <span className="text-lg opacity-60">🔍</span>
@@ -837,7 +858,7 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {gardenAreas.map((tool, index) => (
-                    <Link href={tool.link} key={index} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
+                    <Link href={tool.link} key={index} onClick={(e) => { if (tool.tab) { e.preventDefault(); setActiveTab(tool.tab); window.scrollTo({ top: 0, behavior: "smooth" }); } }} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
                       <div 
                         className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.5] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
                         style={{ backgroundImage: `url(${tool.bgImg})` }}
@@ -1059,6 +1080,45 @@ export default function HomePage() {
             </div>
           )}
 
+          {/* TAB: THI KHẨU NGỮ HSKK 3.0 */}
+          {activeTab === "hskk_exam" && (
+            <div className="space-y-8 animate-fade-in max-w-[1200px] mx-auto">
+              <div className="mb-2">
+                <h2 className="text-3xl font-black text-[#1B5E4B]">🎙 Phòng Thi Khẩu Ngữ HSKK 3.0</h2>
+                <p className="text-[#2F8F6E] text-sm font-medium mt-1">Đề mẫu chính thức 新版HSK口语 · Máy phát đề, đếm giờ và ghi âm từng câu trả lời của bạn.</p>
+              </div>
+
+              <div className="rounded-3xl bg-[#FFD666]/20 border border-[#FFD666] p-5 text-sm text-[#1B5E4B] font-medium leading-relaxed">
+                <p className="font-black mb-1">🎧 Trước khi vào thi</p>
+                <ul className="list-disc pl-5 space-y-0.5">
+                  <li>Đeo <b>tai nghe</b> và ngồi nơi yên tĩnh; cho phép trình duyệt dùng <b>micro</b>.</li>
+                  <li>Chọn <b>Thi thử</b> (chạy liên tục như thi thật) hoặc <b>Luyện tập</b> (được tạm dừng, nghe lại).</li>
+                  <li>Làm xong, nghe lại bài rồi bấm <b>📤 Nộp bài cho giáo viên</b>. Không thoát giữa chừng — bản ghi âm sẽ mất.</li>
+                </ul>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {HSKK_EXAMS.map(ex => (
+                  <div key={ex.level} className="p-6 rounded-3xl border-2 bg-white border-[#8FD9A8] shadow-md hover:shadow-lg transition-all flex flex-col">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="bg-[#A97845] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{ex.label}</span>
+                      <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]">✓ 1 đề mẫu</span>
+                    </div>
+                    <h4 className="font-black text-2xl text-[#1B5E4B] mb-1">{ex.title}</h4>
+                    <p className="text-xs text-slate-500 font-medium mb-1">{ex.questions} câu · khoảng {ex.minutes} phút</p>
+                    <p className="text-xs text-[#2F8F6E] font-bold mb-5">{ex.parts}</p>
+                    <button
+                      onClick={() => setActiveHskkExam(ex)}
+                      className="mt-auto w-full py-3.5 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-2xl font-black text-xs shadow-sm transition"
+                    >
+                      🚀 Vào phòng thi
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* TAB 3: HỌC HSK (KHO BÀI GIẢNG PHÂN TẦNG: CẤP ĐỘ -> BÀI HỌC) */}
           {activeTab === "student_lectures" && (
             <div className="space-y-8 animate-fade-in max-w-[1200px] mx-auto">
@@ -1226,6 +1286,34 @@ export default function HomePage() {
         </div>
       )}
 
+      {/* PHÒNG THI KHẨU NGỮ HSKK 3.0 */}
+      {activeHskkExam && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
+          <div className="h-16 px-6 bg-[#1B5E4B] text-white flex justify-between items-center shrink-0 shadow-md">
+            <div className="min-w-0">
+              <h3 className="font-black text-base truncate">Phòng thi khẩu ngữ: {activeHskkExam.title}</h3>
+              <p className="text-[10px] text-[#8FD9A8] font-bold uppercase tracking-widest truncate">Thí sinh: {user?.fullName || "Học viên"} • {activeHskkExam.label}</p>
+            </div>
+            <button
+              onClick={() => {
+                if (window.confirm("Thoát phòng thi? Nếu chưa bấm Nộp bài, các bản ghi âm sẽ mất.")) setActiveHskkExam(null);
+              }}
+              className="shrink-0 px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition shadow-sm text-white"
+            >
+              ✕ Thoát
+            </button>
+          </div>
+          <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
+            <iframe
+              src={`${activeHskkExam.file}?embed=1&name=${encodeURIComponent(user?.fullName || "")}`}
+              title={activeHskkExam.title}
+              className="w-full h-full border-0"
+              allow="microphone; autoplay; fullscreen"
+            />
+          </div>
+        </div>
+      )}
+
       {/* SEARCH / AI MODAL */}
       {isSearchOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-[8vh]">
@@ -1381,4 +1469,4 @@ export default function HomePage() {
 
     </div>
   );
-}
+}
