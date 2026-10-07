@@ -29,7 +29,7 @@ const HSK3_LEVELS = [
 // Thêm đề mới: chỉ cần up file đề + cập nhật exams.json — KHÔNG cần sửa file này.
 // Danh sách dưới đây chỉ dùng dự phòng khi không đọc được exams.json.
 const HSKK_EXAMS_FALLBACK = [
-  { level: 3, title: "HSK（三级）口语 · 样卷", label: "HSKK 3 · Đề mẫu", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
+  { level: 3, title: "HSK（三级）口语 · 样卷", label: "HSKK 3 · Đề 01", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
   { level: 3, title: "HSK（三级）口语 · 模拟题 02", label: "HSKK 3 · Đề 02", file: "/hskk-exam/HSK3_KHAU_NGU_DE02.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
   { level: 4, title: "HSK（四级）口语", label: "HSKK 4", file: "/hskk-exam/HSK4_KHAU_NGU.html", questions: 5, minutes: 20, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
   { level: 5, title: "HSK（五级）口语", label: "HSKK 5", file: "/hskk-exam/HSK5_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
@@ -1495,4 +1495,4 @@ export default function HomePage() {
 
     </div>
   );
-}
+}
