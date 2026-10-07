@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { db } from "../firebase";
+import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where, addDoc, serverTimestamp } from "firebase/firestore";
 
 // TÍCH HỢP TỪ ĐIỂN LOCAL
@@ -175,6 +176,9 @@ const RadarChart = ({ data }) => {
 export default function HomePage() {
   const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
+
+  // Nhận kết quả bài kiểm tra / đề thi ngữ âm do bài giảng (iframe) gửi lên → lưu về trang Chấm bài của giáo viên
+  usePhoneticsResultSaver({ role: "student", userId, userName: user?.fullName || "" });
 
   // --- TAB NAVIGATION ---
   const [activeTab, setActiveTab] = useState("home"); // 'home' | 'hsk3_exam' | 'student_lectures'
@@ -1147,10 +1151,11 @@ export default function HomePage() {
 
                   <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
                     <iframe 
-                      srcDoc={selectedLecture.htmlContent}
+                      {...(selectedLecture.htmlContent ? { srcDoc: selectedLecture.htmlContent } : { src: selectedLecture.fileUrl })}
                       title={selectedLecture.lectureName}
                       className="w-full h-full border-0"
-                      sandbox="allow-scripts allow-same-origin allow-forms"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
+                      allow="microphone; autoplay; fullscreen; clipboard-write"
                     />
                   </div>
                 </div>
@@ -1215,6 +1220,7 @@ export default function HomePage() {
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
+              allow="microphone; autoplay; fullscreen; clipboard-write"
             />
           </div>
         </div>

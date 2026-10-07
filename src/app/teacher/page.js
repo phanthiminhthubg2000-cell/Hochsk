@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { usePhoneticsResultSaver } from "../../phoneticsResultSaver";
 
 const storage = getStorage();
 
@@ -35,13 +36,40 @@ const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 6"
 ];
 
+// Tiêu chí chấm phần đọc của bài kiểm tra ngữ âm (Buổi 5 & Đề thi dạng HSK)
+const PH_RUBRIC = [
+  { label: "Thanh mẫu & vận mẫu", max: 4 },
+  { label: "Thanh điệu", max: 4 },
+  { label: "Lưu loát, ngắt nghỉ", max: 2 }
+];
+
+// Thang điểm của từng loại bài:
+//  - Buổi 5: phần nghe /10, đọc /10, tổng /10 = trung bình cộng
+//  - Đề thi dạng HSK: trắc nghiệm /80, đọc to (rubric /10) quy ra /20, tổng /100
+const phScale = (sub) => {
+  const objMax = sub?.listening?.max ?? 10;
+  const totalMax = sub?.totalMax ?? 10;
+  const readingWeight = sub?.readingWeight ?? totalMax / 2;
+  return { objMax, totalMax, readingWeight };
+};
+const phTotal = (sub, objScore, readScore10) => {
+  const { objMax, totalMax, readingWeight } = phScale(sub);
+  return Math.round(((objScore / objMax) * (totalMax - readingWeight) + (readScore10 / 10) * readingWeight) * 100) / 100;
+};
+// Câu trắc nghiệm: đủ điểm / một phần / sai
+const itemState = (it) => {
+  const max = it.max ?? 0.5;
+  return it.points >= max ? "ok" : it.points > 0 ? "half" : "no";
+};
+const PART_TITLES = { single: "🎧 Phần 1 – Nghe 10 từ đơn", compound: "🎧 Phần 2 – Nghe 10 từ ghép" };
+
 export default function TeacherDashboard() {
   const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
 
   // --- TAB NAVIGATION ---
   const [activeTab, setActiveTab] = useState("students"); 
-  // 'students' | 'grading' | 'grading_test' | 'hsk3_exam_manager' | 'hsk3_grading' | 'review_manager' | 'lecture_manager'
+  // 'students' | 'grading' | 'grading_test' | 'hsk3_exam_manager' | 'hsk3_grading' | 'phonetics_grading' | 'review_manager' | 'lecture_manager'
 
   // --- STATES QUẢN LÝ LỚP HỌC & KHO BÀI KIỂM TRA ---
   const [classesList, setClassesList] = useState([]);
@@ -74,6 +102,15 @@ export default function TeacherDashboard() {
   const [newLectureHtmlContent, setNewLectureHtmlContent] = useState("");
   const [activeLectureView, setActiveLectureView] = useState(null);
   const lectureContainerRef = useRef(null);
+  const lectureIframeRef = useRef(null);
+
+  // --- STATES CHẤM BÀI NGỮ ÂM (kết quả gửi từ bài giảng Buổi 5) ---
+  const [phoneticSubs, setPhoneticSubs] = useState([]);
+  const [isLoadingPhonetic, setIsLoadingPhonetic] = useState(true);
+  const [phoneticFilter, setPhoneticFilter] = useState("pending_teacher"); // pending_teacher | graded
+  const [selectedPhonetic, setSelectedPhonetic] = useState(null);
+  const [phRubric, setPhRubric] = useState([null, null, null]);
+  const [phFeedback, setPhFeedback] = useState("");
 
   // --- STATES QUẢN LÝ HSK 3.0 EXAMS ---
   const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
@@ -362,16 +399,80 @@ export default function TeacherDashboard() {
     }
   }, []);
 
+  // --- BÀI KIỂM TRA NGỮ ÂM: tải danh sách ---
+  const fetchPhoneticSubs = useCallback(async () => {
+    setIsLoadingPhonetic(true);
+    try {
+      const snapshot = await getDocs(collection(db, "phonetics_tests"));
+      const list = [];
+      snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+      list.sort((a, b) => (b.submittedAt?.toMillis?.() || 0) - (a.submittedAt?.toMillis?.() || 0));
+      setPhoneticSubs(list);
+    } catch (err) {
+      console.error("Lỗi tải bài kiểm tra ngữ âm:", err);
+    } finally {
+      setIsLoadingPhonetic(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchClasses();
     fetchTestsBank();
     fetchLecturesBank();
     fetchHsk3Exams();
     fetchPendingHsk3Submissions();
+    fetchPhoneticSubs();
     fetchPendingExams();
     fetchPendingTests();
     fetchAllStudentsProgress();
-  }, [fetchClasses, fetchTestsBank, fetchLecturesBank, fetchHsk3Exams, fetchPendingHsk3Submissions]);
+  }, [fetchClasses, fetchTestsBank, fetchLecturesBank, fetchHsk3Exams, fetchPendingHsk3Submissions, fetchPhoneticSubs]);
+
+  // --- BÀI KIỂM TRA NGỮ ÂM: nhận kết quả do bài giảng / đề thi (iframe) gửi lên và lưu Firestore ---
+  usePhoneticsResultSaver({ role: "teacher", userId, userName: user?.fullName || "", onSaved: fetchPhoneticSubs });
+
+  const openPhonetic = (sub) => {
+    setSelectedPhonetic(sub);
+    setPhRubric((sub.reading?.rubric || []).map(r => (r.score ?? null)).concat([null, null, null]).slice(0, 3));
+    setPhFeedback(sub.teacherFeedback || "");
+  };
+
+  const handleGradePhonetic = async () => {
+    if (!selectedPhonetic) return;
+    if (phRubric.some(v => v === null)) return alert("Vui lòng chấm đủ 3 tiêu chí phần đọc!");
+    setIsSubmitting(true);
+    try {
+      const readingScore = phRubric.reduce((s, v) => s + v, 0);
+      const listeningScore = selectedPhonetic.listeningScore ?? selectedPhonetic.listening?.score ?? 0;
+      const totalScore = phTotal(selectedPhonetic, listeningScore, readingScore);
+      const rubric = PH_RUBRIC.map((r, i) => ({ label: r.label, max: r.max, score: phRubric[i] }));
+      await updateDoc(doc(db, "phonetics_tests", selectedPhonetic.id), {
+        "reading.rubric": rubric,
+        "reading.score": readingScore,
+        "reading.graded": true,
+        readingScore,
+        totalScore,
+        teacherFeedback: phFeedback,
+        status: "graded",
+        gradedAt: serverTimestamp()
+      });
+      alert(`✅ Đã chấm xong! Tổng điểm: ${totalScore}/${phScale(selectedPhonetic).totalMax}`);
+      setSelectedPhonetic(null);
+      fetchPhoneticSubs();
+    } catch (err) {
+      alert("Lỗi khi lưu điểm: " + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeletePhonetic = async (id) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa bài làm này không?")) return;
+    try {
+      await deleteDoc(doc(db, "phonetics_tests", id));
+      if (selectedPhonetic?.id === id) setSelectedPhonetic(null);
+      fetchPhoneticSubs();
+    } catch (err) { alert("Lỗi khi xóa: " + err.message); }
+  };
 
   const handleHskExamFileUpload = (e) => {
     const file = e.target.files[0];
@@ -647,6 +748,10 @@ export default function TeacherDashboard() {
     if (!newLectureName.trim() || !newLectureHtmlContent.trim()) {
       return alert("Vui lòng nhập tên bài giảng và chọn tệp .html hợp lệ!");
     }
+    // Firestore giới hạn mỗi document ~1MB
+    if (new Blob([newLectureHtmlContent]).size > 1000 * 1024) {
+      return alert("Tệp bài giảng lớn hơn 1MB nên Firestore không lưu được. Hãy dùng bản nhẹ (tách hình ảnh ra thư mục public/).");
+    }
 
     try {
       await addDoc(collection(db, "lectures_bank"), {
@@ -868,6 +973,8 @@ export default function TeacherDashboard() {
     </div>
   );
 
+  const pendingPhoneticCount = phoneticSubs.filter(s => s.status === "pending_teacher").length;
+
   if (!isLoaded) return <div className="min-h-screen bg-[#F7FAF8]"></div>;
 
   return (
@@ -913,6 +1020,12 @@ export default function TeacherDashboard() {
               <button onClick={() => setActiveTab("hsk3_grading")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'hsk3_grading' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
                 <div className="flex items-center gap-3"><span className="text-lg">🎖️</span>{!isSidebarCollapsed && <span>Chấm bài HSK 3.0</span>}</div>
                 {!isSidebarCollapsed && pendingHsk3Submissions.length > 0 && <span className="bg-[#F43F70] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingHsk3Submissions.length}</span>}
+              </button>
+
+              {/* TAB CHẤM BÀI NGỮ ÂM */}
+              <button onClick={() => setActiveTab("phonetics_grading")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'phonetics_grading' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+                <div className="flex items-center gap-3"><span className="text-lg">🔤</span>{!isSidebarCollapsed && <span>Chấm bài Ngữ âm</span>}</div>
+                {!isSidebarCollapsed && pendingPhoneticCount > 0 && <span className="bg-[#F43F70] text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{pendingPhoneticCount}</span>}
               </button>
 
               <button onClick={() => setActiveTab("review_manager")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'review_manager' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
@@ -964,6 +1077,7 @@ export default function TeacherDashboard() {
                activeTab === 'grading_test' ? "Chấm bài kiểm tra Năng lực (4 Kỹ Năng) của học viên." :
                activeTab === 'hsk3_exam_manager' ? "Quản lý, tải lên và cập nhật đề thi HSK 3.0 (Cấp độ 1 - 6)." :
                activeTab === 'hsk3_grading' ? "Chấm điểm và gửi nhận xét cho các bài thi HSK 3.0 của học viên." :
+               activeTab === 'phonetics_grading' ? "Kết quả bài kiểm tra ngữ âm (nghe viết pinyin + đọc đoạn văn) gửi từ bài giảng." :
                activeTab === 'review_manager' ? "Quản lý lớp học và kho bài kiểm tra bài cũ cho học sinh." :
                "Quản lý kho bài giảng điện tử hỗ trợ giảng dạy tương tác."}
             </p>
@@ -1602,6 +1716,149 @@ export default function TeacherDashboard() {
             </div>
           )}
 
+          {/* TAB CHẤM BÀI NGỮ ÂM (kết quả gửi từ bài giảng Buổi 5) */}
+          {activeTab === "phonetics_grading" && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-fade-in">
+              <aside className="lg:col-span-4 w-full bg-white rounded-[24px] border border-[#E2E8F0] shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-200px)]">
+                <div className="p-5 border-b border-[#E2E8F0] bg-[#F8FAFC] flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-black text-[#142033] text-base">Bài kiểm tra ngữ âm</h3>
+                      <p className="text-xs font-medium text-[#64748B] mt-0.5">Nghe viết pinyin + Đọc đoạn văn</p>
+                    </div>
+                    <button onClick={fetchPhoneticSubs} className="w-9 h-9 rounded-xl bg-white border border-[#E2E8F0] text-sm shadow-sm hover:bg-slate-50" title="Làm mới">🔄</button>
+                  </div>
+                  <div className="flex gap-2">
+                    {[["pending_teacher", "Chờ chấm"], ["graded", "Đã chấm"]].map(([k, label]) => (
+                      <button key={k} onClick={() => setPhoneticFilter(k)} className={`flex-1 py-2 rounded-xl text-xs font-black border transition ${phoneticFilter === k ? 'bg-[#142033] text-white border-[#142033]' : 'bg-white text-[#64748B] border-[#E2E8F0] hover:bg-slate-50'}`}>
+                        {label} ({phoneticSubs.filter(s => s.status === k).length})
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+                  {isLoadingPhonetic ? (
+                    <div className="flex justify-center py-10 opacity-50"><div className="w-8 h-8 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin"></div></div>
+                  ) : phoneticSubs.filter(s => s.status === phoneticFilter).length === 0 ? (
+                    <div className="text-center py-12 flex flex-col items-center justify-center opacity-60">
+                      <span className="text-5xl mb-4 grayscale opacity-50">🔤</span>
+                      <p className="text-xs text-[#64748B] font-medium">Không có bài nào trong mục này.</p>
+                    </div>
+                  ) : (
+                    phoneticSubs.filter(s => s.status === phoneticFilter).map(sub => {
+                      const isSel = selectedPhonetic?.id === sub.id;
+                      return (
+                        <button key={sub.id} onClick={() => openPhonetic(sub)} className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${isSel ? 'border-[#10B981] bg-[#ECFDF5] shadow-sm' : 'border-transparent bg-white hover:border-[#E2E8F0] hover:bg-[#F8FAFC]'}`}>
+                          <div className="flex justify-between items-start mb-1">
+                            <p className={`font-black text-sm ${isSel ? 'text-[#065F46]' : 'text-[#142033]'}`}>{sub.studentName}</p>
+                            <span className="text-xs font-black text-[#10B981]">{sub.totalScore != null ? `${sub.totalScore}/${phScale(sub).totalMax}` : `${sub.examType === "phonetics-hsk" ? "TN" : "Nghe"} ${sub.listeningScore ?? 0}/${phScale(sub).objMax}`}</span>
+                          </div>
+                          <p className={`text-[11px] font-medium truncate ${isSel ? 'text-[#047857]' : 'text-[#94A3B8]'}`}>
+                            {sub.submittedBy === "student" ? "👤 Học viên tự làm · " : ""}{sub.className || "—"} · {sub.submittedAt?.toDate ? sub.submittedAt.toDate().toLocaleString("vi-VN") : ""}
+                          </p>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </aside>
+
+              <section className="lg:col-span-8 w-full">
+                {!selectedPhonetic ? (
+                  <div className="bg-white/60 border border-[#E2E8F0] border-dashed rounded-[32px] h-[calc(100vh-200px)] flex flex-col items-center justify-center text-center p-8">
+                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl mb-4 shadow-sm border border-[#E2E8F0]">🔤</div>
+                    <h3 className="text-lg font-black text-[#142033] mb-1">Chọn một bài làm</h3>
+                    <p className="text-[#64748B] text-sm font-medium">Kết quả được gửi từ bài giảng “Buổi 5 – Luyện tập &amp; Kiểm tra” khi bấm “Lưu về trang Chấm bài”.</p>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-[32px] border border-[#E2E8F0] shadow-xl overflow-hidden animate-fade-in flex flex-col">
+                    <div className="bg-[#142033] p-6 text-white flex justify-between items-center">
+                      <div>
+                        <h2 className="text-2xl font-black mb-1">{selectedPhonetic.studentName}</h2>
+                        <p className="text-sm font-medium text-slate-300">{selectedPhonetic.className || "—"} · {selectedPhonetic.lessonName}</p>
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        <span className="bg-[#10B981] px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-md">{selectedPhonetic.examType === "phonetics-hsk" ? "Trắc nghiệm" : "Nghe"} {selectedPhonetic.listeningScore ?? 0}/{phScale(selectedPhonetic).objMax}</span>
+                        <button onClick={() => handleDeletePhonetic(selectedPhonetic.id)} className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 rounded-lg text-xs font-black" title="Xóa bài làm">🗑</button>
+                      </div>
+                    </div>
+
+                    <div className="p-6 md:p-8 bg-[#F8FAFC] space-y-6 max-h-[560px] overflow-y-auto custom-scrollbar border-b border-[#E2E8F0]">
+                      {[...new Set((selectedPhonetic.listening?.items || []).map(it => it.part))].map(part => {
+                        const items = (selectedPhonetic.listening?.items || []).filter(it => it.part === part);
+                        const title = items[0]?.partTitle || PART_TITLES[part] || part;
+                        const got = items.reduce((s, it) => s + (it.points || 0), 0);
+                        const max = items.reduce((s, it) => s + (it.max ?? 0.5), 0);
+                        return (
+                          <div key={part}>
+                            <h3 className="font-black text-[#142033] mb-3 flex justify-between gap-3"><span>{title}</span><span className="text-[#10B981] shrink-0">{got}/{max}</span></h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {items.map((it, i) => {
+                                const st = itemState(it);
+                                return (
+                                  <div key={i} className={`flex items-center justify-between gap-3 p-3 rounded-xl border bg-white ${st === 'ok' ? 'border-[#A7F3D0]' : st === 'half' ? 'border-amber-300' : 'border-rose-200'}`}>
+                                    <div className="min-w-0">
+                                      <p className="font-bold text-[#142033]">{it.no ? <span className="text-[#94A3B8] mr-1">{it.no}.</span> : null}{it.pinyin} <span className="text-[#64748B] font-medium">{it.hanzi}{it.meaning ? ` · ${it.meaning}` : ""}</span></p>
+                                      <p className={`text-sm font-bold ${st === 'ok' ? 'text-[#10B981]' : st === 'half' ? 'text-amber-600' : 'text-rose-600'}`}>
+                                        Trả lời: {it.answerMarked || "(bỏ trống)"}{st === 'half' ? " · sai thanh" : ""}
+                                      </p>
+                                    </div>
+                                    <span className="text-xs font-black text-[#64748B] shrink-0">{it.points}đ</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      <div>
+                        <h3 className="font-black text-[#142033] mb-3">📖 Phần 3 – Đọc đoạn văn</h3>
+                        <div className="bg-white p-5 rounded-2xl border border-[#E2E8F0] space-y-3">
+                          <p className="text-lg leading-relaxed text-[#142033]">{selectedPhonetic.reading?.paragraph}</p>
+                          <p className="text-sm text-[#64748B]">{selectedPhonetic.reading?.paragraphHanzi}</p>
+                          {selectedPhonetic.reading?.audioBase64 ? (
+                            <audio src={selectedPhonetic.reading.audioBase64} controls className="w-full h-10" />
+                          ) : (
+                            <p className="text-sm font-bold text-[#F43F70]">⚠️ Không có bản ghi âm (học viên đọc trực tiếp hoặc chưa ghi âm).</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-6 md:p-8 bg-white space-y-5">
+                      <h3 className="text-lg font-black text-[#142033] flex items-center gap-2"><span>🎖️</span> Chấm phần đọc & Chốt điểm</h3>
+                      {PH_RUBRIC.map((r, i) => (
+                        <div key={i}>
+                          <p className="text-[11px] font-black text-[#64748B] uppercase tracking-widest mb-2">{r.label} (/{r.max})</p>
+                          <div className="flex flex-wrap gap-2">
+                            {Array.from({ length: r.max * 2 + 1 }, (_, k) => k / 2).map(v => (
+                              <button key={v} onClick={() => setPhRubric(prev => prev.map((x, j) => j === i ? v : x))} className={`min-w-[48px] px-3 py-2 rounded-xl text-sm font-black border transition ${phRubric[i] === v ? 'bg-[#142033] text-white border-[#142033]' : 'bg-white text-[#142033] border-[#E2E8F0] hover:bg-[#F8FAFC]'}`}>{v}</button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex flex-col md:flex-row gap-4 items-stretch">
+                        <div className="md:w-40 p-4 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-center">
+                          <p className="text-[10px] font-black text-[#10B981] uppercase tracking-widest">Đọc</p>
+                          <p className="text-2xl font-black text-[#10B981]">{phRubric.some(v => v === null) ? "—" : phRubric.reduce((s, v) => s + v, 0)}/10</p>
+                        </div>
+                        <div className="md:w-40 p-4 rounded-xl bg-[#142033] text-center text-white">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tổng (thang {phScale(selectedPhonetic).totalMax})</p>
+                          <p className="text-2xl font-black">{phRubric.some(v => v === null) ? "—" : phTotal(selectedPhonetic, selectedPhonetic.listeningScore ?? 0, phRubric.reduce((s, v) => s + v, 0))}</p>
+                        </div>
+                        <textarea value={phFeedback} onChange={e => setPhFeedback(e.target.value)} placeholder="Nhận xét cho học viên (tùy chọn)..." className="flex-1 p-3 rounded-xl border-2 border-[#E2E8F0] text-sm font-medium outline-none focus:border-[#10B981] resize-none min-h-[80px]" />
+                      </div>
+                      <button onClick={handleGradePhonetic} disabled={isSubmitting} className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-md transition ${isSubmitting ? 'bg-[#94A3B8] text-white cursor-not-allowed' : 'bg-[#10B981] hover:bg-[#059669] text-white'}`}>
+                        {isSubmitting ? "Đang lưu..." : selectedPhonetic.status === "graded" ? "Cập nhật điểm" : "Hoàn tất chấm điểm"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </section>
+            </div>
+          )}
+
           {/* TAB 4: KIỂM TRA BÀI CŨ (QUẢN LÝ LỚP & KHO BÀI TẬP) */}
           {activeTab === "review_manager" && (
             <div className="space-y-10 animate-fade-in">
@@ -1911,9 +2168,12 @@ export default function TeacherDashboard() {
             <div>
               <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1">Chọn tệp bài giảng (.html)</label>
               <input type="file" accept=".html,.htm" onChange={handleFileUpload} className="w-full p-2.5 rounded-xl border border-[#E2E8F0] text-xs font-bold text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#10B981] file:text-white hover:file:bg-[#059669] cursor-pointer" required />
+              {newLectureHtmlContent && (
+                <p className="text-[10px] text-slate-400 mt-1">Dung lượng: {(new Blob([newLectureHtmlContent]).size / 1024).toFixed(0)} KB (tối đa ~1000 KB)</p>
+              )}
             </div>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setIsAddLectureModalOpen(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
+              <button type="button" onClick={() => { setIsAddLectureModalOpen(false); setNewLectureHtmlContent(""); }} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold text-slate-600 text-xs">Hủy</button>
               <button type="submit" className="flex-1 py-3 bg-[#10B981] text-white rounded-xl font-bold text-xs shadow-md">Tải lên</button>
             </div>
           </form>
@@ -2050,10 +2310,12 @@ export default function TeacherDashboard() {
 
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
             <iframe 
-              srcDoc={activeLectureView.htmlContent}
+              ref={lectureIframeRef}
+              {...(activeLectureView.htmlContent ? { srcDoc: activeLectureView.htmlContent } : { src: activeLectureView.fileUrl })}
               title={activeLectureView.lectureName}
               className="w-full h-full border-0"
-              sandbox="allow-scripts allow-same-origin"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
+              allow="microphone; fullscreen; autoplay; clipboard-write"
             />
           </div>
         </div>
@@ -2216,10 +2478,10 @@ export default function TeacherDashboard() {
             </div>
 
             <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
-              {selectedStudentHistory.history?.length === 0 ? (
+              {!selectedStudentHistory.history || selectedStudentHistory.history.length === 0 ? (
                 <p className="text-sm text-slate-400 py-12 text-center font-medium">Học sinh chưa có bài kiểm tra bài cũ nào.</p>
               ) : (
-                selectedStudentHistory.history?.map((h, i) => {
+                selectedStudentHistory.history.map((h, i) => {
                   const isDetailOpen = activeTestDetail === i;
 
                   return (
@@ -2331,7 +2593,7 @@ export default function TeacherDashboard() {
             <button onClick={() => setActiveHskExamView(null)} className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition text-white">✕ Đóng</button>
           </div>
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
-            <iframe src={activeHskExamView.fileUrl} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" />
+            <iframe src={activeHskExamView.fileUrl} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allow="microphone; autoplay; fullscreen" />
           </div>
         </div>
       )}
