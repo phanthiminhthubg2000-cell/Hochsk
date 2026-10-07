@@ -24,9 +24,13 @@ const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 6"
 ];
 
-// ĐỀ THI KHẨU NGỮ HSKK 3.0 (file tĩnh đặt trong /public/hskk-exam/)
-const HSKK_EXAMS = [
-  { level: 3, title: "HSK（三级）口语", label: "HSKK 3", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
+// ĐỀ THI KHẨU NGỮ HSKK 3.0
+// Danh sách đề được đọc tự động từ /public/hskk-exam/exams.json.
+// Thêm đề mới: chỉ cần up file đề + cập nhật exams.json — KHÔNG cần sửa file này.
+// Danh sách dưới đây chỉ dùng dự phòng khi không đọc được exams.json.
+const HSKK_EXAMS_FALLBACK = [
+  { level: 3, title: "HSK（三级）口语 · 样卷", label: "HSKK 3 · Đề mẫu", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
+  { level: 3, title: "HSK（三级）口语 · 模拟题 02", label: "HSKK 3 · Đề 02", file: "/hskk-exam/HSK3_KHAU_NGU_DE02.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
   { level: 4, title: "HSK（四级）口语", label: "HSKK 4", file: "/hskk-exam/HSK4_KHAU_NGU.html", questions: 5, minutes: 20, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
   { level: 5, title: "HSK（五级）口语", label: "HSKK 5", file: "/hskk-exam/HSK5_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
   { level: 6, title: "HSK（六级）口语", label: "HSKK 6", file: "/hskk-exam/HSK6_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
@@ -226,6 +230,14 @@ export default function HomePage() {
 
   // --- HSKK 3.0 (THI KHẨU NGỮ) STATES ---
   const [activeHskkExam, setActiveHskkExam] = useState(null);
+  const [hskkExams, setHskkExams] = useState(HSKK_EXAMS_FALLBACK);
+
+  useEffect(() => {
+    fetch("/hskk-exam/exams.json", { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(list => { if (Array.isArray(list) && list.length) setHskkExams(list.filter(e => e && e.file && !e.hidden)); })
+      .catch(err => console.warn("Không đọc được /hskk-exam/exams.json, dùng danh sách dự phòng:", err));
+  }, []);
 
   // --- HỌC HSK (KHO BÀI GIẢNG) STATES ---
   const [lecturesBankList, setLecturesBankList] = useState([]);
@@ -1097,24 +1109,38 @@ export default function HomePage() {
                 </ul>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {HSKK_EXAMS.map(ex => (
-                  <div key={ex.level} className="p-6 rounded-3xl border-2 bg-white border-[#8FD9A8] shadow-md hover:shadow-lg transition-all flex flex-col">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="bg-[#A97845] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{ex.label}</span>
-                      <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]">✓ 1 đề mẫu</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...new Set(hskkExams.map(e => Number(e.level)))].sort((a, b) => a - b).map(lv => {
+                  const exams = hskkExams.filter(e => Number(e.level) === lv);
+                  const first = exams[0] || {};
+                  return (
+                    <div key={lv} className="p-6 rounded-3xl border-2 bg-white border-[#8FD9A8] shadow-md hover:shadow-lg transition-all flex flex-col">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="bg-[#A97845] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">HSKK {lv}</span>
+                        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]">✓ {exams.length} đề</span>
+                      </div>
+                      <h4 className="font-black text-2xl text-[#1B5E4B] mb-1">HSK（{"一二三四五六七八九"[lv - 1]}级）口语</h4>
+                      <p className="text-xs text-slate-500 font-medium mb-1">{first.questions} câu · khoảng {first.minutes} phút</p>
+                      <p className="text-xs text-[#2F8F6E] font-bold mb-4">{first.parts}</p>
+                      <div className="space-y-2.5 mt-auto">
+                        {exams.map(ex => (
+                          <div key={ex.file} className="flex items-center gap-3 p-3 rounded-2xl bg-[#F7FAF3] border border-[#8FD9A8]/40 hover:border-[#2F8F6E] transition-colors">
+                            <p className="flex-1 min-w-0 font-black text-sm text-[#1B5E4B] truncate">
+                              {ex.name || ex.label}
+                              {ex.isNew && <span className="ml-2 text-[9px] font-black text-white bg-[#F2765B] px-1.5 py-0.5 rounded">MỚI</span>}
+                            </p>
+                            <button
+                              onClick={() => setActiveHskkExam(ex)}
+                              className="shrink-0 px-4 py-2 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-xl font-black text-[11px] shadow-sm transition"
+                            >
+                              🚀 Vào thi
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <h4 className="font-black text-2xl text-[#1B5E4B] mb-1">{ex.title}</h4>
-                    <p className="text-xs text-slate-500 font-medium mb-1">{ex.questions} câu · khoảng {ex.minutes} phút</p>
-                    <p className="text-xs text-[#2F8F6E] font-bold mb-5">{ex.parts}</p>
-                    <button
-                      onClick={() => setActiveHskkExam(ex)}
-                      className="mt-auto w-full py-3.5 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-2xl font-black text-xs shadow-sm transition"
-                    >
-                      🚀 Vào phòng thi
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
