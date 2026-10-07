@@ -2593,7 +2593,7 @@ export default function TeacherDashboard() {
             <button onClick={() => setActiveHskExamView(null)} className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition text-white">✕ Đóng</button>
           </div>
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
-            <iframe src={activeHskExamView.fileUrl} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allow="microphone; autoplay; fullscreen" />
+            <iframe {...(activeHskExamView?.htmlContent ? { srcDoc: activeHskExamView.htmlContent } : { src: activeHskExamView?.fileUrl })} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allow="microphone; autoplay; fullscreen" />
           </div>
         </div>
       )}
