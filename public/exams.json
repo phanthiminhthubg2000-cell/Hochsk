@@ -1,0 +1,68 @@
+[
+  {
+    "level": 3,
+    "name": "Đề mẫu",
+    "label": "HSKK 3 · Đề mẫu",
+    "title": "HSK（三级）口语 · 样卷",
+    "file": "/hskk-exam/HSK3_KHAU_NGU.html",
+    "questions": 15,
+    "minutes": 15,
+    "parts": "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu",
+    "isNew": false
+  },
+  {
+    "level": 3,
+    "name": "Đề 02",
+    "label": "HSKK 3 · Đề 02",
+    "title": "HSK（三级）口语 · 模拟题 02",
+    "file": "/hskk-exam/HSK3_KHAU_NGU_DE02.html",
+    "questions": 15,
+    "minutes": 15,
+    "parts": "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu",
+    "isNew": false
+  },
+  {
+    "level": 3,
+    "name": "Đề 03",
+    "label": "HSKK 3 · Đề 03",
+    "title": "HSK（三级）口语 · 模拟题 03",
+    "file": "/hskk-exam/HSK3_KHAU_NGU_DE03.html",
+    "questions": 15,
+    "minutes": 15,
+    "parts": "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu",
+    "isNew": true
+  },
+  {
+    "level": 4,
+    "name": "Đề mẫu",
+    "label": "HSKK 4 · Đề mẫu",
+    "title": "HSK（四级）口语 · 样卷",
+    "file": "/hskk-exam/HSK4_KHAU_NGU.html",
+    "questions": 5,
+    "minutes": 20,
+    "parts": "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu",
+    "isNew": false
+  },
+  {
+    "level": 5,
+    "name": "Đề mẫu",
+    "label": "HSKK 5 · Đề mẫu",
+    "title": "HSK（五级）口语 · 样卷",
+    "file": "/hskk-exam/HSK5_KHAU_NGU.html",
+    "questions": 5,
+    "minutes": 23,
+    "parts": "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu",
+    "isNew": false
+  },
+  {
+    "level": 6,
+    "name": "Đề mẫu",
+    "label": "HSKK 6 · Đề mẫu",
+    "title": "HSK（六级）口语 · 样卷",
+    "file": "/hskk-exam/HSK6_KHAU_NGU.html",
+    "questions": 5,
+    "minutes": 23,
+    "parts": "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu",
+    "isNew": false
+  }
+]
