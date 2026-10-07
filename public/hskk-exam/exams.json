@@ -55,6 +55,28 @@
     "isNew": false
   },
   {
+    "level": 5,
+    "name": "Đề 02",
+    "label": "HSKK 5 · Đề 02",
+    "title": "HSK（五级）口语 · 模拟题 02",
+    "file": "/hskk-exam/HSK5_KHAU_NGU_DE02.html",
+    "questions": 5,
+    "minutes": 23,
+    "parts": "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu",
+    "isNew": false
+  },
+  {
+    "level": 5,
+    "name": "Đề 03",
+    "label": "HSKK 5 · Đề 03",
+    "title": "HSK（五级）口语 · 模拟题 03",
+    "file": "/hskk-exam/HSK5_KHAU_NGU_DE03.html",
+    "questions": 5,
+    "minutes": 23,
+    "parts": "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu",
+    "isNew": true
+  },
+  {
     "level": 6,
     "name": "Đề mẫu",
     "label": "HSKK 6 · Đề mẫu",
