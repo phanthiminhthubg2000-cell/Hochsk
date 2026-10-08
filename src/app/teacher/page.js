@@ -506,14 +506,18 @@ export default function TeacherDashboard() {
 
     try {
       setIsSubmitting(true);
-      const storageRef = ref(storage, `hsk3_exams/${Date.now()}_${selectedHskExamFile.name}`);
-      await uploadBytes(storageRef, selectedHskExamFile);
-      const downloadUrl = await getDownloadURL(storageRef);
-
-      // Lưu luôn nội dung HTML vào Firestore (nếu tệp < ~900KB) để học viên mở đề bằng srcDoc, không phụ thuộc Storage
+      // Đề nhỏ (< ~900KB, vd. đề đã tách audio riêng): lưu thẳng nội dung HTML vào Firestore,
+      // KHÔNG dùng Firebase Storage (Storage có thể treo mãi ở "Đang tải lên..." nếu chưa bật / chưa cấu hình).
       let htmlContent = null;
+      let downloadUrl = "";
       if (selectedHskExamFile.size < 900 * 1024) {
-        try { htmlContent = await selectedHskExamFile.text(); } catch (_) { htmlContent = null; }
+        htmlContent = await selectedHskExamFile.text();
+      } else {
+        // Đề lớn: thử Firebase Storage nhưng giới hạn 90 giây để không bị kẹt
+        const storageRef = ref(storage, `hsk3_exams/${Date.now()}_${selectedHskExamFile.name}`);
+        const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("Firebase Storage không phản hồi. Hãy dùng bản đề đã tách audio (dưới 900KB).")), ms))]);
+        await withTimeout(uploadBytes(storageRef, selectedHskExamFile, { contentType: "text/html; charset=utf-8" }), 90000);
+        downloadUrl = await withTimeout(getDownloadURL(storageRef), 30000);
       }
 
       await addDoc(collection(db, "hsk3_exams_bank"), {
