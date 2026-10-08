@@ -9,6 +9,21 @@ import { usePhoneticsResultSaver } from "../../phoneticsResultSaver";
 
 const storage = getStorage();
 
+// Hiển thị tệp .html (đề thi / bài giảng) trong iframe.
+// - Có htmlContent (lưu trong Firestore) → dùng srcDoc.
+// - Chỉ có fileUrl trên Firebase Storage → đi qua /api/exam-html (cùng tên miền, ép Content-Type text/html; charset=utf-8)
+//   để tránh lỗi trắng màn hình do Firebase trả sai kiểu tệp / chặn nhúng.
+function htmlFrameProps(item) {
+  if (!item) return {};
+  if (item.htmlContent) return { srcDoc: item.htmlContent };
+  const url = item.fileUrl || "";
+  if (/^https:\/\/(firebasestorage\.googleapis\.com|storage\.googleapis\.com|[^/]+\.firebasestorage\.app)\//.test(url)) {
+    return { src: `/api/exam-html?u=${encodeURIComponent(url)}` };
+  }
+  return { src: url };
+}
+
+
 const LEVEL_OPTIONS = [
   "Msutong HSK1",
   "Msutong HSK2",
@@ -495,10 +510,17 @@ export default function TeacherDashboard() {
       await uploadBytes(storageRef, selectedHskExamFile);
       const downloadUrl = await getDownloadURL(storageRef);
 
+      // Lưu luôn nội dung HTML vào Firestore (nếu tệp < ~900KB) để học viên mở đề bằng srcDoc, không phụ thuộc Storage
+      let htmlContent = null;
+      if (selectedHskExamFile.size < 900 * 1024) {
+        try { htmlContent = await selectedHskExamFile.text(); } catch (_) { htmlContent = null; }
+      }
+
       await addDoc(collection(db, "hsk3_exams_bank"), {
         examName: newHskExamName.trim(),
         level: newHskExamLevel,
         fileUrl: downloadUrl,
+        ...(htmlContent ? { htmlContent } : {}),
         createdAt: serverTimestamp()
       });
 
@@ -1177,39 +1199,50 @@ export default function TeacherDashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {HSK3_LEVELS.map(lvl => {
-                    const examForLevel = hsk3ExamsList.find(e => e.level === lvl);
-                    const hasExam = Boolean(examForLevel);
+                    const exams = hsk3ExamsList
+                      .filter(e => e.level === lvl)
+                      .sort((x, y) => (x.examName || "").localeCompare(y.examName || "", undefined, { numeric: true }));
+                    const hasExam = exams.length > 0;
 
                     return (
-                      <div key={lvl} className={`p-6 rounded-3xl border-2 transition-all flex flex-col justify-between ${hasExam ? 'bg-white border-[#10B981]/30 shadow-sm' : 'bg-[#F8FAFC] border-[#E2E8F0]'}`}>
-                        <div>
-                          <div className="flex justify-between items-center mb-3">
-                            <span className="bg-[#142033] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{lvl}</span>
-                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${hasExam ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
-                              {hasExam ? "✓ Đã có đề" : "⏳ Đang update"}
-                            </span>
-                          </div>
-                          <h4 className="font-black text-base text-[#142033] mb-1">{hasExam ? examForLevel.examName : "Chưa cập nhật đề"}</h4>
-                          <p className="text-xs text-[#64748B] font-medium mb-6">
-                            {hasExam ? "Đề thi đang hoạt động trên hệ thống học sinh." : "Chưa có file HTML đề thi được tải lên cấp độ này."}
-                          </p>
+                      <div key={lvl} className={`p-6 rounded-3xl border-2 transition-all flex flex-col ${hasExam ? 'bg-white border-[#10B981]/30 shadow-sm' : 'bg-[#F8FAFC] border-[#E2E8F0]'}`}>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="bg-[#142033] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{lvl}</span>
+                          <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${hasExam ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
+                            {hasExam ? `✓ ${exams.length} đề` : "⏳ Đang update"}
+                          </span>
                         </div>
 
-                        {hasExam && (
-                          <div className="flex gap-2 pt-2 border-t border-slate-100">
-                            <button 
-                              onClick={() => setActiveHskExamView(examForLevel)}
-                              className="flex-1 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold shadow-sm"
-                            >
-                              🖥️ Xem thử
-                            </button>
-                            <button 
-                              onClick={() => handleDeleteHskExam(examForLevel.id)}
-                              className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
-                            >
-                              🗑️ Xóa
-                            </button>
+                        {hasExam ? (
+                          <div className="space-y-2.5">
+                            {exams.map(ex => (
+                              <div key={ex.id} className="p-3 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                                <p className="font-black text-sm text-[#142033] truncate mb-0.5" title={ex.examName}>{ex.examName}</p>
+                                <p className="text-[10px] font-bold mb-2 text-[#64748B]">
+                                  {ex.htmlContent ? "Lưu trong hệ thống" : "Tệp trên Storage"}
+                                </p>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setActiveHskExamView(ex)}
+                                    className="flex-1 py-1.5 bg-[#10B981] hover:bg-[#059669] text-white rounded-lg text-[10px] font-bold shadow-sm"
+                                  >
+                                    🖥️ Xem thử
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteHskExam(ex.id)}
+                                    className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
+                                  >
+                                    🗑️ Xóa
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
                           </div>
+                        ) : (
+                          <>
+                            <h4 className="font-black text-base text-[#142033] mb-1">Chưa cập nhật đề</h4>
+                            <p className="text-xs text-[#64748B] font-medium">Chưa có file HTML đề thi được tải lên cấp độ này.</p>
+                          </>
                         )}
                       </div>
                     );
@@ -2311,7 +2344,7 @@ export default function TeacherDashboard() {
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
             <iframe 
               ref={lectureIframeRef}
-              {...(activeLectureView.htmlContent ? { srcDoc: activeLectureView.htmlContent } : { src: activeLectureView.fileUrl })}
+              {...htmlFrameProps(activeLectureView)}
               title={activeLectureView.lectureName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
@@ -2593,7 +2626,7 @@ export default function TeacherDashboard() {
             <button onClick={() => setActiveHskExamView(null)} className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition text-white">✕ Đóng</button>
           </div>
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
-            <iframe {...(activeHskExamView?.htmlContent ? { srcDoc: activeHskExamView.htmlContent } : { src: activeHskExamView?.fileUrl })} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allow="microphone; autoplay; fullscreen" />
+            <iframe {...htmlFrameProps(activeHskExamView)} title={activeHskExamView.examName} className="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-modals" allow="microphone; autoplay; fullscreen" />
           </div>
         </div>
       )}
