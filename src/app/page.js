@@ -24,6 +24,20 @@ const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 6"
 ];
 
+// Hiển thị tệp .html (đề thi / bài giảng) trong iframe.
+// - Có htmlContent (lưu trong Firestore) → dùng srcDoc.
+// - Chỉ có fileUrl trên Firebase Storage → đi qua /api/exam-html (cùng tên miền, ép Content-Type text/html; charset=utf-8)
+//   để tránh lỗi trắng màn hình do Firebase trả sai kiểu tệp / chặn nhúng.
+function htmlFrameProps(item) {
+  if (!item) return {};
+  if (item.htmlContent) return { srcDoc: item.htmlContent };
+  const url = item.fileUrl || "";
+  if (/^https:\/\/(firebasestorage\.googleapis\.com|storage\.googleapis\.com|[^/]+\.firebasestorage\.app)\//.test(url)) {
+    return { src: `/api/exam-html?u=${encodeURIComponent(url)}` };
+  }
+  return { src: url };
+}
+
 // ĐỀ THI KHẨU NGỮ HSKK 3.0
 // Danh sách đề được đọc tự động từ /public/hskk-exam/exams.json.
 // Thêm đề mới: chỉ cần up file đề + cập nhật exams.json — KHÔNG cần sửa file này.
@@ -1237,7 +1251,7 @@ export default function HomePage() {
 
                   <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
                     <iframe 
-                      {...(selectedLecture.htmlContent ? { srcDoc: selectedLecture.htmlContent } : { src: selectedLecture.fileUrl })}
+                      {...htmlFrameProps(selectedLecture)}
                       title={selectedLecture.lectureName}
                       className="w-full h-full border-0"
                       sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
@@ -1302,7 +1316,7 @@ export default function HomePage() {
 
           <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
             <iframe 
-              src={activeHskExamView.fileUrl}
+              {...htmlFrameProps(activeHskExamView)}
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals"
