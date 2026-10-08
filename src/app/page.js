@@ -1,20 +1,23 @@
 "use client";
+// ============================================================
+// HSK GARDEN — GIAO DIỆN "KHU VƯỜN" (v6)
+// 4 khu: Vườn (trang chủ) · Học · Luyện · Thi
+// Một loại điểm duy nhất: "lá" (dùng trường xp sẵn có trong Firestore)
+// Ao sen tự nở: mỗi bài giảng được đánh dấu "Đã học xong" = 1 bông sen
+// ============================================================
 import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { db } from "../firebase";
 import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { useHskkResultSaver } from "../hskkResultSaver";
-import { doc, setDoc, getDoc, collection, getDocs, query, limit, orderBy, where, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
 
-// TÍCH HỢP TỪ ĐIỂN LOCAL
+// TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 import cardsData from "./cards.json";
 import topicData from "./topics.json";
 
-// MỐC LÊN CẤP CHO 11 GIAI ĐOẠN CỦA HOA SEN
-const THRESHOLDS = [0, 10, 40, 90, 150, 250, 350, 500, 700, 1000, 1500];
-
-// 6 CẤP ĐỘ HSK 3.0
+// 6 CẤP ĐỘ HSK 3.0 (kho đề thi)
 const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 1",
   "HSK 3.0 - Cấp độ 2",
@@ -24,10 +27,26 @@ const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 6"
 ];
 
+// Giáo trình (kho bài giảng) — chỉ hiện những giáo trình đã có bài
+const LEVEL_OPTIONS = [
+  "Msutong HSK1", "Msutong HSK2", "Msutong HSK3.1", "Msutong HSK3.2",
+  "HSK4.1 2.0", "HSK4.2 2.0", "HSK5.1 2.0", "HSK5.2 2.0",
+  "HSK1 3.0", "HSK2 3.0", "HSK3 3.0", "HSK4.1 3.0", "HSK4.2 3.0", "HSK5.1 3.0", "HSK5.2 3.0"
+];
+
+// Đề HSKK dự phòng khi không đọc được /public/hskk-exam/exams.json
+const HSKK_EXAMS_FALLBACK = [
+  { level: 3, title: "HSK（三级）口语 · 样卷", label: "HSKK 3 · Đề 01", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
+  { level: 3, title: "HSK（三级）口语 · 模拟题 02", label: "HSKK 3 · Đề 02", file: "/hskk-exam/HSK3_KHAU_NGU_DE02.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
+  { level: 4, title: "HSK（四级）口语", label: "HSKK 4", file: "/hskk-exam/HSK4_KHAU_NGU.html", questions: 5, minutes: 20, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
+  { level: 5, title: "HSK（五级）口语", label: "HSKK 5", file: "/hskk-exam/HSK5_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
+  { level: 6, title: "HSK（六级）口语", label: "HSKK 6", file: "/hskk-exam/HSK6_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
+];
+
+const LEAF_PER_LESSON = 30;
+const LOTUS_STAGES = 11; // /public/lotus/lotus_stage_01..11.webp
+
 // Hiển thị tệp .html (đề thi / bài giảng) trong iframe.
-// - Có htmlContent (lưu trong Firestore) → dùng srcDoc.
-// - Chỉ có fileUrl trên Firebase Storage → đi qua /api/exam-html (cùng tên miền, ép Content-Type text/html; charset=utf-8)
-//   để tránh lỗi trắng màn hình do Firebase trả sai kiểu tệp / chặn nhúng.
 function htmlFrameProps(item) {
   if (!item) return {};
   if (item.htmlContent) return { srcDoc: item.htmlContent };
@@ -38,210 +57,170 @@ function htmlFrameProps(item) {
   return { src: url };
 }
 
-// ĐỀ THI KHẨU NGỮ HSKK 3.0
-// Danh sách đề được đọc tự động từ /public/hskk-exam/exams.json.
-// Thêm đề mới: chỉ cần up file đề + cập nhật exams.json — KHÔNG cần sửa file này.
-// Danh sách dưới đây chỉ dùng dự phòng khi không đọc được exams.json.
-const HSKK_EXAMS_FALLBACK = [
-  { level: 3, title: "HSK（三级）口语 · 样卷", label: "HSKK 3 · Đề 01", file: "/hskk-exam/HSK3_KHAU_NGU.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
-  { level: 3, title: "HSK（三级）口语 · 模拟题 02", label: "HSKK 3 · Đề 02", file: "/hskk-exam/HSK3_KHAU_NGU_DE02.html", questions: 15, minutes: 15, parts: "Nghe nhắc lại 8 câu · Nhìn tranh 5 câu · Trả lời 2 câu" },
-  { level: 4, title: "HSK（四级）口语", label: "HSKK 4", file: "/hskk-exam/HSK4_KHAU_NGU.html", questions: 5, minutes: 20, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
-  { level: 5, title: "HSK（五级）口语", label: "HSKK 5", file: "/hskk-exam/HSK5_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
-  { level: 6, title: "HSK（六级）口语", label: "HSKK 6", file: "/hskk-exam/HSK6_KHAU_NGU.html", questions: 5, minutes: 23, parts: "Nghe thuật lại 2 câu · Kể chuyện theo tranh · Trả lời 2 câu" },
-];
-
-const LEVEL_OPTIONS = [
-  "Msutong HSK1",
-  "Msutong HSK2",
-  "Msutong HSK3.1",
-  "Msutong HSK3.2",
-  "HSK4.1 2.0",
-  "HSK4.2 2.0",
-  "HSK5.1 2.0",
-  "HSK5.2 2.0",
-  "HSK1 3.0",
-  "HSK2 3.0",
-  "HSK3 3.0",
-  "HSK4.1 3.0",
-  "HSK4.2 3.0",
-  "HSK5.1 3.0",
-  "HSK5.2 3.0"
-];
-
 // ============================================================
-// CHUẨN HÓA DỮ LIỆU TỪ ĐIỂN TỪ LOCAL JSON
+// TỪ ĐIỂN
 // ============================================================
 const getLocalDictionary = () => {
   const dict = [];
   if (Array.isArray(cardsData)) {
-    cardsData.forEach(item => {
-      dict.push({
-        hanzi: item.chinese || item.hanzi || item.front || item.word || "",
-        pinyin: item.pinyin || "",
-        meaning: item.vietnamese || item.meaning || item.back || "",
-        type: item.type || "[Từ vựng]"
-      });
-    });
+    cardsData.forEach(item => dict.push({
+      hanzi: item.chinese || item.hanzi || item.front || item.word || "",
+      pinyin: item.pinyin || "",
+      meaning: item.vietnamese || item.meaning || item.back || "",
+    }));
   }
   if (Array.isArray(topicData)) {
-    topicData.forEach(topic => {
-      if (Array.isArray(topic.words)) {
-        topic.words.forEach(w => {
-          dict.push({
-            hanzi: w.chinese || w.hanzi || w.word || "",
-            pinyin: w.pinyin || "",
-            meaning: w.vietnamese || w.meaning || "",
-            type: w.type || "[Chủ đề]"
-          });
-        });
-      }
-    });
+    topicData.forEach(topic => (topic.words || []).forEach(w => dict.push({
+      hanzi: w.chinese || w.hanzi || w.word || "",
+      pinyin: w.pinyin || "",
+      meaning: w.vietnamese || w.meaning || "",
+    })));
   }
-  const uniqueDict = Array.from(new Map(dict.map(item => [item.hanzi, item])).values());
-  return uniqueDict.filter(item => item.hanzi);
+  return Array.from(new Map(dict.map(i => [i.hanzi, i])).values()).filter(i => i.hanzi);
 };
-
 const localDictionary = getLocalDictionary();
 
 // ============================================================
-// COMPONENT: BÔNG SEN TRÒN DÙNG 11 ẢNH WEBP + CÂY LUNG LAY BÊN TRONG
+// BIỂU TƯỢNG (SVG nét, không dùng emoji)
 // ============================================================
-const RealLotus = ({ plantGrowth, isWatering }) => {
-  let currentFrame = 0;
-  for (let i = THRESHOLDS.length - 1; i >= 0; i--) {
-    if (plantGrowth >= THRESHOLDS[i]) {
-      currentFrame = i;
-      break;
-    }
-  }
-
-  const stageNumber = String(currentFrame + 1).padStart(2, '0');
-  const imagePath = `/lotus/lotus_stage_${stageNumber}.webp`;
-
+const Icon = ({ name, className = "w-6 h-6", strokeWidth = 2 }) => {
+  const p = {
+    leaf: <><path d="M5 19c8 0 14-6 14-14-8 0-14 6-14 14z" /><path d="M5 19l7-7" /></>,
+    book: <><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z" /><path d="M4 19V5" /></>,
+    target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /></>,
+    trophy: <><path d="M8 4h8v4a4 4 0 0 1-8 0z" /><path d="M12 12v4" /><path d="M8 20h8" /><path d="M16 5h3a3 3 0 0 1-3 3" /><path d="M8 5H5a3 3 0 0 0 3 3" /></>,
+    flame: <path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-8z" />,
+    search: <><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></>,
+    sprout: <><path d="M12 21V11" /><path d="M12 11C12 7 9 4 5 4c0 4 3 7 7 7z" /><path d="M12 13c0-3 3-6 7-6 0 3-3 6-7 6z" /></>,
+    blocks: <><rect x="3" y="4" width="7" height="6" rx="1.5" /><rect x="14" y="4" width="7" height="6" rx="1.5" /><rect x="3" y="14" width="18" height="6" rx="1.5" /></>,
+    headphones: <><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><rect x="3" y="14" width="4" height="6" rx="1.5" /><rect x="17" y="14" width="4" height="6" rx="1.5" /></>,
+    translate: <><path d="M4 6h8" /><path d="M8 4v2c0 4-2 7-4 8" /><path d="M6 10c1 2 3 4 6 4" /><path d="M13 20l4-9 4 9" /><path d="M14.5 17h5" /></>,
+    mic: <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0" /><path d="M12 18v3" /></>,
+    clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+    chevron: <path d="M9 6l6 6-6 6" />,
+    back: <path d="M15 6l-6 6 6 6" />,
+    close: <><path d="M6 6l12 12" /><path d="M18 6L6 18" /></>,
+    check: <path d="M5 12l5 5 9-10" />,
+    send: <><path d="M4 12l16-8-6 16-3-7z" /></>,
+    shield: <path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z" />,
+    clipboard: <><rect x="6" y="4" width="12" height="17" rx="2" /><path d="M9 4h6v3H9z" /><path d="M9 12h6" /><path d="M9 16h4" /></>,
+    sparkle: <path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />,
+    play: <path d="M8 5l11 7-11 7z" fill="currentColor" />,
+  }[name];
   return (
-    <div className="relative flex flex-col items-center justify-center">
-      <div className={`relative z-10 w-44 h-44 md:w-56 md:h-56 rounded-full border-[6px] border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden bg-gradient-to-b from-[#E0F7FA]/40 to-[#8FD9A8]/30 backdrop-blur-sm flex items-center justify-center transition-transform duration-500 ${isWatering ? 'scale-105' : 'scale-100'}`}>
-        
-        {isWatering && (
-          <div className="absolute inset-0 z-30 pointer-events-none flex justify-center">
-             <div className="w-2.5 h-5 bg-[#4FB6C7] rounded-full animate-bounce mt-6 shadow-sm"></div>
-             <div className="w-2 h-4 bg-blue-300 rounded-full animate-bounce mt-10 ml-6 delay-100"></div>
-             <div className="w-2 h-4 bg-[#4FB6C7] rounded-full animate-bounce mt-8 mr-6 delay-75"></div>
-          </div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">{p}</svg>
+  );
+};
+
+// Ếch Xanh — linh vật (4 biểu cảm: happy · cheer · think · sleepy)
+const Frog = ({ mood = "happy", className = "w-12 h-10" }) => (
+  <svg viewBox="0 0 120 100" className={className} aria-hidden="true">
+    <ellipse cx="60" cy="66" rx="50" ry="32" fill="#3DB46D" />
+    <ellipse cx="60" cy="74" rx="32" ry="18" fill="#A6E3B4" />
+    <circle cx="34" cy="34" r="20" fill="#3DB46D" />
+    <circle cx="86" cy="34" r="20" fill="#3DB46D" />
+    {mood === "cheer" ? (
+      <>
+        <path d="M24 36 Q34 26 44 36" stroke="#13261C" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <path d="M76 36 Q86 26 96 36" stroke="#13261C" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <path d="M42 58 Q60 82 78 58 Z" fill="#13261C" />
+        <path d="M50 66 Q60 74 70 66" fill="#F27BA0" />
+      </>
+    ) : mood === "sleepy" ? (
+      <>
+        <path d="M24 34 Q34 42 44 34" stroke="#13261C" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <path d="M76 34 Q86 42 96 34" stroke="#13261C" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <ellipse cx="60" cy="66" rx="5" ry="4" fill="#13261C" />
+      </>
+    ) : (
+      <>
+        <circle cx="34" cy="34" r="13" fill="#FFFFFF" />
+        <circle cx="86" cy="34" r="13" fill="#FFFFFF" />
+        {mood === "think" ? (
+          <>
+            <circle cx="38" cy="30" r="6" fill="#13261C" /><circle cx="90" cy="30" r="6" fill="#13261C" />
+            <path d="M50 66 L70 64" stroke="#13261C" strokeWidth="4" fill="none" strokeLinecap="round" />
+          </>
+        ) : (
+          <>
+            <circle cx="37" cy="36" r="6" fill="#13261C" /><circle cx="83" cy="36" r="6" fill="#13261C" />
+            <path d="M44 62 Q60 74 76 62" stroke="#13261C" strokeWidth="4" fill="none" strokeLinecap="round" />
+          </>
         )}
+      </>
+    )}
+    <circle cx="26" cy="60" r="6" fill="#F59BB4" opacity="0.7" />
+    <circle cx="94" cy="60" r="6" fill="#F59BB4" opacity="0.7" />
+  </svg>
+);
 
-        <div className="w-full h-full relative overflow-hidden flex items-center justify-center p-3">
-          <img 
-            src={imagePath} 
-            alt={`Giai đoạn ${currentFrame + 1}`} 
-            className="max-h-full max-w-full object-contain mix-blend-multiply transition-all duration-700 ease-in-out drop-shadow-md origin-bottom hover:scale-105"
-            style={{
-              animation: 'swing 4s ease-in-out infinite'
-            }}
-            onError={(e) => {
-               e.target.style.display = 'none';
-               e.target.parentElement.innerHTML = `<div class="text-center p-2 text-[10px] text-red-500 font-bold">Thiếu file: lotus_stage_${stageNumber}.webp trong /public/lotus/</div>`;
-            }}
-          />
-        </div>
-      </div>
+const LotusMark = ({ className = "w-7 h-7" }) => (
+  <svg viewBox="0 0 44 44" className={className} aria-hidden="true">
+    <path d="M22 6 C28 16 30 24 22 34 C14 24 16 16 22 6z" fill="#F59BB4" />
+    <path d="M22 34 C10 30 6 22 8 14 C16 18 20 26 22 34z" fill="#F27BA0" />
+    <path d="M22 34 C34 30 38 22 36 14 C28 18 24 26 22 34z" fill="#F27BA0" />
+  </svg>
+);
 
-      <div className="absolute -bottom-4 w-32 h-6 bg-emerald-950/30 rounded-[100%] blur-md -z-10"></div>
-    </div>
-  );
-};
+const Bar = ({ value, color = "bg-[#2E9D5B]", track = "bg-[#E3EADB]", h = "h-2" }) => (
+  <div className={`${h} rounded-full ${track} overflow-hidden`}>
+    <div className={`h-full rounded-full ${color} transition-all duration-700`} style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+  </div>
+);
 
-const TreeStageIcon = ({ progress, isCurrent }) => {
-  let emoji = '🌱';
-  if (progress === 100 && !isCurrent) emoji = '🌸';
-  else if (isCurrent) emoji = '✨';
-  else if (progress >= 60) emoji = '🌳';
-  else if (progress >= 30) emoji = '🌿';
+const TABS = [
+  { key: "home", label: "Vườn", icon: "leaf" },
+  { key: "learn", label: "Học", icon: "book" },
+  { key: "practice", label: "Luyện", icon: "target" },
+  { key: "exam", label: "Thi", icon: "trophy" },
+];
 
-  return (
-    <span className="text-2xl drop-shadow-sm flex items-center justify-center w-full h-full">
-      {emoji}
-    </span>
-  );
-};
+const fmt = (n) => Number(n || 0).toLocaleString("vi-VN");
 
-const RadarChart = ({ data }) => {
-  const size = 260;
-  const center = size / 2;
-  const radius = 90;
-  const count = data.length;
-
-  const getPoint = (index, value) => {
-    const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
-    const r = (value / 100) * radius;
-    return { x: center + Math.cos(angle) * r, y: center + Math.sin(angle) * r };
-  };
-
-  const polygonPoints = data.map((item, index) => `${getPoint(index, item.value).x},${getPoint(index, item.value).y}`).join(" ");
-
-  return (
-    <div className="flex items-center justify-center">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
-        {[20, 40, 60, 80, 100].map((level) => (
-          <polygon key={level} points={data.map((_, index) => `${getPoint(index, level).x},${getPoint(index, level).y}`).join(" ")} fill="none" stroke="#E2E8F0" strokeWidth="1" strokeDasharray="4 4" />
-        ))}
-        {data.map((_, index) => (
-          <line key={index} x1={center} y1={center} x2={getPoint(index, 100).x} y2={getPoint(index, 100).y} stroke="#E2E8F0" strokeWidth="1" strokeDasharray="4 4" />
-        ))}
-        <polygon points={polygonPoints} fill="#8FD9A8" fillOpacity="0.4" stroke="#2F8F6E" strokeWidth="2.5" strokeLinejoin="round" className="transition-all duration-1000 drop-shadow-sm" />
-        {data.map((item, index) => <circle key={index} cx={getPoint(index, item.value).x} cy={getPoint(index, item.value).y} r="5" fill="#1B5E4B" className="drop-shadow-md" />)}
-        {data.map((item, index) => (
-          <text key={index} x={getPoint(index, 125).x} y={getPoint(index, 125).y} textAnchor="middle" dominantBaseline="middle" className="fill-[#1B5E4B] text-[10px] font-black uppercase tracking-widest">
-            {item.label}
-          </text>
-        ))}
-      </svg>
-    </div>
-  );
-};
-
+// ============================================================
+// TRANG HỌC VIÊN
+// ============================================================
 export default function HomePage() {
   const { isSignedIn, userId } = useAuth();
-  const { user, isLoaded } = useUser();
+  const { user } = useUser();
 
-  // Nhận kết quả bài kiểm tra / đề thi ngữ âm do bài giảng (iframe) gửi lên → lưu về trang Chấm bài của giáo viên
   usePhoneticsResultSaver({ role: "student", userId, userName: user?.fullName || "" });
-
-  // Nhận bài thi Khẩu ngữ HSKK 3.0 (iframe /hskk-exam) → lưu vào "hskk_exams" để giáo viên chấm ở /teacher
   useHskkResultSaver({ userId, userName: user?.fullName || "", userEmail: user?.primaryEmailAddress?.emailAddress || "" });
 
-  // --- TAB NAVIGATION ---
-  const [activeTab, setActiveTab] = useState("home"); // 'home' | 'hsk3_exam' | 'hskk_exam' | 'student_lectures'
+  const [activeTab, setActiveTab] = useState("home");
+  const [examTab, setExamTab] = useState("hsk3"); // hsk3 | hskk | test
 
-  // --- USER STATES ---
+  // --- NGƯỜI HỌC ---
   const [streak, setStreak] = useState(0);
-  const [hearts, setHearts] = useState(5);
-  const [hskXp, setHskXp] = useState(0);
-  const [water, setWater] = useState(0);
-  const [currentLevel, setCurrentLevel] = useState("HSK 1");
-  
+  const [leaves, setLeaves] = useState(0); // = xp
   const [todayVocabLearned, setTodayVocabLearned] = useState(0);
   const [todayListeningLearned, setTodayListeningLearned] = useState(0);
   const [todayGrammarLearned, setTodayGrammarLearned] = useState(0);
-  
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [isTeacher, setIsTeacher] = useState(false); 
+  const [isTeacher, setIsTeacher] = useState(false);
+  const [skillMap, setSkillMap] = useState({ vocabulary: 0, grammar: 0, listening: 0, translation: 0, writing: 0, speaking: 0 });
+  const [results, setResults] = useState([]); // kết quả đã chấm (test + hskk)
+  const [selectedResult, setSelectedResult] = useState(null);
 
-  // --- TRỒNG CÂY TRANG CHỦ STATES ---
-  const [isWatering, setIsWatering] = useState(false);
-  const [showReward, setShowReward] = useState(false);
-  const [lotusGrowth, setLotusGrowth] = useState(0);
+  // --- BÀI GIẢNG ---
+  const [lecturesBankList, setLecturesBankList] = useState([]);
+  const [selectedLectureLevel, setSelectedLectureLevel] = useState(null);
+  const [selectedLecture, setSelectedLecture] = useState(null);
+  const [lastLecture, setLastLecture] = useState(null); // {id, level, name}
+  const [lessonsDone, setLessonsDone] = useState([]);   // [lectureId]
+  const [bloomFx, setBloomFx] = useState(false);
+  const [learnQuery, setLearnQuery] = useState("");
 
-  // --- THÔNG BÁO CHẤM THI ---
-  const [notifications, setNotifications] = useState([]);
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [selectedResult, setSelectedResult] = useState(null); 
-
-  // --- HSK 3.0 EXAM STATES ---
+  // --- ĐỀ THI ---
   const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
   const [activeHskExamView, setActiveHskExamView] = useState(null);
-  // Đề HSK 3.0 dạng trang thi (vd. HSK5 3.0) tự gửi kết quả qua postMessage khi học viên nộp bài
+  const [activeHskkExam, setActiveHskkExam] = useState(null);
+  const [hskkExams, setHskkExams] = useState(HSKK_EXAMS_FALLBACK);
+
+  // --- HỎI ẾCH (AI) ---
+  const [aiResponse, setAiResponse] = useState(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // ---------- Đề HSK 3.0 gửi kết quả qua postMessage ----------
   const hsk3SavedRef = useRef(null);
   useEffect(() => { hsk3SavedRef.current = null; }, [activeHskExamView]);
   useEffect(() => {
@@ -294,11 +273,7 @@ export default function HomePage() {
     return () => window.removeEventListener("message", onMsg);
   }, [activeHskExamView, user, userId]);
 
-
-  // --- HSKK 3.0 (THI KHẨU NGỮ) STATES ---
-  const [activeHskkExam, setActiveHskkExam] = useState(null);
-  const [hskkExams, setHskkExams] = useState(HSKK_EXAMS_FALLBACK);
-
+  // ---------- Tải danh sách đề / bài ----------
   useEffect(() => {
     fetch("/hskk-exam/exams.json", { cache: "no-store" })
       .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
@@ -306,1074 +281,733 @@ export default function HomePage() {
       .catch(err => console.warn("Không đọc được /hskk-exam/exams.json, dùng danh sách dự phòng:", err));
   }, []);
 
-  // --- HỌC HSK (KHO BÀI GIẢNG) STATES ---
-  const [lecturesBankList, setLecturesBankList] = useState([]);
-  const [selectedLectureLevel, setSelectedLectureLevel] = useState(null);
-  const [selectedLecture, setSelectedLecture] = useState(null);
-
   const fetchHsk3Exams = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "hsk3_exams_bank"));
       const list = [];
-      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
       setHsk3ExamsList(list);
     } catch (err) { console.error("Lỗi tải kho đề thi HSK 3.0:", err); }
   }, []);
 
-  const fetchLecturesForStudent = useCallback(async () => {
+  const fetchLectures = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
       const list = [];
-      snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-      list.sort((a, b) => a.lectureName.localeCompare(b.lectureName, undefined, { numeric: true, sensitivity: 'base' }));
+      snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+      list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
       setLecturesBankList(list);
     } catch (err) { console.error("Lỗi tải bài giảng:", err); }
   }, []);
 
+  useEffect(() => { fetchHsk3Exams(); fetchLectures(); }, [fetchHsk3Exams, fetchLectures]);
+
+  // Bài học dở lần trước (lưu trên máy để mở nhanh khi chưa tải xong Firestore)
   useEffect(() => {
-    fetchHsk3Exams();
-    fetchLecturesForStudent();
-  }, [fetchHsk3Exams, fetchLecturesForStudent]);
-
-  const [skillMap, setSkillMap] = useState({
-    vocabulary: 0, grammar: 0, listening: 0, translation: 0, writing: 0, speaking: 0,
-  });
-
-  // --- SEARCH / AI STATES ---
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [aiResponse, setAiResponse] = useState(null);
-  const [isAiLoading, setIsAiLoading] = useState(false);
-
-  const searchResults = searchQuery.trim() === "" ? [] : localDictionary.filter(item => 
-    item.hanzi.includes(searchQuery.trim()) || 
-    item.pinyin.toLowerCase().includes(searchQuery.trim().toLowerCase()) || 
-    item.meaning.toLowerCase().includes(searchQuery.trim().toLowerCase())
-  ).slice(0, 10);
-
-  const handleAskAI = async () => {
-    if (!searchQuery.trim()) return;
-    setIsAiLoading(true);
-    setAiResponse(null);
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: `Hãy giải thích chi tiết về từ vựng, đoạn văn hoặc ngữ pháp này trong tiếng Trung giúp tôi, format rõ ràng: ${searchQuery}` })
-      });
-      const data = await res.json();
-      setAiResponse(data.reply || data.response || "Ếch xanh đang bị mệt, không thể kết nối AI lúc này.");
-    } catch (error) {
-      setAiResponse("Đã xảy ra lỗi khi gọi AI. Vui lòng thử lại sau.");
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
-  const closeSearch = () => { 
-    setIsSearchOpen(false); 
-    setSearchQuery(""); 
-    setAiResponse(null);
-    setIsAiLoading(false);
-  };
-
-  const currentLvlNum = parseInt(currentLevel.replace(/\D/g, "")) || 1;
-  const targetVocab = 20; 
-  const currentLevelProgress = Math.min(100, Math.max(0, Math.round((todayVocabLearned / targetVocab) * 100)));
-
-  const handleWaterPlant = async (mode = "single") => {
-    if (water <= 0) {
-      alert("Bạn đã hết nước! Hãy làm bài test hoặc nhiệm vụ để lấy thêm 💧 nhé.");
-      return;
-    }
-
-    const isMaxLevel = lotusGrowth >= THRESHOLDS[THRESHOLDS.length - 1];
-    if (isMaxLevel) {
-      alert("Sen đã hoàn thành chu kỳ! Hãy làm mới chậu để trồng tiếp.");
-      return;
-    }
-
-    let dropsToUse = 1;
-    if (mode === "all") {
-      const maxGrowthNeeded = THRESHOLDS[THRESHOLDS.length - 1] - lotusGrowth;
-      dropsToUse = Math.min(water, maxGrowthNeeded);
-    }
-
-    if (dropsToUse <= 0) return;
-
-    setIsWatering(true);
-    
-    setTimeout(async () => {
-      const newWater = water - dropsToUse;
-      const newGrowth = lotusGrowth + dropsToUse;
-      
-      setWater(newWater);
-      setLotusGrowth(newGrowth);
-      setIsWatering(false);
-
-      if (userId) {
-        await setDoc(doc(db, "users", userId), { water: newWater, lotus_growth: newGrowth }, { merge: true });
-        await setDoc(doc(db, "user_progress", userId), { water: newWater, lotus_growth: newGrowth }, { merge: true });
-      }
-
-      if (newGrowth >= THRESHOLDS[THRESHOLDS.length - 1]) {
-        setShowReward(true);
-        setTimeout(() => setShowReward(false), 4000);
-        const newXp = hskXp + 500;
-        setHskXp(newXp);
-        if (userId) await setDoc(doc(db, "users", userId), { xp: newXp }, { merge: true });
-      }
-    }, 600);
-  };
-
-  const handleChangeLevel = async (lvl) => {
-    setCurrentLevel(lvl);
-    if (userId) {
-      try {
-        await setDoc(doc(db, "users", userId), { currentLevel: lvl }, { merge: true });
-      } catch (err) { console.error("Lỗi đổi cấp độ:", err); }
-    }
-  };
-
-  const handleExchangeXpForWater = async () => {
-    const costXp = 100;
-    const rewardWater = 5;
-
-    if (hskXp < costXp) {
-      alert(`Bạn cần ít nhất ${costXp} XP để đổi lấy ${rewardWater} giọt nước! Hãy chăm chỉ làm bài tập nhé.`);
-      return;
-    }
-
-    const newXp = hskXp - costXp;
-    const newWater = water + rewardWater;
-
-    setHskXp(newXp);
-    setWater(newWater);
-
-    if (userId) {
-      try {
-        await setDoc(doc(db, "users", userId), { xp: newXp, water: newWater }, { merge: true });
-        await setDoc(doc(db, "user_progress", userId), { water: newWater }, { merge: true });
-      } catch (err) {
-        console.error("Lỗi đổi XP lấy nước:", err);
-      }
-    }
-  };
-
-  const handleResetPlant = async () => {
-    setLotusGrowth(0);
-    if (userId) {
-      await setDoc(doc(db, "users", userId), { lotus_growth: 0 }, { merge: true });
-      await setDoc(doc(db, "user_progress", userId), { lotus_growth: 0 }, { merge: true });
-    }
-  };
-
-  let currentLotusFrame = 0;
-  for (let i = THRESHOLDS.length - 1; i >= 0; i--) {
-    if (lotusGrowth >= THRESHOLDS[i]) {
-      currentLotusFrame = i;
-      break;
-    }
-  }
-  const isLotusMaxLevel = currentLotusFrame >= THRESHOLDS.length - 1;
-  let lotusProgressPercent = 100;
-  let lotusDropsNeeded = 0;
-
-  if (!isLotusMaxLevel) {
-    const currentLvlDrops = THRESHOLDS[currentLotusFrame];
-    const nextLvlDrops = THRESHOLDS[currentLotusFrame + 1];
-    const dropsInCurrentLvl = lotusGrowth - currentLvlDrops;
-    const totalDropsForNextLvl = nextLvlDrops - currentLvlDrops;
-    
-    lotusProgressPercent = (dropsInCurrentLvl / totalDropsForNextLvl) * 100;
-    lotusDropsNeeded = nextLvlDrops - lotusGrowth;
-  }
-
-  const hskLevels = [
-    { level: "HSK 1", title: "Nhập môn", words: 500 },
-    { level: "HSK 2", title: "Cơ bản", words: 772 },
-    { level: "HSK 3", title: "Sơ trung cấp", words: 973 },
-    { level: "HSK 4", title: "Trung cấp", words: 1000 },
-    { level: "HSK 5", title: "Trung cao", words: 1071 },
-    { level: "HSK 6", title: "Cao cấp", words: 1140 },
-    { level: "HSK 7", title: "Thượng cấp", words: 1200 },
-    { level: "HSK 8", title: "Chuyên sâu", words: 1200 },
-    { level: "HSK 9", title: "Tinh thông", words: 3236 },
-  ].map((item, index) => {
-    const lvlNum = index + 1;
-    let progress = 0;
-    if (lvlNum < currentLvlNum) progress = 100;
-    else if (lvlNum === currentLvlNum) progress = currentLevelProgress;
-    return { ...item, progress };
-  });
-
-  const realSkillData = [
-    { label: "TỪ VỰNG", value: Math.min(skillMap?.vocabulary || 0, 100), key: "vocabulary" },
-    { label: "NGỮ PHÁP", value: Math.min(skillMap?.grammar || 0, 100), key: "grammar" },
-    { label: "NGHE", value: Math.min(skillMap?.listening || 0, 100), key: "listening" },
-    { label: "ĐỌC/DỊCH", value: Math.min(skillMap?.translation || 0, 100), key: "translation" },
-    { label: "VIẾT", value: Math.min(skillMap?.writing || 0, 100), key: "writing" },
-    { label: "NÓI", value: Math.min(skillMap?.speaking || 0, 100), key: "speaking" },
-  ];
-
-  const sortedSkills = [...realSkillData].sort((a, b) => b.value - a.value);
-  const strongSkills = sortedSkills.slice(0, 2).filter(s => s.value > 0);
-  const weakSkills = sortedSkills.slice(-2);
-
-  const getCoachSuggestions = (weakest) => {
-    const suggestions = [];
-    weakest.forEach((s) => {
-      if (s.key === "listening") suggestions.push(`Luyện 1 bài nghe ${currentLevel}`);
-      else if (s.key === "speaking") suggestions.push("Diễn xuất tại Phim trường");
-      else if (s.key === "grammar") suggestions.push("Ôn tập 10 câu sắp xếp ngữ pháp");
-      else if (s.key === "translation") suggestions.push("Luyện dịch 5 câu phản xạ");
-      else if (s.key === "writing") suggestions.push("Luyện chép chính tả chữ Hán");
-      else suggestions.push(`Tưới nước thêm 10 từ mới ${currentLevel}`);
-    });
-    return suggestions;
-  };
-
-  const gardenAreas = [
-    { name: "Cây Từ vựng", level: Math.floor((skillMap?.vocabulary || 0) / 10) + 1, icon: "🌱", link: "/vocab", bg: "bg-[#2F8F6E]", text: "text-white", bgImg: "/hskk/tuvung.jpg" },
-    { name: "Đầm Chủ đề", level: Math.floor(((skillMap?.vocabulary || 0) + (skillMap?.translation || 0)) / 20) + 1, icon: "🪷", link: "/topic", bg: "bg-[#F2765B]", text: "text-white", bgImg: "/hskk/chude.jpg" },
-    { name: "Hoa Ngữ pháp", level: Math.floor((skillMap?.grammar || 0) / 10) + 1, icon: "☀️", link: "/arrange", bg: "bg-[#FFD666]", text: "text-[#1B5E4B]", bgImg: "/hskk/sapxep.jpg" },
-    { name: "Ao Nghe", level: Math.floor((skillMap?.listening || 0) / 10) + 1, icon: "💧", link: "/dictation", bg: "bg-[#4FB6C7]", text: "text-white", bgImg: "/hskk/nghechep.jpg" },
-    { name: "Gió Dịch", level: Math.floor((skillMap?.translation || 0) / 10) + 1, icon: "🍃", link: "/translate", bg: "bg-[#8FD9A8]", text: "text-[#1B5E4B]", bgImg: "/hskk/dich.jpg" },
-    // { name: "Cuộc chiến khẩu ngữ", ... link: "/hskk" } — ĐÃ ẨN, thay bằng Phòng thi HSKK 3.0
-    { name: "Thi Khẩu ngữ HSKK", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎙", link: "#hskk", tab: "hskk_exam", bg: "bg-[#A97845]", text: "text-white", bgImg: "/hskk/thucchien.jpg" },
-    { name: "Phim trường", level: Math.floor((skillMap?.speaking || 0) / 10) + 1, icon: "🎬", link: "/roleplay", bg: "bg-[#1B5E4B]", text: "text-white", bgImg: "/hskk/nen.jpg" },
-  ];
-
-  const dailyMissions = [
-    { title: "Học từ mới", progress: Math.min(todayVocabLearned, 20), total: 20, xp: 20, icon: "🌱" },
-    { title: "Luyện nghe", progress: Math.min(todayListeningLearned, 1), total: 1, xp: 15, icon: "💧" },
-    { title: "Sắp xếp câu", progress: Math.min(todayGrammarLearned, 10), total: 10, xp: 20, icon: "☀️" },
-  ];
-
-  useEffect(() => {
-    if (!isSignedIn || !userId) return;
-
-    const loadCompleteUserData = async () => {
-      try {
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
-        const uData = userSnap.exists() ? userSnap.data() : {};
-
-        if (user) {
-            await setDoc(userRef, {
-                fullName: user.fullName || user.firstName || "Người làm vườn",
-                avatar: user.imageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`
-            }, { merge: true });
-        }
-
-        const upRef = doc(db, "user_progress", userId);
-        const upSnap = await getDoc(upRef);
-        const upData = upSnap.exists() ? upSnap.data() : {};
-
-        const pRef = doc(db, "progress", userId);
-        const pSnap = await getDoc(pRef);
-        const pData = pSnap.exists() ? pSnap.data() : {};
-
-        const mergedStreak = uData.streak ?? upData.profile?.streak_days ?? pData.streakCount ?? 0;
-        const mergedHearts = uData.hearts ?? upData.profile?.hearts ?? 5;
-        const mergedXp = uData.xp ?? upData.profile?.hsk_xp ?? pData.xp ?? 0;
-        const mergedWater = uData.water ?? upData.water ?? Math.floor(mergedXp / 15);
-        const mergedLevel = uData.currentLevel ?? upData.profile?.level ?? "HSK 1";
-        
-        const mergedTodayVocab = uData.todayVocabLearned ?? upData.todayVocabLearned ?? 0;
-        const mergedTodayListening = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
-        const mergedTodayGrammar = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
-        const mergedLotusGrowth = uData.lotus_growth ?? upData.lotus_growth ?? 0;
-        
-        let teacherSkills = null;
-        const notifs = [];
-
-        try {
-          const testQ = query(collection(db, "test_submissions"), where("userId", "==", userId), where("status", "==", "graded"));
-          const testSnap = await getDocs(testQ);
-          let latestTest = null;
-          
-          testSnap.forEach(doc => {
-            const tData = doc.data();
-            const timeVal = tData.submittedAt?.toMillis() || 0;
-            notifs.push({
-              id: doc.id, type: "test", title: "Kết quả bài Test Năng lực", score: tData.teacherScore, level: tData.evaluatedLevel, feedback: tData.teacherFeedback, recommendation: tData.recommendation, skills: tData.skillsEvaluation, time: timeVal
-            });
-            if (!latestTest || timeVal > (latestTest.submittedAt?.toMillis() || 0)) latestTest = tData;
-          });
-
-          const hskkQ = query(collection(db, "hskk_exams"), where("userId", "==", userId), where("status", "==", "graded"));
-          const hskkSnap = await getDocs(hskkQ);
-          hskkSnap.forEach(doc => {
-            const data = doc.data();
-            notifs.push({
-              id: doc.id, type: "hskk", title: "Kết quả thi Khẩu Ngữ (HSKK)", score: data.teacherScore, level: data.level, feedback: data.teacherFeedback, time: data.submittedAt?.toMillis() || 0,
-            });
-          });
-
-          notifs.sort((a, b) => b.time - a.time);
-          setNotifications(notifs);
-
-          if (latestTest && latestTest.skillsEvaluation) {
-            const ev = latestTest.skillsEvaluation;
-            teacherSkills = {
-              listening: ev.listening?.score || 0, speaking: ev.speaking?.score || 0, translation: ev.reading?.score || 0, grammar: ev.reading?.score || 0, vocabulary: ev.reading?.score || 0, writing: ev.writing?.score || 0
-            };
-          }
-        } catch (error) { console.error("Lỗi lấy thông báo:", error); }
-
-        const dbSkills = uData.skill_map || upData.skill_map || pData.skill_map || {};
-        
-        const mergedSkills = {
-          vocabulary: teacherSkills?.vocabulary !== undefined ? teacherSkills.vocabulary : (dbSkills.vocabulary ?? Math.min(todayVocabLearned * 5, 100)),
-          grammar: teacherSkills?.grammar !== undefined ? teacherSkills.grammar : (dbSkills.grammar ?? Math.min(todayGrammarLearned * 10, 100)),
-          listening: teacherSkills?.listening !== undefined ? teacherSkills.listening : (dbSkills.listening ?? Math.min(todayListeningLearned * 20, 100)),
-          translation: teacherSkills?.translation !== undefined ? teacherSkills.translation : (dbSkills.translation ?? Math.min((dbSkills.vocabulary || 0) * 0.8, 100)),
-          writing: teacherSkills?.writing !== undefined ? teacherSkills.writing : (dbSkills.writing ?? Math.min((dbSkills.grammar || 0) * 0.8, 100)),
-          speaking: teacherSkills?.speaking !== undefined ? teacherSkills.speaking : (dbSkills.speaking ?? 0),
-        };
-
-        setStreak(mergedStreak); setHearts(mergedHearts); setHskXp(mergedXp);
-        setWater(mergedWater); setCurrentLevel(mergedLevel);
-        setTodayVocabLearned(mergedTodayVocab); setTodayListeningLearned(mergedTodayListening); setTodayGrammarLearned(mergedTodayGrammar);
-        setLotusGrowth(mergedLotusGrowth);
-        setSkillMap(mergedSkills);
-
-        if (uData.role === "teacher" || uData.role === "admin" || user?.publicMetadata?.role === "teacher" || user?.publicMetadata?.role === "admin") {
-          setIsTeacher(true);
-        }
-      } catch (err) { console.error("Lỗi đồng bộ dữ liệu:", err); }
-
-      try {
-        const q = query(collection(db, "users"), orderBy("xp", "desc"), limit(15));
-        const qSnap = await getDocs(q);
-        let list = [];
-        qSnap.forEach((d) => {
-          const dData = d.data();
-          const xpVal = dData.xp || 0;
-          if (
-            dData.role !== "teacher" && 
-            dData.role !== "admin" && 
-            xpVal <= 10000 && 
-            xpVal > 0
-          ) {
-            list.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: xpVal, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
-          }
-        });
-        setLeaderboard(list.slice(0, 5));
-      } catch (err) {
-        const fallbackQ = query(collection(db, "users"), limit(50));
-        const fallbackSnap = await getDocs(fallbackQ);
-        let fallbackList = [];
-        fallbackSnap.forEach((d) => {
-          const dData = d.data();
-          const xpVal = dData.xp || 0;
-          if (
-            dData.role !== "teacher" && 
-            dData.role !== "admin" && 
-            xpVal <= 10000 && 
-            xpVal > 0
-          ) {
-            fallbackList.push({ id: d.id, name: dData.fullName || dData.name || "Người làm vườn", streak: dData.streak || 0, xp: xpVal, avatar: dData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${d.id}` });
-          }
-        });
-        fallbackList.sort((a, b) => b.xp - a.xp);
-        setLeaderboard(fallbackList.slice(0, 5));
-      }
-    };
-
-    loadCompleteUserData();
-  }, [isSignedIn, userId, user]);
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault(); setIsSearchOpen(true);
-      }
-      if (event.key === "Escape") closeSearch();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    try { const s = localStorage.getItem("hg_last_lecture"); if (s) setLastLecture(JSON.parse(s)); } catch (_) {}
   }, []);
 
-  return (
-    <div className="min-h-screen font-sans text-[#1B5E4B] relative bg-[#EEF5E9] selection:bg-[#8FD9A8]/50">
-      
-      <div className="fixed inset-0 z-0 pointer-events-none">
-         <div className="absolute inset-0 bg-[url('/hskk/nen.jpg')] bg-cover bg-center opacity-10"></div>
-         <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
+  // ---------- Dữ liệu người học ----------
+  useEffect(() => {
+    if (!isSignedIn || !userId) return;
+    const load = async () => {
+      try {
+        const userRef = doc(db, "users", userId);
+        const uSnap = await getDoc(userRef);
+        const uData = uSnap.exists() ? uSnap.data() : {};
+        if (user) {
+          await setDoc(userRef, {
+            fullName: user.fullName || user.firstName || "Người làm vườn",
+            avatar: user.imageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`
+          }, { merge: true });
+        }
+        const upSnap = await getDoc(doc(db, "user_progress", userId));
+        const upData = upSnap.exists() ? upSnap.data() : {};
+        const pSnap = await getDoc(doc(db, "progress", userId));
+        const pData = pSnap.exists() ? pSnap.data() : {};
+
+        const tv = uData.todayVocabLearned ?? upData.todayVocabLearned ?? 0;
+        const tl = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
+        const tg = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
+
+        let teacherSkills = null;
+        const list = [];
+        try {
+          const testSnap = await getDocs(query(collection(db, "test_submissions"), where("userId", "==", userId), where("status", "==", "graded")));
+          let latest = null;
+          testSnap.forEach(d => {
+            const t = d.data();
+            const time = t.submittedAt?.toMillis?.() || 0;
+            list.push({ id: d.id, type: "test", title: "Thi đánh giá năng lực", score: t.teacherScore, level: t.evaluatedLevel, feedback: t.teacherFeedback, recommendation: t.recommendation, skills: t.skillsEvaluation, time });
+            if (!latest || time > (latest.submittedAt?.toMillis?.() || 0)) latest = t;
+          });
+          const hskkSnap = await getDocs(query(collection(db, "hskk_exams"), where("userId", "==", userId), where("status", "==", "graded")));
+          hskkSnap.forEach(d => {
+            const h = d.data();
+            list.push({ id: d.id, type: "hskk", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback, time: h.submittedAt?.toMillis?.() || 0 });
+          });
+          list.sort((a, b) => b.time - a.time);
+          setResults(list);
+          if (latest?.skillsEvaluation) {
+            const ev = latest.skillsEvaluation;
+            teacherSkills = { listening: ev.listening?.score || 0, speaking: ev.speaking?.score || 0, translation: ev.reading?.score || 0, grammar: ev.reading?.score || 0, vocabulary: ev.reading?.score || 0, writing: ev.writing?.score || 0 };
+          }
+        } catch (error) { console.error("Lỗi lấy kết quả:", error); }
+
+        const s = uData.skill_map || upData.skill_map || pData.skill_map || {};
+        const pick = (k, fb) => (teacherSkills?.[k] !== undefined ? teacherSkills[k] : (s[k] ?? fb));
+        setSkillMap({
+          vocabulary: pick("vocabulary", Math.min(tv * 5, 100)),
+          grammar: pick("grammar", Math.min(tg * 10, 100)),
+          listening: pick("listening", Math.min(tl * 20, 100)),
+          translation: pick("translation", Math.min((s.vocabulary || 0) * 0.8, 100)),
+          writing: pick("writing", Math.min((s.grammar || 0) * 0.8, 100)),
+          speaking: pick("speaking", 0),
+        });
+
+        setStreak(uData.streak ?? upData.profile?.streak_days ?? pData.streakCount ?? 0);
+        setLeaves(uData.xp ?? upData.profile?.hsk_xp ?? pData.xp ?? 0);
+        setTodayVocabLearned(tv); setTodayListeningLearned(tl); setTodayGrammarLearned(tg);
+        if (Array.isArray(uData.lessonsDone)) setLessonsDone(uData.lessonsDone);
+        if (uData.lastLecture?.id) setLastLecture(uData.lastLecture);
+        if (uData.lectureLevel) setSelectedLectureLevel(l => l || uData.lectureLevel);
+
+        if (["teacher", "admin"].includes(uData.role) || ["teacher", "admin"].includes(user?.publicMetadata?.role)) setIsTeacher(true);
+      } catch (err) { console.error("Lỗi đồng bộ dữ liệu:", err); }
+    };
+    load();
+  }, [isSignedIn, userId, user]);
+
+  // ---------- Suy ra trạng thái khu vườn ----------
+  const levelsWithLessons = useMemo(
+    () => LEVEL_OPTIONS.filter(l => lecturesBankList.some(x => x.level === l)),
+    [lecturesBankList]
+  );
+  const currentCourse = selectedLectureLevel || lastLecture?.level || levelsWithLessons[0] || null;
+  const courseLessons = useMemo(() => lecturesBankList.filter(l => l.level === currentCourse), [lecturesBankList, currentCourse]);
+  const courseDone = courseLessons.filter(l => lessonsDone.includes(l.id)).length;
+  const coursePct = courseLessons.length ? Math.round((courseDone / courseLessons.length) * 100) : 0;
+  const lotusStage = String(Math.min(LOTUS_STAGES, 1 + Math.round((coursePct / 100) * (LOTUS_STAGES - 1)))).padStart(2, "0");
+
+  // Bài nên học tiếp: bài mở gần nhất nếu chưa xong, nếu không thì bài đầu tiên chưa xong trong giáo trình
+  const nextLesson = useMemo(() => {
+    const last = lastLecture && lecturesBankList.find(l => l.id === lastLecture.id);
+    if (last && !lessonsDone.includes(last.id)) return last;
+    return courseLessons.find(l => !lessonsDone.includes(l.id)) || last || courseLessons[0] || null;
+  }, [lastLecture, lecturesBankList, lessonsDone, courseLessons]);
+  const nextIndex = nextLesson ? courseLessons.findIndex(l => l.id === nextLesson.id) + 1 : 0;
+
+  const skills = [
+    { key: "vocabulary", label: "Từ vựng", sub: "Thẻ từ · theo chủ đề", href: "/vocab", extra: { href: "/topic", label: "Chủ đề" }, icon: "sprout", tone: "bg-[#E7F5EC] text-[#1E7A45]" },
+    { key: "grammar", label: "Ngữ pháp", sub: "Sắp xếp câu", href: "/arrange", icon: "blocks", tone: "bg-[#FFF4DE] text-[#B36B00]" },
+    { key: "listening", label: "Nghe chép", sub: "Nghe và viết lại", href: "/dictation", icon: "headphones", tone: "bg-[#E3F3F7] text-[#1F7A8C]" },
+    { key: "translation", label: "Dịch câu", sub: "Việt ⇄ Trung", href: "/translate", icon: "translate", tone: "bg-[#EDEBFA] text-[#5747B5]" },
+    { key: "speaking", label: "Nói", sub: "Phim trường · đóng vai theo tình huống", href: "/roleplay", icon: "mic", tone: "bg-[#FFE9D2] text-[#B35400]" },
+  ].map(s => ({ ...s, value: Math.round(Math.min(skillMap[s.key] || 0, 100)) }));
+  const weakest = [...skills].sort((a, b) => a.value - b.value)[0];
+
+  const missions = [
+    { label: "Ôn 20 từ vựng", done: todayVocabLearned >= 20, sub: `${Math.min(todayVocabLearned, 20)}/20`, href: "/vocab", leaf: 20 },
+    { label: nextLesson ? `Học tiếp ${nextLesson.lectureName}` : "Học 1 bài mới", done: false, sub: `+${LEAF_PER_LESSON}`, lesson: nextLesson, leaf: LEAF_PER_LESSON },
+    { label: "Nghe chép 1 bài", done: todayListeningLearned >= 1, sub: `${Math.min(todayListeningLearned, 1)}/1`, href: "/dictation", leaf: 15 },
+    { label: "Sắp xếp 10 câu", done: todayGrammarLearned >= 10, sub: `${Math.min(todayGrammarLearned, 10)}/10`, href: "/arrange", leaf: 20 },
+  ];
+  const missionsDone = missions.filter(m => m.done).length;
+
+  // ---------- Hành động ----------
+  const goTab = (key) => { setActiveTab(key); window.scrollTo({ top: 0, behavior: "smooth" }); };
+
+  const openLecture = async (lec) => {
+    if (!lec) return;
+    setSelectedLecture(lec);
+    const info = { id: lec.id, level: lec.level, name: lec.lectureName };
+    setLastLecture(info);
+    try { localStorage.setItem("hg_last_lecture", JSON.stringify(info)); } catch (_) {}
+    if (userId) { try { await setDoc(doc(db, "users", userId), { lastLecture: info }, { merge: true }); } catch (_) {} }
+  };
+
+  const pickCourse = async (lvl) => {
+    setSelectedLectureLevel(lvl);
+    if (userId) { try { await setDoc(doc(db, "users", userId), { lectureLevel: lvl }, { merge: true }); } catch (_) {} }
+  };
+
+  const markLessonDone = async () => {
+    if (!selectedLecture || lessonsDone.includes(selectedLecture.id)) return;
+    const next = [...lessonsDone, selectedLecture.id];
+    const newLeaves = leaves + LEAF_PER_LESSON;
+    setLessonsDone(next);
+    setLeaves(newLeaves);
+    setBloomFx(true);
+    setTimeout(() => setBloomFx(false), 2600);
+    if (userId) {
+      try { await setDoc(doc(db, "users", userId), { lessonsDone: next, xp: newLeaves }, { merge: true }); }
+      catch (err) { console.error("Lỗi lưu tiến độ:", err); }
+    }
+  };
+
+  const handleAskFrog = async () => {
+    if (!learnQuery.trim()) return;
+    setIsAiLoading(true); setAiResponse(null);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `Hãy giải thích chi tiết về từ vựng, đoạn văn hoặc ngữ pháp này trong tiếng Trung giúp tôi, format rõ ràng: ${learnQuery}` })
+      });
+      const data = await res.json();
+      setAiResponse(data.reply || data.response || "Ếch xanh đang bận, thử lại sau nhé.");
+    } catch (_) {
+      setAiResponse("Không kết nối được. Vui lòng thử lại sau.");
+    } finally { setIsAiLoading(false); }
+  };
+
+  const q = learnQuery.trim().toLowerCase();
+  const lessonHits = q ? lecturesBankList.filter(l => (l.lectureName || "").toLowerCase().includes(q)).slice(0, 8) : [];
+  const dictHits = q ? localDictionary.filter(i => i.hanzi.includes(learnQuery.trim()) || i.pinyin.toLowerCase().includes(q) || i.meaning.toLowerCase().includes(q)).slice(0, 8) : [];
+
+  const hour = new Date().getHours();
+  const greet = hour < 11 ? "Chào buổi sáng" : hour < 14 ? "Chào buổi trưa" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
+  const firstName = user?.firstName || (user?.fullName || "").split(" ").pop() || "bạn";
+  const inFullscreen = selectedLecture || activeHskExamView || activeHskkExam;
+  const newestExam = useMemo(() => {
+    const t = (e) => e.createdAt?.toMillis?.() || 0;
+    const arr = hsk3ExamsList.filter(e => t(e) > Date.now() - 21 * 86400000).sort((a, b) => t(b) - t(a));
+    return arr[0] || null; // chỉ hiện "Đề mới" cho đề giáo viên tải lên trong 3 tuần gần đây
+  }, [hsk3ExamsList]);
+
+  // ============================================================
+  // KHỐI GIAO DIỆN DÙNG CHUNG
+  // ============================================================
+  const card = "bg-white border border-[#DDE6D3] rounded-[22px]";
+  const eyebrow = "text-xs font-semibold uppercase tracking-[0.08em] text-[#5B7262]";
+
+  const ContinueCard = () => (
+    <section className={`${card} p-6 md:p-8 flex flex-col gap-5 relative overflow-hidden`}>
+      <div className="flex items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <div className={eyebrow}>Học tiếp</div>
+          {nextLesson ? (
+            <>
+              <h2 className="mt-1 text-2xl md:text-[32px] font-extrabold tracking-tight leading-tight">{nextLesson.lectureName}</h2>
+              <p className="mt-1 text-[15px] text-[#3F5546]">{nextLesson.level}{nextIndex > 0 && ` · Bài ${nextIndex}/${courseLessons.length}`}</p>
+            </>
+          ) : (
+            <h2 className="mt-1 text-2xl md:text-[32px] font-extrabold tracking-tight leading-tight">Chọn giáo trình để bắt đầu</h2>
+          )}
+        </div>
+        <div className="hidden sm:flex items-end gap-2 shrink-0">
+          <div className="relative max-w-[220px] rounded-2xl rounded-br-sm bg-[#E7F5EC] border border-[#BFE3CB] px-4 py-3 text-sm text-[#1E3D2A] leading-snug">
+            {nextLesson ? (lessonsDone.includes(nextLesson.id) ? "Bài này xong rồi, ôn lại một chút nhé!" : "Học xong bài này là ao nở thêm một bông sen!") : "Vào khu Học và chọn giáo trình của bạn nhé."}
+          </div>
+          <Frog className="w-16 h-14" />
+        </div>
       </div>
+      {courseLessons.length > 0 && (
+        <div className="flex items-center gap-3">
+          <div className="flex-1"><Bar value={coursePct} h="h-2.5" /></div>
+          <span className="text-sm font-bold text-[#1E7A45] tabular-nums">{coursePct}%</span>
+        </div>
+      )}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          onClick={() => (nextLesson ? openLecture(nextLesson) : goTab("learn"))}
+          className="h-12 px-6 rounded-[14px] bg-[#2E9D5B] hover:bg-[#1E7A45] text-white font-bold text-base inline-flex items-center justify-center gap-2 transition-colors"
+        >
+          <Icon name="play" className="w-4 h-4" /> {nextLesson ? "Học tiếp" : "Chọn bài"}
+        </button>
+        <button onClick={() => goTab("learn")} className="h-12 px-6 rounded-[14px] border border-[#C9D6BE] bg-white hover:bg-[#F1F7EC] text-[#13261C] font-semibold text-base transition-colors">
+          Chọn bài khác
+        </button>
+      </div>
+    </section>
+  );
 
-      {/* SIDEBAR - TỰ ĐỘNG ẨN HẲN KHI VÀO HỌC HOẶC THI */}
-      {(!selectedLecture && !activeHskExamView && !activeHskkExam) && (
-        <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
-          <div className="flex h-full flex-col">
-            <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-sm">🐸</div>
-              {!isSidebarCollapsed && (
-                <div className="min-w-0">
-                  <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">HSK Garden</h2>
-                  <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Khu vườn học tập</p>
-                </div>
-              )}
-            </div>
+  const PondCard = () => (
+    <section className="rounded-[22px] bg-[#1E5C38] text-white p-6 flex flex-col gap-4 overflow-hidden relative">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-[0.08em] text-[#BFE3CB]">Ao sen</div>
+          <h3 className="mt-1 text-lg font-bold">{currentCourse || "Chưa chọn giáo trình"}</h3>
+        </div>
+        <LotusMark className="w-8 h-8" />
+      </div>
+      <div className="relative h-44 rounded-2xl bg-[#2B7A4B] overflow-hidden grid place-items-center">
+        <div className="absolute -left-6 -right-6 -bottom-16 h-28 rounded-[50%] bg-[#7CC8D6]/70" />
+        <div className="relative w-36 h-36 rounded-full overflow-hidden border-4 border-white/70 bg-[#E7F5EC] shadow-xl">
+          <img
+            src={`/lotus/lotus_stage_${lotusStage}.webp`}
+            alt={`Ao sen ${coursePct}%`}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
+          />
+        </div>
+        <Frog className="absolute right-3 bottom-2 w-12 h-10" />
+      </div>
+      <Bar value={coursePct} color="bg-[#FFB547]" track="bg-white/15" />
+      <p className="text-sm text-[#D4EFDC]">{courseDone} / {courseLessons.length || 0} bài đã nở sen</p>
+    </section>
+  );
 
-            <nav className="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar">
-              <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌿 KHU VƯỜN" : "•"}</div>
-              <button onClick={() => setActiveTab("home")} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'home' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-                <span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
-              </button>
+  const MissionsCard = () => (
+    <section className={`${card} p-5 flex flex-col gap-3`}>
+      <div className="flex items-baseline justify-between"><h3 className="text-[17px] font-bold">Việc hôm nay</h3><span className="text-sm text-[#5B7262]">{missionsDone} / {missions.length}</span></div>
+      {missions.map((m, i) => {
+        const inner = (
+          <>
+            <span className={`w-6 h-6 rounded-md border-2 grid place-items-center shrink-0 ${m.done ? "bg-[#2E9D5B] border-[#2E9D5B] text-white" : "border-[#C9D6BE]"}`}>{m.done && <Icon name="check" className="w-4 h-4" strokeWidth={3} />}</span>
+            <span className={`flex-1 min-w-0 truncate text-[15px] ${m.done ? "line-through text-[#5B7262]" : ""}`}>{m.label}</span>
+            <span className="text-xs font-bold text-[#1E7A45] shrink-0">{m.done ? `+${m.leaf}` : m.sub}</span>
+          </>
+        );
+        const cls = `flex items-center gap-3 p-3 rounded-xl text-left min-h-[48px] transition-colors ${m.done ? "bg-[#F1F7EC]" : "border border-[#E3EADB] hover:border-[#2E9D5B]"}`;
+        return m.href
+          ? <Link key={i} href={m.href} className={cls}>{inner}</Link>
+          : <button key={i} onClick={() => (m.lesson ? openLecture(m.lesson) : goTab("learn"))} className={cls}>{inner}</button>;
+      })}
+    </section>
+  );
 
-              {/* TAB HỌC HSK */}
-              <button onClick={() => { setActiveTab("student_lectures"); setSelectedLectureLevel(null); setSelectedLecture(null); }} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'student_lectures' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-                <span className="w-6 text-center text-lg">📖</span>{!isSidebarCollapsed && <span>Học HSK</span>}
-              </button>
+  const StreakCard = () => {
+    const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+    const today = (new Date().getDay() + 6) % 7;
+    return (
+      <section className={`${card} p-5 flex flex-col gap-4`}>
+        <div className="flex items-baseline justify-between"><h3 className="text-[17px] font-bold">Chuỗi ngày học</h3><span className="text-sm font-bold text-[#B36B00]">{streak} ngày</span></div>
+        <div className="grid grid-cols-7 gap-1.5">
+          {days.map((d, i) => {
+            const back = (today - i + 7) % 7;
+            const lit = i <= today && back < streak;
+            return (
+              <div key={d} className="flex flex-col items-center gap-1.5">
+                <span className={`w-9 h-9 rounded-full grid place-items-center ${lit ? "bg-[#FFB547] text-[#13261C]" : i === today ? "border-2 border-dashed border-[#F0C66E] text-[#B36B00]" : "bg-[#EEF2E8] text-[#9AAB9E]"}`}>
+                  <Icon name="flame" className="w-4 h-4" />
+                </span>
+                <span className={`text-[11px] font-semibold ${i === today ? "text-[#13261C]" : "text-[#5B7262]"}`}>{d}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex items-center gap-3 rounded-xl bg-[#FFF8EA] p-3">
+          <Frog mood={streak > 0 ? "happy" : "sleepy"} className="w-10 h-8 shrink-0" />
+          <p className="text-sm text-[#5C3D00]">{streak > 0 ? "Học hôm nay để giữ chuỗi nhé!" : "Ếch đang ngủ gật… học một bài để đánh thức nhé."}</p>
+        </div>
+      </section>
+    );
+  };
 
-              {/* TAB THI HSK 3.0 */}
-              <button onClick={() => setActiveTab("hsk3_exam")} className={`w-full mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hsk3_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-                <span className="w-6 text-center text-lg">🏆</span>{!isSidebarCollapsed && <span>Thi HSK 3.0</span>}
-              </button>
+  const ResultsCard = ({ limit = 3 }) => (
+    <section className={`${card} p-5 flex flex-col gap-2`}>
+      <div className="flex items-baseline justify-between"><h3 className="text-[17px] font-bold">Kết quả của tôi</h3>{results.length > 0 && <span className="text-sm text-[#5B7262]">{results.length}</span>}</div>
+      {results.length === 0 ? (
+        <p className="text-sm text-[#5B7262] py-3">Chưa có bài nào được giáo viên chấm.</p>
+      ) : results.slice(0, limit).map(r => (
+        <button key={r.id} onClick={() => setSelectedResult(r)} className="flex items-center gap-3 py-2.5 border-b border-[#EEF2E8] last:border-0 text-left hover:bg-[#F7FAF4] rounded-lg px-1 transition-colors">
+          <span className="w-12 h-12 rounded-xl bg-[#E7F5EC] grid place-items-center font-extrabold text-[#1E5C38] tabular-nums shrink-0">{r.score ?? "—"}</span>
+          <span className="flex-1 min-w-0"><span className="block font-semibold text-sm truncate">{r.title}</span><span className="block text-xs text-[#5B7262] truncate">{r.level ? `${r.level} · ` : ""}{r.time ? new Date(r.time).toLocaleDateString("vi-VN") : "Đã chấm"}</span></span>
+          <Icon name="chevron" className="w-4 h-4 text-[#5B7262]" />
+        </button>
+      ))}
+    </section>
+  );
 
-              {/* TAB THI KHẨU NGỮ HSKK 3.0 */}
-              <button onClick={() => setActiveTab("hskk_exam")} className={`w-full mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition-all ${activeTab === 'hskk_exam' ? 'bg-[#8FD9A8]/30 text-[#1B5E4B]' : 'text-slate-500 hover:bg-[#8FD9A8]/20'}`}>
-                <span className="w-6 text-center text-lg">🎙</span>{!isSidebarCollapsed && <span>Thi Khẩu ngữ HSKK</span>}
-              </button>
+  // ============================================================
+  // RENDER
+  // ============================================================
+  return (
+    <div className="hg-garden min-h-screen bg-[#F4F7EF] text-[#13261C]">
+      <style>{`@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap");
+.hg-garden{font-family:"Be Vietnam Pro","Noto Sans SC",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.hg-garden .zh{font-family:"Noto Sans SC","Be Vietnam Pro",sans-serif}
+.hg-garden button:focus-visible,.hg-garden a:focus-visible,.hg-garden input:focus-visible{outline:3px solid #2E9D5B;outline-offset:2px}
+.hg-scroll::-webkit-scrollbar{display:none}.hg-scroll{scrollbar-width:none}
+@keyframes hgPop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}`}</style>
 
-              <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌱 KHU RÈN LUYỆN" : "•"}</div>
-              <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🌱</span>{!isSidebarCollapsed && <span>Từ vựng</span>}</Link>
-              <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Chủ đề</span>}</Link>
-              <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
-              <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
-              <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
-              {/* ĐÃ ẨN: Cuộc chiến khẩu ngữ cũ (/hskk) — thay bằng tab "Thi Khẩu ngữ HSKK" */}
-              <Link href="/roleplay" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
-              
-              <Link href="/test" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-                <span className="w-6 text-center text-lg opacity-80">📝</span>{!isSidebarCollapsed && <span>Thi Đánh Giá</span>}
-              </Link>
+      {/* ---------- THANH TRÊN (máy tính) ---------- */}
+      {!inFullscreen && (
+        <header className="sticky top-0 z-30 bg-[#F4F7EF]/90 backdrop-blur border-b border-[#DDE6D3]">
+          <div className="max-w-[1200px] mx-auto h-16 md:h-[72px] px-4 md:px-8 flex items-center gap-4">
+            <button onClick={() => goTab("home")} className="flex items-center gap-2.5 shrink-0" aria-label="HSK Garden — về Vườn">
+              <Frog className="w-10 h-8" />
+              <span className="font-extrabold text-lg tracking-tight hidden sm:inline">HSK Garden</span>
+            </button>
 
-              {isTeacher && (
-                <div className="mt-6 mb-2 border-t border-[#8FD9A8]/20 pt-4">
-                  <Link href="/teacher" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1B5E4B] bg-[#FFD666]/20 hover:bg-[#FFD666]/40 transition-all shadow-sm">
-                    <span className="w-6 text-center text-lg">🛡</span>{!isSidebarCollapsed && <span>Trang Quản Lý</span>}
-                  </Link>
-                </div>
-              )}
+            <nav aria-label="Khu chính" className="hidden md:flex items-center gap-1 ml-6 p-1 rounded-2xl bg-[#E3EADB]">
+              {TABS.map(t => (
+                <button key={t.key} onClick={() => goTab(t.key)} aria-current={activeTab === t.key ? "page" : undefined}
+                  className={`h-10 px-5 rounded-xl inline-flex items-center gap-2 text-[15px] font-semibold transition-colors ${activeTab === t.key ? "bg-white text-[#1E5C38] shadow-sm" : "text-[#3F5546] hover:text-[#13261C]"}`}>
+                  <Icon name={t.icon} className="w-5 h-5" />{t.label}
+                </button>
+              ))}
             </nav>
 
-            <div className="border-t border-[#8FD9A8]/20 p-4">
-              <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-white/50 py-2.5 text-xs font-bold text-slate-500 hover:bg-white transition-colors shadow-sm">
-                {isSidebarCollapsed ? "→" : "← Thu gọn"}
-              </button>
+            <div className="ml-auto flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#FFF4DE] border border-[#F6D99A] text-sm font-bold text-[#7A4A00]" title="Chuỗi ngày học">
+                <Icon name="flame" className="w-4 h-4 text-[#C97A00]" />{streak}<span className="hidden lg:inline font-semibold"> ngày</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#E7F5EC] border border-[#BFE3CB] text-sm font-bold text-[#1E5C38]" title="Lá — điểm khu vườn">
+                <Icon name="leaf" className="w-4 h-4 text-[#1E7A45]" />{fmt(leaves)}<span className="hidden lg:inline font-semibold"> lá</span>
+              </span>
+              {isTeacher && (
+                <Link href="/teacher" className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-[#C9D6BE] bg-white text-sm font-semibold hover:bg-[#F1F7EC]">
+                  <Icon name="shield" className="w-4 h-4" />Quản lý
+                </Link>
+              )}
               {isSignedIn ? (
-                <div className={`flex items-center rounded-2xl bg-white shadow-sm p-2.5 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-                  <UserButton afterSignOutUrl="/" />
-                  {!isSidebarCollapsed && (
-                    <div className="min-w-0">
-                      <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
-                      <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
-                    </div>
-                  )}
-                </div>
+                <div className="ml-1"><UserButton afterSignOutUrl="/" /></div>
               ) : (
                 <SignInButton mode="modal">
-                  <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1B5E4B] py-3 text-xs font-bold text-white hover:bg-[#2F8F6E] shadow-md transition-all">
-                    👤 {!isSidebarCollapsed && "Đăng nhập"}
-                  </button>
+                  <button className="h-10 px-4 rounded-xl bg-[#2E9D5B] hover:bg-[#1E7A45] text-white text-sm font-bold">Đăng nhập</button>
                 </SignInButton>
               )}
             </div>
           </div>
-        </aside>
+        </header>
       )}
 
-      <main className={`min-h-screen transition-all duration-300 relative z-10 ${(selectedLecture || activeHskExamView || activeHskkExam) ? "pl-0" : (isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]")}`}>
-        
-        {/* TOPBAR CHÍNH - ẨN KHI ĐANG VÀO BÀI HỌC HOẶC THI */}
-        {(!selectedLecture && !activeHskExamView && !activeHskkExam) && (
-          <header className="sticky top-0 z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 px-5 backdrop-blur-xl md:px-8 flex items-center justify-between">
-            <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl bg-white/90 shadow-sm px-4 text-left text-sm font-medium text-slate-400 hover:shadow-md transition-all sm:flex group border border-transparent hover:border-[#8FD9A8]">
-              <span className="text-lg opacity-60">🔍</span>
-              <span className="group-hover:text-[#2F8F6E] transition-colors">Tìm kiếm từ vựng, ngữ pháp...</span>
-              <span className="ml-auto rounded-lg bg-[#F4F7F6] px-2 py-1 text-[10px] font-bold text-slate-400 group-hover:text-[#2F8F6E]">Ctrl K</span>
-            </button>
+      {/* ---------- NỘI DUNG ---------- */}
+      {!inFullscreen && (
+        <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-5 md:pt-8 pb-28 md:pb-16">
 
-            <div className="ml-auto flex items-center gap-3">
-              <div className="relative">
-                <button 
-                  onClick={() => setIsNotifOpen(!isNotifOpen)} 
-                  className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm border border-slate-100 hover:border-[#8FD9A8] transition-all"
-                >
-                  <span className="text-xl">🔔</span>
-                  {notifications.length > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#F43F70] text-[9px] font-black text-white shadow-sm border-2 border-white">
-                      {notifications.length}
-                    </span>
-                  )}
-                </button>
-                
-                {isNotifOpen && (
-                  <div className="absolute right-0 mt-3 w-80 bg-white rounded-[24px] shadow-2xl border border-[#E2E8F0] overflow-hidden z-50 animate-slide-up-fade">
-                    <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                      <h3 className="font-black text-[#142033] text-sm flex items-center gap-2"><span>📫</span> Thông báo của bạn</h3>
-                    </div>
-                    <div className="max-h-80 overflow-y-auto custom-scrollbar p-2">
-                      {notifications.length === 0 ? (
-                        <p className="text-center text-xs text-slate-400 py-8 font-medium">Bạn không có thông báo nào mới.</p>
-                      ) : (
-                        notifications.map(n => (
-                          <div 
-                            key={n.id} 
-                            onClick={() => { setSelectedResult(n); setIsNotifOpen(false); }} 
-                            className="p-4 hover:bg-[#EEF5E9] rounded-2xl cursor-pointer transition-colors mb-1 border border-transparent hover:border-[#8FD9A8]/50"
-                          >
-                            <div className="flex justify-between items-start mb-1">
-                              <h4 className="text-xs font-black text-[#1B5E4B]">{n.title}</h4>
-                              <span className="text-[9px] font-bold text-[#10B981] bg-[#ECFDF5] px-1.5 py-0.5 rounded uppercase tracking-widest">{n.score} đ</span>
-                            </div>
-                            <p className="text-[11px] text-[#2F8F6E] font-medium mt-1 line-clamp-1">{n.feedback || "Giáo viên đã gửi một nhận xét cho bạn."}</p>
-                            <p className="text-[9px] text-slate-400 mt-2 font-bold uppercase tracking-widest">{new Date(n.time).toLocaleString()}</p>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
-              <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
-              <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
-            </div>
-          </header>
-        )}
-
-        <div className="mx-auto max-w-6xl space-y-8 px-5 py-8 md:px-8 pb-20">
-          
-          {/* TAB 1: TRANG CHỦ CHÍNH */}
+          {/* ===== VƯỜN ===== */}
           {activeTab === "home" && (
-            <>
-              <section className="relative rounded-[32px] overflow-hidden shadow-lg bg-[#1B5E4B] p-8 md:p-12 text-white flex flex-col md:flex-row justify-between items-center min-h-[300px]">
-                <div className="absolute inset-0 bg-[url('/hskk/backcover.jpg')] bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none"></div>
-                <div className="absolute -left-20 -top-20 w-96 h-96 bg-[#2F8F6E] rounded-full blur-[80px] pointer-events-none opacity-60"></div>
-                
-                <div className="relative z-10 w-full md:w-1/2">
-                   <h2 className="text-[10px] font-black text-[#8FD9A8] uppercase tracking-widest mb-3 drop-shadow-sm">🌿 Hồ Sen Của Bạn</h2>
-                   <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2 leading-[1.2] text-white drop-shadow-md">
-                     Chào {user?.firstName || user?.fullName || "bạn"} 👋
-                   </h1>
-                   <p className="text-sm md:text-base text-white/90 font-medium max-w-md leading-relaxed mb-6 drop-shadow-sm">
-                     {isLotusMaxLevel ? "🌸 Chúc mừng! Hoa sen đã hoàn thành trọn vẹn chu kỳ sinh trưởng!" : `Hãy tưới nước thường xuyên để chăm sóc cho mầm sen phát triển nhé. Tổng đã tưới: ${lotusGrowth} 💧`}
-                   </p>
-                   
-                   <div className="mb-8 w-full max-w-sm">
-                     <div className="flex justify-between text-[11px] font-black text-white mb-2 uppercase tracking-widest drop-shadow-sm">
-                       <span>Giai đoạn {currentLotusFrame + 1}/11</span>
-                       <span className="text-[#FFD666]">{isLotusMaxLevel ? "Đã hoàn tất" : `Cần thêm ${lotusDropsNeeded} 💧`}</span>
-                     </div>
-                     <div className="h-2.5 bg-black/20 rounded-full overflow-hidden shadow-inner border border-white/10">
-                       <div className="h-full bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-full transition-all duration-1000 shadow-sm relative" style={{ width: `${lotusProgressPercent}%` }}>
-                         <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
-                       </div>
-                     </div>
-                   </div>
-
-                   <div className="flex flex-wrap items-center gap-3">
-                      {!isLotusMaxLevel ? (
-                        <>
-                          <button 
-                            onClick={() => handleWaterPlant("single")}
-                            disabled={isWatering || water <= 0}
-                            className="px-5 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 bg-white text-[#1B5E4B] hover:bg-[#8FD9A8] hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            💧 Tưới 1 giọt (-1)
-                          </button>
-
-                          <button 
-                            onClick={() => handleWaterPlant("all")}
-                            disabled={isWatering || water <= 0}
-                            className="px-5 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 bg-[#4FB6C7] text-white hover:bg-[#3FA2B3] hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            💦 Tưới Hết ({water} 💧)
-                          </button>
-                        </>
-                      ) : (
-                        <button onClick={handleResetPlant} className="bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all flex items-center gap-2 shadow-sm">
-                          🔄 Trồng Cây Mới
-                        </button>
-                      )}
-
-                      <button 
-                        onClick={handleExchangeXpForWater}
-                        className="px-5 py-3 rounded-[18px] text-sm font-black transition-all shadow-xl flex items-center gap-2 bg-[#FFD666] text-[#1B5E4B] hover:bg-[#F59E0B] hover:text-white hover:-translate-y-1"
-                        title="Đổi 100 XP lấy 5 giọt nước"
-                      >
-                        ⭐ Đổi 100 XP ➔ 5 💧
-                      </button>
-                      
-                      <Link href="/test">
-                        <button className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-7 py-3 rounded-[18px] text-sm font-bold hover:bg-white/20 transition-all shadow-xl flex items-center gap-2 hover:-translate-y-1">
-                          📝 Thi Đánh Giá
-                        </button>
-                      </Link>
-                   </div>
-                </div>
-
-                <div className="relative z-10 w-full md:w-1/2 flex justify-center mt-10 md:mt-0">
-                   <RealLotus plantGrowth={lotusGrowth} isWatering={isWatering} />
-                   
-                   {showReward && (
-                     <div className="absolute top-0 text-3xl font-black text-[#F59E0B] animate-fade-in-up drop-shadow-xl z-50 whitespace-nowrap bg-white/80 px-4 py-2 rounded-full border-2 border-white">
-                       +500 XP 🌸
-                     </div>
-                   )}
-                </div>
-              </section>
-
-              <section>
-                <div className="mb-5 flex items-center gap-2">
-                  <span className="text-2xl">🏡</span>
-                  <h2 className="text-xl font-black text-[#1B5E4B]">Khu vườn của tôi</h2>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {gardenAreas.map((tool, index) => (
-                    <Link href={tool.link} key={index} onClick={(e) => { if (tool.tab) { e.preventDefault(); setActiveTab(tool.tab); window.scrollTo({ top: 0, behavior: "smooth" }); } }} className={`group relative rounded-[24px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[150px] flex flex-col justify-end ${tool.bg} ${tool.text}`}>
-                      <div 
-                        className="absolute inset-0 transition-transform duration-700 group-hover:scale-[2.5] scale-[2.0] opacity-45 mix-blend-overlay bg-cover bg-center bg-no-repeat" 
-                        style={{ backgroundImage: `url(${tool.bgImg})` }}
-                      ></div>
-                      <div className={`absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-white/20 backdrop-blur-md text-xl shadow-sm transition-transform group-hover:scale-110 z-10`}>
-                        {tool.icon}
-                      </div>
-                      <div className="relative z-10 p-5">
-                        <h3 className="text-base font-black tracking-wide drop-shadow-md leading-tight">{tool.name}</h3>
-                        <p className="mt-1.5 text-[10px] font-bold opacity-100 border border-white/30 bg-white/10 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm shadow-sm">Cấp {tool.level}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-
-              <section className="mb-8 w-full">
-                <div className="rounded-[32px] bg-white p-6 shadow-sm border border-[#E2E8F0]">
-                  <div className="mb-5 flex items-center justify-between">
-                    <div>
-                      <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Lộ trình sinh trưởng (HSK 1 - 9)</h2>
-                      <p className="text-[11px] text-[#2F8F6E] mt-0.5 font-bold">Bấm vào bất kỳ mốc nào để chuyển mục tiêu học.</p>
-                    </div>
-                    <span className="rounded-xl bg-[#8FD9A8]/20 text-[10px] font-black text-[#2F8F6E] px-3 py-1.5 shadow-sm border border-[#8FD9A8]/40">
-                      {currentLevel}
-                    </span>
-                  </div>
-
-                  <div className="overflow-x-auto custom-scrollbar pb-4 -mx-2 px-2">
-                    <div className="relative py-4 flex items-start gap-2 md:gap-4 w-max md:w-full md:justify-between before:absolute before:top-[34px] before:left-[30px] before:right-[30px] before:h-[2px] before:bg-[#8FD9A8]/50 before:rounded-full z-0">
-                      {hskLevels.map((item) => {
-                        const isCurrent = item.level === currentLevel;
-                        const isCompleted = item.progress === 100;
-                        return (
-                          <button key={item.level} onClick={() => handleChangeLevel(item.level)} className="w-[110px] flex-1 min-w-[100px] shrink-0 text-center relative z-10 flex flex-col items-center gap-2 group cursor-pointer">
-                            <div className={`flex h-10 w-10 shrink-0 items-center justify-center shadow-sm text-sm transition-all ${isCompleted && !isCurrent ? "bg-[#1B5E4B] text-white" : isCurrent ? "bg-[#2F8F6E] text-white scale-110 shadow-[0_0_0_4px_rgba(47,143,110,0.2)]" : "bg-[#EEF5E9] text-slate-400 group-hover:bg-[#8FD9A8] group-hover:text-white"}`} style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}>
-                              <TreeStageIcon progress={item.progress} isCurrent={isCurrent} />
-                            </div>
-                            <div className={`w-full rounded-[16px] p-2.5 transition-all ${isCurrent ? "bg-[#FDFBF7] shadow-sm border border-[#FFD666]/40 -translate-y-1" : "bg-transparent group-hover:bg-slate-50 group-hover:shadow-sm border border-transparent group-hover:border-[#E2E8F0]"}`}>
-                              <div className="mb-2">
-                                <h3 className={`text-xs font-black transition-colors mb-0.5 ${isCurrent ? 'text-[#1B5E4B]' : isCompleted ? 'text-[#2F8F6E]' : 'text-slate-400 group-hover:text-[#2F8F6E]'}`}>{item.level}</h3>
-                                <p className="text-[8px] font-bold text-[#2F8F6E]/70 leading-tight">{item.title}<br/>{item.words.toLocaleString("en-US")} từ</p>
-                              </div>
-                              <div className="flex items-center gap-1.5">
-                                <div className="h-1 flex-1 overflow-hidden rounded-full bg-[#E2E8F0]/60 shadow-inner">
-                                  <div className={`h-full rounded-full transition-all duration-700 ${isCompleted ? "bg-[#1B5E4B]" : "bg-[#2F8F6E]"}`} style={{ width: `${item.progress}%` }} />
-                                </div>
-                                <span className={`text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm ${isCurrent ? 'bg-[#FFD666] text-[#1B5E4B]' : 'bg-[#F1F5F9] text-slate-400 border border-[#E2E8F0]'}`}>{item.progress}%</span>
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="grid gap-6 lg:grid-cols-[1fr_1.5fr_1fr] items-stretch">
-                <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col border border-[#E2E8F0] h-full">
-                  <div className="mb-6 flex items-center justify-between border-b border-[#E2E8F0] pb-4">
-                    <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🪷</span> Ao sen danh vọng</h2>
-                  </div>
-                  <div className="space-y-3 flex-1">
-                    {leaderboard.length === 0 ? (
-                      <p className="text-center text-xs font-bold text-slate-400 py-6">Đang tải ao sen...</p>
-                    ) : (
-                      leaderboard.map((person, index) => {
-                        const isMe = person.id === userId;
-                        const displayName = isMe ? (user?.fullName || user?.firstName || person.name) : person.name;
-                        const displayAvatar = isMe ? (user?.imageUrl || person.avatar) : person.avatar;
-                        return (
-                          <div key={index} className={`flex items-center justify-between rounded-xl p-2.5 shadow-sm hover:shadow-md transition-all border ${isMe ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8]/40'}`}>
-                            <div className="flex items-center gap-3">
-                              <span className="w-6 text-center text-base font-black text-[#FFD666] drop-shadow-sm">
-                                {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : <span className="text-xs text-slate-400">#{index + 1}</span>}
-                              </span>
-                              <img src={displayAvatar} alt={displayName} className="h-8 w-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] border-2 border-[#8FD9A8] shadow-sm bg-white object-cover" />
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h4 className={`text-xs font-bold ${isMe ? 'text-[#2F8F6E] font-black' : 'text-[#1B5E4B]'} line-clamp-1 max-w-[90px]`}>{displayName}</h4>
-                                  {isMe && <span className="bg-[#8FD9A8]/30 text-[#2F8F6E] text-[8px] px-1.5 py-0.5 rounded font-black shrink-0">BẠN</span>}
-                                </div>
-                                <p className="text-[9px] font-bold text-[#F2765B] mt-0.5">🔥 {person.streak} ngày streak</p>
-                              </div>
-                            </div>
-                            <span className="text-[10px] font-black text-[#1B5E4B] bg-[#EEF5E9] px-2 py-1 rounded-md shrink-0">{person.xp.toLocaleString()} XP</span>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-
-                <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col border border-[#E2E8F0] h-full">
-                   <div className="mb-6"><h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🐸</span> Bản Đồ Kỹ Năng & AI Coach</h2></div>
-                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-center flex-1">
-                      <div className="flex justify-center scale-75 lg:scale-90 origin-center">
-                        <RadarChart data={realSkillData} />
-                      </div>
-                      <div className="flex flex-col gap-3 justify-center">
-                         {strongSkills.length > 0 && (
-                           <div className="bg-[#EEF5E9] p-3 rounded-2xl border border-[#8FD9A8]/40 shadow-sm">
-                              <h4 className="font-black text-[#2F8F6E] text-[9px] mb-1 uppercase tracking-widest">Điểm mạnh nhất</h4>
-                              <p className="text-xs font-black text-[#1B5E4B]">{strongSkills.map(s => s.label).join(", ")}</p>
-                           </div>
-                         )}
-                         <div className="bg-[#F2765B]/10 p-3 rounded-2xl border border-[#F2765B]/30 shadow-sm">
-                            <h4 className="font-black text-[#F2765B] text-[9px] mb-1 uppercase tracking-widest">Cần tưới thêm nước</h4>
-                            <p className="text-xs font-black text-[#F2765B]">{weakSkills.map(s => s.label).join(", ")}</p>
-                         </div>
-                         <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-[#E2E8F0] shadow-sm mt-auto">
-                            <h4 className="font-black text-slate-500 text-[9px] mb-2 uppercase tracking-widest">👉 Ếch Canh Đề Xuất Hôm Nay:</h4>
-                            <ul className="text-[11px] font-bold text-[#1B5E4B] space-y-1">
-                               {getCoachSuggestions(weakSkills).map((sug, i) => (
-                                 <li key={i}>• {sug}</li>
-                               ))}
-                            </ul>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="rounded-[32px] bg-white p-6 md:p-8 shadow-sm flex flex-col gap-3 border border-[#E2E8F0] h-full">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h2 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2"><span>🌞</span> Chăm vườn hôm nay</h2>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#8FD9A8] text-[#2F8F6E] flex items-center justify-center text-[10px] font-black bg-white shadow-sm shrink-0">
-                      {dailyMissions.filter(m => m.progress === m.total).length}/{dailyMissions.length}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-3 flex-1 justify-center">
-                    {dailyMissions.map((mission, index) => {
-                      const isDone = mission.progress === mission.total;
-                      return (
-                        <div key={index} className={`rounded-2xl border p-3 flex flex-col gap-2 transition-all cursor-pointer group ${isDone ? 'bg-[#EEF5E9]/80 border-[#8FD9A8]/50 shadow-sm' : 'bg-white border-[#E2E8F0] hover:border-[#8FD9A8] hover:shadow-sm'}`}>
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base transition-colors shadow-sm shrink-0 ${isDone ? 'bg-[#2F8F6E] text-white shadow-inner' : 'bg-[#F4F7F6] text-[#2F8F6E]'}`}>
-                              {isDone ? '✅' : mission.icon}
-                            </div>
-                            <div className="flex-1">
-                              <h4 className={`font-bold text-[12px] ${isDone ? 'text-[#2F8F6E]' : 'text-[#1B5E4B]'}`}>{mission.title}</h4>
-                              <span className="text-[9px] font-black text-[#F2765B] inline-block">+{mission.xp} XP</span>
-                            </div>
-                            {!isDone && (
-                              <span className="text-[9px] font-bold bg-[#F4F7F6] text-slate-500 px-2 py-0.5 rounded-md border border-[#E2E8F0] shrink-0">
-                                {mission.progress}/{mission.total}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-4 pt-2 border-t border-[#E2E8F0] shrink-0">
-                    <div className="bg-gradient-to-r from-[#FFD666] to-[#F59E0B] rounded-2xl p-4 shadow-sm flex items-center gap-3 relative overflow-hidden group">
-                      <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-xl shadow-inner text-[#4FB6C7] group-hover:scale-110 transition-transform shrink-0">💧</div>
-                      <div className="relative z-10 text-white">
-                        <h4 className="font-black text-sm drop-shadow-sm">Nước tưới: {water} giọt</h4>
-                        <p className="text-[11px] font-bold opacity-90 leading-tight mt-0.5">Làm nhiệm vụ để nhận tài nguyên.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </>
-          )}
-
-          {/* TAB 2: THI HSK 3.0 (6 CẤP ĐỘ) */}
-          {activeTab === "hsk3_exam" && (
-            <div className="space-y-8 animate-fade-in max-w-[1200px] mx-auto">
-              <div className="mb-2">
-                <h2 className="text-3xl font-black text-[#1B5E4B]">🏆 Phòng Thi Thử HSK 3.0 (Cấp độ 1 - 6)</h2>
-                <p className="text-[#2F8F6E] text-sm font-medium mt-1">Chọn cấp độ phù hợp để bắt đầu làm bài thi thử trực tuyến.</p>
+            <div className="flex flex-col gap-5 md:gap-6">
+              <div>
+                <p className="text-sm text-[#5B7262]">{greet}</p>
+                <h1 className="text-2xl md:text-[28px] font-extrabold tracking-tight">{isSignedIn ? firstName : "Người làm vườn"}</h1>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {HSK3_LEVELS.map(lvl => {
-                  const exams = hsk3ExamsList
-                    .filter(e => e.level === lvl)
-                    .sort((a, b) => (a.examName || "").localeCompare(b.examName || "", undefined, { numeric: true }));
-                  const hasExam = exams.length > 0;
-
-                  return (
-                    <div key={lvl} className={`p-6 rounded-3xl border-2 transition-all flex flex-col ${hasExam ? 'bg-white border-[#8FD9A8] shadow-md hover:shadow-lg' : 'bg-white/50 border-[#E2E8F0] opacity-80'}`}>
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="bg-[#1B5E4B] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">{lvl}</span>
-                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${hasExam ? 'bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>
-                          {hasExam ? `✓ ${exams.length} đề` : "⏳ Đang update"}
-                        </span>
-                      </div>
-
-                      {hasExam ? (
-                        <div className="space-y-2.5">
-                          {exams.map(ex => (
-                            <div key={ex.id} className="flex items-center gap-3 p-3 rounded-2xl bg-[#F7FAF3] border border-[#8FD9A8]/40 hover:border-[#2F8F6E] transition-colors">
-                              <p className="flex-1 min-w-0 font-black text-sm text-[#1B5E4B] truncate">{ex.examName}</p>
-                              <button
-                                onClick={() => setActiveHskExamView(ex)}
-                                className="shrink-0 px-4 py-2 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-xl font-black text-[11px] shadow-sm transition"
-                              >
-                                🚀 Vào thi
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <>
-                          <h4 className="font-black text-lg text-[#1B5E4B] mb-1">Chưa có đề thi</h4>
-                          <p className="text-xs text-slate-500 font-medium mb-6">Giáo viên đang cập nhật nội dung cho cấp độ này.</p>
-                          <button disabled className="mt-auto w-full py-3.5 bg-slate-200 text-slate-400 rounded-2xl font-bold text-xs cursor-not-allowed">
-                            Sắp ra mắt
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
+              <div className="grid gap-5 md:gap-6 lg:grid-cols-[1.6fr_1fr]">
+                <ContinueCard />
+                <PondCard />
+              </div>
+              <div className="grid gap-5 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <MissionsCard />
+                <StreakCard />
+                <ResultsCard />
               </div>
             </div>
           )}
 
-          {/* TAB: THI KHẨU NGỮ HSKK 3.0 */}
-          {activeTab === "hskk_exam" && (
-            <div className="space-y-8 animate-fade-in max-w-[1200px] mx-auto">
-              <div className="mb-2">
-                <h2 className="text-3xl font-black text-[#1B5E4B]">🎙 Phòng Thi Khẩu Ngữ HSKK 3.0</h2>
-                <p className="text-[#2F8F6E] text-sm font-medium mt-1">Đề mẫu chính thức 新版HSK口语 · Máy phát đề, đếm giờ và ghi âm từng câu trả lời của bạn.</p>
-              </div>
+          {/* ===== HỌC ===== */}
+          {activeTab === "learn" && (
+            <div className="flex flex-col gap-5">
+              <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight">Học</h1>
 
-              <div className="rounded-3xl bg-[#FFD666]/20 border border-[#FFD666] p-5 text-sm text-[#1B5E4B] font-medium leading-relaxed">
-                <p className="font-black mb-1">🎧 Trước khi vào thi</p>
-                <ul className="list-disc pl-5 space-y-0.5">
-                  <li>Đeo <b>tai nghe</b> và ngồi nơi yên tĩnh; cho phép trình duyệt dùng <b>micro</b>.</li>
-                  <li>Chọn <b>Thi thử</b> (chạy liên tục như thi thật) hoặc <b>Luyện tập</b> (được tạm dừng, nghe lại).</li>
-                  <li>Làm xong, nghe lại bài rồi bấm <b>📤 Nộp bài cho giáo viên</b>. Không thoát giữa chừng — bản ghi âm sẽ mất.</li>
-                </ul>
-              </div>
+              <label className="flex items-center gap-3 h-12 px-4 rounded-[14px] bg-white border border-[#DDE6D3] focus-within:border-[#2E9D5B]">
+                <Icon name="search" className="w-5 h-5 text-[#5B7262]" />
+                <input
+                  type="search" value={learnQuery}
+                  onChange={(e) => { setLearnQuery(e.target.value); setAiResponse(null); }}
+                  placeholder="Tìm bài, từ vựng, ngữ pháp…" aria-label="Tìm bài, từ vựng, ngữ pháp"
+                  className="flex-1 min-w-0 bg-transparent outline-none text-[15px] placeholder:text-[#8A9B8E]"
+                />
+              </label>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...new Set(hskkExams.map(e => Number(e.level)))].sort((a, b) => a - b).map(lv => {
-                  const exams = hskkExams.filter(e => Number(e.level) === lv);
-                  const first = exams[0] || {};
-                  return (
-                    <div key={lv} className="p-6 rounded-3xl border-2 bg-white border-[#8FD9A8] shadow-md hover:shadow-lg transition-all flex flex-col">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="bg-[#A97845] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">HSKK {lv}</span>
-                        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]">✓ {exams.length} đề</span>
-                      </div>
-                      <h4 className="font-black text-2xl text-[#1B5E4B] mb-1">HSK（{"一二三四五六七八九"[lv - 1]}级）口语</h4>
-                      <p className="text-xs text-slate-500 font-medium mb-1">{first.questions} câu · khoảng {first.minutes} phút</p>
-                      <p className="text-xs text-[#2F8F6E] font-bold mb-4">{first.parts}</p>
-                      <div className="space-y-2.5 mt-auto">
-                        {exams.map(ex => (
-                          <div key={ex.file} className="flex items-center gap-3 p-3 rounded-2xl bg-[#F7FAF3] border border-[#8FD9A8]/40 hover:border-[#2F8F6E] transition-colors">
-                            <p className="flex-1 min-w-0 font-black text-sm text-[#1B5E4B] truncate">
-                              {ex.name || ex.label}
-                              {ex.isNew && <span className="ml-2 text-[9px] font-black text-white bg-[#F2765B] px-1.5 py-0.5 rounded">MỚI</span>}
-                            </p>
-                            <button
-                              onClick={() => setActiveHskkExam(ex)}
-                              className="shrink-0 px-4 py-2 bg-[#2F8F6E] hover:bg-[#1B5E4B] text-white rounded-xl font-black text-[11px] shadow-sm transition"
-                            >
-                              🚀 Vào thi
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: HỌC HSK (KHO BÀI GIẢNG PHÂN TẦNG: CẤP ĐỘ -> BÀI HỌC) */}
-          {activeTab === "student_lectures" && (
-            <div className="space-y-8 animate-fade-in max-w-[1200px] mx-auto">
-              {!selectedLectureLevel ? (
-                <div>
-                  <div className="mb-6">
-                    <h2 className="text-3xl font-black text-[#1B5E4B]">📖 Kho Bài Giảng HSK</h2>
-                    <p className="text-[#2F8F6E] text-sm font-medium mt-1">Chọn cấp độ giáo trình để bắt đầu học tập.</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {LEVEL_OPTIONS.map(lvl => {
-                      const count = lecturesBankList.filter(l => l.level === lvl).length;
-                      return (
-                        <div 
-                          key={lvl} 
-                          onClick={() => setSelectedLectureLevel(lvl)}
-                          className="bg-white p-6 rounded-3xl border-2 border-[#8FD9A8]/40 shadow-sm hover:shadow-md hover:border-[#2F8F6E] cursor-pointer transition-all flex flex-col justify-between group"
-                        >
-                          <div>
-                            <span className="inline-block bg-[#1B5E4B] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mb-3">Giáo trình</span>
-                            <h4 className="font-black text-lg text-[#1B5E4B] mb-1 group-hover:text-[#2F8F6E] transition-colors">{lvl}</h4>
-                            <p className="text-xs text-slate-500 font-medium">{count > 0 ? `${count} bài học sẵn sàng` : "Chưa có bài học"}</p>
-                          </div>
-                          <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-100">
-                            <span className="text-xs font-black text-[#2F8F6E]">Khám phá ngay</span>
-                            <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : !selectedLecture ? (
-                <div>
-                  <div className="mb-6 flex items-center justify-between">
-                    <div>
-                      <button 
-                        onClick={() => setSelectedLectureLevel(null)}
-                        className="text-xs font-bold text-[#2F8F6E] hover:underline mb-2 flex items-center gap-1"
-                      >
-                        ← Quay lại chọn cấp độ
+              {q ? (
+                <div className="grid gap-5 lg:grid-cols-2">
+                  <section className={`${card} p-5 flex flex-col gap-2`}>
+                    <h2 className="text-[17px] font-bold">Bài học</h2>
+                    {lessonHits.length === 0 ? <p className="text-sm text-[#5B7262]">Không có bài nào khớp.</p> : lessonHits.map(l => (
+                      <button key={l.id} onClick={() => openLecture(l)} className="flex items-center gap-3 p-3 rounded-xl border border-[#E3EADB] hover:border-[#2E9D5B] text-left">
+                        <span className="flex-1 min-w-0"><span className="block font-semibold truncate">{l.lectureName}</span><span className="block text-xs text-[#5B7262]">{l.level}</span></span>
+                        <Icon name="chevron" className="w-4 h-4 text-[#5B7262]" />
                       </button>
-                      <h2 className="text-2xl font-black text-[#1B5E4B]">📚 {selectedLectureLevel}</h2>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">Danh sách các bài học tương tác.</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {lecturesBankList.filter(l => l.level === selectedLectureLevel).length === 0 ? (
-                      <div className="col-span-full py-16 text-center text-slate-400 font-medium bg-white rounded-3xl border border-[#E2E8F0]">
-                        Chưa có bài giảng nào được giáo viên cập nhật cho cấp độ này.
+                    ))}
+                  </section>
+                  <section className={`${card} p-5 flex flex-col gap-2`}>
+                    <h2 className="text-[17px] font-bold">Từ điển</h2>
+                    {dictHits.length === 0 ? <p className="text-sm text-[#5B7262]">Không có từ nào khớp.</p> : dictHits.map((w, i) => (
+                      <div key={i} className="flex items-baseline gap-3 py-2 border-b border-[#EEF2E8] last:border-0">
+                        <span className="zh text-xl font-bold text-[#1E5C38]">{w.hanzi}</span>
+                        <span className="text-sm text-[#5B7262]">{w.pinyin}</span>
+                        <span className="text-sm flex-1 min-w-0 truncate">{w.meaning}</span>
                       </div>
-                    ) : (
-                      lecturesBankList
-                        .filter(l => l.level === selectedLectureLevel)
-                        .map(lec => (
-                          <div 
-                            key={lec.id} 
-                            onClick={() => setSelectedLecture(lec)}
-                            className="p-5 bg-white rounded-2xl border-2 border-[#E2E8F0] hover:border-[#8FD9A8] shadow-sm hover:shadow-md cursor-pointer transition-all flex flex-col justify-between group"
-                          >
-                            <div>
-                              <span className="text-[9px] font-black uppercase tracking-widest text-[#2F8F6E] bg-[#EEF5E9] px-2 py-0.5 rounded inline-block mb-2">Bài học tương tác</span>
-                              <h5 className="font-black text-sm text-[#1B5E4B] group-hover:text-[#2F8F6E] transition-colors mb-2">{lec.lectureName}</h5>
-                            </div>
-                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#10B981]">
-                              <span>Vào học</span>
-                              <span>▶</span>
-                            </div>
-                          </div>
-                        ))
-                    )}
-                  </div>
+                    ))}
+                    <div className="mt-2 rounded-xl bg-[#E7F5EC] border border-[#BFE3CB] p-3 flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <Frog mood={isAiLoading ? "think" : "happy"} className="w-10 h-8 shrink-0" />
+                        <p className="flex-1 text-sm text-[#1E3D2A]">Muốn Ếch giải thích kỹ “{learnQuery.trim()}”?</p>
+                        <button onClick={handleAskFrog} disabled={isAiLoading} className="h-10 px-4 rounded-xl bg-[#2E9D5B] hover:bg-[#1E7A45] disabled:opacity-60 text-white text-sm font-bold shrink-0">{isAiLoading ? "Đang nghĩ…" : "Hỏi Ếch"}</button>
+                      </div>
+                      {aiResponse && <div className="text-sm leading-relaxed whitespace-pre-wrap bg-white rounded-lg p-3 border border-[#DDE6D3] max-h-[50vh] overflow-y-auto">{aiResponse}</div>}
+                    </div>
+                  </section>
                 </div>
               ) : (
-                <div className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
-                  <div className="h-16 px-6 bg-[#1B5E4B] text-white flex justify-between items-center shrink-0 shadow-md">
-                    <div>
-                      <h3 className="font-black text-base">{selectedLecture.lectureName}</h3>
-                      <p className="text-[10px] text-[#8FD9A8] font-bold uppercase tracking-widest">{selectedLecture.level}</p>
-                    </div>
-                    <button 
-                      onClick={() => setSelectedLecture(null)}
-                      className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition text-white shadow-sm"
-                    >
-                      ✕ Quay lại danh sách bài
-                    </button>
+                <>
+                  <div role="tablist" aria-label="Giáo trình" className="hg-scroll flex gap-2 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+                    {(levelsWithLessons.length ? levelsWithLessons : LEVEL_OPTIONS).map(lvl => {
+                      const on = lvl === currentCourse;
+                      return (
+                        <button key={lvl} role="tab" aria-selected={on} onClick={() => pickCourse(lvl)}
+                          className={`shrink-0 h-11 px-4 rounded-full border text-sm font-semibold transition-colors ${on ? "bg-[#13261C] border-[#13261C] text-white" : "bg-white border-[#C9D6BE] text-[#3F5546] hover:border-[#2E9D5B]"}`}>
+                          {lvl}
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
-                    <iframe 
-                      {...htmlFrameProps(selectedLecture)}
-                      title={selectedLecture.lectureName}
-                      className="w-full h-full border-0"
-                      sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
-                      allow="microphone; autoplay; fullscreen; clipboard-write"
-                    />
+                  {courseLessons.length > 0 && (
+                    <div className="flex items-center gap-3 text-sm text-[#3F5546]">
+                      <LotusMark className="w-5 h-5" /><span><b>{courseDone}</b> / {courseLessons.length} bài đã nở sen</span>
+                      <div className="flex-1 max-w-[240px]"><Bar value={coursePct} /></div>
+                    </div>
+                  )}
+
+                  <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                    {courseLessons.length === 0 ? (
+                      <div className={`${card} col-span-full p-10 text-center flex flex-col items-center gap-3`}>
+                        <Frog mood="sleepy" className="w-16 h-14" />
+                        <p className="text-[#5B7262]">Giáo viên chưa cập nhật bài cho giáo trình này.</p>
+                      </div>
+                    ) : courseLessons.map((lec, i) => {
+                      const done = lessonsDone.includes(lec.id);
+                      const current = nextLesson?.id === lec.id;
+                      const review = /ôn tập|on tap|review/i.test(lec.lectureName || "");
+                      return (
+                        <button key={lec.id} onClick={() => openLecture(lec)}
+                          className={`flex items-center gap-4 p-4 rounded-[18px] text-left transition-colors ${current ? "bg-white border-2 border-[#2E9D5B]" : review ? "bg-[#FFFBEF] border border-dashed border-[#F0C66E] hover:border-[#B36B00]" : "bg-white border border-[#DDE6D3] hover:border-[#2E9D5B]"}`}>
+                          <span className={`w-12 h-12 rounded-[14px] grid place-items-center shrink-0 font-extrabold ${done ? "bg-[#FDE3EC]" : current ? "bg-[#E7F5EC] text-[#1E7A45]" : review ? "bg-[#FFF0CC] text-[#B36B00]" : "bg-[#EEF2E8] text-[#7A8C7E]"}`}>
+                            {done ? <LotusMark className="w-7 h-7" /> : i + 1}
+                          </span>
+                          <span className="flex-1 min-w-0">
+                            <span className={`block text-xs font-semibold ${current ? "text-[#1E7A45]" : review ? "text-[#8A5A00]" : "text-[#5B7262]"}`}>{done ? "Đã nở sen" : current ? "Học tiếp" : review ? "Ôn tập" : "Chưa học"}</span>
+                            <span className="block font-bold text-[15px] leading-snug line-clamp-2">{lec.lectureName}</span>
+                          </span>
+                          <Icon name="chevron" className="w-5 h-5 text-[#9AAB9E] shrink-0" />
+                        </button>
+                      );
+                    })}
                   </div>
-                </div>
+                </>
               )}
             </div>
           )}
 
-        </div>
-      </main>
-
-      {/* PHÒNG THI TRỰC TUYẾN & NỘP BÀI VỀ CHO GIÁO VIÊN */}
-      {activeHskExamView && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
-          <div className="h-16 px-6 bg-[#1B5E4B] text-white flex justify-between items-center shrink-0 shadow-md">
-            <div>
-              <h3 className="font-black text-base">Phòng thi: {activeHskExamView.examName}</h3>
-              <p className="text-[10px] text-[#8FD9A8] font-bold uppercase tracking-widest">Thí sinh: {user?.fullName || "Học viên"} • {activeHskExamView.level}</p>
+          {/* ===== LUYỆN ===== */}
+          {activeTab === "practice" && (
+            <div className="flex flex-col gap-5">
+              <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight">Luyện</h1>
+              {weakest && (
+                <div className="flex items-center gap-3 p-4 rounded-[18px] bg-[#E7F5EC] border border-[#BFE3CB]">
+                  <Frog className="w-14 h-12 shrink-0" />
+                  <p className="flex-1 text-[15px] leading-snug text-[#1E3D2A]"><b>Ếch gợi ý:</b> kỹ năng <b>{weakest.label}</b> của bạn đang thấp nhất. Luyện 5 phút nhé!</p>
+                  <Link href={weakest.href} className="hidden sm:inline-flex h-11 px-5 items-center rounded-xl bg-[#2E9D5B] hover:bg-[#1E7A45] text-white font-bold text-sm shrink-0">Luyện ngay</Link>
+                </div>
+              )}
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+                {skills.map(s => {
+                  const hot = s.key === weakest?.key;
+                  return (
+                    <div key={s.key} className={`relative rounded-[18px] bg-white p-4 md:p-5 flex flex-col gap-3 ${hot ? "border-2 border-[#F0A43A]" : "border border-[#DDE6D3]"} ${s.key === "speaking" ? "col-span-2 lg:col-span-1" : ""}`}>
+                      <Link href={s.href} className="absolute inset-0 rounded-[18px]" aria-label={`Luyện ${s.label}`} />
+                      <div className="flex items-center justify-between">
+                        <span className={`w-11 h-11 rounded-xl grid place-items-center ${s.tone}`}><Icon name={s.icon} className="w-[22px] h-[22px]" /></span>
+                        {hot && <span className="text-xs font-bold text-[#B35400] bg-[#FFF1E0] px-2.5 py-1 rounded-full">Nên luyện</span>}
+                      </div>
+                      <div>
+                        <div className="font-bold text-base">{s.label}</div>
+                        <div className="text-xs text-[#5B7262]">{s.sub}</div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-auto">
+                        <div className="flex-1"><Bar value={s.value} h="h-1.5" color={hot ? "bg-[#F0A43A]" : "bg-[#2E9D5B]"} /></div>
+                        <span className="text-xs font-bold text-[#3F5546] tabular-nums">{s.value}</span>
+                      </div>
+                      {s.extra && <Link href={s.extra.href} className="relative z-10 self-start text-xs font-semibold text-[#1E7A45] underline underline-offset-2">{s.extra.label}</Link>}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={async () => {
-                  if (hsk3SavedRef.current) {
-                    alert("✅ Bài làm (kể cả phần Viết) đã được gửi tự động cho giáo viên.");
-                    setActiveHskExamView(null);
-                    return;
-                  }
-                  if (window.confirm("Bạn có chắc chắn muốn nộp bài thi này không?")) {
-                    try {
-                      await addDoc(collection(db, "hsk3_submissions"), {
-                        userId: userId || "guest",
-                        userName: user?.fullName || "Học viên ẩn danh",
-                        userEmail: user?.primaryEmailAddress?.emailAddress || "Không có",
-                        examId: activeHskExamView.id,
-                        examName: activeHskExamView.examName,
-                        level: activeHskExamView.level,
-                        status: "pending_teacher",
-                        submittedAt: serverTimestamp()
-                      });
-                      alert("✅ Nộp bài thành công! Kết quả đã được gửi về cho giáo viên.");
-                      setActiveHskExamView(null);
-                    } catch (err) {
-                      alert("Lỗi khi nộp bài: " + err.message);
-                    }
-                  }
-                }}
-                className="px-5 py-2.5 bg-[#2F8F6E] hover:bg-[#1B5E4B] rounded-xl text-xs font-black transition shadow-sm text-white"
-              >
-                📤 Nộp bài & Thoát
-              </button>
+          )}
 
-              <button 
-                onClick={() => {
-                  if (window.confirm("Nếu thoát bây giờ, bài làm của bạn sẽ không được lưu. Bạn có muốn thoát không?")) {
-                    setActiveHskExamView(null);
-                  }
-                }}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition shadow-sm text-white"
-              >
-                ✕ Thoát
-              </button>
+          {/* ===== THI ===== */}
+          {activeTab === "exam" && (
+            <div className="flex flex-col gap-5">
+              <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight">Thi</h1>
+              <div role="tablist" aria-label="Loại đề" className="grid grid-cols-3 gap-1 p-1 rounded-[14px] bg-[#E3EADB] md:max-w-md">
+                {[["hsk3", "HSK 3.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
+                  <button key={k} role="tab" aria-selected={examTab === k} onClick={() => setExamTab(k)}
+                    className={`h-10 rounded-[10px] text-sm transition-colors ${examTab === k ? "bg-white font-bold text-[#13261C] shadow-sm" : "font-semibold text-[#3F5546]"}`}>{l}</button>
+                ))}
+              </div>
+
+              <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] items-start">
+                <div className="flex flex-col gap-5 min-w-0">
+                  {examTab === "hsk3" && (
+                    <>
+                      {newestExam && (
+                        <section className="rounded-[22px] bg-[#1E5C38] text-white p-5 md:p-6 flex flex-col gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 min-w-0"><div className="text-xs font-semibold uppercase tracking-[0.08em] text-[#BFE3CB]">Đề mới của giáo viên</div><div className="font-extrabold text-xl mt-0.5 truncate">{newestExam.examName}</div></div>
+                            <span className="text-xs font-bold text-[#13261C] bg-[#FFB547] px-2.5 py-1 rounded-full shrink-0">Mới</span>
+                          </div>
+                          <div className="text-sm text-[#D4EFDC]">{newestExam.level}</div>
+                          <button onClick={() => setActiveHskExamView(newestExam)} className="h-12 rounded-[14px] bg-white text-[#1E5C38] font-bold hover:bg-[#E7F5EC] transition-colors">Bắt đầu làm bài</button>
+                        </section>
+                      )}
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {HSK3_LEVELS.map((lvl, i) => {
+                          const exams = hsk3ExamsList.filter(e => e.level === lvl).sort((a, b) => (a.examName || "").localeCompare(b.examName || "", undefined, { numeric: true }));
+                          return (
+                            <section key={lvl} className={`rounded-[18px] p-4 flex flex-col gap-2 ${exams.length ? "bg-white border border-[#DDE6D3]" : "border border-dashed border-[#C9D6BE]"}`}>
+                              <div className="flex items-baseline justify-between"><h3 className="font-extrabold text-lg">HSK {i + 1}</h3><span className="text-xs text-[#5B7262]">{exams.length ? `${exams.length} đề` : "Sắp có"}</span></div>
+                              {exams.map(ex => (
+                                <button key={ex.id} onClick={() => setActiveHskExamView(ex)} className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl bg-[#F4F7EF] hover:bg-[#E7F5EC] text-left">
+                                  <span className="flex-1 min-w-0 truncate text-sm font-semibold">{ex.examName}</span>
+                                  <span className="text-xs font-bold text-[#1E7A45] shrink-0">Vào thi</span>
+                                </button>
+                              ))}
+                            </section>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+
+                  {examTab === "hskk" && (
+                    <>
+                      <div className="rounded-[18px] bg-[#FFF8EA] border border-[#F6D99A] p-4 text-sm leading-relaxed text-[#5C3D00]">
+                        <b>Trước khi vào thi:</b> đeo tai nghe, ngồi nơi yên tĩnh và cho phép trình duyệt dùng micro. Làm xong, nghe lại rồi bấm <b>Nộp bài cho giáo viên</b> — thoát giữa chừng sẽ mất bản ghi âm.
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {[...new Set(hskkExams.map(e => Number(e.level)))].sort((a, b) => a - b).map(lv => {
+                          const exams = hskkExams.filter(e => Number(e.level) === lv);
+                          const first = exams[0] || {};
+                          return (
+                            <section key={lv} className="rounded-[18px] bg-white border border-[#DDE6D3] p-4 flex flex-col gap-2">
+                              <div className="flex items-baseline justify-between"><h3 className="font-extrabold text-lg">HSKK {lv}</h3><span className="text-xs text-[#5B7262] inline-flex items-center gap-1"><Icon name="clock" className="w-3.5 h-3.5" />{first.minutes} phút</span></div>
+                              <p className="text-xs text-[#5B7262]">{first.parts}</p>
+                              {exams.map(ex => (
+                                <button key={ex.file} onClick={() => setActiveHskkExam(ex)} className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl bg-[#F4F7EF] hover:bg-[#E7F5EC] text-left">
+                                  <span className="flex-1 min-w-0 truncate text-sm font-semibold">{ex.name || ex.label}</span>
+                                  {ex.isNew && <span className="text-[10px] font-bold text-[#13261C] bg-[#FFB547] px-1.5 py-0.5 rounded">Mới</span>}
+                                  <span className="text-xs font-bold text-[#1E7A45] shrink-0">Vào thi</span>
+                                </button>
+                              ))}
+                            </section>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+
+                  {examTab === "test" && (
+                    <section className={`${card} p-6 flex flex-col sm:flex-row sm:items-center gap-5`}>
+                      <Frog mood="think" className="w-20 h-16 shrink-0" />
+                      <div className="flex-1">
+                        <h2 className="text-xl font-extrabold">Thi đánh giá năng lực</h2>
+                        <p className="text-sm text-[#3F5546] mt-1">Làm một bài kiểm tra tổng hợp Nghe · Nói · Đọc · Viết. Giáo viên chấm và gợi ý cấp độ phù hợp cho bạn.</p>
+                      </div>
+                      <Link href="/test" className="h-12 px-6 inline-flex items-center justify-center rounded-[14px] bg-[#2E9D5B] hover:bg-[#1E7A45] text-white font-bold shrink-0">Bắt đầu</Link>
+                    </section>
+                  )}
+                </div>
+                <ResultsCard limit={6} />
+              </div>
             </div>
+          )}
+        </main>
+      )}
+
+      {/* ---------- THANH DƯỚI (điện thoại) ---------- */}
+      {!inFullscreen && (
+        <nav aria-label="Khu chính" className="md:hidden fixed bottom-0 inset-x-0 z-30 grid grid-cols-4 bg-white border-t border-[#DDE6D3] pt-2 pb-[max(14px,env(safe-area-inset-bottom))]">
+          {TABS.map(t => (
+            <button key={t.key} onClick={() => goTab(t.key)} aria-current={activeTab === t.key ? "page" : undefined}
+              className={`flex flex-col items-center gap-1 py-1.5 text-xs ${activeTab === t.key ? "text-[#1E7A45] font-bold" : "text-[#5B7262] font-semibold"}`}>
+              <Icon name={t.icon} className="w-6 h-6" />{t.label}
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {/* ---------- MÀN HÌNH BÀI HỌC ---------- */}
+      {selectedLecture && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-white">
+          <div className="h-14 md:h-16 px-3 md:px-6 bg-[#1E5C38] text-white flex items-center gap-3 shrink-0">
+            <button onClick={() => setSelectedLecture(null)} className="h-10 px-3 rounded-xl hover:bg-white/10 inline-flex items-center gap-1 text-sm font-semibold shrink-0" aria-label="Quay lại">
+              <Icon name="back" className="w-5 h-5" /><span className="hidden sm:inline">Quay lại</span>
+            </button>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-[15px] truncate">{selectedLecture.lectureName}</h3>
+              <p className="text-xs text-[#BFE3CB] truncate">{selectedLecture.level}</p>
+            </div>
+            {lessonsDone.includes(selectedLecture.id) ? (
+              <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl bg-white/10 text-sm font-semibold shrink-0"><LotusMark className="w-5 h-5" /><span className="hidden sm:inline">Đã nở sen</span></span>
+            ) : (
+              <button onClick={markLessonDone} className="h-10 px-4 rounded-xl bg-[#FFB547] hover:bg-[#FFC56E] text-[#13261C] text-sm font-bold inline-flex items-center gap-1.5 shrink-0">
+                <Icon name="check" className="w-4 h-4" strokeWidth={3} /><span className="hidden sm:inline">Đã học xong</span><span className="sm:hidden">Xong</span>
+              </button>
+            )}
           </div>
+          <div className="flex-1 bg-[#F4F7EF] relative overflow-hidden">
+            <iframe
+              {...htmlFrameProps(selectedLecture)}
+              title={selectedLecture.lectureName}
+              className="w-full h-full border-0"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
+              allow="microphone; autoplay; fullscreen; clipboard-write"
+            />
+            {bloomFx && (
+              <div className="pointer-events-none absolute inset-0 grid place-items-center bg-[#13261C]/30">
+                <div className="bg-white rounded-3xl px-8 py-6 flex flex-col items-center gap-2 shadow-2xl" style={{ animation: "hgPop .5s ease-out" }}>
+                  <div className="flex items-end gap-1"><Frog mood="cheer" className="w-20 h-16" /><LotusMark className="w-12 h-12" /></div>
+                  <p className="font-extrabold text-lg">Ao nở thêm một bông sen!</p>
+                  <p className="text-sm font-bold text-[#1E7A45]">+{LEAF_PER_LESSON} lá</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
-          <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
-            <iframe 
+      {/* ---------- PHÒNG THI HSK 3.0 ---------- */}
+      {activeHskExamView && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-white">
+          <div className="h-14 md:h-16 px-3 md:px-6 bg-[#13261C] text-white flex items-center gap-3 shrink-0">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-[15px] truncate">{activeHskExamView.examName}</h3>
+              <p className="text-xs text-[#BFE3CB] truncate">Thí sinh: {user?.fullName || "Học viên"} · {activeHskExamView.level}</p>
+            </div>
+            <button
+              onClick={async () => {
+                if (hsk3SavedRef.current) {
+                  alert("Bài làm (kể cả phần Viết) đã được gửi tự động cho giáo viên.");
+                  setActiveHskExamView(null);
+                  return;
+                }
+                if (window.confirm("Bạn có chắc chắn muốn nộp bài thi này không?")) {
+                  try {
+                    await addDoc(collection(db, "hsk3_submissions"), {
+                      userId: userId || "guest",
+                      userName: user?.fullName || "Học viên ẩn danh",
+                      userEmail: user?.primaryEmailAddress?.emailAddress || "Không có",
+                      examId: activeHskExamView.id,
+                      examName: activeHskExamView.examName,
+                      level: activeHskExamView.level,
+                      status: "pending_teacher",
+                      submittedAt: serverTimestamp()
+                    });
+                    alert("Nộp bài thành công! Kết quả đã được gửi về cho giáo viên.");
+                    setActiveHskExamView(null);
+                  } catch (err) {
+                    alert("Lỗi khi nộp bài: " + err.message);
+                  }
+                }
+              }}
+              className="h-10 px-4 rounded-xl bg-[#2E9D5B] hover:bg-[#3DB46D] text-white text-sm font-bold inline-flex items-center gap-1.5 shrink-0"
+            >
+              <Icon name="send" className="w-4 h-4" /><span className="hidden sm:inline">Nộp bài & thoát</span><span className="sm:hidden">Nộp</span>
+            </button>
+            <button
+              onClick={() => { if (window.confirm("Nếu thoát bây giờ, bài làm của bạn sẽ không được lưu. Bạn có muốn thoát không?")) setActiveHskExamView(null); }}
+              className="h-10 w-10 rounded-xl bg-white/10 hover:bg-[#C2413B] grid place-items-center shrink-0" aria-label="Thoát phòng thi"
+            >
+              <Icon name="close" className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex-1 bg-[#F4F7EF] relative overflow-hidden">
+            <iframe
               {...htmlFrameProps(activeHskExamView)}
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
@@ -1384,24 +1018,22 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* PHÒNG THI KHẨU NGỮ HSKK 3.0 */}
+      {/* ---------- PHÒNG THI HSKK ---------- */}
       {activeHskkExam && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-white animate-fade-in">
-          <div className="h-16 px-6 bg-[#1B5E4B] text-white flex justify-between items-center shrink-0 shadow-md">
-            <div className="min-w-0">
-              <h3 className="font-black text-base truncate">Phòng thi khẩu ngữ: {activeHskkExam.title}</h3>
-              <p className="text-[10px] text-[#8FD9A8] font-bold uppercase tracking-widest truncate">Thí sinh: {user?.fullName || "Học viên"} • {activeHskkExam.label}</p>
+        <div className="fixed inset-0 z-50 flex flex-col bg-white">
+          <div className="h-14 md:h-16 px-3 md:px-6 bg-[#13261C] text-white flex items-center gap-3 shrink-0">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-[15px] truncate">{activeHskkExam.title}</h3>
+              <p className="text-xs text-[#BFE3CB] truncate">Thí sinh: {user?.fullName || "Học viên"} · {activeHskkExam.label}</p>
             </div>
             <button
-              onClick={() => {
-                if (window.confirm("Thoát phòng thi? Nếu chưa bấm Nộp bài, các bản ghi âm sẽ mất.")) setActiveHskkExam(null);
-              }}
-              className="shrink-0 px-4 py-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-xs font-black transition shadow-sm text-white"
+              onClick={() => { if (window.confirm("Thoát phòng thi? Nếu chưa bấm Nộp bài, các bản ghi âm sẽ mất.")) setActiveHskkExam(null); }}
+              className="h-10 w-10 rounded-xl bg-white/10 hover:bg-[#C2413B] grid place-items-center shrink-0" aria-label="Thoát phòng thi"
             >
-              ✕ Thoát
+              <Icon name="close" className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex-1 w-full bg-slate-50 relative overflow-hidden">
+          <div className="flex-1 bg-[#F4F7EF] relative overflow-hidden">
             <iframe
               src={`${activeHskkExam.file}?embed=1&name=${encodeURIComponent(user?.fullName || "")}`}
               title={activeHskkExam.title}
@@ -1412,159 +1044,42 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* SEARCH / AI MODAL */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-[8vh]">
-          <div className="absolute inset-0 bg-[#1B5E4B]/80 backdrop-blur-sm transition-opacity" onClick={closeSearch} />
-          <div className="relative flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
-            
-            <div className="flex flex-col border-b border-[#E2E8F0] p-5 bg-white relative z-10">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">✨</span>
-                <input 
-                  autoFocus 
-                  type="text" 
-                  value={searchQuery} 
-                  onChange={(e) => setSearchQuery(e.target.value)} 
-                  onKeyDown={(e) => e.key === 'Enter' && handleAskAI()}
-                  placeholder="Tìm kiếm từ vựng, ngữ pháp..." 
-                  className="flex-1 bg-transparent text-xl font-bold text-[#1B5E4B] outline-none placeholder:text-slate-300" 
-                />
-                <button 
-                  onClick={handleAskAI}
-                  disabled={isAiLoading || !searchQuery.trim()}
-                  className="bg-[#1B5E4B] text-white px-4 py-2 rounded-xl text-sm font-black hover:bg-[#2F8F6E] disabled:opacity-50 transition-all shadow-sm shrink-0"
-                >
-                  Hỏi AI
-                </button>
-                <button onClick={closeSearch} className="rounded-xl bg-[#FFF1F2] px-3 py-2 text-[10px] font-black uppercase tracking-widest text-[#BE123C] hover:bg-[#FECDD3] transition-colors shrink-0">ĐÓNG</button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar bg-white relative z-0">
-              {isAiLoading ? (
-                <div className="flex flex-col items-center justify-center py-10 opacity-60">
-                  <div className="w-10 h-10 border-4 border-[#8FD9A8] border-t-transparent rounded-full animate-spin mb-4"></div>
-                  <p className="text-sm font-bold text-[#2F8F6E] animate-pulse">Ếch xanh đang suy nghĩ...</p>
-                </div>
-              ) : aiResponse ? (
-                <div className="bg-[#EEF5E9] p-6 rounded-3xl border border-[#8FD9A8]/40 shadow-sm animate-fade-in">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-2xl">🐸</span>
-                    <h3 className="font-black text-[#1B5E4B] text-lg">Ếch Canh giải đáp:</h3>
-                  </div>
-                  <div className="text-[#142033] font-medium leading-relaxed whitespace-pre-wrap text-sm md:text-base">
-                    {aiResponse}
-                  </div>
-                </div>
-              ) : searchResults.length > 0 ? (
-                <div className="space-y-3 animate-fade-in">
-                  <h3 className="text-xs font-black text-[#64748B] uppercase tracking-widest mb-4">Kết quả từ điển</h3>
-                  {searchResults.map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0] hover:border-[#8FD9A8] transition-colors cursor-pointer">
-                      <div className="flex items-center gap-4">
-                        <span className="text-2xl font-black text-[#1B5E4B]">{item.hanzi}</span>
-                        <div>
-                          <p className="text-sm font-bold text-[#F2765B]">{item.pinyin}</p>
-                          <p className="text-xs font-medium text-[#64748B]">{item.meaning}</p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-black bg-white px-2 py-1 rounded-md text-slate-400 border border-[#E2E8F0]">{item.type}</span>
-                    </div>
-                  ))}
-                  
-                  <div className="mt-6 text-center border-t border-[#E2E8F0] pt-6">
-                     <p className="text-xs text-slate-400 font-medium mb-3">Chưa hiểu rõ? Hãy nhờ AI giải thích sâu hơn.</p>
-                     <button onClick={handleAskAI} className="bg-[#1B5E4B] text-white px-6 py-2.5 rounded-xl text-xs font-black hover:bg-[#2F8F6E] transition-all shadow-sm">
-                       Hỏi AI thêm về "{searchQuery}"
-                     </button>
-                  </div>
-                </div>
-              ) : searchQuery.trim() !== "" ? (
-                 <div className="text-center py-10 animate-fade-in">
-                   <p className="text-slate-400 font-medium mb-4">Không tìm thấy "{searchQuery}" trong từ điển cục bộ.</p>
-                   <button onClick={handleAskAI} className="bg-[#1B5E4B] text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-[#2F8F6E] transition-all shadow-sm">
-                     Nhờ AI giải thích chi tiết
-                   </button>
-                 </div>
-              ) : (
-                <div className="py-16 text-center opacity-40">
-                   <span className="text-6xl mb-4 block">🔍</span>
-                   <p className="text-lg font-bold text-[#1B5E4B]">Bạn muốn tra cứu điều gì?</p>
-                   <p className="text-xs font-medium text-[#2F8F6E] mt-2">Gõ từ vựng tiếng Trung, pinyin hoặc ngữ pháp để AI giải đáp.</p>
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {/* MODAL CHI TIẾT KẾT QUẢ THI */}
+      {/* ---------- CHI TIẾT KẾT QUẢ ---------- */}
       {selectedResult && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-          <div className="absolute inset-0 bg-[#1B5E4B]/60 backdrop-blur-sm" onClick={() => setSelectedResult(null)}></div>
-          <div className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl overflow-hidden animate-slide-up-fade">
-            <div className="bg-[#1B5E4B] p-6 text-white text-center">
-              <div className="text-5xl mb-3">🎓</div>
-              <h2 className="text-2xl font-black">{selectedResult.title}</h2>
-              {selectedResult.level && <p className="text-sm text-[#8FD9A8] font-bold mt-1">Cấp độ đánh giá: {selectedResult.level}</p>}
-            </div>
-            
-            <div className="p-6 md:p-8 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              <div className="text-center">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Điểm số của bạn</span>
-                <div className="text-5xl font-black text-[#F59E0B] mt-1">{selectedResult.score || 0} <span className="text-xl text-slate-300">điểm</span></div>
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" role="dialog" aria-modal="true" aria-label={selectedResult.title}>
+          <div className="absolute inset-0 bg-[#13261C]/50" onClick={() => setSelectedResult(null)} />
+          <div className="relative w-full sm:max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-3xl">
+            <div className="p-6 flex items-center gap-4 border-b border-[#EEF2E8]">
+              <Frog mood={(selectedResult.score ?? 0) > 0 ? "cheer" : "think"} className="w-16 h-14 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-extrabold">{selectedResult.title}</h2>
+                {selectedResult.level && <p className="text-sm text-[#5B7262]">Cấp độ: {selectedResult.level}</p>}
               </div>
-
-              {selectedResult.type === 'test' && selectedResult.skills && (
-                <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-[#E2E8F0]">
-                  <h4 className="text-xs font-black text-[#142033] mb-3 uppercase tracking-widest">Chi tiết 4 Kỹ năng</h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
-                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Nghe</p>
-                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.listening?.score || 0}</p>
-                    </div>
-                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
-                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Nói</p>
-                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.speaking?.score || 0}</p>
-                    </div>
-                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
-                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Đọc/Dịch</p>
-                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.reading?.score || 0}</p>
-                    </div>
-                    <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-center">
-                      <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Viết</p>
-                      <p className="text-lg font-black text-[#10B981]">{selectedResult.skills.writing?.score || 0}</p>
-                    </div>
-                  </div>
+              <div className="text-right shrink-0"><div className="text-4xl font-extrabold text-[#1E5C38] tabular-nums">{selectedResult.score ?? 0}</div><div className="text-xs text-[#5B7262]">điểm</div></div>
+            </div>
+            <div className="p-6 flex flex-col gap-5">
+              {selectedResult.type === "test" && selectedResult.skills && (
+                <div className="grid grid-cols-4 gap-2">
+                  {[["Nghe", "listening"], ["Nói", "speaking"], ["Đọc", "reading"], ["Viết", "writing"]].map(([l, k]) => (
+                    <div key={k} className="rounded-xl bg-[#F4F7EF] p-3 text-center"><div className="text-xs text-[#5B7262]">{l}</div><div className="text-lg font-extrabold text-[#1E7A45]">{selectedResult.skills[k]?.score || 0}</div></div>
+                  ))}
                 </div>
               )}
-
               <div>
-                <h4 className="text-xs font-black text-[#1B5E4B] mb-2 uppercase tracking-widest">Giáo viên nhận xét</h4>
-                <div className="bg-[#EEF5E9] p-4 rounded-2xl text-sm font-medium text-[#1B5E4B] leading-relaxed border border-[#8FD9A8]/40 whitespace-pre-wrap">
-                  {selectedResult.feedback || "Chưa có nhận xét."}
-                </div>
+                <h4 className={eyebrow}>Giáo viên nhận xét</h4>
+                <div className="mt-2 rounded-xl bg-[#F4F7EF] p-4 text-sm leading-relaxed whitespace-pre-wrap">{selectedResult.feedback || "Chưa có nhận xét."}</div>
               </div>
-
               {selectedResult.recommendation && (
                 <div>
-                  <h4 className="text-xs font-black text-[#F2765B] mb-2 uppercase tracking-widest">Lộ trình khuyến nghị</h4>
-                  <div className="bg-[#FFF1F2] p-4 rounded-2xl text-sm font-medium text-[#BE123C] leading-relaxed border border-[#FECDD3] whitespace-pre-wrap">
-                    {selectedResult.recommendation}
-                  </div>
+                  <h4 className={eyebrow}>Lộ trình gợi ý</h4>
+                  <div className="mt-2 rounded-xl bg-[#FFF8EA] border border-[#F6D99A] p-4 text-sm leading-relaxed whitespace-pre-wrap">{selectedResult.recommendation}</div>
                 </div>
               )}
-            </div>
-
-            <div className="p-4 border-t border-[#E2E8F0] text-center bg-[#F8FAFC]">
-              <button onClick={() => setSelectedResult(null)} className="bg-[#1B5E4B] text-white px-8 py-3 rounded-xl font-black text-sm hover:bg-[#2F8F6E] transition-all shadow-md">Đã Hiểu</button>
+              <button onClick={() => setSelectedResult(null)} className="h-12 rounded-[14px] bg-[#2E9D5B] hover:bg-[#1E7A45] text-white font-bold">Đã hiểu</button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }
