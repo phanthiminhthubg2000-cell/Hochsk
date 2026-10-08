@@ -241,6 +241,59 @@ export default function HomePage() {
   // --- HSK 3.0 EXAM STATES ---
   const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
   const [activeHskExamView, setActiveHskExamView] = useState(null);
+  // Đề HSK 3.0 dạng trang thi (vd. HSK5 3.0) tự gửi kết quả qua postMessage khi học viên nộp bài
+  const hsk3SavedRef = useRef(null);
+  useEffect(() => { hsk3SavedRef.current = null; }, [activeHskExamView]);
+  useEffect(() => {
+    const onMsg = async (e) => {
+      const d = e.data;
+      if (!d || d.source !== "hsk-garden-hsk3") return;
+      const frame = Array.from(document.querySelectorAll("iframe")).find((f) => f.contentWindow === e.source);
+      if (!frame) return;
+      const reply = (m) => { try { e.source.postMessage({ source: "hsk-garden-dashboard", ...m }, "*"); } catch (_) {} };
+      if (d.type === "HSK3_READY") {
+        reply({ type: "HSK3_INIT", name: user?.fullName || "", email: user?.primaryEmailAddress?.emailAddress || "" });
+        return;
+      }
+      if (d.type !== "HSK3_SUBMIT" || !activeHskExamView) return;
+      if (hsk3SavedRef.current) { reply({ type: "HSK3_SAVED" }); return; }
+      try {
+        const brief = (det) => (Array.isArray(det) ? det.map((x) => `${x.n}:${x.your || "-"}${x.ok ? "✓" : "✗" + x.ans}`).join(" ") : "");
+        const ref = await addDoc(collection(db, "hsk3_submissions"), {
+          userId: userId || "guest",
+          userName: user?.fullName || d.name || "Học viên ẩn danh",
+          userEmail: user?.primaryEmailAddress?.emailAddress || d.email || "Không có",
+          studentTypedName: d.name || "",
+          examId: activeHskExamView.id,
+          examName: activeHskExamView.examName,
+          level: activeHskExamView.level,
+          status: "pending_teacher",
+          autoResult: true,
+          listeningScore: d.listening?.score ?? null,
+          listeningCorrect: d.listening?.correct ?? null,
+          listeningTotal: d.listening?.total ?? null,
+          readingScore: d.reading?.score ?? null,
+          readingCorrect: d.reading?.correct ?? null,
+          readingTotal: d.reading?.total ?? null,
+          listeningDetail: brief(d.listening?.detail),
+          readingDetail: brief(d.reading?.detail),
+          writing71: String(d.writing?.q71 || "").slice(0, 20000),
+          writing72: String(d.writing?.q72 || "").slice(0, 20000),
+          writing71Count: d.writing?.c71 ?? 0,
+          writing72Count: d.writing?.c72 ?? 0,
+          durationMin: d.durationMin ?? null,
+          submittedAt: serverTimestamp()
+        });
+        hsk3SavedRef.current = ref.id;
+        reply({ type: "HSK3_SAVED" });
+      } catch (err) {
+        reply({ type: "HSK3_ERROR", message: err.message });
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, [activeHskExamView, user, userId]);
+
 
   // --- HSKK 3.0 (THI KHẨU NGỮ) STATES ---
   const [activeHskkExam, setActiveHskkExam] = useState(null);
@@ -1277,6 +1330,11 @@ export default function HomePage() {
             <div className="flex items-center gap-3">
               <button 
                 onClick={async () => {
+                  if (hsk3SavedRef.current) {
+                    alert("✅ Bài làm (kể cả phần Viết) đã được gửi tự động cho giáo viên.");
+                    setActiveHskExamView(null);
+                    return;
+                  }
                   if (window.confirm("Bạn có chắc chắn muốn nộp bài thi này không?")) {
                     try {
                       await addDoc(collection(db, "hsk3_submissions"), {
