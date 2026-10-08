@@ -1306,6 +1306,36 @@ export default function TeacherDashboard() {
                     </div>
 
                     <div className="p-6 md:p-8 space-y-6 bg-white">
+                      {selectedHsk3Submission.autoResult && (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF5] p-4">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-[#059669]">Nghe (tự chấm)</p>
+                              <p className="text-2xl font-black text-[#142033]">{selectedHsk3Submission.listeningScore}<span className="text-sm text-slate-400">/100</span></p>
+                              <p className="text-xs text-slate-500">Đúng {selectedHsk3Submission.listeningCorrect}/{selectedHsk3Submission.listeningTotal} câu</p>
+                            </div>
+                            <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF5] p-4">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-[#059669]">Đọc (tự chấm)</p>
+                              <p className="text-2xl font-black text-[#142033]">{selectedHsk3Submission.readingScore}<span className="text-sm text-slate-400">/100</span></p>
+                              <p className="text-xs text-slate-500">Đúng {selectedHsk3Submission.readingCorrect}/{selectedHsk3Submission.readingTotal} câu</p>
+                            </div>
+                          </div>
+                          <details className="rounded-2xl border border-[#E2E8F0] p-4 text-xs text-slate-600">
+                            <summary className="cursor-pointer font-black text-[#142033]">Chi tiết từng câu (câu:đáp án học viên ✓/✗đáp án đúng)</summary>
+                            <p className="mt-3 leading-6 break-words"><b>Nghe:</b> {selectedHsk3Submission.listeningDetail}</p>
+                            <p className="mt-2 leading-6 break-words"><b>Đọc:</b> {selectedHsk3Submission.readingDetail}</p>
+                          </details>
+                          {[71, 72].map((n) => (
+                            <div key={n}>
+                              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Bài viết câu {n} · {selectedHsk3Submission[`writing${n}Count`] || 0} chữ (yêu cầu ≥ {n === 71 ? 100 : 200})</label>
+                              <div className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] text-base leading-8 whitespace-pre-wrap" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}>
+                                {selectedHsk3Submission[`writing${n}`] || <span className="text-slate-400">(Học viên chưa viết)</span>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       <div>
                         <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Điểm số tổng (0 - 100)</label>
                         <input 
