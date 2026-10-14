@@ -1,7 +1,7 @@
 "use client";
 // ============================================================
 // HSK GARDEN — GIAO DIỆN "KHU VƯỜN" (v6)
-// 4 khu: Vườn (trang chủ) · Học · Luyện · Thi
+// 5 khu: Vườn (trang chủ) · Học · Luyện · Thi · Chơi
 // Một loại điểm duy nhất: "lá" (dùng trường xp sẵn có trong Firestore)
 // Ao sen tự nở: mỗi bài giảng được đánh dấu "Đã học xong" = 1 bông sen
 // ============================================================
@@ -99,6 +99,7 @@ const Icon = ({ name, className = "w-6 h-6", strokeWidth = 2 }) => {
     clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
     chevron: <path d="M9 6l6 6-6 6" />,
     back: <path d="M15 6l-6 6 6 6" />,
+    gamepad: <><path d="M7 8h10a5 5 0 0 1 4.6 7l-.7 1.6a2.5 2.5 0 0 1-4.3.4L15 15H9l-1.6 2a2.5 2.5 0 0 1-4.3-.4L2.4 15A5 5 0 0 1 7 8z" /><path d="M7 11v3" /><path d="M5.5 12.5h3" /><circle cx="16" cy="11.5" r=".6" /><circle cx="18" cy="13.5" r=".6" /></>,
     close: <><path d="M6 6l12 12" /><path d="M18 6L6 18" /></>,
     check: <path d="M5 12l5 5 9-10" />,
     send: <><path d="M4 12l16-8-6 16-3-7z" /></>,
@@ -173,6 +174,20 @@ const TABS = [
   { key: "learn", label: "Học", icon: "book" },
   { key: "practice", label: "Luyện", icon: "target" },
   { key: "exam", label: "Thi", icon: "trophy" },
+  { key: "play", label: "Chơi", icon: "gamepad" },
+];
+
+// KHU CHƠI — mỗi trò là một tệp .html trong /public
+const GAMES = [
+  {
+    key: "nghieng-dau",
+    title: "Quiz Nghiêng Đầu",
+    zh: "汉字大挑战",
+    desc: "Nghiêng đầu trái / phải để chọn đáp án. Mỗi lượt 10 từ lấy từ các bài học HSK 1 · 2 · 3 · 5.",
+    tags: ["Camera", "10 từ / lượt", "Cả lớp"],
+    href: "/game-nghieng-dau.html",
+    bg: "from-[#2A1650] to-[#4B2A8A]",
+  },
 ];
 
 const fmt = (n) => Number(n || 0).toLocaleString("vi-VN");
@@ -820,6 +835,49 @@ export default function HomePage() {
             </div>
           )}
 
+          {/* ===== CHƠI ===== */}
+          {activeTab === "play" && (
+            <div className="flex flex-col gap-5">
+              <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight">Chơi</h1>
+              <div className="flex items-center gap-3 p-4 rounded-[18px] bg-[#E7F5EC] border border-[#BFE3CB]">
+                <Frog className="w-14 h-12 shrink-0" />
+                <p className="flex-1 text-[15px] leading-snug text-[#1E3D2A]"><b>Vừa chơi vừa học:</b> chọn một trò, chọn bài đã học rồi thử thách cả lớp nhé!</p>
+              </div>
+              <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {GAMES.map(g => (
+                  <a key={g.key} href={g.href} target="_blank" rel="noopener"
+                    className="group rounded-[22px] overflow-hidden bg-white border border-[#DDE6D3] hover:border-[#2E9D5B] hover:shadow-md transition-all flex flex-col">
+                    <div className={`h-36 bg-gradient-to-br ${g.bg} grid place-items-center relative`}>
+                      <div className="flex items-center gap-3">
+                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#C9F2DF] text-[#1B1530] text-3xl font-bold grid place-items-center -rotate-6 group-hover:-rotate-12 transition-transform">左</span>
+                        <span className="text-[#FFD25A] text-2xl font-bold">⇄</span>
+                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#F8D3EA] text-[#1B1530] text-3xl font-bold grid place-items-center rotate-6 group-hover:rotate-12 transition-transform">右</span>
+                      </div>
+                    </div>
+                    <div className="p-5 flex flex-col gap-2 flex-1">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <h3 className="font-extrabold text-lg">{g.title}</h3>
+                        <span className="zh text-sm text-[#5B7262]">{g.zh}</span>
+                      </div>
+                      <p className="text-sm text-[#3F5546] leading-snug">{g.desc}</p>
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {g.tags.map(t => <span key={t} className="text-xs font-semibold text-[#1E5C38] bg-[#E7F5EC] px-2.5 py-1 rounded-full">{t}</span>)}
+                      </div>
+                      <span className="mt-auto pt-3 inline-flex items-center gap-1.5 text-sm font-bold text-[#1E7A45]">
+                        <Icon name="play" className="w-4 h-4" />Vào chơi
+                      </span>
+                    </div>
+                  </a>
+                ))}
+                <div className="rounded-[22px] border-2 border-dashed border-[#C9D6BE] p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[220px] text-[#5B7262]">
+                  <Icon name="sprout" className="w-8 h-8 text-[#2E9D5B]" />
+                  <div className="font-bold text-[#3F5546]">Trò chơi mới đang được ươm…</div>
+                  <div className="text-sm">Sắp có thêm trò để cả lớp cùng chơi.</div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ===== THI ===== */}
           {activeTab === "exam" && (
             <div className="flex flex-col gap-5">
@@ -911,7 +969,7 @@ export default function HomePage() {
 
       {/* ---------- THANH DƯỚI (điện thoại) ---------- */}
       {!inFullscreen && (
-        <nav aria-label="Khu chính" className="md:hidden fixed bottom-0 inset-x-0 z-30 grid grid-cols-4 bg-white border-t border-[#DDE6D3] pt-2 pb-[max(14px,env(safe-area-inset-bottom))]">
+        <nav aria-label="Khu chính" className="md:hidden fixed bottom-0 inset-x-0 z-30 grid grid-cols-5 bg-white border-t border-[#DDE6D3] pt-2 pb-[max(14px,env(safe-area-inset-bottom))]">
           {TABS.map(t => (
             <button key={t.key} onClick={() => goTab(t.key)} aria-current={activeTab === t.key ? "page" : undefined}
               className={`flex flex-col items-center gap-1 py-1.5 text-xs ${activeTab === t.key ? "text-[#1E7A45] font-bold" : "text-[#5B7262] font-semibold"}`}>
