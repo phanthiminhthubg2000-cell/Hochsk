@@ -199,6 +199,16 @@ const GAMES = [
     bg: "from-[#050B2E] to-[#1D47B8]",
     face: ["百", "万"],
   },
+  {
+    key: "bom",
+    title: "Bom nổ chậm",
+    zh: "传炸弹",
+    desc: "Học sinh quét QR, chơi trên điện thoại. Bom rơi vào tay ai thì người đó trả lời — đúng thì chuyền bom, ngòi nổ ngẫu nhiên. Màn hình giáo viên phát trực tiếp.",
+    tags: ["Quét QR", "Điện thoại", "Cả lớp"],
+    href: "/bom/host",
+    bg: "from-[#3A1206] to-[#C2410C]",
+    face: ["炸", "弹"],
+  },
 ];
 
 const fmt = (n) => Number(n || 0).toLocaleString("vi-VN");
