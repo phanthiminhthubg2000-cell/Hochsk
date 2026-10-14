@@ -10,6 +10,7 @@ import { STATIC_LECTURES } from "./staticLectures";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { db } from "../firebase";
+import { HSK3_BRIDGE } from "./hsk3Bridge";
 import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { useHskkResultSaver } from "../hskkResultSaver";
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
@@ -410,6 +411,11 @@ export default function HomePage() {
           readingTotal: d.reading?.total ?? null,
           listeningDetail: brief(d.listening?.detail),
           readingDetail: brief(d.reading?.detail),
+          bridge: d.bridge || null,
+          writingItems: Array.isArray(d.writing?.items) ? d.writing.items.slice(0, 20).map(x => ({ n: Number(x.n) || 0, text: String(x.text || "").slice(0, 8000), ref: String(x.ref || "").slice(0, 4000) })) : [],
+          writingAutoCorrect: d.writing?.auto?.correct ?? null,
+          writingAutoTotal: d.writing?.auto?.total ?? null,
+          writingAutoDetail: brief(d.writing?.auto?.detail),
           writing71: String(d.writing?.q71 || "").slice(0, 20000),
           writing72: String(d.writing?.q72 || "").slice(0, 20000),
           writing71Count: d.writing?.c71 ?? 0,
@@ -1181,6 +1187,21 @@ export default function HomePage() {
                 if (window.confirm("Bạn có chắc chắn muốn nộp bài thi này không?")) {
                   try {
                     const cap = captureExamFrame() || {};
+                    try {
+                      const fw = document.querySelector("iframe[data-hsk3-frame]")?.contentWindow;
+                      const r = fw && fw.__hsk3BridgeCollect && fw.__hsk3BridgeCollect();
+                      if (r) {
+                        const brief = (det) => (Array.isArray(det) ? det.map((x) => `${x.n}:${x.your || "-"}${x.ok ? "✓" : "✗" + x.ans}`).join(" ") : "");
+                        const it = (r.writing?.items || []).slice(0, 20).map(x => ({ n: Number(x.n) || 0, text: String(x.text || "").slice(0, 8000), ref: String(x.ref || "").slice(0, 4000) }));
+                        Object.assign(cap, {
+                          autoResult: true, partialSubmit: true, bridge: "manual",
+                          listeningScore: r.listening?.score ?? null, listeningCorrect: r.listening?.correct ?? null, listeningTotal: r.listening?.total ?? null,
+                          readingScore: r.reading?.score ?? null, readingCorrect: r.reading?.correct ?? null, readingTotal: r.reading?.total ?? null,
+                          listeningDetail: brief(r.listening?.detail), readingDetail: brief(r.reading?.detail),
+                          writingItems: it, writingAutoCorrect: r.writing?.auto?.correct ?? null, writingAutoTotal: r.writing?.auto?.total ?? null, writingAutoDetail: brief(r.writing?.auto?.detail),
+                        });
+                      }
+                    } catch (_) {}
                     await addDoc(collection(db, "hsk3_submissions"), {
                       userId: userId || "guest",
                       userName: user?.fullName || "Học viên ẩn danh",
@@ -1215,6 +1236,13 @@ export default function HomePage() {
             <iframe
               {...htmlFrameProps(activeHskExamView)}
               data-hsk3-frame=""
+              onLoad={(e) => {
+                try {
+                  const w = e.currentTarget.contentWindow, d = e.currentTarget.contentDocument;
+                  if (!w || !d || w.__hsk3Bridge) return;
+                  const sc = d.createElement("script"); sc.textContent = HSK3_BRIDGE; (d.body || d.documentElement).appendChild(sc);
+                } catch (_) {}
+              }}
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals"

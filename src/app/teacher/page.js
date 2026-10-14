@@ -1346,7 +1346,21 @@ export default function TeacherDashboard() {
                             <p className="mt-3 leading-6 break-words"><b>Nghe:</b> {selectedHsk3Submission.listeningDetail}</p>
                             <p className="mt-2 leading-6 break-words"><b>Đọc:</b> {selectedHsk3Submission.readingDetail}</p>
                           </details>
-                          {[71, 72].map((n) => (
+                          {selectedHsk3Submission.partialSubmit && (
+                            <div className="rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] p-3 text-xs text-[#92400E]">Học viên bấm “Nộp bài &amp; thoát” khi chưa nộp trong đề — điểm trên tính theo các câu đã làm lúc đó (câu bỏ trống tính sai).</div>
+                          )}
+                          {selectedHsk3Submission.writingAutoTotal ? (
+                            <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF5] p-3 text-sm"><b>Viết phần 1 (tự chấm):</b> đúng {selectedHsk3Submission.writingAutoCorrect}/{selectedHsk3Submission.writingAutoTotal} câu <span className="text-xs text-slate-500 break-words">· {selectedHsk3Submission.writingAutoDetail}</span></div>
+                          ) : null}
+                          {Array.isArray(selectedHsk3Submission.writingItems) && selectedHsk3Submission.writingItems.length > 0 ? selectedHsk3Submission.writingItems.map((it) => (
+                            <div key={it.n}>
+                              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Bài viết câu {it.n} · {(it.text || "").replace(/\s/g, "").length} chữ</label>
+                              <div className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] text-base leading-8 whitespace-pre-wrap" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}>
+                                {it.text || <span className="text-slate-400">(Học viên chưa viết)</span>}
+                              </div>
+                              {it.ref && <p className="mt-1.5 text-xs text-slate-500" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}><b>Tham khảo:</b> {it.ref}</p>}
+                            </div>
+                          )) : (selectedHsk3Submission.bridge ? [] : [71, 72]).map((n) => (
                             <div key={n}>
                               <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Bài viết câu {n} · {selectedHsk3Submission[`writing${n}Count`] || 0} chữ (yêu cầu ≥ {n === 71 ? 100 : 200})</label>
                               <div className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] text-base leading-8 whitespace-pre-wrap" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}>
