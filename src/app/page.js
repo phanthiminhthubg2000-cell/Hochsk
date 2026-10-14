@@ -187,6 +187,17 @@ const GAMES = [
     tags: ["Camera", "10 từ / lượt", "Cả lớp"],
     href: "/game-nghieng-dau.html",
     bg: "from-[#2A1650] to-[#4B2A8A]",
+    face: ["左", "右"],
+  },
+  {
+    key: "trieu-phu",
+    title: "Ai là triệu phú",
+    zh: "百万富翁",
+    desc: "10 câu hỏi khó dần, 4 đáp án, 3 quyền trợ giúp (50:50 · hỏi cả lớp · đổi câu) và 2 mốc an toàn.",
+    tags: ["4 đáp án", "Khó dần", "Ôn tập cuối chương"],
+    href: "/game-trieu-phu.html",
+    bg: "from-[#050B2E] to-[#1D47B8]",
+    face: ["百", "万"],
   },
 ];
 
@@ -849,9 +860,9 @@ export default function HomePage() {
                     className="group rounded-[22px] overflow-hidden bg-white border border-[#DDE6D3] hover:border-[#2E9D5B] hover:shadow-md transition-all flex flex-col">
                     <div className={`h-36 bg-gradient-to-br ${g.bg} grid place-items-center relative`}>
                       <div className="flex items-center gap-3">
-                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#C9F2DF] text-[#1B1530] text-3xl font-bold grid place-items-center -rotate-6 group-hover:-rotate-12 transition-transform">左</span>
+                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#C9F2DF] text-[#1B1530] text-3xl font-bold grid place-items-center -rotate-6 group-hover:-rotate-12 transition-transform">{g.face[0]}</span>
                         <span className="text-[#FFD25A] text-2xl font-bold">⇄</span>
-                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#F8D3EA] text-[#1B1530] text-3xl font-bold grid place-items-center rotate-6 group-hover:rotate-12 transition-transform">右</span>
+                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#F8D3EA] text-[#1B1530] text-3xl font-bold grid place-items-center rotate-6 group-hover:rotate-12 transition-transform">{g.face[1]}</span>
                       </div>
                     </div>
                     <div className="p-5 flex flex-col gap-2 flex-1">
