@@ -178,6 +178,93 @@ const TABS = [
 ];
 
 // KHU CHƠI — mỗi trò là một tệp .html trong /public
+// ---------- Bìa minh hoạ riêng cho từng trò chơi ----------
+const GAME_STYLE = {
+  "nghieng-dau": { ink: "#5B33B0", soft: "#EEE7FB", badge: "📷 Camera", meta: "1 máy chiếu · cả lớp" },
+  "trieu-phu": { ink: "#1D47B8", soft: "#E6EDFC", badge: "🏆 10 câu", meta: "1 máy chiếu · cả lớp" },
+  "bom": { ink: "#C2410C", soft: "#FDEBDD", badge: "📱 Nhiều máy", meta: "Mỗi HS 1 điện thoại" },
+};
+
+function GameCover({ g }) {
+  const st = GAME_STYLE[g.key] || {};
+  return (
+    <div className={`h-44 bg-gradient-to-br ${g.bg} relative overflow-hidden`}>
+      {/* hoạ tiết chữ Hán mờ */}
+      <div aria-hidden="true" className="zh absolute inset-0 text-white/[.05] font-bold text-[44px] leading-[1.15] tracking-[.3em] select-none -rotate-12 scale-125 whitespace-pre">
+        {"汉字游戏学习\n中文快乐课堂\n汉语水平考试\n汉字游戏学习"}
+      </div>
+      <span className="absolute top-3 left-3 z-10 text-[11px] font-extrabold tracking-wide text-white bg-black/25 backdrop-blur px-2.5 py-1 rounded-full">{st.badge}</span>
+      <div className="absolute inset-0 grid place-items-center">
+        {g.key === "nghieng-dau" && <CoverTilt />}
+        {g.key === "trieu-phu" && <CoverMillion />}
+        {g.key === "bom" && <CoverBomb />}
+        {!["nghieng-dau", "trieu-phu", "bom"].includes(g.key) && (
+          <div className="flex gap-3 zh text-3xl font-bold">{g.face.map((f) => <span key={f} className="w-16 h-[70px] rounded-2xl bg-white grid place-items-center">{f}</span>)}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Nghiêng đầu: khuôn mặt lắc trái/phải giữa 2 thẻ 左 右
+function CoverTilt() {
+  return (
+    <div className="flex items-center gap-5">
+      <span className="zh w-14 h-16 rounded-2xl bg-[#C9F2DF] text-[#1B1530] text-3xl font-bold grid place-items-center -rotate-12 shadow-lg transition-transform group-hover:-translate-x-1">左</span>
+      <svg viewBox="0 0 100 110" className="w-24 h-24 gc-tilt drop-shadow-lg" aria-hidden="true">
+        <rect x="18" y="98" width="64" height="12" rx="6" fill="#2A1650" opacity=".35" />
+        <circle cx="50" cy="52" r="38" fill="#FFD9A8" />
+        <path d="M14 46 q8 -36 36 -36 q28 0 36 36 q-14 -16 -36 -16 q-22 0 -36 16z" fill="#2A1650" />
+        <circle cx="37" cy="56" r="5" fill="#2A1650" /><circle cx="63" cy="56" r="5" fill="#2A1650" />
+        <circle cx="29" cy="68" r="5" fill="#FF9DB5" opacity=".7" /><circle cx="71" cy="68" r="5" fill="#FF9DB5" opacity=".7" />
+        <path d="M40 72 q10 9 20 0" stroke="#2A1650" strokeWidth="4" fill="none" strokeLinecap="round" />
+      </svg>
+      <span className="zh w-14 h-16 rounded-2xl bg-[#F8D3EA] text-[#1B1530] text-3xl font-bold grid place-items-center rotate-12 shadow-lg transition-transform group-hover:translate-x-1">右</span>
+    </div>
+  );
+}
+
+// Triệu phú: đèn sân khấu + bảng đáp án + giải thưởng
+function CoverMillion() {
+  return (
+    <div className="relative w-full h-full">
+      <div aria-hidden="true" className="gc-glow absolute left-1/2 -translate-x-1/2 -top-10 w-72 h-72 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,214,90,.45), transparent 62%)" }} />
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
+        <div className="gc-float text-[#FFD25A] font-extrabold text-3xl tracking-wide drop-shadow">💰 1.000.000</div>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 w-[230px]">
+          {[["A", "学习"], ["B", "工作"], ["C", "朋友"], ["D", "老师"]].map(([k, w]) => (
+            <span key={k} className={`zh h-8 rounded-full border-2 text-sm font-bold flex items-center gap-2 px-3 ${k === "C" ? "bg-[#FFB627] border-[#FFE29A] text-[#1B1530]" : "bg-[#0B1A5C]/80 border-[#6E8EF0] text-white"}`}>
+              <b className={k === "C" ? "text-[#1B1530]" : "text-[#FFD25A]"}>{k}</b>{w}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Bom: quả bom ngòi cháy + điện thoại quét QR
+function CoverBomb() {
+  return (
+    <div className="flex items-end gap-4">
+      <svg viewBox="0 0 120 120" className="w-32 h-32 gc-shake drop-shadow-xl" aria-hidden="true">
+        <circle cx="56" cy="72" r="38" fill="#1F2A24" />
+        <circle cx="44" cy="58" r="10" fill="#47564D" />
+        <rect x="70" y="26" width="18" height="15" rx="4" transform="rotate(40 79 33)" fill="#47564D" />
+        <path d="M86 26 q8 -12 20 -14" stroke="#E2B77A" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <g transform="translate(106 12)"><g className="gc-spark"><circle r="9" fill="#FFB627" /><circle r="4.5" fill="#FFF3C4" /></g></g>
+        <text x="56" y="82" textAnchor="middle" fontSize="26" fontWeight="800" fill="#FFB627" fontFamily="Noto Sans SC, sans-serif">炸</text>
+      </svg>
+      <div className="gc-float w-[62px] h-[104px] rounded-[14px] bg-[#1B1530] border-[3px] border-white/80 p-1.5 flex flex-col items-center gap-1 shadow-xl -rotate-6">
+        <div className="w-full flex-1 rounded-md bg-white grid grid-cols-5 grid-rows-5 gap-[2px] p-1">
+          {[1,1,1,0,1, 1,0,1,1,0, 1,1,0,1,1, 0,1,1,0,1, 1,0,1,1,1].map((v, i) => <span key={i} className={v ? "bg-[#1B1530] rounded-[1px]" : ""} />)}
+        </div>
+        <span className="text-[9px] font-extrabold text-white tracking-wider">QUÉT QR</span>
+      </div>
+    </div>
+  );
+}
+
 const GAMES = [
   {
     key: "nghieng-dau",
@@ -867,14 +954,8 @@ export default function HomePage() {
               <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {GAMES.map(g => (
                   <a key={g.key} href={g.href} target="_blank" rel="noopener"
-                    className="group rounded-[22px] overflow-hidden bg-white border border-[#DDE6D3] hover:border-[#2E9D5B] hover:shadow-md transition-all flex flex-col">
-                    <div className={`h-36 bg-gradient-to-br ${g.bg} grid place-items-center relative`}>
-                      <div className="flex items-center gap-3">
-                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#C9F2DF] text-[#1B1530] text-3xl font-bold grid place-items-center -rotate-6 group-hover:-rotate-12 transition-transform">{g.face[0]}</span>
-                        <span className="text-[#FFD25A] text-2xl font-bold">⇄</span>
-                        <span className="zh w-16 h-[70px] rounded-2xl bg-[#F8D3EA] text-[#1B1530] text-3xl font-bold grid place-items-center rotate-6 group-hover:rotate-12 transition-transform">{g.face[1]}</span>
-                      </div>
-                    </div>
+                    className="group rounded-[22px] overflow-hidden bg-white border border-[#DDE6D3] hover:-translate-y-1 hover:shadow-[0_14px_30px_-12px_rgba(19,38,28,.35)] transition-all duration-300 flex flex-col">
+                    <GameCover g={g} />
                     <div className="p-5 flex flex-col gap-2 flex-1">
                       <div className="flex items-baseline gap-2 flex-wrap">
                         <h3 className="font-extrabold text-lg">{g.title}</h3>
@@ -882,11 +963,14 @@ export default function HomePage() {
                       </div>
                       <p className="text-sm text-[#3F5546] leading-snug">{g.desc}</p>
                       <div className="flex flex-wrap gap-1.5 mt-1">
-                        {g.tags.map(t => <span key={t} className="text-xs font-semibold text-[#1E5C38] bg-[#E7F5EC] px-2.5 py-1 rounded-full">{t}</span>)}
+                        {g.tags.map(t => <span key={t} className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ color: GAME_STYLE[g.key]?.ink, background: GAME_STYLE[g.key]?.soft }}>{t}</span>)}
                       </div>
-                      <span className="mt-auto pt-3 inline-flex items-center gap-1.5 text-sm font-bold text-[#1E7A45]">
-                        <Icon name="play" className="w-4 h-4" />Vào chơi
-                      </span>
+                      <div className="mt-auto pt-4 flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1.5 h-10 px-4 rounded-full text-sm font-bold text-white transition-transform group-hover:scale-105" style={{ background: GAME_STYLE[g.key]?.ink }}>
+                          <Icon name="play" className="w-4 h-4" />Vào chơi
+                        </span>
+                        <span className="text-xs font-semibold text-[#5B7262]">{GAME_STYLE[g.key]?.meta}</span>
+                      </div>
                     </div>
                   </a>
                 ))}

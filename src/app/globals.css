@@ -7,3 +7,17 @@
     transform: rotate(3deg);
   }
 }
+/* ===== Bìa trò chơi (tab Chơi) ===== */
+@keyframes gc-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+@keyframes gc-tilt { 0%,100% { transform: rotate(-14deg) } 50% { transform: rotate(14deg) } }
+@keyframes gc-spark { 0%,100% { transform: scale(1); opacity: 1 } 50% { transform: scale(1.45); opacity: .65 } }
+@keyframes gc-shake { 0%,100% { transform: rotate(-3deg) } 50% { transform: rotate(3deg) } }
+@keyframes gc-glow { 0%,100% { opacity: .55 } 50% { opacity: .95 } }
+.gc-float { animation: gc-float 3.2s ease-in-out infinite }
+.gc-tilt { animation: gc-tilt 2.6s ease-in-out infinite; transform-origin: 50% 85% }
+.gc-spark { animation: gc-spark .35s ease-in-out infinite; transform-box: fill-box; transform-origin: center }
+.gc-shake { animation: gc-shake 1.1s ease-in-out infinite; transform-origin: 50% 60% }
+.gc-glow { animation: gc-glow 2.4s ease-in-out infinite }
+.group:hover .gc-shake { animation-duration: .22s }
+.group:hover .gc-tilt { animation-duration: 1.2s }
+@media (prefers-reduced-motion: reduce) { .gc-float,.gc-tilt,.gc-spark,.gc-shake,.gc-glow { animation: none } }
