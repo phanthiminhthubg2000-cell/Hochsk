@@ -6,6 +6,7 @@
 // Ao sen tự nở: mỗi bài giảng được đánh dấu "Đã học xong" = 1 bông sen
 // ============================================================
 import Link from "next/link";
+import { STATIC_LECTURES } from "./staticLectures";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { db } from "../firebase";
@@ -416,11 +417,11 @@ export default function HomePage() {
   const fetchLectures = useCallback(async () => {
     try {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
-      const list = [];
+      const list = [...STATIC_LECTURES];
       snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
       list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
       setLecturesBankList(list);
-    } catch (err) { console.error("Lỗi tải bài giảng:", err); }
+    } catch (err) { console.error("Lỗi tải bài giảng:", err); setLecturesBankList([...STATIC_LECTURES]); }
   }, []);
 
   useEffect(() => { fetchHsk3Exams(); fetchLectures(); }, [fetchHsk3Exams, fetchLectures]);
