@@ -406,12 +406,20 @@ export default function HomePage() {
   }, []);
 
   const fetchHsk3Exams = useCallback(async () => {
+    // Đề tĩnh trong /public/hsk3-exam/exams.json (không cần tải lên Firestore)
+    let statics = [];
+    try {
+      const r = await fetch("/hsk3-exam/exams.json", { cache: "no-store" });
+      if (r.ok) statics = (await r.json()).filter(e => e && e.fileUrl && !e.hidden).map(e => ({ ...e, createdAt: e.addedAt ? { toMillis: () => Date.parse(e.addedAt) } : null }));
+    } catch (err) { console.warn("Không đọc được /hsk3-exam/exams.json:", err); }
+    if (statics.length) setHsk3ExamsList(prev => (prev.length ? prev : statics));
+    const list = [];
     try {
       const snapshot = await getDocs(collection(db, "hsk3_exams_bank"));
-      const list = [];
       snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
-      setHsk3ExamsList(list);
     } catch (err) { console.error("Lỗi tải kho đề thi HSK 3.0:", err); }
+    const names = new Set(list.map(e => e.examName));
+    setHsk3ExamsList([...list, ...statics.filter(e => !names.has(e.examName))]);
   }, []);
 
   const fetchLectures = useCallback(async () => {
