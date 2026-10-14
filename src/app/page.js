@@ -16,8 +16,6 @@ import { useHskkResultSaver } from "../hskkResultSaver";
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
-import cardsData from "./cards.json";
-import topicData from "./topics.json";
 
 // 6 CẤP ĐỘ HSK 3.0 (kho đề thi)
 const HSK3_LEVELS = [
@@ -92,25 +90,25 @@ function captureExamFrame() {
 // ============================================================
 // TỪ ĐIỂN
 // ============================================================
-const getLocalDictionary = () => {
-  const dict = [];
-  if (Array.isArray(cardsData)) {
-    cardsData.forEach(item => dict.push({
+// Từ điển ~3 MB chỉ được tải khi học viên gõ tra từ lần đầu (không làm nặng trang chủ).
+let dictPromise = null;
+const loadLocalDictionary = () => {
+  if (!dictPromise) dictPromise = Promise.all([import("./cards.json"), import("./topics.json")]).then(([c, t]) => {
+    const cardsData = c.default || c, topicData = t.default || t, dict = [];
+    if (Array.isArray(cardsData)) cardsData.forEach(item => dict.push({
       hanzi: item.chinese || item.hanzi || item.front || item.word || "",
-      pinyin: item.pinyin || "",
+      pinyin: item.pinyin || item.ipa || "",
       meaning: item.vietnamese || item.meaning || item.back || "",
     }));
-  }
-  if (Array.isArray(topicData)) {
-    topicData.forEach(topic => (topic.words || []).forEach(w => dict.push({
+    if (Array.isArray(topicData)) topicData.forEach(topic => (topic.words || []).forEach(w => dict.push({
       hanzi: w.chinese || w.hanzi || w.word || "",
       pinyin: w.pinyin || "",
       meaning: w.vietnamese || w.meaning || "",
     })));
-  }
-  return Array.from(new Map(dict.map(i => [i.hanzi, i])).values()).filter(i => i.hanzi);
+    return Array.from(new Map(dict.map(i => [i.hanzi, i])).values()).filter(i => i.hanzi);
+  });
+  return dictPromise;
 };
-const localDictionary = getLocalDictionary();
 
 // ============================================================
 // BIỂU TƯỢNG (SVG nét, không dùng emoji)
@@ -364,6 +362,8 @@ export default function HomePage() {
   const [lessonsDone, setLessonsDone] = useState([]);   // [lectureId]
   const [bloomFx, setBloomFx] = useState(false);
   const [learnQuery, setLearnQuery] = useState("");
+  const [localDictionary, setLocalDictionary] = useState([]);
+  useEffect(() => { if (learnQuery.trim() && !localDictionary.length) loadLocalDictionary().then(setLocalDictionary).catch(() => {}); }, [learnQuery, localDictionary.length]);
 
   // --- ĐỀ THI ---
   const [hsk3ExamsList, setHsk3ExamsList] = useState([]);
