@@ -1233,6 +1233,23 @@ export default function TeacherDashboard() {
                                     🖥️ Xem thử
                                   </button>
                                   <button
+                                    onClick={async () => {
+                                      try {
+                                        let html = ex.htmlContent;
+                                        if (!html && ex.fileUrl) html = await (await fetch(ex.fileUrl)).text();
+                                        if (!html) return alert("Đề này không có nội dung HTML để tải.");
+                                        const a = document.createElement("a");
+                                        a.href = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+                                        a.download = (ex.examName || "de-thi").replace(/[\\/:*?"<>|]+/g, "_") + ".html";
+                                        document.body.appendChild(a); a.click(); a.remove();
+                                        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+                                      } catch (err) { alert("Không tải được file: " + err.message); }
+                                    }}
+                                    className="py-1.5 px-3 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-lg text-[10px] font-bold border border-sky-200"
+                                  >
+                                    ⬇️ Tải file
+                                  </button>
+                                  <button
                                     onClick={() => handleDeleteHskExam(ex.id)}
                                     className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
                                   >
