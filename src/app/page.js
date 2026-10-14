@@ -58,6 +58,36 @@ function htmlFrameProps(item) {
   return { src: url };
 }
 
+// Thu bài làm từ iframe đề thi (đề không tự gửi kết quả): đọc các lựa chọn / ô viết + nội dung trang
+function captureExamFrame() {
+  try {
+    const f = document.querySelector("iframe[data-hsk3-frame]");
+    const doc = f && (f.contentDocument || f.contentWindow?.document);
+    if (!doc || !doc.body) return null;
+    const txt = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
+    const labelOf = (el) => {
+      if (el.id) { const l = doc.querySelector(`label[for="${CSS.escape(el.id)}"]`); if (l) return txt(l); }
+      const l = el.closest("label"); if (l) return txt(l);
+      return txt(el.parentElement).slice(0, 60);
+    };
+    const choices = [];
+    doc.querySelectorAll("input[type=radio]:checked, input[type=checkbox]:checked").forEach((el) => {
+      choices.push(`${el.name || el.id || "?"}: ${el.value && el.value !== "on" ? el.value : ""} ${labelOf(el)}`.replace(/\s+/g, " ").trim().slice(0, 120));
+    });
+    doc.querySelectorAll("select").forEach((el) => { if (el.value) choices.push(`${el.name || el.id || "?"}: ${el.value}`); });
+    const texts = [];
+    doc.querySelectorAll("textarea, input[type=text], input:not([type]), [contenteditable=true]").forEach((el) => {
+      const v = (el.value ?? el.innerText ?? "").trim();
+      if (v) texts.push(`[${el.name || el.id || el.placeholder || "ô viết"}]\n${v}`);
+    });
+    return {
+      capturedChoices: choices.join("\n").slice(0, 30000),
+      capturedTexts: texts.join("\n\n").slice(0, 40000),
+      capturedPageText: (doc.body.innerText || "").replace(/\n{3,}/g, "\n\n").trim().slice(0, 20000),
+    };
+  } catch (e) { return { captureError: String(e && e.message || e) }; }
+}
+
 // ============================================================
 // TỪ ĐIỂN
 // ============================================================
@@ -1150,6 +1180,7 @@ export default function HomePage() {
                 }
                 if (window.confirm("Bạn có chắc chắn muốn nộp bài thi này không?")) {
                   try {
+                    const cap = captureExamFrame() || {};
                     await addDoc(collection(db, "hsk3_submissions"), {
                       userId: userId || "guest",
                       userName: user?.fullName || "Học viên ẩn danh",
@@ -1158,6 +1189,8 @@ export default function HomePage() {
                       examName: activeHskExamView.examName,
                       level: activeHskExamView.level,
                       status: "pending_teacher",
+                      manualSubmit: true,
+                      ...cap,
                       submittedAt: serverTimestamp()
                     });
                     alert("Nộp bài thành công! Kết quả đã được gửi về cho giáo viên.");
@@ -1181,6 +1214,7 @@ export default function HomePage() {
           <div className="flex-1 bg-[#F4F7EF] relative overflow-hidden">
             <iframe
               {...htmlFrameProps(activeHskExamView)}
+              data-hsk3-frame=""
               title={activeHskExamView.examName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals"

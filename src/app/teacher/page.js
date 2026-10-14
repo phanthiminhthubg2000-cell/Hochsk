@@ -1340,6 +1340,31 @@ export default function TeacherDashboard() {
                         </div>
                       )}
 
+                      {!selectedHsk3Submission.autoResult && (() => {
+                        const sub = selectedHsk3Submission;
+                        const has = sub.capturedChoices || sub.capturedTexts || sub.capturedPageText;
+                        const box = "w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] text-sm leading-7 whitespace-pre-wrap break-words max-h-[420px] overflow-auto";
+                        const zh = { fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" };
+                        if (!has) return (
+                          <div className="rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] p-4 text-sm text-[#92400E] leading-6">
+                            <b>Bài nộp này không kèm bài làm.</b> Học viên đã bấm “Nộp bài &amp; thoát” ở thanh trên cùng, và đề này không tự gửi đáp án về hệ thống, nên chỉ ghi nhận được việc nộp bài. (Từ nay, khi học viên bấm nút đó, hệ thống sẽ tự chụp lại các lựa chọn và phần viết trong đề.)
+                          </div>
+                        );
+                        return (
+                          <div className="space-y-4">
+                            <div className="rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-3 text-xs text-[#1E40AF]">Đề này không tự chấm — dưới đây là bài làm được chụp lại lúc học viên bấm “Nộp bài &amp; thoát”.</div>
+                            {sub.capturedChoices && (<div><label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Các đáp án học viên đã chọn</label><div className={box} style={zh}>{sub.capturedChoices}</div></div>)}
+                            {sub.capturedTexts && (<div><label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Phần học viên viết</label><div className={box + " text-base leading-8"} style={zh}>{sub.capturedTexts}</div></div>)}
+                            {sub.capturedPageText && (
+                              <details className="rounded-2xl border border-[#E2E8F0] p-4 text-xs text-slate-600">
+                                <summary className="cursor-pointer font-black text-[#142033]">Màn hình đề lúc nộp bài (có thể chứa điểm/kết quả đề tự hiện)</summary>
+                                <div className="mt-3 whitespace-pre-wrap break-words leading-6 max-h-[420px] overflow-auto" style={zh}>{sub.capturedPageText}</div>
+                              </details>
+                            )}
+                          </div>
+                        );
+                      })()}
+
                       <div>
                         <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Điểm số tổng (0 - 100)</label>
                         <input 
