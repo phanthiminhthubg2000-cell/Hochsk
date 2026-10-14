@@ -89,5 +89,23 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 15 · 纸上谈兵",
   "level": "HSK5.1 2.0",
   "fileUrl": "/lectures/hsk5-1/LESSON_15.html"
+ },
+ {
+  "id": "static-hsk5-1-16",
+  "lectureName": "Bài 16 · 体重与节食",
+  "level": "HSK5.1 2.0",
+  "fileUrl": "/lectures/hsk5-1/LESSON_16.html"
+ },
+ {
+  "id": "static-hsk5-1-17",
+  "lectureName": "Bài 17 · 在最美好的时刻离开",
+  "level": "HSK5.1 2.0",
+  "fileUrl": "/lectures/hsk5-1/LESSON_17.html"
+ },
+ {
+  "id": "static-hsk5-1-18",
+  "lectureName": "Bài 18 · 抽象艺术美不美？",
+  "level": "HSK5.1 2.0",
+  "fileUrl": "/lectures/hsk5-1/LESSON_18.html"
  }
 ];
