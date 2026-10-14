@@ -78,6 +78,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 .hud button{border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:12px;padding:7px 12px;font-weight:800;font-size:14px}
 .dots{display:flex;gap:6px}
 .dots i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.18);display:block}
+.dots.pb{width:180px;height:10px;border-radius:6px;background:rgba(255,255,255,.18);overflow:hidden}.dots.pb i{width:0;height:100%;border-radius:0;background:var(--gold);transition:width .3s}
 .dots i.ok{background:var(--ok)}.dots i.bad{background:var(--bad)}.dots i.cur{background:var(--gold);box-shadow:0 0 0 3px rgba(255,210,90,.3)}
 .tbar{height:8px;border-radius:8px;background:rgba(255,255,255,.1);overflow:hidden}
 .tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--ok),var(--gold));transform-origin:left;transition:background .3s}
@@ -158,7 +159,7 @@ button{font:inherit;cursor:pointer;color:inherit}
     <div class="hero">
       <span class="pill" id="heroPill">HSK ✦ THỬ THÁCH TỪ VỰNG</span>
       <h1>Nghiêng đầu.<span>CHINH PHỤC CHỮ HÁN!</span></h1>
-      <p>Hai lựa chọn. Một cú nghiêng. Mỗi lượt 10 từ — bạn đúng được bao nhiêu câu?</p>
+      <p>Hai lựa chọn. Một cú nghiêng. Mỗi lượt là toàn bộ từ vựng của bài đã chọn — bạn đúng được bao nhiêu câu?</p>
       <div class="demo"><div class="dcard l"><span id="dL">姐姐</span><small>← CHỌN TRÁI</small></div><div class="bolt">⚡</div><div class="dcard r"><span id="dR">妹妹</span><small>CHỌN PHẢI →</small></div></div>
     </div>
     <div class="panel">
@@ -197,7 +198,7 @@ button{font:inherit;cursor:pointer;color:inherit}
       <li>Trả lời xong, <b>đưa đầu về thẳng</b> để sang câu tiếp theo.</li>
       <li>Không có camera: dùng phím <b>← →</b>, hoặc bấm / chạm trực tiếp vào ô đáp án. Phím <b>P</b> tạm dừng, <b>F</b> toàn màn hình.</li>
       <li>Nếu máy nhận nhầm hướng (ví dụ camera đặt ngược), bật <b>Đảo trái / phải</b>. Nhấn <b>C</b> để căn lại tư thế đầu thẳng (khi đổi học sinh).</li>
-      <li>Mỗi lượt 10 từ; bấm <b>Lượt mới</b> để chơi tiếp 10 từ khác chưa xuất hiện.</li>
+      <li>Mỗi lượt gồm <b>tất cả từ vựng</b> của các bài đã chọn (số câu tuỳ bài), thứ tự xáo trộn; bấm <b>Lượt mới</b> để chơi lại với thứ tự khác.</li>
     </ol>
   </div>
 </section>
@@ -205,7 +206,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 <!-- ============ GAME ============ -->
 <section class="screen" id="game">
   <div class="hud">
-    <span class="chip">Câu <b id="hNo">1</b>/10</span>
+    <span class="chip">Câu <b id="hNo">1</b>/<span id="hTot">10</span></span>
     <div class="dots" id="dots"></div>
     <span class="chip">Điểm <b id="hScore">0</b></span>
     <span class="chip combo" id="hCombo" hidden></span>
@@ -233,14 +234,14 @@ button{font:inherit;cursor:pointer;color:inherit}
 <!-- ============ RESULT ============ -->
 <section class="screen" id="result">
   <div class="res">
-    <div class="score" id="rScore">0<small>/10</small></div>
+    <div class="score" id="rScore">0<small>/0</small></div>
     <div class="stars" id="rStars"></div>
     <div class="msg" id="rMsg"></div>
     <div class="sub" id="rSub"></div>
     <div class="rbtn">
-      <button class="main" id="nextBtn">▶ Lượt mới (10 từ khác)</button>
+      <button class="main" id="nextBtn">▶ Lượt mới (xáo lại thứ tự)</button>
       <button id="wrongBtn">🔁 Ôn lại câu sai</button>
-      <button id="againBtn">↺ Chơi lại 10 từ này</button>
+      <button id="againBtn">↺ Chơi lại đúng thứ tự này</button>
       <button id="homeBtn">⚙ Đổi bài</button>
     </div>
     <div class="rlist" id="rList"></div>
@@ -315,10 +316,8 @@ function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
 /* ---------- words & questions ---------- */
 const USED=new Set();
 function newWords(){const p=pool();if(p.length<2){toast('Hãy chọn bài có ít nhất 2 từ.');return null}
-  let fresh=shuf(p.filter(w=>!USED.has(w[0])));
-  if(fresh.length<10){if(fresh.length===0)toast('Đã chơi hết từ của các bài đã chọn — bắt đầu vòng mới!');USED.clear();fresh=fresh.concat(shuf(p.filter(w=>!fresh.includes(w))))}
-  const ws=fresh.slice(0,10);while(ws.length<10)ws.push(rnd(p));ws.forEach(w=>USED.add(w[0]));return ws}
-function fillTo10(ws){const out=ws.slice();const p=pool();while(out.length<10)out.push(rnd(ws.length?ws:p));return shuf(out)}
+  return shuf(p)}
+function fillTo10(ws){return shuf(ws.slice())}
 function modesFor(w){const m=['py2hz','hz2py'];if(w[2])m.push('hz2vi','vi2hz');if(w[3])m.push('hz2def','def2hz','def2hz');return m}
 function makeQ(w){
   const P=pool();let mode=S.mode;if(mode==='mix'||(need(mode)&&!w[need(mode)]))mode=rnd(modesFor(w));
@@ -342,7 +341,7 @@ const valCls={0:'hzv',1:'pyv',2:'viv',3:'defv'};
 /* ---------- round ---------- */
 let G={words:[],i:0,score:0,correct:0,combo:0,log:[],q:null,state:'idle'};
 function startRound(ws){if(!ws)return;G={words:ws,i:0,score:0,correct:0,combo:0,best:0,log:[],q:null,state:'idle'};
-  show('game');$('#dots').innerHTML=ws.map(()=>'<i></i>').join('');
+  show('game');$('#hTot').textContent=ws.length;$('#dots').classList.toggle('pb',ws.length>20);$('#dots').innerHTML=ws.length>20?'<i></i>':ws.map(()=>'<i></i>').join('');
   initAudio();
   if(S.ctl==='cam')startCam();else useKeys();
   nextQ()}
@@ -350,7 +349,7 @@ function nextQ(){
   if(G.i>=G.words.length){finish();return}
   const q=G.q=makeQ(G.words[G.i]);
   $('#hNo').textContent=G.i+1;$('#hScore').textContent=G.score;
-  $$('#dots i').forEach((d,k)=>{d.className=k<G.log.length?(G.log[k].ok?'ok':'bad'):(k===G.i?'cur':'')});
+  if(G.words.length>20){$('#dots i').style.width=(100*G.log.length/G.words.length)+'%'}else $$('#dots i').forEach((d,k)=>{d.className=k<G.log.length?(G.log[k].ok?'ok':'bad'):(k===G.i?'cur':'')});
   $('#prompt').innerHTML=promptHTML(q);
   ['L','R'].forEach((s,k)=>{const v=$('#val'+s);v.textContent=q.vals[k];v.className='val '+valCls[q.key];$('#opt'+s).className='opt '+s.toLowerCase();$('#fill'+s).style.height='0'});
   G.state=(S.ctl==='cam'&&CAM.ready&&Math.abs(CAM.angle)>CFG.neutral)?'wait':'ask';
@@ -370,10 +369,10 @@ function answer(side){
   setTimeout(()=>{if(G.state==='done'){nextQ()}},ok?1100:1900)}
 function fb(t,ok){const f=$('#fb');f.textContent=t;f.style.color=ok?'var(--ok)':'var(--bad)';f.classList.add('show');setTimeout(()=>f.classList.remove('show'),700)}
 function finish(){stopTimer();G.state='idle';show('result');stopCam(false);
-  const c=G.correct;$('#rScore').innerHTML=`${c}<small>/10</small>`;
-  const st=c>=10?3:c>=8?3:c>=6?2:c>=4?1:0;$('#rStars').textContent='★'.repeat(st)+'☆'.repeat(3-st);
-  $('#rMsg').textContent=c===10?'Hoàn hảo! 满分！🎉':c>=8?'Xuất sắc! 太棒了！':c>=6?'Khá lắm! 不错！':c>=4?'Cố lên! 加油！':'Ôn lại một chút nhé! 再试一次！';
-  $('#rSub').textContent=`Điểm ${G.score} · chuỗi đúng dài nhất ${G.best} · đã chơi ${USED.size}/${pool().length} từ của các bài đã chọn`;
+  const c=G.correct;$('#rScore').innerHTML=`${c}<small>/${G.words.length}</small>`;
+  const N=G.words.length,r=N?c/N:0;const st=r>=.8?3:r>=.6?2:r>=.4?1:0;$('#rStars').textContent='★'.repeat(st)+'☆'.repeat(3-st);
+  $('#rMsg').textContent=c===N?'Hoàn hảo! 满分！🎉':r>=.8?'Xuất sắc! 太棒了！':r>=.6?'Khá lắm! 不错！':r>=.4?'Cố lên! 加油！':'Ôn lại một chút nhé! 再试一次！';
+  $('#rSub').textContent=`Điểm ${G.score} · chuỗi đúng dài nhất ${G.best} · ${N} câu = toàn bộ từ của các bài đã chọn`;
   $('#rList').innerHTML=G.log.map(x=>`<div><span class="m ${x.ok?'ok':'bad'}">${x.ok?'✓':'✗'}</span><span class="w">${esc(x.w[0])}</span><span class="d"><em>${esc(x.w[1])}</em>${x.w[2]?'<br>'+esc(x.w[2]):(x.w[3]?'<br><span class="hz">'+esc(x.w[3])+'</span>':'')}${x.ok?'':`<br><span style="color:var(--bad)">Đã chọn: ${esc(x.pick)}</span>`}</span></div>`).join('');
   beep('end')}
 function pause(on){if(G.state==='idle')return;$('#pause').classList.toggle('on',on);if(on){G.paused=true;stopTimer(true)}else{G.paused=false;if(G.state==='ask'||G.state==='wait')resumeTimer()}}
