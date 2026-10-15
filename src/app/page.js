@@ -470,9 +470,15 @@ export default function HomePage() {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
       const list = [...STATIC_LECTURES];
       // Bài tĩnh (bản bố cục mới) thay cho bài cùng cấp & cùng số bài đã tải lên Firestore
-      const numOf = (n) => { const m = String(n || "").match(/\d+/); return m ? String(Number(m[0])) : ""; };
+      // Chỉ coi là "trùng" khi tên là bài khoá đánh số (Bài 3 / Lesson 3 / 第3课) — không đụng tới bài ngữ âm, ôn tập, kiểm tra…
+      const numOf = (n) => {
+        const t = String(n || "");
+        if (/ng[uữ]\s*[aâ]m|语音|phát âm|pinyin|ôn tập|kiểm tra|test|đề/i.test(t)) return "";
+        const m = t.match(/(?:bài|lesson|第)\s*0*(\d+)/i);
+        return m ? String(Number(m[1])) : "";
+      };
       const staticKey = new Set(STATIC_LECTURES.map(x => x.level + "#" + numOf(x.lectureName)));
-      snapshot.forEach(d => { const x = { id: d.id, ...d.data() }; if (!staticKey.has(x.level + "#" + numOf(x.lectureName))) list.push(x); });
+      snapshot.forEach(d => { const x = { id: d.id, ...d.data() }; const k = numOf(x.lectureName); if (!k || !staticKey.has(x.level + "#" + k)) list.push(x); });
       list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
       setLecturesBankList(list);
     } catch (err) { console.error("Lỗi tải bài giảng:", err); setLecturesBankList([...STATIC_LECTURES]); }
