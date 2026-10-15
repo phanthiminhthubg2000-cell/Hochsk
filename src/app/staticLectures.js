@@ -113,5 +113,23 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 19 · 家乡的萝卜饼",
   "level": "HSK5.2 2.0",
   "fileUrl": "/lectures/hsk5-2/LESSON_19.html"
+ },
+ {
+  "id": "static-hsk5-2-20",
+  "lectureName": "Bài 20 · 小人书摊",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_20.html"
+ },
+ {
+  "id": "static-hsk5-2-21",
+  "lectureName": "Bài 21 · 汉字叔叔：一个美国人的汉字情缘",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_21.html"
+ },
+ {
+  "id": "static-hsk5-2-22",
+  "lectureName": "Bài 22 · 阅读与思考",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_22.html"
  }
 ];
