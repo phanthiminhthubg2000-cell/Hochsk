@@ -2193,6 +2193,36 @@ export default function TeacherDashboard() {
                                   >
                                     🖥️ Giảng dạy
                                   </button>
+                                  <button
+                                    title="Tải file HTML của bài giảng về máy"
+                                    onClick={async () => {
+                                      try {
+                                        let html = lec.htmlContent;
+                                        if (!html && lec.fileUrl) html = await (await fetch(lec.fileUrl)).text();
+                                        if (!html) return alert("Bài giảng này không có nội dung HTML để tải.");
+                                        const a = document.createElement("a");
+                                        a.href = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+                                        a.download = (lec.lectureName || "bai-giang").replace(/[\\/:*?"<>|]+/g, "_") + ".html";
+                                        document.body.appendChild(a); a.click(); a.remove();
+                                        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+                                      } catch (err) { alert("Không tải được file: " + err.message); }
+                                    }}
+                                    className="py-1.5 px-2.5 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-lg text-[10px] font-bold border border-sky-200"
+                                  >⬇️</button>
+                                  {!String(lec.id).startsWith("static-") && (
+                                    <label title="Thay nội dung bằng file HTML mới (giữ nguyên tên, cấp độ)" className="py-1.5 px-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-[10px] font-bold border border-amber-200 cursor-pointer">
+                                      ♻️
+                                      <input type="file" accept=".html,text/html" className="hidden" onChange={async (e) => {
+                                        const f = e.target.files?.[0]; e.target.value = "";
+                                        if (!f) return;
+                                        const html = await f.text();
+                                        if (new Blob([html]).size > 1000 * 1024) return alert("Tệp lớn hơn 1MB nên Firestore không lưu được.");
+                                        if (!window.confirm(`Thay nội dung bài “${lec.lectureName}” bằng tệp ${f.name}?`)) return;
+                                        try { await updateDoc(doc(db, "lectures_bank", lec.id), { htmlContent: html, updatedAt: serverTimestamp() }); alert("✅ Đã thay nội dung bài giảng."); fetchLecturesBank(); }
+                                        catch (err) { alert("Lỗi khi thay bài giảng: " + err.message); }
+                                      }} />
+                                    </label>
+                                  )}
                                   <button 
                                     onClick={() => handleDeleteLecture(lec.id)} 
                                     className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold border border-rose-200"
