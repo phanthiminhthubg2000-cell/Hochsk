@@ -107,5 +107,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 18 · 抽象艺术美不美？",
   "level": "HSK5.1 2.0",
   "fileUrl": "/lectures/hsk5-1/LESSON_18.html"
+ },
+ {
+  "id": "static-hsk5-2-19",
+  "lectureName": "Bài 19 · 家乡的萝卜饼",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_19.html"
  }
 ];
