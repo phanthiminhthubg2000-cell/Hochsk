@@ -5,6 +5,7 @@ import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { updateUserProgress } from "../../lib/firebaseUtils";
+import GardenNav from "../GardenNav";
 
 export default function HskkPage() {
   const { user, isLoaded } = useUser();
@@ -560,41 +561,7 @@ export default function HskkPage() {
         <div className="absolute inset-0 bg-[#F4F8F5]/90 backdrop-blur-[4px]"></div>
       </div>
       
-      <header className="w-full bg-white/80 backdrop-blur-xl border-b border-rose-100/60 sticky top-0 z-30 shadow-sm px-6 h-[76px] flex items-center justify-between">
-        
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-12 h-12 bg-rose-500 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-white text-2xl shadow-sm border border-rose-600">🐸</div>
-            <div className="hidden sm:block">
-              <h1 className="font-black text-slate-900 text-lg leading-tight">Hành Trình HSK</h1>
-              <p className="text-[10px] text-rose-600 font-bold uppercase tracking-wider mt-0.5">Cuộc chiến khẩu ngữ</p>
-            </div>
-          </Link>
-          <div className="hidden lg:flex items-center gap-2 text-[10px] font-black bg-rose-50 text-rose-700 px-3 py-1 rounded-lg border border-rose-100 ml-4 shadow-sm uppercase tracking-widest">
-            🎙️ Mô phỏng phòng thi
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 pl-4">
-          <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-slate-100 px-4 py-2.5">
-            <span className="text-lg drop-shadow-sm">☀️</span><span className="text-xs font-black text-[#FFD666] drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">{streak}</span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 shadow-sm border border-[#4FB6C7]/30 px-4 py-2.5">
-            <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7] drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">{water}</span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5">
-            <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
-          </div>
-          
-          {isLoaded && user ? (
-            <UserButton afterSignOutUrl="/" />
-          ) : (
-            <SignInButton mode="modal">
-              <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl shadow-md hover:bg-slate-800 transition">Đăng nhập</button>
-            </SignInButton>
-          )}
-        </div>
-      </header>
+      <GardenNav active="exam" title="Phòng thi HSKK · 口语考试" />
 
       <main className="relative z-10 flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center w-full pb-20 pt-8 px-4">
         

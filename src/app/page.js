@@ -341,6 +341,13 @@ export default function HomePage() {
   useHskkResultSaver({ userId, userName: user?.fullName || "", userEmail: user?.primaryEmailAddress?.emailAddress || "" });
 
   const [activeTab, setActiveTab] = useState("home");
+  // Mở đúng khu khi quay về từ trang con: /?tab=learn | practice | exam | play
+  useEffect(() => {
+    try {
+      const t = new URLSearchParams(window.location.search).get("tab");
+      if (t && ["home", "learn", "practice", "exam", "play"].includes(t)) setActiveTab(t);
+    } catch (_) {}
+  }, []);
   const [examTab, setExamTab] = useState("hsk3"); // hsk3 | hskk | test
 
   // --- NGƯỜI HỌC ---

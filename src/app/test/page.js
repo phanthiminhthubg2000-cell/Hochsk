@@ -8,6 +8,7 @@ import Link from "next/link";
 // Import dữ liệu lấy trực tiếp từ arrange và sentences
 import arrangeData from "../arrange.json";    
 import sentencesData from "../sentences.json"; 
+import GardenNav from "../GardenNav";
 
 // --- HÀM HỖ TRỢ CƠ BẢN ---
 function shuffleArray(array) {
@@ -416,19 +417,7 @@ export default function PlacementTestPage() {
            <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
         </div>
 
-        <header className="relative z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-white/50 px-5 md:px-8 flex items-center justify-between backdrop-blur-xl">
-          <Link href="/">
-            <button className="flex items-center gap-2 rounded-2xl bg-white shadow-sm px-4 py-2.5 text-sm font-black text-[#1B5E4B] hover:bg-[#8FD9A8]/20 transition-all border border-[#E2E8F0] hover:border-[#8FD9A8]">
-              ← Trở về Vườn
-            </button>
-          </Link>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm px-4 py-2.5 border border-slate-100"><span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span></div>
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span></div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5"><span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span></div>
-            {isLoaded && <UserButton afterSignOutUrl="/"/>}
-          </div>
-        </header>
+        <GardenNav active="exam" title="Đánh giá năng lực" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center animate-fade-in">
           <div className="text-center mb-12">
@@ -437,10 +426,10 @@ export default function PlacementTestPage() {
             <p className="text-[#2F8F6E] font-medium max-w-lg mx-auto leading-relaxed">Thực hiện bài kiểm tra để gửi về hệ thống. Giáo viên chuyên môn sẽ đánh giá trực tiếp năng lực của bạn.</p>
           </div>
 
-          <div onClick={startComprehensiveTest} className="w-full max-w-2xl bg-[#1B5E4B] p-8 rounded-[32px] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer mb-10 flex items-center gap-6 group border-b-[8px] border-[#2F8F6E]">
-            <div className="w-20 h-20 bg-[#EEF5E9]/20 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:scale-110 transition-transform border border-white/20">📋</div>
+          <div onClick={startComprehensiveTest} className="w-full max-w-2xl bg-[#1B5E4B] p-5 md:p-8 rounded-[28px] md:rounded-[32px] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer mb-10 flex items-center gap-4 md:gap-6 group border-b-[8px] border-[#2F8F6E]">
+            <div className="w-14 h-14 md:w-20 md:h-20 shrink-0 bg-[#EEF5E9]/20 rounded-full flex items-center justify-center text-3xl md:text-4xl shadow-inner group-hover:scale-110 transition-transform border border-white/20">📋</div>
             <div className="flex-1 text-left text-white">
-              <h2 className="text-2xl font-black mb-2 flex items-center gap-2 drop-shadow-sm">Test Chẩn Đoán Toàn Diện <span className="bg-[#F2765B] text-white text-[10px] px-2 py-0.5 rounded uppercase tracking-widest shadow-sm">Khuyên dùng</span></h2>
+              <h2 className="text-xl md:text-2xl font-black mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 drop-shadow-sm">Test Chẩn Đoán Toàn Diện <span className="bg-[#F2765B] text-white text-[10px] px-2 py-0.5 rounded uppercase tracking-widest shadow-sm">Khuyên dùng</span></h2>
               <p className="text-[#8FD9A8] text-sm font-medium">Đánh giá 4 Kỹ năng: Nghe, Nói, Đọc, Viết rút ngẫu nhiên từ 6 cấp độ HSK.</p>
             </div>
           </div>

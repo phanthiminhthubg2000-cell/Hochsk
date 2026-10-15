@@ -7,6 +7,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 
 // Import data từ topics.json
 import myCustomData from "../topics.json"; 
+import GardenNav from "../GardenNav";
 
 const generateLevelsFromData = (data, wordsPerLevel = 10) => {
   const levels = [];
@@ -338,97 +339,21 @@ export default function TopicFlashcardPage() {
   const exampleDisplay = activeWord ? activeWord.example : "";
 
   return (
-    <div className="flex min-h-screen font-sans text-[#1B5E4B] bg-[#F4F7F6] selection:bg-[#8FD9A8]/50">
+    <div className="flex flex-col min-h-screen font-sans text-[#1B5E4B] bg-[#F4F7EF] selection:bg-[#8FD9A8]/50">
+      <GardenNav active="practice" />
       
       {/* ==========================================
           SIDEBAR - HSK GARDEN STYLE
           ========================================== */}
-      <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#E2E8F0] bg-white transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
-        <div className="flex h-full flex-col">
-          <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-sm">🐸</div>
-            {!isSidebarCollapsed && (
-              <div className="min-w-0">
-                <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">Khu Vườn HSK</h2>
-                <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Hành trình của bạn</p>
-              </div>
-            )}
-          </div>
-
-          <nav className="flex-1 overflow-y-auto px-3 py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <Link href="/" className="mb-2 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">🏠</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
-            </Link>
-            
-            <Link href="/test" className="mb-6 flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">🎯</span>{!isSidebarCollapsed && <span>Kiểm tra năng lực</span>}
-            </Link>
-
-            <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">
-              {!isSidebarCollapsed ? "Góc Học Tập" : "•"}
-            </div>
-
-            <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">📚</span>{!isSidebarCollapsed && <span>Từ vựng</span>}
-            </Link>
-            <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl bg-[#8FD9A8]/30 px-3 py-2.5 text-sm font-bold text-[#1B5E4B]">
-              <span className="w-6 text-center text-lg">💡</span>{!isSidebarCollapsed && <span>Theo chủ đề</span>}
-            </Link>
-            <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">🧩</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}
-            </Link>
-            <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">🎧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}
-            </Link>
-            <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">✍️</span>{!isSidebarCollapsed && <span>Dịch câu</span>}
-            </Link>
-            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors">
-              <span className="w-6 text-center text-lg opacity-80">💬</span>{!isSidebarCollapsed && <span>Thực chiến AI</span>}
-            </Link>
-
-            {isTeacher && (
-              <div className="mt-6 mb-2 border-t border-[#E2E8F0] pt-4">
-                <p className="px-3 mb-3 text-[10px] font-black uppercase tracking-widest text-[#FFD666]">{!isSidebarCollapsed ? "Hệ thống" : "•"}</p>
-                <Link href="/teacher" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1B5E4B] bg-[#FFD666]/20 hover:bg-[#FFD666]/40 transition-all shadow-sm">
-                  <span className="w-6 text-center text-lg">🛡️</span>{!isSidebarCollapsed && <span>Trang Quản Lý</span>}
-                </Link>
-              </div>
-            )}
-          </nav>
-
-          <div className="border-t border-[#E2E8F0] p-4">
-            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-slate-50 py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors shadow-sm">
-              {isSidebarCollapsed ? "→" : "← Thu gọn"}
-            </button>
-            {isSignedIn ? (
-              <div className={`flex items-center rounded-2xl bg-white border border-[#E2E8F0] shadow-sm p-2.5 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-                <UserButton afterSignOutUrl="/" />
-                {!isSidebarCollapsed && (
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p>
-                    <p className="text-[9px] text-[#2F8F6E] font-medium mt-0.5">Tài khoản</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <SignInButton mode="modal">
-                <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1B5E4B] py-3 text-xs font-bold text-white hover:bg-[#2F8F6E] shadow-md transition-all">
-                  👤 {!isSidebarCollapsed && "Đăng nhập"}
-                </button>
-              </SignInButton>
-            )}
-          </div>
-        </div>
-      </aside>
+      
 
       {/* ======================================================
           MAIN CONTENT
           ====================================================== */}
-      <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
+      <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col `}>
         
         {/* TOPBAR (Có NƯỚC) */}
-        <header className="sticky top-0 z-30 h-[76px] border-b border-[#E2E8F0] bg-white/80 px-5 md:px-8 flex items-center justify-between backdrop-blur-xl">
+        <header className="px-4 md:px-8 xl:px-[calc((100vw-1200px)/2+2rem)] h-14 md:h-16 border-b border-[#E2E8F0] bg-white/80 flex items-center justify-between backdrop-blur-xl">
           <button onClick={() => setIsSearchOpen(true)} className="flex h-11 max-w-md flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 shadow-sm px-4 text-left text-sm font-medium text-slate-500 hover:bg-white transition-all sm:flex group">
             <span className="text-lg opacity-60">🔍</span>
             <span>Tìm kiếm trong vườn...</span>
@@ -436,15 +361,6 @@ export default function TopicFlashcardPage() {
           </button>
 
           <div className="ml-auto flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white shadow-sm border border-[#E2E8F0] px-4 py-2.5">
-              <span className="text-lg drop-shadow-sm">☀️</span><span className="text-xs font-black text-[#FFD666] drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">{streak}</span>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#4FB6C7]/10 shadow-sm border border-[#4FB6C7]/30 px-4 py-2.5">
-              <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7] drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">{water}</span>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-2xl bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-4 py-2.5">
-              <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
-            </div>
           </div>
         </header>
 

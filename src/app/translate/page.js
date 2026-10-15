@@ -8,6 +8,7 @@ import { updateUserProgress } from "../../lib/firebaseUtils";
 
 // IMPORT DATA TỪ FILE ARRANGE.JSON
 import translationData from "../arrange.json"; 
+import GardenNav from "../GardenNav";
 
 // --- HÀM CHUẨN HÓA LEVEL ---
 const matchLevel = (dataLevel, targetLevel) => {
@@ -271,71 +272,27 @@ export default function TranslatePage() {
   if (loadingUser) return <div className="min-h-screen bg-[#EEF5E9]"></div>;
 
   return (
-    <div className="flex min-h-screen font-sans text-[#1B5E4B] bg-[#EEF5E9] selection:bg-[#8FD9A8]/50">
+    <div className="flex flex-col min-h-screen font-sans text-[#1B5E4B] bg-[#F4F7EF] selection:bg-[#8FD9A8]/50">
+      <GardenNav active="practice" />
       
       {/* ==========================================
           SIDEBAR ĐỒNG BỘ THEME VƯỜN HSK
           ========================================== */}
-      <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
-        <div className="flex h-full flex-col">
-          <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-sm">🐸</div>
-            {!isSidebarCollapsed && (
-              <div className="min-w-0">
-                <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">HSK Garden</h2>
-                <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Khu vườn học tập</p>
-              </div>
-            )}
-          </div>
+      
 
-          <nav className="flex-1 overflow-y-auto px-3 py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌿 KHU VƯỜN" : "•"}</div>
-            <Link href="/" className="mb-6 flex items-center gap-3 rounded-2xl bg-[#8FD9A8]/30 px-3 py-3 text-sm font-bold text-[#1B5E4B] transition-all"><span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}</Link>
-
-            <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌱 KHU RÈN LUYỆN" : "•"}</div>
-            <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🌱</span>{!isSidebarCollapsed && <span>Từ vựng</span>}</Link>
-            <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Chủ đề</span>}</Link>
-            <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
-            <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
-            <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#1B5E4B] bg-[#8FD9A8]/30 border border-[#8FD9A8]/50 shadow-sm"><span className="w-6 text-center text-lg">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
-            
-            <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
-            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
-          </nav>
-
-          <div className="border-t border-[#8FD9A8]/20 p-4">
-            <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="mb-3 flex w-full items-center justify-center rounded-xl bg-white/50 py-2.5 text-xs font-bold text-slate-500 hover:bg-white transition-colors shadow-sm">
-              {isSidebarCollapsed ? "→" : "← Thu gọn"}
-            </button>
-            {isSignedIn ? (
-              <div className={`flex items-center rounded-2xl bg-white shadow-sm p-2.5 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-                <UserButton afterSignOutUrl="/" />
-                {!isSidebarCollapsed && (
-                  <div className="min-w-0"><p className="truncate text-xs font-black text-[#1B5E4B]">{user?.fullName || "Người làm vườn"}</p></div>
-                )}
-              </div>
-            ) : (
-              <SignInButton mode="modal">
-                <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1B5E4B] py-3 text-xs font-bold text-white hover:bg-[#2F8F6E] shadow-md transition-all">👤 {!isSidebarCollapsed && "Đăng nhập"}</button>
-              </SignInButton>
-            )}
-          </div>
-        </div>
-      </aside>
-
-      <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
+      <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col `}>
         
         {/* ==========================================
             TOP BAR ĐỒNG BỘ
             ========================================== */}
-        <header className="sticky top-0 z-30 h-[76px] border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 px-5 backdrop-blur-xl md:px-8 flex items-center justify-between">
+        <header className="px-4 md:px-8 xl:px-[calc((100vw-1200px)/2+2rem)] h-14 md:h-16 border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 backdrop-blur-xl flex items-center justify-between">
           <div className="flex items-center gap-4">
             {step === "DO_TRANSLATION" ? (
               <button onClick={() => setStep("SELECT_LEVEL")} className="text-slate-500 hover:text-[#2F8F6E] transition flex items-center gap-1 font-bold text-sm bg-white px-4 py-2 rounded-xl border border-[#E2E8F0] shadow-sm">
                 ← <span className="hidden sm:inline">Trở về</span>
               </button>
             ) : (
-              <h2 className="font-black text-lg hidden sm:block text-[#1B5E4B]">Dịch Thuật Cùng Ếch xanh</h2>
+              <h2 className="font-black text-base md:text-lg text-[#1B5E4B]">Dịch Thuật Cùng Ếch xanh</h2>
             )}
             
             {step === "DO_TRANSLATION" && (
@@ -347,15 +304,6 @@ export default function TranslatePage() {
           
           <div className="flex items-center gap-3">
             {combo > 1 && <span className="text-xs font-black text-[#F2765B] bg-[#FFF1F2] px-3 py-1.5 rounded-xl border border-[#FECDD3] animate-pulse shadow-sm">🔥 Combo {combo}</span>}
-            <div className="hidden sm:flex items-center gap-1.5 rounded-2xl bg-white/90 backdrop-blur-md shadow-sm px-4 py-2.5 border border-slate-100">
-              <span className="text-lg drop-shadow-sm">🔥</span><span className="text-xs font-black text-[#F2765B]">{streak} ngày</span>
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5 bg-[#4FB6C7]/10 backdrop-blur-md border border-[#4FB6C7]/30 shadow-sm px-4 py-2.5 rounded-2xl">
-              <span className="text-lg drop-shadow-sm">💧</span><span className="text-xs font-black text-[#4FB6C7]">{water} giọt</span>
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5 bg-[#FFD666]/20 backdrop-blur-md border border-[#FFD666]/50 shadow-sm px-4 py-2.5 rounded-2xl">
-              <span className="text-lg drop-shadow-sm">⭐</span><span className="text-xs font-black text-[#1B5E4B]">{hskXp.toLocaleString()} XP</span>
-            </div>
           </div>
         </header>
 

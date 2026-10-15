@@ -5,6 +5,7 @@ import myCustomData from "../cards.json";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit } from "firebase/firestore";
+import GardenNav from "../GardenNav";
 
 // --- HÀM HỖ TRỢ ---
 const generateLevelsFromData = (data, wordsPerLevel = 10) => {
@@ -251,46 +252,18 @@ export default function FlashcardPage() {
   const isAlreadyMastered = activeWord ? wordProgress[activeWord.front] === "mastered" : false;
 
   return (
-    <div className="flex min-h-screen bg-[#EEF5E9] font-sans text-[#1B5E4B] selection:bg-[#8FD9A8]/50">
+    <div className="flex flex-col min-h-screen bg-[#EEF5E9] font-sans text-[#1B5E4B] selection:bg-[#8FD9A8]/50">
+      <GardenNav active="practice" />
       
-      {/* SIDEBAR */}
-      <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#8FD9A8]/30 bg-[#F7FAF3]/90 backdrop-blur-xl transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
-        <div className="flex h-full flex-col">
-          <div className={`flex items-center px-4 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-xl text-white shadow-sm">🐸</div>
-            {!isSidebarCollapsed && (
-              <div className="min-w-0">
-                <h2 className="truncate text-[15px] font-black text-[#1B5E4B] tracking-tight">HSK Garden</h2>
-                <p className="mt-0.5 truncate text-[9px] font-bold uppercase tracking-wider text-[#2F8F6E]">Khu vườn học tập</p>
-              </div>
-            )}
-          </div>
-
-          <nav className="flex-1 overflow-y-auto px-3 py-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌿 KHU VƯỜN" : "•"}</div>
-            <Link href="/" className="mb-6 flex items-center gap-3 rounded-2xl bg-[#8FD9A8]/30 px-3 py-3 text-sm font-bold text-[#1B5E4B] transition-all">
-              <span className="w-6 text-center text-lg">🏡</span>{!isSidebarCollapsed && <span>Trang chủ</span>}
-            </Link>
-
-            <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-widest text-[#2F8F6E]/60">{!isSidebarCollapsed ? "🌱 KHU RÈN LUYỆN" : "•"}</div>
-            <Link href="/vocab" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🌱</span>{!isSidebarCollapsed && <span>Từ vựng</span>}</Link>
-            <Link href="/topic" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🪷</span>{!isSidebarCollapsed && <span>Chủ đề</span>}</Link>
-            <Link href="/arrange" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">☀️</span>{!isSidebarCollapsed && <span>Ngữ pháp</span>}</Link>
-            <Link href="/dictation" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">💧</span>{!isSidebarCollapsed && <span>Nghe chép</span>}</Link>
-            <Link href="/translate" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🍃</span>{!isSidebarCollapsed && <span>Dịch câu</span>}</Link>
-            
-            <Link href="/hskk" className="mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎤</span>{!isSidebarCollapsed && <span>Cuộc chiến khẩu ngữ</span>}</Link>
-            <Link href="/roleplay" className="mb-6 flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 hover:bg-[#8FD9A8]/20 hover:text-[#1B5E4B] transition-colors"><span className="w-6 text-center text-lg opacity-80">🎬</span>{!isSidebarCollapsed && <span>Phim trường</span>}</Link>
-          </nav>
-        </div>
-      </aside>
+      
+      
 
       {/* MAIN CONTENT: VOCABULARY JOURNEY */}
-      <main className="flex-1 relative flex flex-col min-w-0 h-screen overflow-hidden">
+      <main className="flex-1 relative flex flex-col min-w-0">
         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 10px 10px, #8FD9A8 2px, transparent 0)", backgroundSize: "40px 40px" }}></div>
         
         <div className="relative z-10 flex-1 overflow-y-auto scrollbar-hide pb-20">
-          <div className="max-w-4xl mx-auto w-full px-4 md:px-8 pt-6 md:pt-10">
+          <div className="max-w-[1200px] mx-auto w-full px-4 md:px-8 pt-6 md:pt-8">
 
             {/* HEADER: CHỌN CẤP ĐỘ HSK VÀ CHẾ ĐỘ HỌC */}
             <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -326,18 +299,6 @@ export default function FlashcardPage() {
                 </div>
               </div>
 
-              {/* CHỈ SỐ GÓC PHẢI */}
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 bg-white/90 shadow-sm px-3 py-2 rounded-2xl border border-slate-100 text-xs">
-                  <span>🔥</span><span className="font-black text-[#F2765B]">{streak}</span>
-                </div>
-                <div className="flex items-center gap-1 bg-[#4FB6C7]/10 border border-[#4FB6C7]/30 shadow-sm px-3 py-2 rounded-2xl text-xs">
-                  <span>💧</span><span className="font-black text-[#4FB6C7]">{water}</span>
-                </div>
-                <div className="flex items-center gap-1 bg-[#FFD666]/20 border border-[#FFD666]/50 shadow-sm px-3 py-2 rounded-2xl text-xs">
-                  <span>⭐</span><span className="font-black text-[#1B5E4B]">{hskXp.toLocaleString()}</span>
-                </div>
-              </div>
             </header>
 
             {/* THANH CHỌN LESSON / BÀI HỌC (ĐÃ CẬP NHẬT MÀU XANH KHI ĐÃ HỌC XONG, XÁM KHI CHƯA) */}
