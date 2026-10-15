@@ -131,5 +131,185 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 22 · 阅读与思考",
   "level": "HSK5.2 2.0",
   "fileUrl": "/lectures/hsk5-2/LESSON_22.html"
+ },
+ {
+  "id": "static-hsk1-3-01",
+  "lectureName": "Bài 1 · AI小语，你好！",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_01.html"
+ },
+ {
+  "id": "static-hsk1-3-02",
+  "lectureName": "Bài 2 · 我叫李文",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_02.html"
+ },
+ {
+  "id": "static-hsk1-3-03",
+  "lectureName": "Bài 3 · 我是中国人",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_03.html"
+ },
+ {
+  "id": "static-hsk1-3-04",
+  "lectureName": "Bài 4 · 我有两个孩子",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_04.html"
+ },
+ {
+  "id": "static-hsk1-3-05",
+  "lectureName": "Bài 5 · 今天我休息",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_05.html"
+ },
+ {
+  "id": "static-hsk1-3-06",
+  "lectureName": "Bài 6 · 你的手机号是多少？",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_06.html"
+ },
+ {
+  "id": "static-hsk1-3-07",
+  "lectureName": "Bài 7 · 我晚上六点半下班",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_07.html"
+ },
+ {
+  "id": "static-hsk1-3-08",
+  "lectureName": "Bài 8 · 我爸爸也在医院工作",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_08.html"
+ },
+ {
+  "id": "static-hsk1-3-09",
+  "lectureName": "Bài 9 · 我明天上午在学校学习",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_09.html"
+ },
+ {
+  "id": "static-hsk1-3-10",
+  "lectureName": "Bài 10 · 这儿的苹果真便宜！",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_10.html"
+ },
+ {
+  "id": "static-hsk1-3-11",
+  "lectureName": "Bài 11 · 我读大学呢",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_11.html"
+ },
+ {
+  "id": "static-hsk1-3-12",
+  "lectureName": "Bài 12 · 昨天下雪了",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_12.html"
+ },
+ {
+  "id": "static-hsk1-3-13",
+  "lectureName": "Bài 13 · 请给我一杯茶",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_13.html"
+ },
+ {
+  "id": "static-hsk1-3-14",
+  "lectureName": "Bài 14 · 我看了一个电影",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_14.html"
+ },
+ {
+  "id": "static-hsk1-3-15",
+  "lectureName": "Bài 15 · 大兴机场见！",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/hsk1-3/LESSON_15.html"
+ },
+ {
+  "id": "static-hsk2-3-01",
+  "lectureName": "Bài 1 · 她请我们吃了北京烤鸭",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_01.html"
+ },
+ {
+  "id": "static-hsk2-3-02",
+  "lectureName": "Bài 2 · 还是打车去北大吧",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_02.html"
+ },
+ {
+  "id": "static-hsk2-3-03",
+  "lectureName": "Bài 3 · 我想去西安旅游",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_03.html"
+ },
+ {
+  "id": "static-hsk2-3-04",
+  "lectureName": "Bài 4 · 你穿红色的很好看",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_04.html"
+ },
+ {
+  "id": "static-hsk2-3-05",
+  "lectureName": "Bài 5 · 第一次去中国朋友家",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_05.html"
+ },
+ {
+  "id": "static-hsk2-3-06",
+  "lectureName": "Bài 6 · 小雪，生日快乐！",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_06.html"
+ },
+ {
+  "id": "static-hsk2-3-07",
+  "lectureName": "Bài 7 · 他篮球打得很好",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_07.html"
+ },
+ {
+  "id": "static-hsk2-3-08",
+  "lectureName": "Bài 8 · 虽然你忘了，但是我记得",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_08.html"
+ },
+ {
+  "id": "static-hsk2-3-09",
+  "lectureName": "Bài 9 · 我去买杯奶茶",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_09.html"
+ },
+ {
+  "id": "static-hsk2-3-10",
+  "lectureName": "Bài 10 · 就要考试了",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_10.html"
+ },
+ {
+  "id": "static-hsk2-3-11",
+  "lectureName": "Bài 11 · 我最喜欢吃中国菜",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_11.html"
+ },
+ {
+  "id": "static-hsk2-3-12",
+  "lectureName": "Bài 12 · 这里比北京冷多了",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_12.html"
+ },
+ {
+  "id": "static-hsk2-3-13",
+  "lectureName": "Bài 13 · 我们爱上中文课",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_13.html"
+ },
+ {
+  "id": "static-hsk2-3-14",
+  "lectureName": "Bài 14 · 一个人过年多没意思啊",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_14.html"
+ },
+ {
+  "id": "static-hsk2-3-15",
+  "lectureName": "Bài 15 · 我想再去一次中国",
+  "level": "HSK2 3.0",
+  "fileUrl": "/lectures/hsk2-3/LESSON_15.html"
  }
 ];

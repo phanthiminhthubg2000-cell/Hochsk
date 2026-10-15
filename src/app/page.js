@@ -469,7 +469,10 @@ export default function HomePage() {
     try {
       const snapshot = await getDocs(collection(db, "lectures_bank"));
       const list = [...STATIC_LECTURES];
-      snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+      // Bài tĩnh (bản bố cục mới) thay cho bài cùng cấp & cùng số bài đã tải lên Firestore
+      const numOf = (n) => { const m = String(n || "").match(/\d+/); return m ? String(Number(m[0])) : ""; };
+      const staticKey = new Set(STATIC_LECTURES.map(x => x.level + "#" + numOf(x.lectureName)));
+      snapshot.forEach(d => { const x = { id: d.id, ...d.data() }; if (!staticKey.has(x.level + "#" + numOf(x.lectureName))) list.push(x); });
       list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
       setLecturesBankList(list);
     } catch (err) { console.error("Lỗi tải bài giảng:", err); setLecturesBankList([...STATIC_LECTURES]); }
