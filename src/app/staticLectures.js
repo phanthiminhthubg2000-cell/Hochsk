@@ -311,5 +311,12 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 15 · 我想再去一次中国",
   "level": "HSK2 3.0",
   "fileUrl": "/lectures/hsk2-3/LESSON_15.html"
+ },
+ {
+  "id": "static-ngu-am-4",
+  "lectureName": "Bài 4 – Ngữ âm 4 · Chữ Hán và số đếm",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/ngu-am-4/NGU_AM_4.html",
+  "replaces": "ngữ âm 4"
  }
 ];

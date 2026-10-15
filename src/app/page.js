@@ -478,7 +478,13 @@ export default function HomePage() {
         return m ? String(Number(m[1])) : "";
       };
       const staticKey = new Set(STATIC_LECTURES.map(x => x.level + "#" + numOf(x.lectureName)));
-      snapshot.forEach(d => { const x = { id: d.id, ...d.data() }; const k = numOf(x.lectureName); if (!k || !staticKey.has(x.level + "#" + k)) list.push(x); });
+      const norm = (t) => String(t || "").normalize("NFC").toLowerCase().replace(/\s+/g, " ");
+      const replacers = STATIC_LECTURES.filter(x => x.replaces);
+      snapshot.forEach(d => {
+        const x = { id: d.id, ...d.data() };
+        if (replacers.some(r => r.level === x.level && norm(x.lectureName).includes(norm(r.replaces)))) return; // đã có bản sửa tĩnh
+        const k = numOf(x.lectureName); if (!k || !staticKey.has(x.level + "#" + k)) list.push(x);
+      });
       list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
       setLecturesBankList(list);
     } catch (err) { console.error("Lỗi tải bài giảng:", err); setLecturesBankList([...STATIC_LECTURES]); }
