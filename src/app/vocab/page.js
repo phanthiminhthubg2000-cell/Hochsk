@@ -28,6 +28,7 @@ export default function FlashcardPage() {
   const [levelsData, setLevelsData] = useState([]);
   const [viewingLevel, setViewingLevel] = useState(1);
   const [wordProgress, setWordProgress] = useState({}); 
+  const [showLessons, setShowLessons] = useState(false);
   const [filter, setFilter] = useState("all"); 
   
   // STATE: FLASHCARD INTERACTION
@@ -301,56 +302,54 @@ export default function FlashcardPage() {
 
             </header>
 
-            {/* THANH CHỌN LESSON / BÀI HỌC (ĐÃ CẬP NHẬT MÀU XANH KHI ĐÃ HỌC XONG, XÁM KHI CHƯA) */}
-            {mode === "learn" && levelsData.length > 0 && (
-              <div className="mb-6 bg-white/80 backdrop-blur-md p-4 rounded-[24px] border border-[#E2E8F0] shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">CHỌN BÀI HỌC ({selectedHsk.toUpperCase()}):</p>
-                <div className="flex flex-wrap gap-2">
-                  {levelsData.map((lvlObj) => {
-                    // Kiểm tra xem bài học này đã học xong tất cả các từ chưa
-                    const isAllMastered = lvlObj.words.length > 0 && lvlObj.words.every(w => wordProgress[w.front] === "mastered");
-                    const isCurrent = viewingLevel === lvlObj.level;
-
-                    return (
-                      <button
-                        key={lvlObj.level}
-                        onClick={() => setViewingLevel(lvlObj.level)}
-                        className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all shadow-sm border ${
-                          isCurrent 
-                            ? 'ring-2 ring-offset-2 ring-[#2F8F6E] ' + (isAllMastered ? 'bg-[#1B5E4B] text-white border-[#1B5E4B]' : 'bg-[#1B5E4B] text-white border-[#1B5E4B]')
-                            : isAllMastered 
-                              ? 'bg-[#1B5E4B] text-white border-[#1B5E4B] hover:opacity-90' 
-                              : 'bg-[#F4F7F6] text-slate-500 border-[#E2E8F0] hover:bg-slate-100'
-                        }`}
-                      >
-                        Bài {lvlObj.level} ({lvlObj.words.length} từ) {isAllMastered ? '✓' : ''}
+            {/* THANH BÀI HỌC GỌN: chuyển bài ‹ › · mở danh sách khi cần · tiến độ · lọc */}
+            {mode === "learn" && levelsData.length > 0 && (() => {
+              const idx = levelsData.findIndex(l => l.level === viewingLevel);
+              const cur = levelsData[idx] || levelsData[0];
+              const go = (d) => { const n = levelsData[(idx + d + levelsData.length) % levelsData.length]; if (n) setViewingLevel(n.level); };
+              const doneLessons = levelsData.filter(l => l.words.length > 0 && l.words.every(w => wordProgress[w.front] === "mastered")).length;
+              return (
+                <div className="mb-5 bg-white/85 backdrop-blur-md rounded-[22px] border border-[#E2E8F0] shadow-sm">
+                  <div className="p-3 md:p-4 flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <button onClick={() => go(-1)} aria-label="Bài trước" className="w-10 h-10 rounded-xl border border-[#E2E8F0] bg-white text-slate-500 hover:text-[#2F8F6E] hover:border-[#8FD9A8] font-black">‹</button>
+                      <button onClick={() => setShowLessons(v => !v)} aria-expanded={showLessons}
+                        className="h-10 px-4 rounded-xl bg-[#1B5E4B] text-white font-black text-sm inline-flex items-center gap-2 min-w-[150px] justify-between">
+                        <span>Bài {cur?.level} <span className="font-semibold opacity-75">· {cur?.words.length} từ</span></span><span className={`transition-transform ${showLessons ? "rotate-180" : ""}`}>▾</span>
                       </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* TIẾN ĐỘ BÀI HỌC HIỆN TẠI */}
-            {mode === "learn" && (
-              <div className="bg-white/90 backdrop-blur-xl rounded-[32px] p-6 md:p-8 shadow-sm border border-[#E2E8F0] mb-10">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-4 flex-1 pr-8">
-                    <div className="w-full h-3.5 bg-[#EEF5E9] rounded-full overflow-hidden border border-[#E2E8F0]/50 shadow-inner">
-                      <div className="h-full bg-[#2F8F6E] rounded-full transition-all duration-700 relative shadow-[0_0_10px_rgba(47,143,110,0.5)]" style={{ width: `${progressPercent}%` }}></div>
+                      <button onClick={() => go(1)} aria-label="Bài tiếp" className="w-10 h-10 rounded-xl border border-[#E2E8F0] bg-white text-slate-500 hover:text-[#2F8F6E] hover:border-[#8FD9A8] font-black">›</button>
                     </div>
-                    <span className="font-black text-[#2F8F6E] text-lg shrink-0">{progressPercent}%</span>
+                    <div className="flex items-center gap-2 flex-1 min-w-[160px]">
+                      <div className="flex-1 h-2.5 bg-[#EEF5E9] rounded-full overflow-hidden"><div className="h-full bg-[#2F8F6E] rounded-full transition-all duration-700" style={{ width: `${progressPercent}%` }} /></div>
+                      <span className="text-xs font-black text-[#2F8F6E] shrink-0">{masteredCount}/{allCount} thuộc</span>
+                    </div>
+                    <div className="flex items-center bg-[#F4F7F6] p-1 rounded-xl border border-[#E2E8F0]">
+                      <button onClick={() => setFilter("all")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "all" ? 'bg-white text-[#1B5E4B] shadow-sm' : 'text-slate-500'}`}>Tất cả {allCount}</button>
+                      <button onClick={() => setFilter("learning")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "learning" ? 'bg-white text-[#F2765B] shadow-sm' : 'text-slate-500'}`}>Chưa thuộc {learningCount}</button>
+                      <button onClick={() => setFilter("mastered")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "mastered" ? 'bg-white text-[#2F8F6E] shadow-sm' : 'text-slate-500'}`}>Đã thuộc {masteredCount}</button>
+                    </div>
                   </div>
-                  <span className="text-xs font-bold text-slate-400 shrink-0 bg-[#F4F7F6] px-3 py-1.5 rounded-xl">Bài {viewingLevel}: {masteredCount} / {allCount} từ đã thuộc</span>
+                  {showLessons && (
+                    <div className="border-t border-[#E2E8F0] p-3 md:p-4">
+                      <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2">{selectedHsk.toUpperCase()} · {levelsData.length} bài · đã thuộc hết {doneLessons} bài</p>
+                      <div className="grid grid-cols-[repeat(auto-fill,minmax(52px,1fr))] gap-1.5 max-h-[240px] overflow-y-auto pr-1">
+                        {levelsData.map((lvlObj) => {
+                          const isAllMastered = lvlObj.words.length > 0 && lvlObj.words.every(w => wordProgress[w.front] === "mastered");
+                          const isCurrent = viewingLevel === lvlObj.level;
+                          return (
+                            <button key={lvlObj.level} title={`Bài ${lvlObj.level} · ${lvlObj.words.length} từ`}
+                              onClick={() => { setViewingLevel(lvlObj.level); setShowLessons(false); }}
+                              className={`h-9 rounded-lg text-xs font-black border transition-colors ${isCurrent ? 'bg-[#1B5E4B] text-white border-[#1B5E4B] ring-2 ring-offset-1 ring-[#8FD9A8]' : isAllMastered ? 'bg-[#E7F5EC] text-[#1B5E4B] border-[#8FD9A8]' : 'bg-white text-slate-500 border-[#E2E8F0] hover:border-[#8FD9A8]'}`}>
+                              {lvlObj.level}{isAllMastered ? '✓' : ''}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                <div className="flex flex-wrap items-center bg-[#F4F7F6] p-1.5 rounded-2xl w-fit border border-[#E2E8F0]">
-                  <button onClick={() => setFilter("all")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "all" ? 'bg-white text-[#1B5E4B] shadow-sm' : 'text-slate-500'}`}>Tất cả <span className="ml-1 opacity-60 font-bold">{allCount}</span></button>
-                  <button onClick={() => setFilter("learning")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "learning" ? 'bg-white text-[#F2765B] shadow-sm' : 'text-slate-500'}`}>Chưa thuộc <span className="ml-1 opacity-60 font-bold">{learningCount}</span></button>
-                  <button onClick={() => setFilter("mastered")} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${filter === "mastered" ? 'bg-white text-[#2F8F6E] shadow-sm' : 'text-slate-500'}`}>Đã thuộc <span className="ml-1 opacity-60 font-bold">{masteredCount}</span></button>
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* THÔNG BÁO HẾT TỪ */}
             {currentWordsPool.length === 0 ? (
@@ -363,7 +362,7 @@ export default function FlashcardPage() {
             ) : (
               <>
                 {/* KHU VỰC THẺ TỪ VỰNG */}
-                <div className="relative mb-10 mt-4">
+                <div className="relative mb-10 mt-2">
                   <button onClick={() => setActiveWordIndex(prev => prev > 0 ? prev - 1 : currentWordsPool.length - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F8F6E] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">←</span></button>
                   <button onClick={() => setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F8F6E] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">→</span></button>
 
