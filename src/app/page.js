@@ -358,8 +358,13 @@ export default function HomePage() {
   const [todayGrammarLearned, setTodayGrammarLearned] = useState(0);
   const [isTeacher, setIsTeacher] = useState(false);
   const [skillMap, setSkillMap] = useState({ vocabulary: 0, grammar: 0, listening: 0, translation: 0, writing: 0, speaking: 0 });
-  const [results, setResults] = useState([]); // kết quả đã chấm (test + hskk)
+  const [results, setResults] = useState([]); // bài thi đã nộp: HSK, HSKK, đánh giá năng lực, ngữ âm (đã chấm + chờ chấm)
   const [selectedResult, setSelectedResult] = useState(null);
+  const [seenIds, setSeenIds] = useState(() => new Set());
+  useEffect(() => { try { setSeenIds(new Set(JSON.parse(localStorage.getItem("hg_seen_results") || "[]"))); } catch (_) {} }, []);
+  const newResults = results.filter(r => r.graded && !seenIds.has(r.type + r.id));
+  const markSeen = (keys) => setSeenIds(prev => { const n = new Set(prev); keys.forEach(k => n.add(k)); try { localStorage.setItem("hg_seen_results", JSON.stringify([...n].slice(-300))); } catch (_) {} return n; });
+  const openResult = (r) => { setSelectedResult(r); if (r.graded) markSeen([r.type + r.id]); };
 
   // --- BÀI GIẢNG ---
   const [lecturesBankList, setLecturesBankList] = useState([]);
@@ -523,19 +528,28 @@ export default function HomePage() {
         let teacherSkills = null;
         const list = [];
         try {
-          const testSnap = await getDocs(query(collection(db, "test_submissions"), where("userId", "==", userId), where("status", "==", "graded")));
+          const ms = (x) => x?.toMillis?.() || 0;
+          const grab = async (col, field, fn) => {
+            try { (await getDocs(query(collection(db, col), where(field, "==", userId)))).forEach(d => { const r = fn(d.data(), d.id); if (r) list.push(r); }); }
+            catch (e) { console.warn("Không đọc được", col, e?.message); }
+          };
           let latest = null;
-          testSnap.forEach(d => {
-            const t = d.data();
-            const time = t.submittedAt?.toMillis?.() || 0;
-            list.push({ id: d.id, type: "test", title: "Thi đánh giá năng lực", score: t.teacherScore, level: t.evaluatedLevel, feedback: t.teacherFeedback, recommendation: t.recommendation, skills: t.skillsEvaluation, time });
-            if (!latest || time > (latest.submittedAt?.toMillis?.() || 0)) latest = t;
+          await grab("test_submissions", "userId", (t, id) => {
+            const graded = t.status === "graded";
+            if (graded && (!latest || ms(t.submittedAt) > ms(latest.submittedAt))) latest = t;
+            return { id, type: "test", graded, title: "Thi đánh giá năng lực", score: t.teacherScore, level: t.evaluatedLevel, feedback: t.teacherFeedback, recommendation: t.recommendation, skills: t.skillsEvaluation, time: ms(t.gradedAt) || ms(t.submittedAt) };
           });
-          const hskkSnap = await getDocs(query(collection(db, "hskk_exams"), where("userId", "==", userId), where("status", "==", "graded")));
-          hskkSnap.forEach(d => {
-            const h = d.data();
-            list.push({ id: d.id, type: "hskk", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback, time: h.submittedAt?.toMillis?.() || 0 });
-          });
+          await grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) }));
+          await grab("hsk3_submissions", "userId", (h, id) => ({
+            id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback,
+            parts: [["Nghe", h.listeningCorrect, h.listeningTotal], ["Đọc", h.readingCorrect, h.readingTotal], ["Viết (tự chấm)", h.writingAutoCorrect, h.writingAutoTotal]].filter(x => x[2]),
+            time: ms(h.gradedAt) || ms(h.submittedAt)
+          }));
+          await grab("phonetics_tests", "studentUserId", (h, id) => ({
+            id, type: "phonetics", graded: h.status === "graded", title: h.lessonName ? `Kiểm tra ngữ âm · ${h.lessonName}` : "Kiểm tra ngữ âm", score: h.totalScore, max: h.totalMax ?? 10, level: h.className || "", feedback: h.teacherFeedback,
+            parts: [["Nghe", h.listeningScore, null], ["Đọc", h.readingScore, null]].filter(x => x[1] != null),
+            time: ms(h.gradedAt) || ms(h.submittedAt)
+          }));
           list.sort((a, b) => b.time - a.time);
           setResults(list);
           if (latest?.skillsEvaluation) {
@@ -785,20 +799,26 @@ export default function HomePage() {
     );
   };
 
-  const ResultsCard = ({ limit = 3 }) => (
-    <section className={`${card} p-5 flex flex-col gap-2`}>
-      <div className="flex items-baseline justify-between"><h3 className="text-[17px] font-bold">Kết quả của tôi</h3>{results.length > 0 && <span className="text-sm text-[#5B7262]">{results.length}</span>}</div>
-      {results.length === 0 ? (
-        <p className="text-sm text-[#5B7262] py-3">Chưa có bài nào được giáo viên chấm.</p>
-      ) : results.slice(0, limit).map(r => (
-        <button key={r.id} onClick={() => setSelectedResult(r)} className="flex items-center gap-3 py-2.5 border-b border-[#EEF2E8] last:border-0 text-left hover:bg-[#F7FAF4] rounded-lg px-1 transition-colors">
-          <span className="w-12 h-12 rounded-xl bg-[#E7F5EC] grid place-items-center font-extrabold text-[#1E5C38] tabular-nums shrink-0">{r.score ?? "—"}</span>
-          <span className="flex-1 min-w-0"><span className="block font-semibold text-sm truncate">{r.title}</span><span className="block text-xs text-[#5B7262] truncate">{r.level ? `${r.level} · ` : ""}{r.time ? new Date(r.time).toLocaleDateString("vi-VN") : "Đã chấm"}</span></span>
-          <Icon name="chevron" className="w-4 h-4 text-[#5B7262]" />
-        </button>
-      ))}
-    </section>
-  );
+  const ResultsCard = ({ limit = 3 }) => {
+    const pending = results.filter(r => !r.graded).length;
+    return (
+      <section className={`${card} p-5 flex flex-col gap-2`}>
+        <div className="flex items-baseline justify-between gap-2"><h3 className="text-[17px] font-bold">Kết quả của tôi</h3>
+          <span className="text-xs text-[#5B7262]">{newResults.length > 0 && <b className="text-[#C2410C]">{newResults.length} mới · </b>}{pending > 0 ? `${pending} chờ chấm` : results.length || ""}</span></div>
+        {results.length === 0 ? (
+          <p className="text-sm text-[#5B7262] py-3">Bạn chưa nộp bài thi nào. Bài nộp sẽ hiện ở đây, giáo viên chấm xong bạn sẽ thấy điểm và nhận xét.</p>
+        ) : results.slice(0, limit).map(r => (
+          <button key={r.type + r.id} onClick={() => openResult(r)} className="flex items-center gap-3 py-2.5 border-b border-[#EEF2E8] last:border-0 text-left hover:bg-[#F7FAF4] rounded-lg px-1 transition-colors">
+            <span className={`w-12 h-12 rounded-xl grid place-items-center font-extrabold tabular-nums shrink-0 ${r.graded ? "bg-[#E7F5EC] text-[#1E5C38]" : "bg-[#FFF4DB] text-[#8A5A00] text-lg"}`}>{r.graded ? (r.score ?? "—") : "⏳"}</span>
+            <span className="flex-1 min-w-0"><span className="block font-semibold text-sm truncate">{r.title}{seenIds.has(r.type + r.id) || !r.graded ? "" : <b className="ml-1.5 text-[10px] align-middle px-1.5 py-0.5 rounded-full bg-[#C2410C] text-white">MỚI</b>}</span>
+              <span className="block text-xs text-[#5B7262] truncate">{r.graded ? "Đã chấm" : "Đang chờ giáo viên chấm"}{r.level ? ` · ${r.level}` : ""}{r.time ? ` · ${new Date(r.time).toLocaleDateString("vi-VN")}` : ""}</span></span>
+            <Icon name="chevron" className="w-4 h-4 text-[#5B7262]" />
+          </button>
+        ))}
+        {results.length > limit && <button onClick={() => goTab("exam")} className="text-xs font-semibold text-[#1E7A45] pt-1 text-left">Xem tất cả {results.length} bài ở mục Thi →</button>}
+      </section>
+    );
+  };
 
   // ============================================================
   // RENDER
@@ -865,6 +885,16 @@ export default function HomePage() {
                 <p className="text-sm text-[#5B7262]">{greet}</p>
                 <h1 className="text-2xl md:text-[28px] font-extrabold tracking-tight">{isSignedIn ? firstName : "Người làm vườn"}</h1>
               </div>
+              {newResults.length > 0 && (
+                <button onClick={() => openResult(newResults[0])} className="flex items-center gap-4 rounded-2xl border-2 border-[#F6D99A] bg-[#FFF8EA] p-4 text-left hover:bg-[#FFF1D1] transition-colors">
+                  <Frog mood="cheer" className="w-14 h-12 shrink-0" />
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-extrabold text-[#5C3D00]">Giáo viên đã chấm {newResults.length > 1 ? `${newResults.length} bài` : "bài"} của bạn!</span>
+                    <span className="block text-sm text-[#7A5410] truncate">{newResults[0].title}{newResults[0].score != null ? ` · ${newResults[0].score}${newResults[0].max ? "/" + newResults[0].max : ""} điểm` : ""} — bấm để xem nhận xét</span>
+                  </span>
+                  <Icon name="chevron" className="w-5 h-5 text-[#7A5410]" />
+                </button>
+              )}
               <div className="grid gap-5 md:gap-6 lg:grid-cols-[1.6fr_1fr]">
                 <ContinueCard />
                 <PondCard />
@@ -1132,7 +1162,7 @@ export default function HomePage() {
                     </section>
                   )}
                 </div>
-                <ResultsCard limit={6} />
+                <ResultsCard limit={50} />
               </div>
             </div>
           )}
@@ -1311,7 +1341,9 @@ export default function HomePage() {
                 <h2 className="text-lg font-extrabold">{selectedResult.title}</h2>
                 {selectedResult.level && <p className="text-sm text-[#5B7262]">Cấp độ: {selectedResult.level}</p>}
               </div>
-              <div className="text-right shrink-0"><div className="text-4xl font-extrabold text-[#1E5C38] tabular-nums">{selectedResult.score ?? 0}</div><div className="text-xs text-[#5B7262]">điểm</div></div>
+              <div className="text-right shrink-0">{selectedResult.graded === false
+                ? <><div className="text-3xl">⏳</div><div className="text-xs text-[#8A5A00] font-semibold">Chờ chấm</div></>
+                : <><div className="text-4xl font-extrabold text-[#1E5C38] tabular-nums">{selectedResult.score ?? 0}{selectedResult.max ? <span className="text-lg text-[#5B7262]">/{selectedResult.max}</span> : null}</div><div className="text-xs text-[#5B7262]">điểm</div></>}</div>
             </div>
             <div className="p-6 flex flex-col gap-5">
               {selectedResult.type === "test" && selectedResult.skills && (
@@ -1321,9 +1353,19 @@ export default function HomePage() {
                   ))}
                 </div>
               )}
+              {selectedResult.parts?.length > 0 && (
+                <div>
+                  <h4 className={eyebrow}>Máy chấm tự động</h4>
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    {selectedResult.parts.map(([l, c, t]) => (
+                      <div key={l} className="rounded-xl bg-[#F4F7EF] p-3 text-center"><div className="text-xs text-[#5B7262]">{l}</div><div className="text-lg font-extrabold text-[#1E7A45] tabular-nums">{c ?? "—"}{t ? <span className="text-sm text-[#5B7262]">/{t}</span> : null}</div></div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div>
                 <h4 className={eyebrow}>Giáo viên nhận xét</h4>
-                <div className="mt-2 rounded-xl bg-[#F4F7EF] p-4 text-sm leading-relaxed whitespace-pre-wrap">{selectedResult.feedback || "Chưa có nhận xét."}</div>
+                <div className="mt-2 rounded-xl bg-[#F4F7EF] p-4 text-sm leading-relaxed whitespace-pre-wrap">{selectedResult.graded === false ? "Bài đã nộp, giáo viên chưa chấm. Khi chấm xong, điểm và nhận xét sẽ hiện ở đây và trên trang chủ." : (selectedResult.feedback || "Chưa có nhận xét.")}</div>
               </div>
               {selectedResult.recommendation && (
                 <div>

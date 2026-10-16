@@ -561,7 +561,8 @@ export default function TeacherDashboard() {
         status: "graded",
         teacherScore: Number(hsk3ScoreInput),
         teacherFeedback: hsk3FeedbackInput,
-        evaluatedLevel: selectedHsk3Submission.level
+        evaluatedLevel: selectedHsk3Submission.level,
+        gradedAt: serverTimestamp()
       });
       alert("✅ Đã chấm điểm và gửi kết quả về cho học viên thành công!");
       setSelectedHsk3Submission(null);
@@ -919,7 +920,7 @@ export default function TeacherDashboard() {
         const answerDocRef = doc(db, "hskk_exams", selectedExam.id, "answers", ans.id);
         await updateDoc(answerDocRef, { teacherComment: commentInputs[ans.id] || "", teacherScore: Number(itemScores[ans.id]) || 0 });
       }
-      await updateDoc(doc(db, "hskk_exams", selectedExam.id), { status: "graded", teacherScore: parseInt(scoreInput), teacherFeedback: feedbackInput });
+      await updateDoc(doc(db, "hskk_exams", selectedExam.id), { status: "graded", teacherScore: parseInt(scoreInput), teacherFeedback: feedbackInput, gradedAt: serverTimestamp() });
       alert("✅ Đã chấm xong và trả kết quả thẳng về trang cá nhân của học viên!");
       setSelectedExam(null); fetchPendingExams(); 
     } catch (error) { alert("Lỗi: " + error.message); } finally { setIsSubmitting(false); }
