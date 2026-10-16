@@ -510,6 +510,7 @@ svg.contour .neu{fill:none;stroke:var(--t0);stroke-width:11;stroke-linecap:round
 #s-places .g4 .digits{font-size:80px}
 .pl{padding:26px 6px}
 .pl .zh{font-size:56px}
+.dzh{font-size:26px;color:var(--muted)}
 
 /* ===== Số đếm (bản chi tiết) ===== */
 .nx-hint{font-size:20px;color:var(--muted);align-self:flex-end}
@@ -695,7 +696,7 @@ svg.contour .neu{fill:none;stroke:var(--t0);stroke-width:11;stroke-linecap:round
     <span class="dop">+</span>
     <div class="dcard"><span class="dl-lab">Thanh điệu</span><span class="dval" id="dT">?</span><span class="dsub" id="dTn">&nbsp;</span></div>
     <span class="dop">=</span>
-    <div class="dcard dres"><span class="dl-lab">Âm tiết</span><span class="dval" id="dR">?</span></div>
+    <div class="dcard dres"><span class="dl-lab">Âm tiết</span><span class="dval" id="dR">?</span><span class="dsub dzh" id="dRx">&nbsp;</span></div>
   </div>
   <div class="row in" style="justify-content:center;gap:20px">
     <button class="spk dbig" id="drawBtn">Bốc âm</button>
@@ -1310,6 +1311,9 @@ document.getElementById('r3').innerHTML=
 
   const INITS=[...new Set(POOL.map(p=>p[0]))], FINS=[...new Set(POOL.map(p=>p[1]))];
   function written(ini,fin){ let f=fin; if(f==='iou') f='iu'; if(f==='-i') f='i'; if(f==='uei') f='ui'; if(f==='uen') f='un'; if('jqx'.includes(ini)) f=f.replace('ü','u'); return f; }
+  /* bộ lọc: chỉ giữ tổ hợp âm + thanh có thật trong tiếng Phổ thông (kèm chữ Hán ví dụ) */
+  const TONES={"a":"阿···","ai":"唉癌矮爱","an":"安·俺按","ang":"肮昂·盎","ao":"凹熬袄傲","ba":"八拔把爸","bai":"掰白百败","ban":"班·板半","bang":"帮·膀棒","bao":"包薄饱报","bei":"杯·北备","ben":"奔·本笨","beng":"绷甭·蹦","bi":"逼鼻比必","bian":"边·贬变","biao":"标·表·","bie":"憋别瘪别","bin":"宾··摈","bing":"冰·饼病","bo":"播博簸·","bu":"·不补不","ca":"擦···","cai":"猜才彩菜","can":"参残惨灿","cang":"仓藏··","cao":"操嘈草·","ce":"···厕","ceng":"·层·蹭","cha":"插茶·差","chai":"差柴··","chan":"搀馋产颤","chang":"猖常场唱","chao":"超朝吵·","che":"车·扯彻","chen":"郴晨·衬","cheng":"称成逞秤","chi":"吃迟尺翅","chong":"充重宠·","chou":"抽愁丑臭","chu":"出除楚处","chuai":"揣·揣踹","chuan":"穿船喘串","chuang":"窗床闯创","chui":"吹垂··","chun":"春纯蠢·","chuo":"戳··绰","ci":"疵词此次","cong":"聪从··","cou":"···凑","cu":"粗··促","cuan":"蹿··窜","cui":"催·璀脆","cun":"村存·寸","cuo":"搓··错","da":"答答打大","dai":"呆·逮带","dan":"单·胆蛋","dang":"当·挡当","dao":"刀·导到","de":"·得··","dei":"··得·","deng":"灯·等瞪","di":"低的底第","dian":"颠·点电","diao":"叼··掉","die":"跌蝶··","ding":"钉·顶定","diu":"丢···","dong":"东·懂动","dou":"都·抖豆","du":"都读堵度","duan":"端·短段","dui":"堆··对","dun":"吨·盹顿","duo":"多夺朵堕","e":"·额恶饿","en":"恩···","er":"·儿耳二","fa":"发罚法发","fan":"翻烦反饭","fang":"方房访放","fei":"非肥诽费","fen":"分坟粉分","feng":"风缝讽奉","fou":"··否·","fu":"夫服腐附","ga":"嘎噶·尬","gai":"该·改概","gan":"干·感干","gang":"刚·港杠","gao":"高·搞告","ge":"歌格·个","gei":"··给·","gen":"跟···","geng":"更·哽更","gong":"公·巩共","gou":"沟·狗够","gu":"估·鼓故","gua":"刮·寡挂","guai":"乖·拐怪","guan":"关·馆惯","guang":"光·广逛","gui":"规·轨贵","gun":"··滚棍","guo":"锅国果过","ha":"哈蛤··","hai":"·还海害","han":"酣寒喊汉","hang":"夯行··","hao":"·毫好号","he":"喝河·贺","hei":"黑···","hen":"·痕很恨","heng":"哼衡··","hong":"轰红哄哄","hou":"·猴吼后","hu":"乎湖虎护","hua":"花滑·话","huai":"·怀·坏","huan":"欢环缓换","huang":"荒黄晃晃","hui":"挥回悔会","hun":"婚浑·混","huo":"豁活火或","ji":"机级几记","jia":"家颊假假","jian":"间·检见","jiang":"江·讲降","jiao":"交·饺叫","jie":"接节姐介","jin":"今·仅进","jing":"经·景静","jiong":"··窘·","jiu":"究·九就","ju":"居橘举据","juan":"捐·卷卷","jue":"撅觉··","jun":"军··俊","ka":"咖·卡·","kai":"开·慨·","kan":"刊·砍看","kang":"康扛·抗","kao":"··考靠","ke":"科咳可客","ken":"··肯·","keng":"坑···","kong":"空·恐控","kou":"抠·口扣","ku":"哭·苦裤","kua":"夸·垮挎","kuai":"···块","kuan":"宽·款·","kuang":"框狂·矿","kui":"亏魁·馈","kun":"昆·捆困","kuo":"···括","la":"拉·喇辣","lai":"·来·赖","lan":"·篮懒烂","lang":"·郎朗浪","lao":"捞劳老涝","le":"肋··乐","lei":"勒雷累累","leng":"·棱冷愣","li":"哩离里历","lia":"··俩·","lian":"·联脸炼","liang":"·凉两亮","liao":"撩聊了料","lie":"咧·咧列","lin":"拎邻凛吝","ling":"·零领另","liu":"溜留柳六","long":"·龙拢·","lou":"·楼搂漏","lu":"·炉鲁路","luan":"·孪卵乱","lun":"抡轮·论","luo":"啰逻裸落","lü":"·驴旅绿","lüe":"···略","ma":"妈麻码骂","mai":"·埋买卖","man":"·馒满慢","mang":"·忙莽·","mao":"猫毛铆冒","mei":"·没每妹","men":"闷门·闷","meng":"·盟猛梦","mi":"眯迷米密","mian":"·眠免面","miao":"·描秒妙","mie":"···灭","min":"·民敏·","ming":"·明·命","miu":"···谬","mo":"摸模抹末","mou":"·谋某·","mu":"·模母目","n":"·嗯··","na":"·拿哪那","nai":"··奶耐","nan":"·男·难","nang":"·囊··","nao":"·挠脑闹","nei":"··馁内","nen":"···嫩","neng":"·能··","ni":"妮泥你匿","nian":"蔫年撵念","niang":"·娘·酿","niao":"··鸟尿","nie":"捏··聂","nin":"·您··","ning":"·宁·宁","niu":"·牛扭·","nong":"·农·弄","nu":"·奴努怒","nuan":"··暖·","nuo":"·挪·诺","nü":"··女·","nüe":"···虐","o":"·哦··","ou":"欧·偶·","pa":"趴爬·怕","pai":"拍排·派","pan":"攀盘·判","pang":"乓旁耪胖","pao":"抛刨跑泡","pei":"胚陪·配","pen":"喷盆··","peng":"抨朋捧碰","pi":"批啤匹辟","pian":"片便·片","piao":"飘朴·漂","pie":"撇···","pin":"拼频品聘","ping":"乒苹··","po":"泼婆颇破","pou":"剖···","pu":"扑葡普铺","qi":"七骑起气","qia":"掐··恰","qian":"千前浅歉","qiang":"腔强抢呛","qiao":"敲桥巧峭","qie":"切茄且切","qin":"亲琴寝沁","qing":"轻晴请庆","qiong":"·穷··","qiu":"秋球··","qu":"区渠取去","quan":"圈全犬劝","que":"缺瘸·却","qun":"·裙··","ran":"·然染·","rang":"·瓤壤让","rao":"·饶扰绕","re":"··惹热","ren":"·人忍认","reng":"扔仍··","ri":"···日","rong":"茸容冗·","rou":"·柔·肉","ru":"·如乳入","ruan":"··软·","rui":"··蕊锐","run":"···润","ruo":"···弱","sa":"撒·洒萨","sai":"塞··赛","san":"三·伞散","sang":"桑·嗓丧","sao":"骚·扫扫","se":"···色","sen":"森···","seng":"僧···","sha":"沙啥傻厦","shai":"筛··晒","shan":"衫·闪善","shang":"商·赏上","shao":"烧勺少绍","she":"奢蛇舍社","shei":"·谁··","shen":"身什审甚","sheng":"生绳省剩","shi":"师识始市","shou":"收·手受","shu":"书熟暑束","shua":"刷·耍·","shuai":"摔·甩帅","shuan":"拴··涮","shuang":"双·爽·","shui":"·谁水睡","shun":"··吮顺","shuo":"说··硕","si":"司·死四","song":"松·耸送","sou":"搜·擞嗽","su":"苏俗·诉","suan":"酸··算","sui":"虽随髓岁","sun":"孙·损·","suo":"缩·所·","ta":"他·塔踏","tai":"胎台·太","tan":"滩谈毯碳","tang":"汤糖躺趟","tao":"掏萄讨套","te":"···特","teng":"·疼··","ti":"踢题体替","tian":"天甜腆·","tiao":"挑条挑跳","tie":"贴·铁·","ting":"听庭挺·","tong":"通同桶痛","tou":"偷头·透","tu":"突图土兔","tuan":"湍团··","tui":"推颓腿退","tun":"吞豚··","tuo":"脱驮妥拓","wa":"挖娃瓦袜","wai":"歪··外","wan":"弯玩晚万","wang":"汪王网忘","wei":"微为尾位","wen":"温文稳问","weng":"翁··瓮","wo":"窝·我握","wu":"屋无午物","xi":"西习喜系","xia":"虾辖·下","xian":"先咸险现","xiang":"箱详想向","xiao":"消淆小校","xie":"些鞋写谢","xin":"新··信","xing":"星行醒兴","xiong":"兄熊··","xiu":"休·朽秀","xu":"须徐许续","xuan":"宣旋选炫","xue":"削学雪血","xun":"熏询·训","ya":"压牙雅亚","yan":"烟颜眼验","yang":"央阳养样","yao":"要摇咬要","ye":"椰爷也页","yi":"一一以一","yin":"阴银饮印","ying":"应迎影应","yo":"哟···","yong":"拥·泳用","you":"优游友右","yu":"迂鱼语育","yuan":"鸳元远院","yue":"约··月","yun":"晕云允运","za":"扎杂咋·","zai":"灾·载在","zan":"·咱攒暂","zang":"赃··脏","zao":"糟凿早造","ze":"·择··","zei":"·贼··","zen":"··怎·","zeng":"增··赠","zha":"扎闸眨炸","zhai":"摘宅窄寨","zhan":"粘·展站","zhang":"张·长丈","zhao":"招着找照","zhe":"遮折者这","zhei":"···这","zhen":"真·诊震","zheng":"争·整正","zhi":"知直只至","zhong":"钟·种重","zhou":"周轴帚骤","zhu":"猪逐主住","zhua":"抓·爪·","zhuai":"拽···","zhuan":"专·转赚","zhuang":"装··状","zhui":"追··缀","zhun":"谆·准·","zhuo":"桌着··","zi":"资·子字","zong":"综·总粽","zou":"邹·走奏","zu":"租足组·","zuan":"钻·纂攥","zui":"··嘴最","zun":"尊···","zuo":"·昨左作"};
+  const VALID=[]; POOL.forEach(p=>{ const z=TONES[p[0]+written(p[0],p[1])]; if(z) [...z].forEach((c,k)=>{ if(c!=='·') VALID.push([p[0],p[1],k+1,c]); }); });
 const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü':'ǖǘǚǜ'};
   const TSYM=['ˉ','ˊ','ˇ','ˋ'];
   function addTone(fin,t){
@@ -1320,7 +1324,7 @@ const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü
     else { for(let x=fin.length-1;x>=0;x--) if('iouü'.includes(fin[x])){k=x;break;} }
     return fin.slice(0,k)+MARK[fin[k]][t-1]+fin.slice(k+1);
   }
-  const dI=document.getElementById('dI'), dF=document.getElementById('dF'), dT=document.getElementById('dT'), dTn=document.getElementById('dTn'), dR=document.getElementById('dR');
+  const dI=document.getElementById('dI'), dF=document.getElementById('dF'), dT=document.getElementById('dT'), dTn=document.getElementById('dTn'), dR=document.getElementById('dR'), dRx=document.getElementById('dRx');
   const drawBtn=document.getElementById('drawBtn'), revBtn=document.getElementById('revealBtn'), hist=document.getElementById('dHist');
   const rnd=a=>a[Math.floor(Math.random()*a.length)];
   let cur=null, last=null, history=[];
@@ -1329,10 +1333,10 @@ const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü
   function land(el){ el.classList.remove('spin','q'); void el.offsetWidth; el.classList.add('land'); }
   drawBtn.onclick=()=>{
     if(drawBtn.disabled) return;
-    let pick; do{ pick=rnd(POOL); }while(last && pick[0]===last[0] && pick[1]===last[1]);
-    const tone=1+Math.floor(Math.random()*4); cur={i:pick[0],f:pick[1],t:tone}; last=pick;
+    let pick; do{ pick=rnd(VALID); }while(last && pick[0]===last[0] && pick[1]===last[1] && pick[2]===last[2]);
+    cur={i:pick[0],f:pick[1],t:pick[2],zh:pick[3]}; last=pick;
     drawBtn.disabled=true; revBtn.disabled=true;
-    dR.textContent='?'; dR.className='dval q'; dTn.innerHTML='&nbsp;'; dTn.className='dsub';
+    dR.textContent='?'; dR.className='dval q'; dRx.innerHTML='&nbsp;'; dTn.innerHTML='&nbsp;'; dTn.className='dsub';
     [dI,dF,dT].forEach(e=>{e.className='dval spin';});
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const tick=setInterval(()=>{ if(dI.classList.contains('spin')) dI.textContent=rnd(INITS); if(dF.classList.contains('spin')) dF.textContent=rnd(FINS); if(dT.classList.contains('spin')) dT.textContent=rnd(TSYM); },70);
@@ -1344,9 +1348,9 @@ const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü
   revBtn.onclick=()=>{
     if(!cur||revBtn.disabled) return;
     const s=cur.i+addTone(written(cur.i,cur.f),cur.t);
-    dR.textContent=s; dR.className='dval t'+cur.t; land(dR); dR.classList.add('t'+cur.t);
+    dR.textContent=s; dR.className='dval t'+cur.t; dRx.textContent='Ví dụ: '+cur.zh; land(dR); dR.classList.add('t'+cur.t);
     revBtn.disabled=true;
-    history.unshift(`<b class="t${cur.t}">${s}</b>`); history=history.slice(0,8); hist.innerHTML=history.join('');
+    history.unshift(`<b class="t${cur.t}">${s} ${cur.zh}</b>`); history=history.slice(0,8); hist.innerHTML=history.join('');
   };
 })();
 
