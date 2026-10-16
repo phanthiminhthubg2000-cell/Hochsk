@@ -313,6 +313,27 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk2-3/LESSON_15.html"
  },
  {
+  "id": "static-ngu-am-1",
+  "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/ngu-am-1/NGU_AM_1.html",
+  "replaces": "ngữ âm 1"
+ },
+ {
+  "id": "static-ngu-am-2",
+  "lectureName": "Bài 2 – Ngữ âm 2 · Pinyin",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/ngu-am-2/NGU_AM_2.html",
+  "replaces": "ngữ âm 2"
+ },
+ {
+  "id": "static-ngu-am-3",
+  "lectureName": "Bài 3 – Ngữ âm 3 · Pinyin",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/ngu-am-3/NGU_AM_3.html",
+  "replaces": "ngữ âm 3"
+ },
+ {
   "id": "static-ngu-am-4",
   "lectureName": "Bài 4 – Ngữ âm 4 · Chữ Hán và số đếm",
   "level": "HSK1 3.0",

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bài 1 – Ngữ âm 1 · Pinyin 拼音</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Noto+Sans:wght@400;600&family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --ink:#1E2A4A; --ink2:#2C3B63; --paper:#F4F6FA; --card:#FFFFFF; --line:#DDE3EE; --muted:#5B6683;
+  --t1:#2F7FD8; --t2:#1F9E6A; --t3:#D48A00; --t4:#D9452B; --t0:#8A93A6;
+  --chrome-bg:#E9EDF4; --chrome-fg:#1E2A4A; --chrome-btn:#FFFFFF;
+  --lat:'Lexend','Noto Sans',system-ui,sans-serif;
+  --han:'Noto Serif SC','Songti SC','SimSun',serif;
+  --brush:'Ma Shan Zheng','Noto Serif SC',serif;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --chrome-bg:#11182B; --chrome-fg:#E6EAF3; --chrome-btn:#1E2A4A; } }
+:root[data-theme="dark"]{ --chrome-bg:#11182B; --chrome-fg:#E6EAF3; --chrome-btn:#1E2A4A; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--chrome-bg);color:var(--chrome-fg);font-family:var(--lat);overflow:hidden;display:flex;flex-direction:column}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+button:focus-visible,[tabindex]:focus-visible{outline:4px solid var(--t1);outline-offset:3px;border-radius:12px}
+
+#viewport{flex:1;position:relative;min-height:0}
+#deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);color:var(--ink);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(20,30,60,.18)}
+.slide{position:absolute;inset:0;padding:72px 96px 64px;display:flex;flex-direction:column;gap:32px;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s}
+.slide.active{opacity:1;visibility:visible;transition:opacity .45s ease}
+.slide.dark{background:var(--ink);color:#F1F4FA}
+.in{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.slide.active .in{opacity:1;transform:none}
+.slide.active .in:nth-child(2){transition-delay:.08s}.slide.active .in:nth-child(3){transition-delay:.16s}.slide.active .in:nth-child(4){transition-delay:.24s}.slide.active .in:nth-child(5){transition-delay:.32s}
+
+.kick{font-size:20px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:12px}
+.kick .chip{background:var(--ink);color:#fff;border-radius:999px;padding:4px 14px;font-size:18px}
+.dark .kick{color:#A9B4CF}
+h1,h2,h3{font-weight:600;line-height:1.15}
+h2{font-size:52px;letter-spacing:-.5px}
+h2 .han{font-family:var(--han);font-weight:600;color:var(--muted);font-size:42px;margin-left:12px}
+.han{font-family:var(--han)}
+.lead{font-size:26px;line-height:1.5;color:var(--muted);max-width:1100px}
+.dark .lead{color:#C4CCE0}
+.t1{color:var(--t1)}.t2{color:var(--t2)}.t3{color:var(--t3)}.t4{color:var(--t4)}.t0{color:var(--t0)}
+.box{background:var(--card);border:2px solid var(--line);border-radius:22px}
+.spk{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 22px;font-size:20px;font-weight:500;transition:transform .15s}
+.spk:hover{transform:scale(1.04)}
+.spk svg{width:22px;height:22px}
+.ghost{background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:10px 20px;font-size:20px;font-weight:500}
+.ghost:hover{border-color:var(--ink)}
+.row{display:flex;gap:24px}
+.grow{flex:1}
+
+/* Cover */
+#s-cover{justify-content:center;gap:20px;padding-left:120px}
+#s-cover .brush{position:absolute;right:90px;top:90px;font-family:var(--brush);font-size:340px;line-height:1;display:flex;flex-direction:column}
+#s-cover .brush span{display:block;opacity:0;transform:scale(1.25) rotate(-6deg);filter:blur(6px);transition:all .9s cubic-bezier(.2,.8,.2,1)}
+#s-cover.active .brush span{opacity:1;transform:none;filter:none}
+#s-cover.active .brush span:nth-child(2){transition-delay:.35s}
+#s-cover h1{font-size:150px;font-weight:700;letter-spacing:-3px;line-height:1}
+.tone-strip{display:flex;gap:14px;margin-top:24px}
+.tone-strip span{font-size:56px;font-weight:600;padding:6px 22px;border-radius:16px;background:rgba(255,255,255,.08)}
+
+/* agenda */
+.agenda{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;flex:1}
+.agenda button{text-align:left;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:36px 30px;border-radius:26px;background:var(--card);border:2px solid var(--line);transition:transform .2s,border-color .2s}
+.agenda button:hover{transform:translateY(-6px);border-color:var(--ink)}
+.agenda .big{font-family:var(--han);font-size:150px;line-height:1;margin-bottom:auto}
+.agenda h3{font-size:34px}
+.agenda p{font-size:24px;line-height:1.5;color:var(--muted)}
+
+/* concept */
+.flip{perspective:1600px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .8s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.face.back{transform:rotateY(180deg)}
+
+/* structure */
+.assemble{display:flex;align-items:center;justify-content:center;gap:28px;height:220px;font-size:150px;font-weight:600}
+.piece{display:inline-block;transition:transform .7s cubic-bezier(.3,.7,.2,1),opacity .5s}
+.assemble .op{font-size:70px;color:var(--t0);font-weight:300}
+.assemble .eq{opacity:0;transform:scale(.3)}
+.assemble.join .eq{opacity:1;transform:none}
+.assemble.join .p1,.assemble.join .p2,.assemble.join .p3{animation:pop .5s}
+.assemble .result{opacity:0;transform:scale(.6);transition:all .6s .55s}
+.assemble.join .result{opacity:1;transform:none}
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.parts .box{padding:28px 30px;display:flex;flex-direction:column;gap:10px;border-top-width:10px}
+.parts h3{font-size:30px}
+.parts p{font-size:22px;color:var(--muted);line-height:1.45}
+.parts .n{font-size:54px;font-weight:700}
+
+/* initials explorer */
+.explorer{display:grid;grid-template-columns:1fr 640px;gap:36px;flex:1;min-height:0}
+.groups{display:flex;flex-direction:column;gap:18px}
+.group h3{font-size:22px;color:var(--muted);font-weight:500;margin-bottom:10px}
+.tiles{display:flex;gap:14px;flex-wrap:wrap}
+.tile{width:104px;height:104px;border-radius:22px;background:var(--card);border:2px solid var(--line);font-size:56px;font-weight:600;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .2s,color .2s}
+.tile:hover{transform:translateY(-4px)}
+.tile.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.panel{display:flex;flex-direction:column;gap:18px;padding:28px;border-radius:28px;background:var(--card);border:2px solid var(--line)}
+.panel img{width:100%;height:300px;object-fit:contain;background:#E6F0FA;border-radius:18px}
+.panel .big{font-size:96px;font-weight:700;line-height:1}
+.panel .tip{font-size:24px;line-height:1.5}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.7);opacity:.2}100%{transform:none;opacity:1}}
+
+/* aspiration */
+.pairs{display:flex;flex-direction:column;gap:22px}
+.pair{display:grid;grid-template-columns:150px 150px 1fr;gap:22px;align-items:center;padding:20px 28px}
+.lbtn{height:120px;border-radius:24px;font-size:72px;font-weight:700;background:var(--paper);border:2px solid var(--line)}
+.lbtn.asp{color:var(--t4)}
+.paperwrap{height:120px;position:relative;display:flex;align-items:center;gap:28px}
+.mouth{width:44px;height:44px;border-radius:50%;background:var(--ink)}
+.sheet{width:26px;height:110px;background:#fff;border:2px solid #C9D2E3;border-radius:4px;transform-origin:50% 0;box-shadow:2px 2px 0 #E4E9F2}
+.sheet.soft{animation:soft .6s ease}
+.sheet.hard{animation:hard 1s ease}
+@keyframes soft{30%{transform:rotate(-4deg)}100%{transform:none}}
+@keyframes hard{15%{transform:rotate(-38deg)}35%{transform:rotate(-24deg)}55%{transform:rotate(-32deg)}100%{transform:none}}
+.puff{position:absolute;left:62px;top:50%;width:14px;height:14px;border-radius:50%;background:rgba(47,127,216,.35);opacity:0}
+.puff.go{animation:puff .7s ease-out}
+@keyframes puff{0%{opacity:.9;transform:translate(0,-50%) scale(1)}100%{opacity:0;transform:translate(70px,-50%) scale(3)}}
+.pair .desc{font-size:22px;color:var(--muted);line-height:1.5}
+
+/* finals */
+.ftiles{display:grid;gap:20px}
+.ftile{border-radius:24px;background:var(--card);border:2px solid var(--line);padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .15s,border-color .2s}
+.ftile:hover{transform:translateY(-5px);border-color:var(--t1)}
+.ftile .f{font-size:76px;font-weight:600;color:var(--t1);line-height:1.05}
+.ftile .h{font-size:20px;color:var(--muted)}
+.ftile .ex{font-size:22px}
+.ftile.playing{border-color:var(--t1);background:#EEF5FD}
+.tipbar{font-size:24px;line-height:1.5;padding:20px 28px;border-radius:20px;background:#E9EFF9;min-height:76px}
+.lbl{font-size:24px;font-weight:600;margin-bottom:12px}
+.lbl span{font-weight:400;color:var(--muted)}
+
+.big6 .ftile{padding:48px 18px;gap:14px}.big6 .ftile .f{font-size:140px}.big6 .ftile .h{font-size:24px}.big6 .ftile .ex{font-size:28px}
+/* tables */
+.tablewrap{display:grid;grid-template-columns:300px 1fr;gap:36px;flex:1;min-height:0}
+table.py{table-layout:fixed;border-collapse:separate;border-spacing:4px;width:100%;font-size:24px}
+table.py th,table.py td{text-align:center;height:52px;border-radius:10px}
+table.py th{background:var(--ink);color:#fff;font-weight:600}
+table.py td{background:var(--card);transition:background .15s,color .15s,transform .15s}
+table.py td.e{background:transparent}
+table.py tr.hl td:not(.e),table.py td.hlc{background:#DCE8F8}
+table.py td.pick{background:var(--t3)!important;color:#fff;transform:scale(1.12);font-weight:700}
+table.py.small{font-size:26px}
+table.py.small th,table.py.small td{height:56px}
+
+/* tones */
+.tcards{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.tcard{border-radius:26px;background:var(--card);border:2px solid var(--line);padding:28px 22px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .2s}
+.tcard:hover{transform:translateY(-6px)}
+.tcard .zh{font-family:var(--han);font-size:120px;line-height:1.05}
+.tcard .p{font-size:64px;font-weight:600;line-height:1.1}
+.tcard .m{font-size:28px}
+.tcard .tn{font-size:22px;font-weight:600;color:var(--muted)}
+svg.contour{width:220px;height:180px;overflow:visible}
+svg.contour .grid line{stroke:#E3E8F1;stroke-width:2}
+svg.contour .grid text{font-size:16px;fill:#9AA3B7;font-family:Lexend,sans-serif}
+svg.contour .stroke{fill:none;stroke-width:11;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+svg.contour .neu{fill:none;stroke:var(--t0);stroke-width:11;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.draw .stroke{animation:draw 1s ease forwards}
+.draw .neu{animation:draw .35s ease forwards .95s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.tcard .desc{font-size:20px;color:var(--muted);text-align:center;line-height:1.45}
+
+/* sandhi */
+.srows{display:flex;flex-direction:column;gap:16px}
+.srow{display:grid;grid-template-columns:360px 1fr 470px;gap:24px;align-items:center;padding:20px 28px}
+.srow .c{font-size:24px;font-weight:600}
+.srow .r{font-size:22px;color:var(--muted);line-height:1.45}
+.sx{display:flex;align-items:center;gap:16px;justify-content:space-between;border-radius:16px;background:var(--paper);padding:12px 18px;cursor:pointer}
+.sx .zh{font-family:var(--han);font-size:34px}
+.sx .pp{font-size:30px;font-weight:600;position:relative;height:42px;min-width:230px;text-align:right}
+.sx .pp > span{position:absolute;right:0;top:0;white-space:nowrap;transition:opacity .35s,transform .35s}
+.sx .pp .read{opacity:0;transform:translateY(14px)}
+.sx.on .pp .write{opacity:0;transform:translateY(-14px)}
+.sx.on .pp .read{opacity:1;transform:none}
+.sx .tag{font-size:16px;color:var(--muted);width:64px;text-align:right}
+
+/* exercises */
+.ex1{display:grid;grid-template-columns:1fr 1fr;gap:16px 36px}
+.exr{display:flex;align-items:center;gap:14px;padding:10px 18px}
+.exr .num{font-size:22px;font-weight:700;color:var(--muted);width:40px}
+.syl{font-size:36px;font-weight:500;padding:6px 16px;border-radius:14px;border:3px solid transparent;transition:all .15s}
+.syl:hover{background:var(--paper)}
+.syl.mark{border-color:var(--ink);background:#EEF2F8}
+.syl.target{background:var(--t3);color:#fff!important;animation:pop .4s}
+.quiz{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.q{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.q .top{display:flex;justify-content:space-between;align-items:center}
+.q .num{font-size:20px;font-weight:700;color:var(--muted)}
+.q .play{width:52px;height:52px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center}
+.q .play svg{width:24px;height:24px}
+.q .play.ready{background:var(--t3);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(212,138,0,.18)}}
+.q .opts{display:flex;gap:10px}
+.q .opt{flex:1;font-size:30px;font-weight:500;padding:10px 4px;border-radius:14px;background:var(--paper);border:2px solid transparent;transition:all .15s}
+.q .opt:hover{border-color:var(--line)}
+.q .opt.ok{background:#DDF3E8;border-color:var(--t2)}
+.q .opt.no{background:#FBE3DE;border-color:var(--t4);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.q .note{font-size:16px;color:var(--muted)}
+.score{font-size:24px;font-weight:600;display:flex;gap:16px;align-items:center}
+.score b{font-size:34px;color:var(--t2)}
+.toolbar{display:flex;gap:14px;align-items:center;justify-content:space-between}
+
+/* flashcards */
+.fc-grid{display:grid;gap:18px;flex:1;min-height:0}
+.fc{perspective:1200px;cursor:pointer;min-height:0}
+.fc .flip-in{height:100%}
+.fc .face{border-radius:20px;border:2px solid var(--line);background:#FDF5DF;overflow:hidden;gap:6px}
+.fc .front img{width:100%;height:100%;object-fit:contain;padding:10px}
+.fc .front .n{position:absolute;left:12px;top:8px;font-size:18px;font-weight:700;color:#8C7A4A}
+.fc .back{background:var(--card)}
+.fc .back .zh{font-family:var(--han);font-size:64px;line-height:1.1}
+.fc .back .p{font-size:30px;font-weight:600}
+.fc .back .m{font-size:20px;color:var(--muted)}
+.fc.on .flip-in{transform:rotateY(180deg)}
+
+/* end */
+#s-end{align-items:center;justify-content:center;text-align:center}
+#s-end .brush{font-family:var(--brush);font-size:260px;line-height:1.1}
+#s-end .brush span{display:inline-block;opacity:0;transform:translateY(40px) rotate(8deg);transition:all .7s cubic-bezier(.3,1.4,.5,1)}
+#s-end.active .brush span{opacity:1;transform:none}
+#s-end.active .brush span:nth-child(2){transition-delay:.18s}#s-end.active .brush span:nth-child(3){transition-delay:.36s}
+
+/* controls */
+#bar{flex:none;display:flex;align-items:center;gap:12px;padding:10px 16px calc(10px + 0px);flex-wrap:wrap;justify-content:center}
+#bar .nav{width:46px;height:46px;border-radius:50%;background:var(--chrome-btn);display:flex;align-items:center;justify-content:center;border:1px solid rgba(127,140,170,.3)}
+#bar .nav svg{width:22px;height:22px}
+#secs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#secs button{font-size:14px;padding:8px 14px;border-radius:999px;background:var(--chrome-btn);border:1px solid rgba(127,140,170,.3)}
+#secs button.on{background:var(--t1);color:#fff;border-color:var(--t1)}
+#count{font-size:14px;min-width:64px;text-align:center;opacity:.8}
+#progress{position:absolute;left:0;top:0;height:6px;background:var(--t3);transition:width .4s;z-index:5}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#1E2A4A;color:#fff;padding:12px 20px;border-radius:12px;font-size:15px;opacity:0;pointer-events:none;transition:all .3s;max-width:90vw;text-align:center;z-index:20}
+#toast.show{opacity:1;transform:translateX(-50%)}
+@media (max-width:700px){#secs{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+<script>/* bộ lọc âm tiết có thật trong tiếng Phổ thông: âm tiết → chữ ví dụ cho thanh 1–4 (· = không có) */
+var PY_TONES={"a":"阿···","ai":"唉癌矮爱","an":"安·俺按","ang":"肮昂·盎","ao":"凹熬袄傲","ba":"八拔把爸","bai":"掰白百败","ban":"班·板半","bang":"帮·膀棒","bao":"包薄饱报","bei":"杯·北备","ben":"奔·本笨","beng":"绷甭·蹦","bi":"逼鼻比必","bian":"边·贬变","biao":"标·表·","bie":"憋别瘪别","bin":"宾··摈","bing":"冰·饼病","bo":"播博簸·","bu":"·不补不","ca":"擦···","cai":"猜才彩菜","can":"参残惨灿","cang":"仓藏··","cao":"操嘈草·","ce":"···厕","ceng":"·层·蹭","cha":"插茶·差","chai":"差柴··","chan":"搀馋产颤","chang":"猖常场唱","chao":"超朝吵·","che":"车·扯彻","chen":"郴晨·衬","cheng":"称成逞秤","chi":"吃迟尺翅","chong":"充重宠·","chou":"抽愁丑臭","chu":"出除楚处","chuai":"揣·揣踹","chuan":"穿船喘串","chuang":"窗床闯创","chui":"吹垂··","chun":"春纯蠢·","chuo":"戳··绰","ci":"疵词此次","cong":"聪从··","cou":"···凑","cu":"粗··促","cuan":"蹿··窜","cui":"催·璀脆","cun":"村存·寸","cuo":"搓··错","da":"答答打大","dai":"呆·逮带","dan":"单·胆蛋","dang":"当·挡当","dao":"刀·导到","de":"·得··","dei":"··得·","deng":"灯·等瞪","di":"低的底第","dian":"颠·点电","diao":"叼··掉","die":"跌蝶··","ding":"钉·顶定","diu":"丢···","dong":"东·懂动","dou":"都·抖豆","du":"都读堵度","duan":"端·短段","dui":"堆··对","dun":"吨·盹顿","duo":"多夺朵堕","e":"·额恶饿","en":"恩···","er":"·儿耳二","fa":"发罚法发","fan":"翻烦反饭","fang":"方房访放","fei":"非肥诽费","fen":"分坟粉分","feng":"风缝讽奉","fou":"··否·","fu":"夫服腐附","ga":"嘎噶·尬","gai":"该·改概","gan":"干·感干","gang":"刚·港杠","gao":"高·搞告","ge":"歌格·个","gei":"··给·","gen":"跟···","geng":"更·哽更","gong":"公·巩共","gou":"沟·狗够","gu":"估·鼓故","gua":"刮·寡挂","guai":"乖·拐怪","guan":"关·馆惯","guang":"光·广逛","gui":"规·轨贵","gun":"··滚棍","guo":"锅国果过","ha":"哈蛤··","hai":"·还海害","han":"酣寒喊汉","hang":"夯行··","hao":"·毫好号","he":"喝河·贺","hei":"黑···","hen":"·痕很恨","heng":"哼衡··","hong":"轰红哄哄","hou":"·猴吼后","hu":"乎湖虎护","hua":"花滑·话","huai":"·怀·坏","huan":"欢环缓换","huang":"荒黄晃晃","hui":"挥回悔会","hun":"婚浑·混","huo":"豁活火或","ji":"机级几记","jia":"家颊假假","jian":"间·检见","jiang":"江·讲降","jiao":"交·饺叫","jie":"接节姐介","jin":"今·仅进","jing":"经·景静","jiong":"··窘·","jiu":"究·九就","ju":"居橘举据","juan":"捐·卷卷","jue":"撅觉··","jun":"军··俊","ka":"咖·卡·","kai":"开·慨·","kan":"刊·砍看","kang":"康扛·抗","kao":"··考靠","ke":"科咳可客","ken":"··肯·","keng":"坑···","kong":"空·恐控","kou":"抠·口扣","ku":"哭·苦裤","kua":"夸·垮挎","kuai":"···块","kuan":"宽·款·","kuang":"框狂·矿","kui":"亏魁·馈","kun":"昆·捆困","kuo":"···括","la":"拉·喇辣","lai":"·来·赖","lan":"·篮懒烂","lang":"·郎朗浪","lao":"捞劳老涝","le":"肋··乐","lei":"勒雷累累","leng":"·棱冷愣","li":"哩离里历","lia":"··俩·","lian":"·联脸炼","liang":"·凉两亮","liao":"撩聊了料","lie":"咧·咧列","lin":"拎邻凛吝","ling":"·零领另","liu":"溜留柳六","long":"·龙拢·","lou":"·楼搂漏","lu":"·炉鲁路","luan":"·孪卵乱","lun":"抡轮·论","luo":"啰逻裸落","lü":"·驴旅绿","lüe":"···略","ma":"妈麻码骂","mai":"·埋买卖","man":"·馒满慢","mang":"·忙莽·","mao":"猫毛铆冒","mei":"·没每妹","men":"闷门·闷","meng":"·盟猛梦","mi":"眯迷米密","mian":"·眠免面","miao":"·描秒妙","mie":"···灭","min":"·民敏·","ming":"·明·命","miu":"···谬","mo":"摸模抹末","mou":"·谋某·","mu":"·模母目","n":"·嗯··","na":"·拿哪那","nai":"··奶耐","nan":"·男·难","nang":"·囊··","nao":"·挠脑闹","nei":"··馁内","nen":"···嫩","neng":"·能··","ni":"妮泥你匿","nian":"蔫年撵念","niang":"·娘·酿","niao":"··鸟尿","nie":"捏··聂","nin":"·您··","ning":"·宁·宁","niu":"·牛扭·","nong":"·农·弄","nu":"·奴努怒","nuan":"··暖·","nuo":"·挪·诺","nü":"··女·","nüe":"···虐","o":"·哦··","ou":"欧·偶·","pa":"趴爬·怕","pai":"拍排·派","pan":"攀盘·判","pang":"乓旁耪胖","pao":"抛刨跑泡","pei":"胚陪·配","pen":"喷盆··","peng":"抨朋捧碰","pi":"批啤匹辟","pian":"片便·片","piao":"飘朴·漂","pie":"撇···","pin":"拼频品聘","ping":"乒苹··","po":"泼婆颇破","pou":"剖···","pu":"扑葡普铺","qi":"七骑起气","qia":"掐··恰","qian":"千前浅歉","qiang":"腔强抢呛","qiao":"敲桥巧峭","qie":"切茄且切","qin":"亲琴寝沁","qing":"轻晴请庆","qiong":"·穷··","qiu":"秋球··","qu":"区渠取去","quan":"圈全犬劝","que":"缺瘸·却","qun":"·裙··","ran":"·然染·","rang":"·瓤壤让","rao":"·饶扰绕","re":"··惹热","ren":"·人忍认","reng":"扔仍··","ri":"···日","rong":"茸容冗·","rou":"·柔·肉","ru":"·如乳入","ruan":"··软·","rui":"··蕊锐","run":"···润","ruo":"···弱","sa":"撒·洒萨","sai":"塞··赛","san":"三·伞散","sang":"桑·嗓丧","sao":"骚·扫扫","se":"···色","sen":"森···","seng":"僧···","sha":"沙啥傻厦","shai":"筛··晒","shan":"衫·闪善","shang":"商·赏上","shao":"烧勺少绍","she":"奢蛇舍社","shei":"·谁··","shen":"身什审甚","sheng":"生绳省剩","shi":"师识始市","shou":"收·手受","shu":"书熟暑束","shua":"刷·耍·","shuai":"摔·甩帅","shuan":"拴··涮","shuang":"双·爽·","shui":"·谁水睡","shun":"··吮顺","shuo":"说··硕","si":"司·死四","song":"松·耸送","sou":"搜·擞嗽","su":"苏俗·诉","suan":"酸··算","sui":"虽随髓岁","sun":"孙·损·","suo":"缩·所·","ta":"他·塔踏","tai":"胎台·太","tan":"滩谈毯碳","tang":"汤糖躺趟","tao":"掏萄讨套","te":"···特","teng":"·疼··","ti":"踢题体替","tian":"天甜腆·","tiao":"挑条挑跳","tie":"贴·铁·","ting":"听庭挺·","tong":"通同桶痛","tou":"偷头·透","tu":"突图土兔","tuan":"湍团··","tui":"推颓腿退","tun":"吞豚··","tuo":"脱驮妥拓","wa":"挖娃瓦袜","wai":"歪··外","wan":"弯玩晚万","wang":"汪王网忘","wei":"微为尾位","wen":"温文稳问","weng":"翁··瓮","wo":"窝·我握","wu":"屋无午物","xi":"西习喜系","xia":"虾辖·下","xian":"先咸险现","xiang":"箱详想向","xiao":"消淆小校","xie":"些鞋写谢","xin":"新··信","xing":"星行醒兴","xiong":"兄熊··","xiu":"休·朽秀","xu":"须徐许续","xuan":"宣旋选炫","xue":"削学雪血","xun":"熏询·训","ya":"压牙雅亚","yan":"烟颜眼验","yang":"央阳养样","yao":"要摇咬要","ye":"椰爷也页","yi":"一一以一","yin":"阴银饮印","ying":"应迎影应","yo":"哟···","yong":"拥·泳用","you":"优游友右","yu":"迂鱼语育","yuan":"鸳元远院","yue":"约··月","yun":"晕云允运","za":"扎杂咋·","zai":"灾·载在","zan":"·咱攒暂","zang":"赃··脏","zao":"糟凿早造","ze":"·择··","zei":"·贼··","zen":"··怎·","zeng":"增··赠","zha":"扎闸眨炸","zhai":"摘宅窄寨","zhan":"粘·展站","zhang":"张·长丈","zhao":"招着找照","zhe":"遮折者这","zhei":"···这","zhen":"真·诊震","zheng":"争·整正","zhi":"知直只至","zhong":"钟·种重","zhou":"周轴帚骤","zhu":"猪逐主住","zhua":"抓·爪·","zhuai":"拽···","zhuan":"专·转赚","zhuang":"装··状","zhui":"追··缀","zhun":"谆·准·","zhuo":"桌着··","zi":"资·子字","zong":"综·总粽","zou":"邹·走奏","zu":"租足组·","zuan":"钻·纂攥","zui":"··嘴最","zun":"尊···","zuo":"·昨左作"};</script>
+</head>
+<body>
+<div id="viewport"><div id="deck" role="region" aria-label="Bài giảng Ngữ âm 1"><div id="progress"></div>
+
+<!-- 1 COVER -->
+<section class="slide dark" id="s-cover" data-sec="Mở đầu">
+  <div class="brush" aria-hidden="true"><span style="color:#F2B84B">拼</span><span style="color:#7FB3F0">音</span></div>
+  <p class="kick in"><span class="chip" style="background:#F2B84B;color:#1E2A4A">Bài 1</span> HK-SCHOOL</p>
+  <h1 class="in">Ngữ âm 1</h1>
+  <p class="lead in" style="font-size:32px">Làm quen với Pinyin — chìa khóa để đọc đúng tiếng Trung.</p>
+  <div class="tone-strip in"><span style="color:#7FB3F0">mā</span><span style="color:#6FD3A4">má</span><span style="color:#F2B84B">mǎ</span><span style="color:#FF8A73">mà</span></div>
+</section>
+
+<!-- 2 AGENDA -->
+<section class="slide" id="s-agenda" data-sec="Mở đầu">
+  <p class="kick in">Nội dung bài học</p>
+  <h2 class="in">Hôm nay chúng ta học gì?</h2>
+  <div class="agenda in">
+    <button data-go="s-concept"><span class="big t1">拼</span><h3>Khái niệm</h3><p>Pinyin là gì, một âm tiết gồm những phần nào.</p></button>
+    <button data-go="s-initials"><span class="big t2">声</span><h3>Thanh mẫu</h3><p>11 phụ âm đầu: b p m f d t n l g k h.</p></button>
+    <button data-go="s-fin1"><span class="big t3">韵</span><h3>Vận mẫu</h3><p>Vận mẫu đơn, kép, mũi và bảng ghép vần.</p></button>
+    <button data-go="s-tmean"><span class="big t4">调</span><h3>Thanh điệu</h3><p>4 thanh chính, biến điệu thanh 3, thanh nhẹ.</p></button>
+  </div>
+</section>
+
+<!-- 3 CONCEPT -->
+<section class="slide" id="s-concept" data-sec="Khái niệm">
+  <p class="kick in"><span class="chip">01</span> Khái niệm</p>
+  <h2 class="in">Pinyin là gì?<span class="han">什么是拼音</span></h2>
+  <div class="row in" style="flex:1;gap:40px;align-items:stretch">
+    <div class="flip grow" id="flipHao" tabindex="0" role="button" aria-label="Lật thẻ chữ 好">
+      <div class="flip-in">
+        <div class="face box"><span class="han" style="font-size:300px;line-height:1">好</span><span style="font-size:26px;color:var(--muted)">汉字 <b class="t4">hànzì</b> · Hán tự</span></div>
+        <div class="face back box" style="background:#FFF9EC"><span class="t3" style="font-size:220px;font-weight:600;line-height:1">hǎo</span><span style="font-size:26px;color:var(--muted)">拼音 <b class="t1">pīnyīn</b> · Bính âm</span></div>
+      </div>
+    </div>
+    <div style="width:560px;display:flex;flex-direction:column;justify-content:center;gap:28px">
+      <p style="font-size:34px;line-height:1.45;font-weight:500">Chữ Hán không cho ta biết cách đọc.</p>
+      <p style="font-size:28px;line-height:1.55;color:var(--muted)">Pinyin dùng chữ cái Latinh để ghi lại âm đọc của chữ Hán. Bấm vào thẻ để lật.</p>
+      <div class="row"><button class="spk" data-say="好"><i data-ic="vol"></i>Nghe 好</button><button class="ghost" id="flipBtn">Lật thẻ</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 STRUCTURE -->
+<section class="slide" id="s-structure" data-sec="Khái niệm">
+  <p class="kick in"><span class="chip">01</span> Khái niệm</p>
+  <h2 class="in">Một âm tiết gồm ba phần<span class="han">拼音结构</span></h2>
+  <div class="in" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div class="assemble" id="asm">
+      <span class="piece p1 t4">h</span><span class="piece op">+</span><span class="piece p2 t1">ao</span><span class="piece op">+</span><span class="piece p3" style="color:var(--t3)">ˇ</span><span class="piece op eq">=</span>
+      <span class="result t3" style="font-weight:700">hǎo</span>
+    </div>
+    <div class="row"><button class="ghost" id="asmBtn">Ghép lại</button><button class="spk" data-say="好"><i data-ic="vol"></i>Nghe</button></div>
+  </div>
+  <div class="parts in">
+    <div class="box" style="border-top-color:var(--t4)"><h3 class="t4">Thanh mẫu <span class="han">声母</span></h3><p>Phụ âm đứng đầu âm tiết</p><span class="n">21</span></div>
+    <div class="box" style="border-top-color:var(--t1)"><h3 class="t1">Vận mẫu <span class="han">韵母</span></h3><p>Phần vần phía sau thanh mẫu</p><span class="n">39</span></div>
+    <div class="box" style="border-top-color:var(--t3)"><h3 style="color:var(--t3)">Thanh điệu <span class="han">声调</span></h3><p>Dấu đặt trên nguyên âm chính</p><span class="n">4 + 1 <small style="font-size:22px;font-weight:400;color:var(--muted)">thanh nhẹ</small></span></div>
+  </div>
+</section>
+
+<!-- 5 INITIALS -->
+<section class="slide" id="s-initials" data-sec="Thanh mẫu">
+  <p class="kick in"><span class="chip">02</span> Thanh mẫu 声母</p>
+  <h2 class="in">Chọn một thanh mẫu để xem khẩu hình</h2>
+  <div class="explorer in">
+    <div class="groups" id="groups"></div>
+    <div class="panel" id="ipanel" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 6 ASPIRATION -->
+<section class="slide" id="s-asp" data-sec="Thanh mẫu">
+  <p class="kick in"><span class="chip">02</span> Thanh mẫu 声母</p>
+  <h2 class="in">Bật hơi hay không bật hơi?</h2>
+  <div class="row in" style="gap:40px;flex:1">
+    <div class="pairs grow" id="pairs"></div>
+    <div class="box" style="width:420px;padding:36px;display:flex;flex-direction:column;gap:18px;background:var(--ink);color:#fff;border-color:var(--ink);align-self:flex-start">
+      <h3 style="font-size:30px;color:#F2B84B">Thử với tờ giấy</h3>
+      <p style="font-size:23px;line-height:1.6;color:#D7DDEB">Cầm tờ giấy mỏng trước miệng. Đọc <b>p, t, k</b> thì giấy bay mạnh; đọc <b>b, d, g</b> thì giấy gần như đứng yên.</p>
+      <p style="font-size:21px;line-height:1.6;color:#A9B4CF">Bấm từng chữ để xem và nghe.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 FINALS 1 -->
+<section class="slide" id="s-fin1" data-sec="Vận mẫu">
+  <p class="kick in"><span class="chip">03</span> Vận mẫu 韵母</p>
+  <h2 class="in">Sáu vận mẫu đơn</h2>
+  <div class="ftiles in big6" id="fin1" style="grid-template-columns:repeat(6,1fr)"></div>
+  <p class="tipbar in" id="fin1tip">Bấm vào từng vận mẫu để nghe và xem cách đọc.</p>
+</section>
+
+<!-- 8 FINALS 2 -->
+<section class="slide" id="s-fin2" data-sec="Vận mẫu">
+  <p class="kick in"><span class="chip">03</span> Vận mẫu 韵母</p>
+  <h2 class="in">Vận mẫu kép và vận mẫu mũi</h2>
+  <div class="in"><p class="lbl">Vận mẫu kép <span>— trượt từ nguyên âm này sang nguyên âm kia</span></p><div class="ftiles" id="fin2a" style="grid-template-columns:repeat(4,1fr)"></div></div>
+  <div class="in"><p class="lbl">Vận mẫu mũi <span>— kết thúc bằng -n hoặc -ng</span></p><div class="ftiles" id="fin2b" style="grid-template-columns:repeat(5,1fr)"></div></div>
+</section>
+
+<!-- 9 TABLE 1 -->
+<section class="slide" id="s-tab1" data-sec="Vận mẫu" style="padding-top:56px">
+  <div class="tablewrap">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <p class="kick"><span class="chip">03</span> Vận mẫu</p>
+      <h2 style="font-size:44px">Bảng ghép vần</h2>
+      <p class="lead" style="font-size:22px">Di chuột để thấy hàng và cột. Bấm “Ô ngẫu nhiên” để gọi học viên đọc.</p>
+      <button class="spk" data-rand="tab1"><i data-ic="dice"></i>Ô ngẫu nhiên</button>
+    </div>
+    <table class="py" id="tab1"></table>
+  </div>
+</section>
+
+<!-- 10 TABLE 2 -->
+<section class="slide" id="s-tab2" data-sec="Vận mẫu" style="padding-top:56px">
+  <div class="tablewrap">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <p class="kick"><span class="chip">03</span> Vận mẫu</p>
+      <h2 style="font-size:44px">Bảng ghép vần mũi</h2>
+      <p class="lead" style="font-size:22px">Luyện phân biệt -n và -ng: ban – bang, fen – feng, dan – dang.</p>
+      <button class="spk" data-rand="tab2"><i data-ic="dice"></i>Ô ngẫu nhiên</button>
+    </div>
+    <table class="py small" id="tab2"></table>
+  </div>
+</section>
+
+<!-- 11 TONES MEANING -->
+<section class="slide" id="s-tmean" data-sec="Thanh điệu">
+  <p class="kick in"><span class="chip">04</span> Thanh điệu 声调</p>
+  <h2 class="in">Đổi thanh điệu là đổi nghĩa</h2>
+  <div class="tcards in" id="tmean"></div>
+  <p class="lead in">Câu vui dễ nhớ: <span class="han">妈妈骂马</span> <b><span class="t1">māma</span> <span class="t4">mà</span> <span class="t3">mǎ</span></b> — mẹ mắng con ngựa.</p>
+</section>
+
+<!-- 12 FOUR TONES -->
+<section class="slide" id="s-tones" data-sec="Thanh điệu">
+  <p class="kick in"><span class="chip">04</span> Thanh điệu 声调</p>
+  <h2 class="in">Bốn thanh điệu chính</h2>
+  <div class="tcards in" id="tones"></div>
+  <p class="lead in" style="font-size:22px">Thang độ cao từ 1 (thấp nhất) đến 5 (cao nhất). Bấm vào thẻ để vẽ lại đường thanh và nghe.</p>
+</section>
+
+<!-- 13 SANDHI -->
+<section class="slide" id="s-sandhi" data-sec="Thanh điệu">
+  <p class="kick in"><span class="chip">04</span> Thanh điệu 声调</p>
+  <h2 class="in">Biến điệu của thanh 3</h2>
+  <div class="srows in" id="sandhi"></div>
+  <p class="lead in" style="font-size:22px">Bấm vào ví dụ để chuyển giữa cách <b>viết</b> và cách <b>đọc</b>. Khi viết, dấu thanh 3 vẫn giữ nguyên.</p>
+</section>
+
+<!-- 14 NEUTRAL -->
+<section class="slide" id="s-neutral" data-sec="Thanh điệu">
+  <p class="kick in"><span class="chip">04</span> Thanh điệu 声调</p>
+  <h2 class="in">Thanh nhẹ <span style="font-weight:400;color:var(--muted);font-size:38px">(thanh không)</span></h2>
+  <div class="tcards in" id="neutral"></div>
+  <p class="lead in" style="font-size:22px">Thanh nhẹ đọc ngắn, nhẹ và <b>không đánh dấu</b>. Độ cao của nó phụ thuộc vào thanh đứng trước.</p>
+</section>
+
+<!-- 15 EX1 -->
+<section class="slide" id="s-ex1" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip" style="background:var(--t3)">Luyện tập 1</span></p><h2 style="margin-top:10px">Nghe và chọn đúng thanh điệu</h2></div>
+  <div class="row"><button class="spk" id="ex1rand"><i data-ic="dice"></i>Gợi ý ngẫu nhiên</button><button class="ghost" id="ex1clear">Xóa chọn</button></div></div>
+  <div class="ex1 in" id="ex1"></div>
+  <p class="lead in" style="font-size:21px">Giáo viên đọc một âm tiết mỗi dòng, học viên bấm chọn. “Gợi ý ngẫu nhiên” tô sáng một âm mỗi dòng để luyện theo cặp.</p>
+</section>
+
+<!-- 16 EX2 -->
+<section class="slide" id="s-ex2" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip" style="background:var(--t3)">Luyện tập 2</span></p><h2 style="margin-top:10px">Nghe và chọn: thanh mẫu, vận mẫu</h2></div>
+  <div class="score"><span>Đúng</span><b data-score="ex2">0</b><span data-total="ex2">/ 12</span><button class="ghost" data-reset="ex2">Làm lại</button></div></div>
+  <div class="quiz in" id="ex2"></div>
+</section>
+
+<!-- 17 EX3 -->
+<section class="slide" id="s-ex3" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip" style="background:var(--t3)">Luyện tập 3</span></p><h2 style="margin-top:10px">Nghe và chọn: thanh điệu</h2></div>
+  <div class="score"><span>Đúng</span><b data-score="ex3">0</b><span data-total="ex3">/ 12</span><button class="ghost" data-reset="ex3">Làm lại</button></div></div>
+  <div class="quiz in" id="ex3"></div>
+</section>
+
+<!-- 18 READ 1 -->
+<section class="slide" id="s-read1" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip" style="background:var(--t2)">Luyện đọc</span> 朗读练习</p><h2 style="margin-top:10px">Nhìn hình, đoán chữ</h2></div>
+  <div class="row"><button class="ghost" data-flipall="read1">Lật tất cả</button></div></div>
+  <div class="fc-grid in" id="read1" style="grid-template-columns:repeat(5,1fr);grid-template-rows:1fr 1fr"></div>
+</section>
+
+<!-- 19 READ 2 -->
+<section class="slide" id="s-read2" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip" style="background:var(--t2)">Luyện đọc</span> 朗读练习</p><h2 style="margin-top:10px">Nhìn hình, đọc từ</h2></div>
+  <div class="row"><button class="ghost" data-flipall="read2">Lật tất cả</button></div></div>
+  <div class="fc-grid in" id="read2" style="grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr"></div>
+</section>
+
+<!-- 20 END -->
+<section class="slide dark" id="s-end" data-sec="Luyện tập">
+  <p class="brush" aria-label="下课了"><span style="color:#F2B84B">下</span><span style="color:#7FB3F0">课</span><span style="color:#FF8A73">了</span></p>
+  <p style="font-size:52px;font-weight:500"><span style="color:#FF8A73">xià</span> <span style="color:#FF8A73">kè</span> <span style="color:#A9B4CF">le</span></p>
+  <p class="lead" style="margin-top:16px">Hết giờ học rồi! Về nhà ôn lại thanh mẫu, vận mẫu và bốn thanh điệu nhé.</p>
+  <button class="spk" data-say="下课了" style="margin-top:24px;background:#F2B84B;color:#1E2A4A"><i data-ic="vol"></i>Nghe</button>
+</section>
+
+</div></div>
+
+<nav id="bar" aria-label="Điều khiển">
+  <button class="nav" id="prev" aria-label="Trang trước"><i data-ic="left"></i></button>
+  <div id="secs"></div>
+  <span id="count"></span>
+  <button class="nav" id="next" aria-label="Trang sau"><i data-ic="right"></i></button>
+  <button class="nav" id="fs" aria-label="Toàn màn hình"><i data-ic="full"></i></button>
+</nav>
+<div id="toast" role="status"></div>
+
+<script>
+const IMG = {"g_b": "b.gif", "g_p": "p.gif", "g_m": "m.gif", "g_f": "f.gif", "g_d": "d.gif", "g_t": "t.gif", "g_n": "n.gif", "g_l": "l.gif", "g_g": "g.gif", "g_k": "k.gif", "g_h": "h.gif", "r1_1": "r1_1.jpg", "r1_2": "r1_2.jpg", "r1_3": "r1_3.jpg", "r1_4": "r1_4.jpg", "r1_5": "r1_5.jpg", "r1_6": "r1_6.jpg", "r1_7": "r1_7.jpg", "r1_8": "r1_8.jpg", "r1_9": "r1_9.jpg", "r1_10": "r1_10.jpg", "r2_1": "r2_1.jpg", "r2_5": "r2_5.jpg", "r2_2": "r2_2.jpg", "r2_6": "r2_6.jpg", "r2_3": "r2_3.jpg", "r2_7": "r2_7.jpg", "r2_4": "r2_4.jpg", "r2_8": "r2_8.jpg"};
+const IC = {
+ vol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
+ dice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>',
+ left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>',
+ right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>',
+ full:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'
+};
+const icons = root => root.querySelectorAll('i[data-ic]').forEach(i=>{i.outerHTML=IC[i.dataset.ic]});
+
+/* ---------- tone helpers ---------- */
+const TM = {1:'āēīōūǖĀĒĪŌŪ',2:'áéíóúǘÁÉÍÓÚ',3:'ǎěǐǒǔǚǍĚǏǑǓ',4:'àèìòùǜÀÈÌÒÙ'};
+function toneOf(s){for(const t in TM){for(const c of TM[t]) if(s.includes(c)) return +t;} return 0;}
+const py = s => `<span class="t${toneOf(s)}">${s}</span>`;
+const pyw = arr => arr.map(py).join('');
+
+/* ---------- speech ---------- */
+let zhVoice=null;
+function loadVoices(){ if(!('speechSynthesis' in window)) return; const v=speechSynthesis.getVoices(); zhVoice = v.find(x=>/zh[-_]CN/i.test(x.lang)) || v.find(x=>/^zh/i.test(x.lang)) || null; }
+if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+let warned=false;
+function say(text, rate=0.75){
+  if(!('speechSynthesis' in window)){ toast('Trình duyệt này không hỗ trợ đọc âm thanh.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='zh-CN'; u.rate=rate; if(zhVoice) u.voice=zhVoice;
+  if(!zhVoice && !warned){ warned=true; toast('Chưa thấy giọng đọc tiếng Trung trên máy — âm thanh có thể không đúng. Hãy cài giọng đọc tiếng Trung hoặc dùng Chrome/Edge.'); }
+  speechSynthesis.speak(u);
+}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),4200); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-say]'); if(b){ say(b.dataset.say); } });
+
+/* ---------- contours ---------- */
+const LV = l => 180-(l-1)*40;
+const TP = {1:`M30 ${LV(5)} L210 ${LV(5)}`,2:`M30 ${LV(3)} L210 ${LV(5)}`,3:`M30 ${LV(2)} C75 205 125 205 145 ${LV(1)} S195 95 210 ${LV(4)}`,4:`M30 ${LV(5)} L210 ${LV(1)}`};
+const NP = {1:`M20 ${LV(5)} L130 ${LV(5)}`,2:`M20 ${LV(3)} L130 ${LV(5)}`,3:`M20 ${LV(2)} C55 205 95 205 130 ${LV(1)+4}`,4:`M20 ${LV(5)} L130 ${LV(1)}`};
+const NN = {1:`M168 ${LV(2)-6} L200 ${LV(2)+10}`,2:`M168 ${LV(3)-4} L200 ${LV(3)+10}`,3:`M168 ${LV(4)+8} L200 ${LV(4)-6}`,4:`M168 ${LV(1)-6} L200 ${LV(1)+2}`};
+function gridSvg(inner,label){
+  let g='<g class="grid">'; for(let l=1;l<=5;l++) g+=`<line x1="20" x2="220" y1="${LV(l)}" y2="${LV(l)}"/><text x="0" y="${LV(l)+6}">${l}</text>`; g+='</g>';
+  return `<svg class="contour" viewBox="0 0 230 200" role="img" aria-label="${label}">${g}${inner}</svg>`;
+}
+function redraw(el){ el.classList.remove('draw'); void el.offsetWidth; el.classList.add('draw'); }
+
+/* ---------- build: initials ---------- */
+const INIT = {
+ b:{c:'玻',p:'bō',tip:'Hai môi khép rồi bật ra nhẹ, <b>không bật hơi</b> — gần “p” trong tiếng Việt.'},
+ p:{c:'坡',p:'pō',tip:'Giống b nhưng <b>bật mạnh luồng hơi</b> ra ngoài.'},
+ m:{c:'摸',p:'mō',tip:'Hai môi khép, hơi thoát qua mũi — như “m”.'},
+ f:{c:'佛',p:'fó',tip:'Răng trên chạm môi dưới, hơi cọ xát — như “ph”.'},
+ d:{c:'得',p:'dé',tip:'Đầu lưỡi chạm lợi trên, <b>không bật hơi</b> — gần “t”.'},
+ t:{c:'特',p:'tè',tip:'Giống d nhưng <b>bật hơi mạnh</b> — gần “th”.'},
+ n:{c:'讷',p:'nè',tip:'Đầu lưỡi chạm lợi trên, hơi thoát qua mũi — như “n”.'},
+ l:{c:'勒',p:'lè',tip:'Đầu lưỡi chạm lợi trên, hơi thoát ra hai bên lưỡi — như “l”.'},
+ g:{c:'哥',p:'gē',tip:'Cuống lưỡi chạm ngạc mềm, <b>không bật hơi</b> — gần “c/k”. Không đọc thành “gờ”.'},
+ k:{c:'科',p:'kē',tip:'Giống g nhưng <b>bật hơi mạnh</b> ra ngoài.'},
+ h:{c:'喝',p:'hē',tip:'Cuống lưỡi nâng gần ngạc mềm, hơi cọ xát — gần “h/kh”.'}
+};
+const GROUPS=[['Âm hai môi','bpm'],['Âm môi – răng','f'],['Âm đầu lưỡi','dtnl'],['Âm cuống lưỡi','gkh']];
+(function(){
+  const g=document.getElementById('groups');
+  g.innerHTML=GROUPS.map(([n,ls])=>`<div class="group"><h3>${n}</h3><div class="tiles">${[...ls].map(l=>`<button class="tile" data-i="${l}" aria-label="Thanh mẫu ${l}">${l}</button>`).join('')}</div></div>`).join('');
+  const panel=document.getElementById('ipanel');
+  function show(l,speak){
+    g.querySelectorAll('.tile').forEach(t=>t.classList.toggle('sel',t.dataset.i===l));
+    const d=INIT[l];
+    panel.innerHTML=`<img src="${IMG['g_'+l]}" alt="Khẩu hình khi phát âm ${l}"><div style="display:flex;align-items:center;gap:24px"><span class="big t4 pop">${l}</span><span style="font-size:36px;font-weight:500">${py(d.p)} <span class="han" style="font-size:34px;color:var(--muted)">${d.c}</span></span><button class="spk" data-say="${d.c}" style="margin-left:auto">${IC.vol}Nghe</button></div><p class="tip">${d.tip}</p>`;
+    if(speak) say(d.c);
+  }
+  g.addEventListener('click',e=>{const t=e.target.closest('.tile'); if(t) show(t.dataset.i,true);});
+  show('b',false);
+})();
+
+/* ---------- aspiration ---------- */
+(function(){
+  const P=[['b','巴','bā','p','趴','pā'],['d','搭','dā','t','他','tā'],['g','哥','gē','k','科','kē']];
+  const el=document.getElementById('pairs');
+  el.innerHTML=P.map((r,i)=>`<div class="pair box"><button class="lbtn" data-asp="0" data-i="${i}" aria-label="${r[0]} không bật hơi">${r[0]}</button><button class="lbtn asp" data-asp="1" data-i="${i}" aria-label="${r[3]} bật hơi">${r[3]}</button><div class="paperwrap"><div class="mouth"></div><div class="puff"></div><div class="sheet"></div><p class="desc"><b>${r[0]}</b> ${py(r[2])}: giấy yên<br><b class="t4">${r[3]}</b> ${py(r[5])}: giấy bay</p></div></div>`).join('');
+  el.addEventListener('click',e=>{const b=e.target.closest('.lbtn'); if(!b) return; const r=P[b.dataset.i]; const asp=b.dataset.asp==='1'; const row=b.closest('.pair'); const sh=row.querySelector('.sheet'), pf=row.querySelector('.puff');
+    sh.className='sheet'; pf.className='puff'; void sh.offsetWidth; sh.classList.add(asp?'hard':'soft'); if(asp) pf.classList.add('go'); say(asp?r[4]:r[1]); });
+})();
+
+/* ---------- finals ---------- */
+function finals(id, data, tipId){
+  const el=document.getElementById(id);
+  el.innerHTML=data.map((d,i)=>`<button class="ftile" data-k="${i}"><span class="f">${d.f}</span><span class="h">${d.h}</span><span class="ex">${py(d.p)} <span class="han">${d.c}</span></span></button>`).join('');
+  el.addEventListener('click',e=>{const b=e.target.closest('.ftile'); if(!b) return; const d=data[b.dataset.k]; el.querySelectorAll('.ftile').forEach(x=>x.classList.remove('playing')); b.classList.add('playing'); say(d.c); if(tipId){const t=document.getElementById(tipId); t.innerHTML=`<b class="t1" style="font-size:30px">${d.f}</b> &nbsp;${d.tip}`; t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop');}});
+}
+finals('fin1',[
+ {f:'a',h:'như “a”',p:'ā',c:'啊',tip:'Mở rộng miệng, lưỡi hạ thấp — như “a” tiếng Việt.'},
+ {f:'o',h:'gần “ua”',p:'ō',c:'喔',tip:'Tròn môi. Sau b, p, m, f đọc gần “ua”: bo ≈ “bua”.'},
+ {f:'e',h:'gần “ưa”',p:'é',c:'鹅',tip:'Miệng mở vừa, không tròn môi, âm phát từ sâu trong họng — gần “ưa”.'},
+ {f:'i',h:'như “i”',p:'yī',c:'衣',tip:'Môi dẹt sang hai bên — như “i”. Đứng một mình viết là yi.'},
+ {f:'u',h:'như “u”',p:'wū',c:'乌',tip:'Tròn môi, nhô ra trước — như “u”. Đứng một mình viết là wu.'},
+ {f:'ü',h:'gần “uy”',p:'yū',c:'迂',tip:'Giữ lưỡi như đọc i rồi tròn môi như u — gần “uy”. Đứng một mình viết là yu; sau n, l giữ hai dấu chấm: nü, lü.'}
+],'fin1tip');
+finals('fin2a',[{f:'ai',h:'≈ ai',p:'āi',c:'哀'},{f:'ei',h:'≈ ây',p:'hēi',c:'黑'},{f:'ao',h:'≈ ao',p:'āo',c:'凹'},{f:'ou',h:'≈ âu',p:'ōu',c:'欧'}]);
+finals('fin2b',[{f:'an',h:'≈ an',p:'ān',c:'安'},{f:'en',h:'≈ ân',p:'ēn',c:'恩'},{f:'ang',h:'≈ ang',p:'āng',c:'肮'},{f:'eng',h:'≈ âng',p:'fēng',c:'风'},{f:'ong',h:'≈ ung',p:'dōng',c:'东'}]);
+
+/* ---------- tables ---------- */
+function buildTable(id, cols, rows){
+  const t=document.getElementById(id);
+  let h='<tr><th></th>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr>';
+  rows.forEach(([r,cells])=>{ h+=`<tr><th>${r}</th>`+cells.map((c,j)=>c?`<td data-c="${j}">${c}</td>`:`<td class="e" data-c="${j}"></td>`).join('')+'</tr>'; });
+  t.innerHTML=h;
+  t.addEventListener('mouseover',e=>{const td=e.target.closest('td'); t.querySelectorAll('.hl,.hlc').forEach(x=>x.classList.remove('hl','hlc')); if(!td||td.classList.contains('e')) return; td.parentElement.classList.add('hl'); t.querySelectorAll(`td[data-c="${td.dataset.c}"]:not(.e)`).forEach(x=>x.classList.add('hlc'));});
+  t.addEventListener('mouseleave',()=>t.querySelectorAll('.hl,.hlc').forEach(x=>x.classList.remove('hl','hlc')));
+  t.addEventListener('click',e=>{const td=e.target.closest('td:not(.e)'); if(!td) return; t.querySelectorAll('.pick').forEach(x=>x.classList.remove('pick')); td.classList.add('pick');});
+}
+const S=s=>s.split(' ').map(x=>x==='·'?'':x);
+buildTable('tab1',['a','o','e','i','u','ü','ai','ei','ao','ou'],[
+ ['b',S('ba bo · bi bu · bai bei bao ·')],['p',S('pa po · pi pu · pai pei pao pou')],['m',S('ma mo me mi mu · mai mei mao mou')],['f',S('fa fo · · fu · · fei · fou')],
+ ['d',S('da · de di du · dai dei dao dou')],['t',S('ta · te ti tu · tai · tao tou')],['n',S('na · ne ni nu nü nai nei nao nou')],['l',S('la · le li lu lü lai lei lao lou')],
+ ['g',S('ga · ge · gu · gai gei gao gou')],['k',S('ka · ke · ku · kai kei kao kou')],['h',S('ha · he · hu · hai hei hao hou')],['',S('· · · yi wu yu · · · ·')]]);
+buildTable('tab2',['an','en','ang','eng','ong'],[
+ ['b',S('ban ben bang beng ·')],['p',S('pan pen pang peng ·')],['m',S('man men mang meng ·')],['f',S('fan fen fang feng ·')],['d',S('dan den dang deng dong')],['t',S('tan · tang teng tong')],
+ ['n',S('nan nen nang neng nong')],['l',S('lan · lang leng long')],['g',S('gan gen gang geng gong')],['k',S('kan ken kang keng kong')],['h',S('han hen hang heng hong')]]);
+document.querySelectorAll('[data-rand]').forEach(b=>b.addEventListener('click',()=>{const t=document.getElementById(b.dataset.rand); const c=[...t.querySelectorAll('td:not(.e)')].filter(x=>PY_TONES[x.textContent.trim()]); t.querySelectorAll('.pick').forEach(x=>x.classList.remove('pick')); const x=c[Math.floor(Math.random()*c.length)]; x.classList.add('pick');}));
+
+/* ---------- tones ---------- */
+(function(){
+  const M=[['妈','mā','mẹ'],['麻','má','tê'],['马','mǎ','con ngựa'],['骂','mà','mắng, chửi']];
+  document.getElementById('tmean').innerHTML=M.map((m,i)=>`<button class="tcard" data-say="${m[0]}"><span class="tn">Thanh ${i+1}</span><span class="zh">${m[0]}</span><span class="p">${py(m[1])}</span><span class="m">${m[2]}</span></button>`).join('');
+  const T=[['八','bā','5 → 5','Cao và bằng, giữ hơi đều'],['拔','bá','3 → 5','Đi lên — gần thanh sắc'],['把','bǎ','2 → 1 → 4','Xuống thấp rồi lên — gần thanh hỏi'],['爸','bà','5 → 1','Rơi mạnh từ cao xuống thấp']];
+  document.getElementById('tones').innerHTML=T.map((t,i)=>`<button class="tcard" data-say="${t[0]}" data-redraw><span class="p">${py(t[1])} <span class="han" style="font-size:44px;color:var(--ink)">${t[0]}</span></span>${gridSvg(`<path class="stroke" pathLength="1" d="${TP[i+1]}" style="stroke:var(--t${i+1})"/>`,'Đường nét thanh '+(i+1))}<span style="font-size:26px;font-weight:600">Thanh ${i+1} <span style="font-weight:400;color:var(--muted)">(${t[2]})</span></span><span class="desc">${t[3]}</span></button>`).join('');
+  const N=[['桌子',['zhuō','zi'],'cái bàn'],['盘子',['pán','zi'],'cái đĩa'],['椅子',['yǐ','zi'],'cái ghế'],['裤子',['kù','zi'],'cái quần']];
+  document.getElementById('neutral').innerHTML=N.map((n,i)=>`<button class="tcard" data-say="${n[0]}" data-redraw><span class="tn">Thanh ${i+1} + thanh nhẹ</span><span class="zh" style="font-size:76px">${n[0]}</span><span class="p" style="font-size:44px">${pyw(n[1])}</span>${gridSvg(`<path class="stroke" pathLength="1" d="${NP[i+1]}" style="stroke:var(--t${i+1})"/><path class="neu" pathLength="1" d="${NN[i+1]}"/>`,'Đường nét thanh '+(i+1)+' và thanh nhẹ')}<span class="m">${n[2]}</span></button>`).join('');
+  document.addEventListener('click',e=>{const c=e.target.closest('[data-redraw]'); if(c) redraw(c);});
+})();
+
+/* ---------- sandhi ---------- */
+(function(){
+  const R=[['Thanh 3 đứng một mình','Đọc đầy đủ: xuống rồi lên','好',['hǎo'],['hǎo']],
+   ['Hai thanh 3 liền nhau','Thanh 3 đầu đọc thành thanh 2','你好',['nǐ',' ','hǎo'],['ní',' ','hǎo']],
+   ['Thanh 3 + thanh 1, 2, 4','Chỉ đọc nửa đầu (phần đi xuống)','老师',['lǎo','shī'],['lǎo','shī']],
+   ['Nhiều thanh 3 liền nhau','Tách theo cụm nghĩa để đọc','我很好',['wǒ',' ','hěn',' ','hǎo'],['wǒ',' ','hén',' ','hǎo']]];
+  const el=document.getElementById('sandhi');
+  el.innerHTML=R.map((r,i)=>`<div class="srow box"><span class="c">${r[0]}</span><span class="r">${r[1]}</span><button class="sx" data-say="${r[2]}" aria-label="Ví dụ ${r[2]}, bấm để đổi cách viết và cách đọc"><span class="zh">${r[2]}</span><span class="pp"><span class="write">${pyw(r[3])}</span><span class="read">${pyw(r[4])}${i===2?' <small style="font-size:18px;color:var(--muted)">(nửa thanh 3)</small>':''}</span></span><span class="tag">viết</span></button></div>`).join('');
+  el.addEventListener('click',e=>{const b=e.target.closest('.sx'); if(!b) return; b.classList.toggle('on'); b.querySelector('.tag').textContent=b.classList.contains('on')?'đọc':'viết';});
+})();
+
+/* ---------- ex1 ---------- */
+(function(){
+  const E=['ā á ǎ à','wū wó wǒ wù','ē é ě è','nī ní nǐ nì','wū wú wǔ wù','lū lǘ lǚ lǜ','pī pí pǐ pì','dū dú dǔ dù','tū tú tǔ tù','hāo háo hǎo hào'];
+  const el=document.getElementById('ex1');
+  const order=[0,5,1,6,2,7,3,8,4,9];
+  el.innerHTML=order.map(i=>`<div class="exr box"><span class="num">${i+1}.</span>${E[i].split(' ').map(s=>`<button class="syl t${toneOf(s)}">${s}</button>`).join('')}</div>`).join('');
+  el.addEventListener('click',e=>{const s=e.target.closest('.syl'); if(!s) return; s.parentElement.querySelectorAll('.syl').forEach(x=>{if(x!==s)x.classList.remove('mark')}); s.classList.toggle('mark');});
+  document.getElementById('ex1rand').onclick=()=>{el.querySelectorAll('.exr').forEach(r=>{const ss=r.querySelectorAll('.syl'); ss.forEach(x=>x.classList.remove('target')); ss[Math.floor(Math.random()*ss.length)].classList.add('target');});};
+  document.getElementById('ex1clear').onclick=()=>el.querySelectorAll('.syl').forEach(x=>x.classList.remove('mark','target'));
+})();
+
+/* ---------- listening quizzes ---------- */
+function quiz(id, data){
+  const el=document.getElementById(id); let score=0, done=0;
+  const scoreEl=document.querySelector(`[data-score="${id}"]`);
+  function render(){
+    score=0; done=0; scoreEl.textContent='0';
+    el.innerHTML=data.map((d,i)=>{const audio=d.every(o=>o[1]);
+      return `<div class="q box" data-i="${i}"><div class="top"><span class="num">${i+1}</span>${audio?`<button class="play" aria-label="Nghe câu ${i+1}">${IC.vol}</button>`:`<span class="note">Giáo viên đọc</span>`}</div><div class="opts">${d.map((o,j)=>`<button class="opt" data-j="${j}">${pyw(o[0])}</button>`).join('')}</div></div>`;}).join('');
+  }
+  el.addEventListener('click',e=>{
+    const q=e.target.closest('.q'); if(!q) return; const d=data[q.dataset.i];
+    const play=e.target.closest('.play');
+    if(play){ if(q.dataset.t===undefined){ q.dataset.t=Math.floor(Math.random()*2); } play.classList.add('ready'); say(d[q.dataset.t][1]); return; }
+    const opt=e.target.closest('.opt'); if(!opt || q.dataset.answered) return;
+    if(q.dataset.t===undefined){ if(d.every(o=>o[1])){ toast('Bấm nút loa để nghe trước khi chọn.'); return; } opt.classList.toggle('ok'); return; }
+    q.dataset.answered=1; q.querySelector('.play')?.classList.remove('ready');
+    const right=+q.dataset.t; const j=+opt.dataset.j;
+    if(j===right){ opt.classList.add('ok'); score++; } else { opt.classList.add('no'); q.querySelectorAll('.opt')[right].classList.add('ok'); }
+    scoreEl.textContent=score; scoreEl.classList.remove('pop'); void scoreEl.offsetWidth; scoreEl.classList.add('pop');
+  });
+  document.querySelector(`[data-reset="${id}"]`).onclick=render;
+  render();
+}
+quiz('ex2',[[[['mà'],'骂'],[['nà'],'那']],[[['bù'],'步'],[['pù'],'瀑']],[[['pō'],'坡'],[['bō'],'玻']],[[['tǎ'],'塔'],[['dǎ'],'打']],[[['tí'],'题'],[['dí'],'笛']],[[['tǔ'],'土'],[['dǔ'],'赌']],
+ [[['wò'],'卧'],[['è'],'饿']],[[['yí'],'姨'],[['yú'],'鱼']],[[['wǔ'],'五'],[['wǒ'],'我']],[[['lù'],'路'],[['lǜ'],'绿']],[[['fú'],'福'],[['fó'],'佛']],[[['tè'],'特'],[['tì'],'替']]]);
+quiz('ex3',[[[['bà'],'爸'],[['bá'],'拔']],[[['nù'],'怒'],[['nú'],'奴']],[[['tǔ'],'土'],[['tù'],'兔']],[[['dǐ'],'底'],[['dì'],'地']],[[['lǚ'],'旅'],[['lǜ'],'绿']],[[['lē'],null],[['lè'],null]],
+ [[['tǔ','dì'],'土地'],[['tú','dì'],'徒弟']],[[['dà','yì'],'大意'],[['dá','yí'],'答疑']],[[['yú','fū'],'渔夫'],[['yū','fǔ'],'迂腐']],[[['mò','lì'],'茉莉'],[['mó','lì'],'魔力']],[[['nà','lǐ'],'那里'],[['nǎ','lǐ'],'哪里']],[[['gē','ge'],'哥哥'],[['gé','ge'],'格格']]]);
+
+/* ---------- flashcards ---------- */
+function cards(id, data, prefix){
+  const el=document.getElementById(id);
+  el.innerHTML=data.map((d,i)=>`<div class="fc" tabindex="0" role="button" aria-label="Thẻ ${i+1}: ${d[2]}" data-zh="${d[0]}"><div class="flip-in"><div class="face front"><span class="n">${i+1}</span><img src="${IMG[prefix+(i+1)]}" alt="${d[2]}"></div><div class="face back"><span class="zh">${d[0]}</span><span class="p">${pyw(d[1])}</span><span class="m">${d[2]}</span></div></div></div>`).join('');
+  const flip=c=>{c.classList.toggle('on'); if(c.classList.contains('on')) say(c.dataset.zh);};
+  el.addEventListener('click',e=>{const c=e.target.closest('.fc'); if(c) flip(c);});
+  el.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('fc')){e.preventDefault(); e.stopPropagation(); flip(e.target);}});
+}
+cards('read1',[['鱼',['yú'],'con cá'],['八',['bā'],'số tám'],['图',['tú'],'bức tranh'],['佛',['fó'],'Phật'],['笔',['bǐ'],'cái bút'],['土',['tǔ'],'đất'],['五',['wǔ'],'số năm'],['打',['dǎ'],'đánh'],['米',['mǐ'],'gạo'],['壶',['hú'],'cái ấm']],'r1_');
+cards('read2',[['爸爸',['bà','ba'],'bố'],['妈妈',['mā','ma'],'mẹ'],['地图',['dì','tú'],'bản đồ'],['努力',['nǔ','lì'],'cố gắng'],['木头',['mù','tou'],'gỗ'],['河内',['Hé','nèi'],'Hà Nội'],['喇叭',['lǎ','ba'],'cái loa'],['打赌',['dǎ','dǔ'],'đánh cược']],'r2_');
+document.querySelectorAll('[data-flipall]').forEach(b=>b.onclick=()=>{const cs=document.querySelectorAll('#'+b.dataset.flipall+' .fc'); const any=[...cs].some(c=>!c.classList.contains('on')); cs.forEach(c=>c.classList.toggle('on',any)); b.textContent=any?'Úp tất cả':'Lật tất cả';});
+
+/* ---------- concept & structure ---------- */
+const fh=document.getElementById('flipHao');
+const doFlip=()=>fh.classList.toggle('on');
+fh.addEventListener('click',doFlip); fh.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();doFlip();}});
+document.getElementById('flipBtn').onclick=doFlip;
+const asm=document.getElementById('asm');
+document.getElementById('asmBtn').onclick=function(){asm.classList.toggle('join'); this.textContent=asm.classList.contains('join')?'Tách ra':'Ghép lại';};
+
+/* ---------- deck navigation ---------- */
+icons(document);
+const slides=[...document.querySelectorAll('.slide')];
+const secNames=[...new Set(slides.map(s=>s.dataset.sec))];
+const secsEl=document.getElementById('secs');
+secsEl.innerHTML=secNames.map(n=>`<button data-sec="${n}">${n}</button>`).join('');
+let cur=0;
+function go(i){
+  i=Math.max(0,Math.min(slides.length-1,i)); slides[cur].classList.remove('active'); cur=i; const s=slides[cur]; s.classList.add('active');
+  s.querySelectorAll('[data-redraw]').forEach(c=>{c.classList.remove('draw'); setTimeout(()=>redraw(c),350);});
+  if(s.id==='s-structure'){ asm.classList.remove('join'); document.getElementById('asmBtn').textContent='Ghép lại'; setTimeout(()=>{asm.classList.add('join');document.getElementById('asmBtn').textContent='Tách ra';},900); }
+  document.getElementById('count').textContent=`${cur+1} / ${slides.length}`;
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  secsEl.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.sec===s.dataset.sec));
+  try{ history.replaceState(null,'','#'+(cur+1)); }catch(e){}
+}
+secsEl.onclick=e=>{const b=e.target.closest('button'); if(b) go(slides.findIndex(s=>s.dataset.sec===b.dataset.sec));};
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(slides.findIndex(s=>s.id===b.dataset.go)));
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('fs').onclick=()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); };
+document.addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();go(cur+1);}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(slides.length-1);
+  else if(e.key==='f'&&!e.metaKey&&!e.ctrlKey) document.getElementById('fs').click();
+});
+let tx=null; const vp=document.getElementById('viewport');
+vp.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+vp.addEventListener('touchend',e=>{ if(tx===null) return; const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>60) go(cur+(dx<0?1:-1)); tx=null; });
+function fit(){ const d=document.getElementById('deck'); const w=vp.clientWidth-24, h=vp.clientHeight-24; const k=Math.min(w/1600,h/900); d.style.transform=`scale(${k}) translate(-50%,-50%)`; }
+window.addEventListener('resize',fit); fit();
+window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1)); if(!isNaN(n)&&n-1!==cur) go(n-1);});
+const start=parseInt((location.hash||'').slice(1)); go(isNaN(start)?0:start-1);
+</script>
+</body>
+</html>
