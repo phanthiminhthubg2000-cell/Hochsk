@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buổi 5 – Ôn tập tổng hợp ngữ âm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Noto+Sans:wght@400;600&family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --ink:#1E2A4A; --ink2:#2C3B63; --paper:#F4F6FA; --card:#FFFFFF; --line:#DDE3EE; --muted:#5B6683;
+  --t1:#2F7FD8; --t2:#1F9E6A; --t3:#D48A00; --t4:#D9452B; --t0:#8A93A6;
+  --chrome-bg:#E9EDF4; --chrome-fg:#1E2A4A; --chrome-btn:#FFFFFF;
+  --lat:'Lexend','Noto Sans',system-ui,sans-serif;
+  --han:'Noto Serif SC','Songti SC','SimSun',serif;
+  --brush:'Ma Shan Zheng','Noto Serif SC',serif;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --chrome-bg:#11182B; --chrome-fg:#E6EAF3; --chrome-btn:#1E2A4A; } }
+:root[data-theme="dark"]{ --chrome-bg:#11182B; --chrome-fg:#E6EAF3; --chrome-btn:#1E2A4A; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--chrome-bg);color:var(--chrome-fg);font-family:var(--lat);overflow:hidden;display:flex;flex-direction:column}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+button:focus-visible,[tabindex]:focus-visible{outline:4px solid var(--t1);outline-offset:3px;border-radius:12px}
+
+#viewport{flex:1;position:relative;min-height:0}
+#deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);color:var(--ink);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(20,30,60,.18)}
+.slide{position:absolute;inset:0;padding:72px 96px 64px;display:flex;flex-direction:column;gap:32px;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s}
+.slide.active{opacity:1;visibility:visible;transition:opacity .45s ease}
+.slide.dark{background:var(--ink);color:#F1F4FA}
+.in{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.slide.active .in{opacity:1;transform:none}
+.slide.active .in:nth-child(2){transition-delay:.08s}.slide.active .in:nth-child(3){transition-delay:.16s}.slide.active .in:nth-child(4){transition-delay:.24s}.slide.active .in:nth-child(5){transition-delay:.32s}
+
+.kick{font-size:20px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:12px}
+.kick .chip{background:var(--ink);color:#fff;border-radius:999px;padding:4px 14px;font-size:18px}
+.dark .kick{color:#A9B4CF}
+h1,h2,h3{font-weight:600;line-height:1.15}
+h2{font-size:52px;letter-spacing:-.5px}
+h2 .han{font-family:var(--han);font-weight:600;color:var(--muted);font-size:42px;margin-left:12px}
+.han{font-family:var(--han)}
+.lead{font-size:26px;line-height:1.5;color:var(--muted);max-width:1100px}
+.dark .lead{color:#C4CCE0}
+.t1{color:var(--t1)}.t2{color:var(--t2)}.t3{color:var(--t3)}.t4{color:var(--t4)}.t0{color:var(--t0)}
+.box{background:var(--card);border:2px solid var(--line);border-radius:22px}
+.spk{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 22px;font-size:20px;font-weight:500;transition:transform .15s}
+.spk:hover{transform:scale(1.04)}
+.spk svg{width:22px;height:22px}
+.ghost{background:var(--card);border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:10px 20px;font-size:20px;font-weight:500}
+.ghost:hover{border-color:var(--ink)}
+.row{display:flex;gap:24px}
+.grow{flex:1}
+
+/* Cover */
+#s-cover{justify-content:center;gap:20px;padding-left:120px}
+#s-cover .brush{position:absolute;right:90px;top:90px;font-family:var(--brush);font-size:340px;line-height:1;display:flex;flex-direction:column}
+#s-cover .brush span{display:block;opacity:0;transform:scale(1.25) rotate(-6deg);filter:blur(6px);transition:all .9s cubic-bezier(.2,.8,.2,1)}
+#s-cover.active .brush span{opacity:1;transform:none;filter:none}
+#s-cover.active .brush span:nth-child(2){transition-delay:.35s}
+#s-cover h1{font-size:150px;font-weight:700;letter-spacing:-3px;line-height:1}
+.tone-strip{display:flex;gap:14px;margin-top:24px}
+.tone-strip span{font-size:56px;font-weight:600;padding:6px 22px;border-radius:16px;background:rgba(255,255,255,.08)}
+
+/* agenda */
+.agenda{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;flex:1}
+.agenda button{text-align:left;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:36px 30px;border-radius:26px;background:var(--card);border:2px solid var(--line);transition:transform .2s,border-color .2s}
+.agenda button:hover{transform:translateY(-6px);border-color:var(--ink)}
+.agenda .big{font-family:var(--han);font-size:150px;line-height:1;margin-bottom:auto}
+.agenda h3{font-size:34px}
+.agenda p{font-size:24px;line-height:1.5;color:var(--muted)}
+
+/* concept */
+.flip{perspective:1600px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .8s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.face.back{transform:rotateY(180deg)}
+
+/* structure */
+.assemble{display:flex;align-items:center;justify-content:center;gap:28px;height:220px;font-size:150px;font-weight:600}
+.piece{display:inline-block;transition:transform .7s cubic-bezier(.3,.7,.2,1),opacity .5s}
+.assemble .op{font-size:70px;color:var(--t0);font-weight:300}
+.assemble .eq{opacity:0;transform:scale(.3)}
+.assemble.join .eq{opacity:1;transform:none}
+.assemble.join .p1,.assemble.join .p2,.assemble.join .p3{animation:pop .5s}
+.assemble .result{opacity:0;transform:scale(.6);transition:all .6s .55s}
+.assemble.join .result{opacity:1;transform:none}
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.parts .box{padding:28px 30px;display:flex;flex-direction:column;gap:10px;border-top-width:10px}
+.parts h3{font-size:30px}
+.parts p{font-size:22px;color:var(--muted);line-height:1.45}
+.parts .n{font-size:54px;font-weight:700}
+
+/* initials explorer */
+.explorer{display:grid;grid-template-columns:1fr 640px;gap:36px;flex:1;min-height:0}
+.groups{display:flex;flex-direction:column;gap:18px}
+.group h3{font-size:22px;color:var(--muted);font-weight:500;margin-bottom:10px}
+.tiles{display:flex;gap:14px;flex-wrap:wrap}
+.tile{width:104px;height:104px;border-radius:22px;background:var(--card);border:2px solid var(--line);font-size:56px;font-weight:600;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .2s,color .2s}
+.tile:hover{transform:translateY(-4px)}
+.tile.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.panel{display:flex;flex-direction:column;gap:18px;padding:28px;border-radius:28px;background:var(--card);border:2px solid var(--line)}
+.panel img{width:100%;height:300px;object-fit:contain;background:#E6F0FA;border-radius:18px}
+.panel .big{font-size:96px;font-weight:700;line-height:1}
+.panel .tip{font-size:24px;line-height:1.5}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.7);opacity:.2}100%{transform:none;opacity:1}}
+
+/* aspiration */
+.pairs{display:flex;flex-direction:column;gap:22px}
+.pair{display:grid;grid-template-columns:150px 150px 1fr;gap:22px;align-items:center;padding:20px 28px}
+.lbtn{height:120px;border-radius:24px;font-size:72px;font-weight:700;background:var(--paper);border:2px solid var(--line)}
+.lbtn.asp{color:var(--t4)}
+.paperwrap{height:120px;position:relative;display:flex;align-items:center;gap:28px}
+.mouth{width:44px;height:44px;border-radius:50%;background:var(--ink)}
+.sheet{width:26px;height:110px;background:#fff;border:2px solid #C9D2E3;border-radius:4px;transform-origin:50% 0;box-shadow:2px 2px 0 #E4E9F2}
+.sheet.soft{animation:soft .6s ease}
+.sheet.hard{animation:hard 1s ease}
+@keyframes soft{30%{transform:rotate(-4deg)}100%{transform:none}}
+@keyframes hard{15%{transform:rotate(-38deg)}35%{transform:rotate(-24deg)}55%{transform:rotate(-32deg)}100%{transform:none}}
+.puff{position:absolute;left:62px;top:50%;width:14px;height:14px;border-radius:50%;background:rgba(47,127,216,.35);opacity:0}
+.puff.go{animation:puff .7s ease-out}
+@keyframes puff{0%{opacity:.9;transform:translate(0,-50%) scale(1)}100%{opacity:0;transform:translate(70px,-50%) scale(3)}}
+.pair .desc{font-size:22px;color:var(--muted);line-height:1.5}
+
+/* finals */
+.ftiles{display:grid;gap:20px}
+.ftile{border-radius:24px;background:var(--card);border:2px solid var(--line);padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .15s,border-color .2s}
+.ftile:hover{transform:translateY(-5px);border-color:var(--t1)}
+.ftile .f{font-size:76px;font-weight:600;color:var(--t1);line-height:1.05}
+.ftile .h{font-size:20px;color:var(--muted)}
+.ftile .ex{font-size:22px}
+.ftile.playing{border-color:var(--t1);background:#EEF5FD}
+.tipbar{font-size:24px;line-height:1.5;padding:20px 28px;border-radius:20px;background:#E9EFF9;min-height:76px}
+.lbl{font-size:24px;font-weight:600;margin-bottom:12px}
+.lbl span{font-weight:400;color:var(--muted)}
+
+.big6 .ftile{padding:48px 18px;gap:14px}.big6 .ftile .f{font-size:140px}.big6 .ftile .h{font-size:24px}.big6 .ftile .ex{font-size:28px}
+/* tables */
+.tablewrap{display:grid;grid-template-columns:300px 1fr;gap:36px;flex:1;min-height:0}
+table.py{table-layout:fixed;border-collapse:separate;border-spacing:4px;width:100%;font-size:24px}
+table.py th,table.py td{text-align:center;height:52px;border-radius:10px}
+table.py th{background:var(--ink);color:#fff;font-weight:600}
+table.py td{background:var(--card);transition:background .15s,color .15s,transform .15s}
+table.py td.e{background:transparent}
+table.py tr.hl td:not(.e),table.py td.hlc{background:#DCE8F8}
+table.py td.pick{background:var(--t3)!important;color:#fff;transform:scale(1.12);font-weight:700}
+table.py.small{font-size:26px}
+table.py.small th,table.py.small td{height:56px}
+
+/* tones */
+.tcards{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.tcard{border-radius:26px;background:var(--card);border:2px solid var(--line);padding:28px 22px;display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .2s}
+.tcard:hover{transform:translateY(-6px)}
+.tcard .zh{font-family:var(--han);font-size:120px;line-height:1.05}
+.tcard .p{font-size:64px;font-weight:600;line-height:1.1}
+.tcard .m{font-size:28px}
+.tcard .tn{font-size:22px;font-weight:600;color:var(--muted)}
+svg.contour{width:220px;height:180px;overflow:visible}
+svg.contour .grid line{stroke:#E3E8F1;stroke-width:2}
+svg.contour .grid text{font-size:16px;fill:#9AA3B7;font-family:Lexend,sans-serif}
+svg.contour .stroke{fill:none;stroke-width:11;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+svg.contour .neu{fill:none;stroke:var(--t0);stroke-width:11;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.draw .stroke{animation:draw 1s ease forwards}
+.draw .neu{animation:draw .35s ease forwards .95s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.tcard .desc{font-size:20px;color:var(--muted);text-align:center;line-height:1.45}
+
+/* sandhi */
+.srows{display:flex;flex-direction:column;gap:16px}
+.srow{display:grid;grid-template-columns:360px 1fr 470px;gap:24px;align-items:center;padding:20px 28px}
+.srow .c{font-size:24px;font-weight:600}
+.srow .r{font-size:22px;color:var(--muted);line-height:1.45}
+.sx{display:flex;align-items:center;gap:16px;justify-content:space-between;border-radius:16px;background:var(--paper);padding:12px 18px;cursor:pointer}
+.sx .zh{font-family:var(--han);font-size:34px}
+.sx .pp{font-size:30px;font-weight:600;position:relative;height:42px;min-width:230px;text-align:right}
+.sx .pp > span{position:absolute;right:0;top:0;white-space:nowrap;transition:opacity .35s,transform .35s}
+.sx .pp .read{opacity:0;transform:translateY(14px)}
+.sx.on .pp .write{opacity:0;transform:translateY(-14px)}
+.sx.on .pp .read{opacity:1;transform:none}
+.sx .tag{font-size:16px;color:var(--muted);width:64px;text-align:right}
+
+/* exercises */
+.ex1{display:grid;grid-template-columns:1fr 1fr;gap:16px 36px}
+.exr{display:flex;align-items:center;gap:14px;padding:10px 18px}
+.exr .num{font-size:22px;font-weight:700;color:var(--muted);width:40px}
+.syl{font-size:36px;font-weight:500;padding:6px 16px;border-radius:14px;border:3px solid transparent;transition:all .15s}
+.syl:hover{background:var(--paper)}
+.syl.mark{border-color:var(--ink);background:#EEF2F8}
+.syl.target{background:var(--t3);color:#fff!important;animation:pop .4s}
+.quiz{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.q{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.q .top{display:flex;justify-content:space-between;align-items:center}
+.q .num{font-size:20px;font-weight:700;color:var(--muted)}
+.q .play{width:52px;height:52px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center}
+.q .play svg{width:24px;height:24px}
+.q .play.ready{background:var(--t3);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(212,138,0,.18)}}
+.q .opts{display:flex;gap:10px}
+.q .opt{flex:1;font-size:30px;font-weight:500;padding:10px 4px;border-radius:14px;background:var(--paper);border:2px solid transparent;transition:all .15s}
+.q .opt:hover{border-color:var(--line)}
+.q .opt.ok{background:#DDF3E8;border-color:var(--t2)}
+.q .opt.no{background:#FBE3DE;border-color:var(--t4);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.q .note{font-size:16px;color:var(--muted)}
+.score{font-size:24px;font-weight:600;display:flex;gap:16px;align-items:center}
+.score b{font-size:34px;color:var(--t2)}
+.toolbar{display:flex;gap:14px;align-items:center;justify-content:space-between}
+
+/* flashcards */
+.fc-grid{display:grid;gap:18px;flex:1;min-height:0}
+.fc{perspective:1200px;cursor:pointer;min-height:0}
+.fc .flip-in{height:100%}
+.fc .face{border-radius:20px;border:2px solid var(--line);background:#FDF5DF;overflow:hidden;gap:6px}
+.fc .front img{width:100%;height:100%;object-fit:contain;padding:10px}
+.fc .front .n{position:absolute;left:12px;top:8px;font-size:18px;font-weight:700;color:#8C7A4A}
+.fc .back{background:var(--card)}
+.fc .back .zh{font-family:var(--han);font-size:64px;line-height:1.1}
+.fc .back .p{font-size:30px;font-weight:600}
+.fc .back .m{font-size:20px;color:var(--muted)}
+.fc.on .flip-in{transform:rotateY(180deg)}
+
+/* end */
+#s-end{align-items:center;justify-content:center;text-align:center}
+#s-end .brush{font-family:var(--brush);font-size:260px;line-height:1.1}
+#s-end .brush span{display:inline-block;opacity:0;transform:translateY(40px) rotate(8deg);transition:all .7s cubic-bezier(.3,1.4,.5,1)}
+#s-end.active .brush span{opacity:1;transform:none}
+#s-end.active .brush span:nth-child(2){transition-delay:.18s}#s-end.active .brush span:nth-child(3){transition-delay:.36s}
+
+/* controls */
+#bar{flex:none;display:flex;align-items:center;gap:12px;padding:10px 16px calc(10px + 0px);flex-wrap:wrap;justify-content:center}
+#bar .nav{width:46px;height:46px;border-radius:50%;background:var(--chrome-btn);display:flex;align-items:center;justify-content:center;border:1px solid rgba(127,140,170,.3)}
+#bar .nav svg{width:22px;height:22px}
+#secs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#secs button{font-size:14px;padding:8px 14px;border-radius:999px;background:var(--chrome-btn);border:1px solid rgba(127,140,170,.3)}
+#secs button.on{background:var(--t1);color:#fff;border-color:var(--t1)}
+#count{font-size:14px;min-width:64px;text-align:center;opacity:.8}
+#progress{position:absolute;left:0;top:0;height:6px;background:var(--t3);transition:width .4s;z-index:5}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#1E2A4A;color:#fff;padding:12px 20px;border-radius:12px;font-size:15px;opacity:0;pointer-events:none;transition:all .3s;max-width:90vw;text-align:center;z-index:20}
+#toast.show{opacity:1;transform:translateX(-50%)}
+@media (max-width:700px){#secs{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;animation-iteration-count:1!important}}
+/* review */
+.review{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+.rv{padding:24px 28px;display:flex;flex-direction:column;gap:14px}
+.rv h3{font-size:26px;display:flex;gap:12px;align-items:center}
+.rv h3 .no{width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;flex:none}
+.rv .line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rv .lab{font-size:20px;color:var(--muted);width:150px}
+.chipb{font-size:28px;font-weight:500;padding:4px 14px;border-radius:12px;background:var(--paper);border:2px solid transparent;transition:all .15s}
+.chipb:hover{border-color:var(--line)}
+.chipb.na{cursor:default}
+/* rule transformer */
+.xf-grid{display:grid;gap:16px}
+.xf{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 22px;border-radius:20px;background:var(--card);border:2px solid var(--line);cursor:pointer;transition:border-color .2s}
+.xf:hover{border-color:var(--t1)}
+.xf .from{font-size:44px;font-weight:600;color:var(--muted)}
+.xf .arr{font-size:26px;color:var(--t0)}
+.xf .to{font-size:44px;font-weight:700;color:var(--t1);opacity:.15;transition:opacity .4s,transform .4s;transform:translateX(-10px)}
+.xf.on .to{opacity:1;transform:none}
+.xf .to b{color:var(--t4)}
+.rulebox{padding:24px 28px;display:flex;flex-direction:column;gap:14px}
+.rulebox h3{font-size:28px}
+.rulebox p{font-size:22px;line-height:1.5;color:var(--muted)}
+/* dots drop */
+.ju{font-size:44px;font-weight:600;position:relative;display:inline-block}
+.dots{position:absolute;left:0;right:0;top:-6px;text-align:center;color:var(--t4);transition:transform .6s cubic-bezier(.5,0,.8,.6),opacity .6s}
+.xf.on .dots{transform:translateY(60px) rotate(30deg);opacity:0}
+/* yi/bu */
+.rules3{display:grid;gap:18px}
+.rl{padding:22px 28px;display:grid;grid-template-columns:400px 1fr;gap:24px;align-items:center}
+.rl .what{font-size:24px;font-weight:600;line-height:1.4}
+.rl .what small{display:block;font-size:20px;font-weight:400;color:var(--muted);margin-top:4px}
+.rl .exs{display:flex;gap:14px;flex-wrap:wrap}
+.sx2{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 22px;border-radius:16px;background:var(--paper);border:2px solid transparent;min-width:230px;transition:border-color .2s}
+.sx2:hover{border-color:var(--line)}
+.sx2 .zh{font-family:var(--han);font-size:44px}
+.sx2 .pp{font-size:30px;font-weight:600;height:42px;position:relative;width:100%}
+.sx2 .pp > span{position:absolute;left:0;right:0;text-align:center;white-space:nowrap;transition:opacity .35s,transform .35s}
+.sx2 .pp .read{opacity:0;transform:translateY(12px)}
+.sx2.on{border-color:var(--t3)}
+.sx2.on .pp .write{opacity:0;transform:translateY(-12px)}
+.sx2.on .pp .read{opacity:1;transform:none}
+.sx2 .tag{font-size:15px;color:var(--muted)}
+/* quick quiz */
+.qq{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.qc{padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.qc .zh{font-family:var(--han);font-size:60px;line-height:1.1}
+.qc .rest{font-size:24px;color:var(--muted)}
+.qc .opts{display:flex;gap:10px;width:100%}
+.qc .opt{flex:1;font-size:28px;font-weight:600;padding:10px 0;border-radius:14px;background:var(--paper);border:2px solid transparent}
+.qc .opt.ok{background:#DDF3E8;border-color:var(--t2)}
+.qc .opt.no{background:#FBE3DE;border-color:var(--t4);animation:shake .4s}
+/* dialogue */
+.dlg{display:flex;flex-direction:column;gap:12px}
+.dl{display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:center;padding:10px 22px;border-radius:18px;background:var(--card);border:2px solid var(--line);cursor:pointer;text-align:left;width:100%}
+.dl:hover{border-color:var(--ink)}
+.dl.playing{border-color:var(--t3);background:#FFF8EA}
+.dl .who{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff}
+.dl .who.A{background:var(--t1)}.dl .who.B{background:var(--t4)}
+.dl .zh{font-family:var(--han);font-size:32px}
+.dl .pyn{font-size:22px;color:var(--ink2);margin-top:2px}
+.dl .vi{font-size:20px;color:var(--muted);margin-top:2px}
+.hide-py .dl .pyn{visibility:hidden}
+.hide-vi .dl .vi{visibility:hidden}
+.dl .sp{color:var(--muted)}
+.dl .sp svg{width:26px;height:26px}
+.dgap{height:6px}
+/* audio quiz */
+.aq{display:grid;grid-template-columns:1fr 1fr;gap:20px 28px}
+.aqr{display:flex;align-items:center;gap:14px;padding:20px 18px}
+.aqr .num{font-size:20px;font-weight:700;color:var(--muted);width:30px}
+.aqr .play{width:50px;height:50px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.aqr .play svg{width:22px;height:22px}
+.aqr .play.on{background:var(--t3);animation:pulse 1.2s infinite}
+.aqr .opts{display:flex;gap:8px;flex:1}
+.aqr .opt{flex:1;font-size:32px;font-weight:500;padding:8px 2px;border-radius:12px;background:var(--paper);border:2px solid transparent;white-space:nowrap}
+.aqr .opt:hover{border-color:var(--line)}
+.aqr .opt.ok{background:#DDF3E8;border-color:var(--t2)}
+.aqr .opt.no{background:#FBE3DE;border-color:var(--t4);animation:shake .4s}
+/* summary */
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1}
+.sm{padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+.sm h3{font-size:28px;display:flex;align-items:center;gap:10px}
+.sm h3 .no{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center}
+.sm p{font-size:24px;line-height:1.55}
+.sm .big{font-size:40px;font-weight:600;color:var(--t1)}
+
+#ru2 .xf{padding:22px 10px}
+#ru2 .ju{font-size:40px}
+.dl .zh{font-size:34px}
+
+/* draw game */
+.draw-row{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:8px}
+.dcard{width:290px;height:270px;border-radius:26px;background:var(--card);border:2px solid var(--line);border-top:10px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 10px 30px rgba(30,42,74,.08);position:relative;overflow:hidden}
+.dl-lab{position:absolute;top:18px;font-size:24px;font-weight:600;color:var(--muted)}
+.dval{font-size:120px;font-weight:700;line-height:1;color:var(--ink)}
+.dval.q{color:#B9C2D6}
+.dsub{position:absolute;bottom:18px;font-size:22px;font-weight:600}
+.dres{border-top-color:var(--t3);background:#FFF9EC}
+.dres .dval{font-size:104px}
+.dop{font-size:64px;font-weight:300;color:var(--t0)}
+.dval.spin{animation:spin .09s linear infinite}
+@keyframes spin{0%{transform:translateY(-10px);opacity:.5}50%{transform:translateY(10px);opacity:1}100%{transform:translateY(-10px);opacity:.5}}
+.dval.land{animation:land .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes land{0%{transform:scale(1.5);opacity:.3}100%{transform:none;opacity:1}}
+.dbig{font-size:28px;padding:18px 44px}
+.ghost.dbig{border-width:3px}
+.ghost:disabled{opacity:.4;cursor:default}
+.dhist{display:flex;align-items:center;gap:14px;justify-content:center;font-size:24px;color:var(--muted)}
+.dh-list{display:flex;gap:10px;flex-wrap:wrap}
+.dh-list b{font-size:28px;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:2px 14px}
+.dval.t1{color:var(--t1)}.dval.t2{color:var(--t2)}.dval.t3{color:var(--t3)}.dval.t4{color:var(--t4)}
+.dlg.two{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:12px 20px}
+.dlg.two .dl .zh{font-size:28px}
+.para{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:14px 20px}
+.para .dl{grid-template-columns:44px 1fr auto}
+.para .dl .who{width:40px;height:40px;font-size:18px;background:var(--ink2)}
+.para .dl .zh{font-size:26px;line-height:1.35}
+.para .dl .pyn{font-size:19px}
+.para .dl .vi{font-size:18px}
+.phr{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex:1}
+.ph{display:flex;flex-direction:column;justify-content:center;gap:6px;padding:16px 20px;border-radius:20px;background:var(--card);border:2px solid var(--line);text-align:left;transition:border-color .2s,transform .15s}
+.ph:hover{border-color:var(--ink);transform:translateY(-3px)}
+.ph.playing{border-color:var(--t3);background:#FFF8EA}
+.ph .zh{font-family:var(--han);font-size:40px;line-height:1.15}
+.ph .p{font-size:24px;font-weight:500;color:var(--ink2)}
+.ph .v{font-size:21px;color:var(--muted)}
+.hide-vi .ph .v{visibility:hidden}
+.hide-py .ph .p{visibility:hidden}
+.er-demo{display:flex;align-items:center;gap:22px;font-size:84px;font-weight:600;justify-content:center}
+.er-demo .op{font-size:56px;color:var(--t0);font-weight:300}
+.erx{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.erc{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 16px;border-radius:24px;background:var(--card);border:2px solid var(--line);cursor:pointer}
+.erc:hover{border-color:var(--t4)}
+.erc .zh{font-family:var(--han);font-size:72px;line-height:1.1}
+.erc .zh small{font-size:72px;color:var(--t4)}
+.erc .pp{font-size:38px;font-weight:600}
+.erc .pp b{color:var(--t4)}
+.erc .m{font-size:22px;color:var(--muted)}
+.wide table.py{font-size:25px}
+.wide table.py th,.wide table.py td{height:64px}
+.tablewrap.top{grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:24px}
+.tbhead{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+
+#ru1 .xf,#ru2 .xf{padding:14px 26px}
+#ru1 .from,#ru1 .to,#ru2 .from,#ru2 .to{font-size:40px}
+.bigu .ftile{padding:26px 10px!important;flex-direction:row;justify-content:center;gap:18px;flex-wrap:wrap}
+.bigu .ftile .f{font-size:56px!important;width:100%;text-align:center}
+.bigu .ftile .h,.bigu .ftile .ex{font-size:26px}
+.bigu .ftile .han{font-size:30px!important}
+/* strokes */
+.stk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stk{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px;border-radius:20px;background:var(--card);border:2px solid var(--line);transition:transform .15s,border-color .2s}
+.stk:hover{transform:translateY(-4px)}
+.stk.sel{border-color:var(--ink);background:#EEF2F8}
+.stk img{width:96px;height:96px;object-fit:contain}
+.stk .nm{font-size:22px;font-weight:600}
+.stk .cn{font-size:18px;color:var(--muted)}
+.spanel{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:26px;border-radius:28px;background:var(--card);border:2px solid var(--line)}
+.spanel .cell{display:flex;flex-direction:column;align-items:center;gap:10px}
+.spanel .cell .cap{font-size:20px;color:var(--muted);font-weight:600}
+.spanel img{width:250px;height:250px;object-fit:contain;background:#fff;border:2px solid var(--line);border-radius:16px}
+.spanel .txt{grid-column:1/3;display:flex;flex-direction:column;gap:8px}
+.spanel .txt h3{font-size:40px}
+.spanel .txt p{font-size:24px;line-height:1.5}
+/* rules */
+.rlist{display:flex;flex-direction:column;gap:12px}
+.rbtn{display:flex;align-items:center;gap:18px;padding:16px 22px;border-radius:18px;background:var(--card);border:2px solid var(--line);text-align:left;font-size:26px;font-weight:500;transition:border-color .2s}
+.rbtn .no{width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.rbtn.sel{border-color:var(--ink);background:#EEF2F8}
+.rbtn.sel .no{background:var(--ink);color:#fff}
+.rbtn .zh{font-family:var(--han);margin-left:auto;font-size:32px;color:var(--muted)}
+.rshow{display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px;border-radius:28px;background:var(--card);border:2px solid var(--line)}
+.rshow img{width:400px;height:400px;object-fit:contain;border:2px solid var(--line);border-radius:18px;background:#fff}
+.rshow .info{display:flex;align-items:center;gap:20px}
+/* writing pad */
+.pad{display:grid;grid-template-columns:600px 1fr;gap:36px;flex:1;min-height:0}
+.padbox{position:relative;width:600px;height:600px;border-radius:22px;background:#FFFDF8;border:3px solid #E7C9B5;overflow:hidden}
+.padbox canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.chars{display:flex;gap:12px;flex-wrap:wrap}
+.chars button{width:96px;height:96px;border-radius:20px;background:var(--card);border:2px solid var(--line);font-family:var(--han);font-size:54px}
+.chars button.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.padside{display:flex;flex-direction:column;gap:20px}
+.padside .demo{display:flex;align-items:center;gap:24px;padding:18px;border-radius:22px;background:var(--card);border:2px solid var(--line)}
+.padside .demo img{width:180px;height:180px;object-fit:contain;border:2px solid var(--line);border-radius:14px;background:#fff}
+.pens{display:flex;gap:10px;align-items:center}
+.pen{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.pen.sel{box-shadow:0 0 0 3px var(--ink)}
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;flex:1}
+.num{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 8px;border-radius:22px;background:var(--card);border:2px solid var(--line);transition:transform .15s,border-color .2s,background .2s}
+.num:hover{transform:translateY(-4px)}
+.num.playing{border-color:var(--t3);background:#FFF5DF;transform:scale(1.05)}
+.num img{width:100px;height:90px;object-fit:contain}
+.num .d{font-size:30px;font-weight:700;color:var(--muted)}
+.num .zh{font-family:var(--han);font-size:60px;line-height:1.05}
+.num .p{font-size:26px;font-weight:600}
+.num.count{background:var(--ink);color:#fff;border-color:var(--ink);gap:12px}
+.num.count .zh{font-size:44px}
+.places{display:grid;grid-template-columns:repeat(8,1fr);gap:12px}
+.pl{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 6px;border-radius:20px;background:var(--card);border:2px solid var(--line)}
+.pl:hover{border-color:var(--ink)}
+.pl .zh{font-family:var(--han);font-size:46px;line-height:1.1}
+.pl .p{font-size:22px;font-weight:600;color:var(--t1)}
+.pl .v{font-size:19px;color:var(--muted);text-align:center}
+.pl .n{font-size:17px;color:var(--ink2);font-weight:600}
+.group4{display:flex;gap:40px;justify-content:center;align-items:flex-end}
+.g4{display:flex;flex-direction:column;align-items:center;gap:8px}
+.g4 .digits{font-size:64px;font-weight:700;letter-spacing:4px}
+.g4 .lab{font-size:22px;color:var(--muted)}
+.dg{padding:0 6px;border-radius:10px}
+.dg.a{background:#FBE3DE;color:var(--t4)}.dg.b{background:#DCE8F8;color:var(--t1)}.dg.c{background:#DDF3E8;color:var(--t2)}
+.nrules{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.nr{padding:20px 22px;display:flex;flex-direction:column;gap:10px}
+.nr h3{font-size:24px}
+.nr p{font-size:20px;color:var(--muted);line-height:1.45}
+.nr .exs{display:flex;flex-direction:column;gap:6px}
+.nx{display:flex;align-items:baseline;gap:12px;padding:6px 12px;border-radius:12px;background:var(--paper);text-align:left}
+.nx:hover{background:#E9EFF9}
+.nx b{font-size:24px;min-width:70px}
+.nx .zh{font-family:var(--han);font-size:26px}
+.nx .p{font-size:18px;color:var(--muted)}
+/* number reader */
+.reader{display:grid;grid-template-columns:560px 1fr;gap:32px;flex:1;min-height:0}
+.rinput{display:flex;flex-direction:column;gap:16px}
+.rinput input{font:inherit;font-size:64px;font-weight:700;width:100%;padding:14px 22px;border-radius:20px;border:3px solid var(--line);background:var(--card);color:var(--ink);letter-spacing:2px}
+.rinput input:focus{outline:none;border-color:var(--t1)}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.keypad button{height:72px;border-radius:16px;background:var(--card);border:2px solid var(--line);font-size:32px;font-weight:600}
+.keypad button:hover{border-color:var(--ink)}
+.keypad .wide2{grid-column:span 2}
+.mode{display:flex;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:4px;align-self:flex-start}
+.mode button{padding:10px 18px;border-radius:999px;font-size:19px;font-weight:600}
+.mode button.on{background:var(--ink);color:#fff}
+.rout{display:flex;flex-direction:column;gap:16px;padding:30px;border-radius:28px;background:var(--card);border:2px solid var(--line);justify-content:center}
+.rout .grp{font-size:34px;font-weight:600;color:var(--muted)}
+.rout .zh{font-family:var(--han);font-size:72px;line-height:1.2;word-break:break-all}
+.rout .zh.long{font-size:52px}
+.rout .p{font-size:32px;font-weight:500;color:var(--ink2);line-height:1.4}
+.rout .vi{font-size:22px;color:var(--muted)}
+/* number exercise */
+.nex{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;flex:1}
+.ne{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:20px;background:var(--card);border:2px solid var(--line);cursor:pointer}
+.ne .n{font-size:40px;font-weight:700}
+.ne .vn{font-size:18px;color:var(--muted)}
+.ne .ans{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;transform:translateY(8px);transition:all .35s}
+.ne.on .ans{opacity:1;transform:none}
+.ne.on{border-color:var(--t2);background:#F2FBF6}
+.ne .ans .zh{font-family:var(--han);font-size:28px;text-align:center}
+.ne .ans .p{font-size:18px;color:var(--ink2);text-align:center}
+/* yao */
+.yao{display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1}
+.yc{padding:28px;display:flex;flex-direction:column;gap:16px}
+.yc h3{font-size:30px}
+.yc p{font-size:22px;line-height:1.5;color:var(--muted)}
+.yx{display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:16px;background:var(--paper);text-align:left}
+.yx:hover{background:#E9EFF9}
+.yx .zh{font-family:var(--han);font-size:36px}
+.yx .p{font-size:26px;font-weight:600}
+.yx .p b{color:var(--t4)}
+.yx .m{font-size:19px;color:var(--muted);margin-left:auto}
+
+#s-places .group4{margin-top:24px}
+#s-places .g4 .digits{font-size:80px}
+.pl{padding:26px 6px}
+.pl .zh{font-size:56px}
+/* typing help */
+/* IME guide */
+.ime-setup{display:grid;grid-template-columns:1.05fr 1fr;gap:24px;flex:1;min-height:0}
+.ime-dev{padding:22px 28px;display:flex;flex-direction:column;gap:14px}
+.ime-tabs{display:flex;gap:10px;flex-wrap:wrap}
+.ime-tabs button{font:inherit;font-size:22px;font-weight:600;padding:8px 18px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.ime-tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ime-steps{list-style:none;counter-reset:st;display:flex;flex-direction:column;gap:10px}
+.ime-steps li{counter-increment:st;display:flex;gap:14px;align-items:flex-start;font-size:23px;line-height:1.4}
+.ime-steps li::before{content:counter(st);flex:none;width:36px;height:36px;border-radius:50%;background:var(--t1);color:#fff;font-weight:700;display:grid;place-items:center;font-size:20px;margin-top:1px}
+.ime-steps b{color:var(--ink)}
+.ime-sw{font-size:21px;color:var(--muted);line-height:1.45;margin-top:auto;padding-top:10px;border-top:2px dashed var(--line)}
+.ime-tips{padding:22px 28px;display:flex;flex-direction:column;gap:14px}
+.ime-tips h3{font-size:28px}
+.ime-tips .tip{display:grid;grid-template-columns:auto auto auto 1fr;align-items:center;gap:12px;font-size:22px}
+.ime-tips code{font-family:'Lexend',monospace;background:var(--paper);padding:5px 12px;border-radius:10px;font-size:24px;white-space:nowrap}
+.ime-tips .arrow{color:var(--t0)}
+.ime-tips .han{font-family:var(--han);font-size:32px;font-weight:600;color:var(--t4);white-space:nowrap}
+.ime-tips .note{color:var(--muted);font-size:20px;line-height:1.35}
+.ime-tips .tip:nth-child(3) .note{grid-column:3/5}
+.ime{display:grid;grid-template-columns:1fr 360px;gap:24px;flex:1;min-height:0}
+.ime-main{padding:24px 30px;display:flex;flex-direction:column;gap:14px}
+.ime-task{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;font-size:26px}
+.ime-task .lab{color:var(--muted);font-size:22px}
+.ime-task .vi{font-weight:700;font-size:32px}
+.ime-task .py{color:var(--t1);font-weight:600;font-size:28px}
+.ime-task .sm{padding:6px 12px;font-size:18px}
+.ime-out{min-height:96px;border-radius:16px;background:var(--paper);border:2px solid var(--line);padding:10px 20px;font-family:var(--han);font-size:60px;line-height:1.25;color:var(--ink)}
+.ime-out:empty::before{content:'Chữ Hán sẽ hiện ở đây';font-family:var(--lat);font-size:22px;color:var(--t0)}
+.ime-pad{border:3px solid var(--line);border-radius:18px;padding:12px;background:var(--card);display:flex;flex-direction:column;gap:8px}
+.ime-comp{font-size:22px;color:var(--t1);font-weight:600;min-height:28px;padding-left:6px}
+.ime-cands{display:flex;gap:6px;flex-wrap:wrap;min-height:58px}
+.ime-cands button{font:inherit;cursor:pointer;border:none;background:var(--paper);border-radius:12px;padding:4px 12px;display:flex;align-items:baseline;gap:6px}
+.ime-cands button small{font-size:16px;color:var(--t0)}
+.ime-cands button span{font-family:var(--han);font-size:36px;color:var(--ink)}
+.ime-cands button:first-of-type{background:#DCE8F8}
+.ime-cands .pg{font-size:22px;color:var(--muted);padding:4px 10px}
+.ime-pad .pyin{border:none;padding:6px 8px;font-size:30px}
+.ime .fb{font-size:24px;font-weight:700;margin-left:8px}
+.ime .fb.ok{color:var(--t2)}.ime .fb.no{color:var(--t4)}
+.ime-help{padding:20px 24px;font-size:20px;line-height:1.55;color:var(--muted)}
+.ime-help b{color:var(--ink)}
+.lp-rule{font-size:20px;color:var(--muted);margin-top:-6px}
+.lp-rule code{font-family:'Lexend',monospace;background:var(--paper);padding:2px 8px;border-radius:8px}
+
+.typ{display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1}
+.tbox{padding:26px 30px;display:flex;flex-direction:column;gap:14px}
+.tbox h3{font-size:28px}
+.trow{display:flex;align-items:center;gap:18px;font-size:26px}
+.trow code{font-family:'Lexend',monospace;background:var(--paper);padding:6px 14px;border-radius:10px;font-size:28px;min-width:190px}
+.trow .arrow{color:var(--t0)}
+.trow .res{font-size:32px;font-weight:600}
+.pyin{font:inherit;font-size:34px;font-weight:600;width:100%;padding:12px 18px;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink)}
+.pyin:focus{outline:none;border-color:var(--t1)}
+.pyin:disabled{background:var(--paper)}
+.prev{font-size:30px;font-weight:600;min-height:44px;color:var(--t1)}
+/* practice listen */
+.lp{display:grid;grid-template-columns:1fr 420px;gap:28px;flex:1;min-height:0}
+.lpcard{padding:34px 40px;display:flex;flex-direction:column;gap:22px;align-items:center;justify-content:center}
+.bigplay{width:150px;height:150px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.bigplay:hover{transform:scale(1.05)}
+.bigplay svg{width:64px;height:64px}
+.fb{font-size:28px;font-weight:600;min-height:40px;text-align:center}
+.fb.ok{color:var(--t2)}.fb.half{color:var(--t3)}.fb.no{color:var(--t4)}
+.ans{font-size:26px;color:var(--muted);text-align:center;min-height:36px}
+.ans b{color:var(--ink);font-size:32px}
+.side{display:flex;flex-direction:column;gap:16px}
+.stat{padding:22px 26px;display:flex;flex-direction:column;gap:8px}
+.stat .big{font-size:56px;font-weight:700;color:var(--t2);line-height:1}
+.stat .lab{font-size:20px;color:var(--muted)}
+.hist{display:flex;flex-wrap:wrap;gap:8px}
+.hist span{font-size:20px;padding:4px 12px;border-radius:10px;font-weight:600}
+.hist .ok{background:#DDF3E8;color:var(--t2)}.hist .half{background:#FFF1D6;color:#9A6400}.hist .no{background:#FBE3DE;color:var(--t4)}
+/* reading */
+.rd{display:grid;grid-template-columns:1fr 360px;gap:26px;flex:1;min-height:0}
+.para2{padding:30px 36px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+.sent{display:block;text-align:left;padding:10px 16px;border-radius:14px;border:2px solid transparent;transition:background .2s,border-color .2s;width:100%}
+.sent:hover{background:var(--paper)}
+.sent.on{background:#FFF5DF;border-color:var(--t3)}
+.sent .py{font-size:34px;font-weight:500;line-height:1.45;color:var(--ink)}
+.sent .zh{font-family:var(--han);font-size:26px;color:var(--ink2);display:none}
+.sent .vi{font-size:20px;color:var(--muted);display:none}
+.show-zh .sent .zh{display:block}
+.show-vi .sent .vi{display:block}
+.ctrl{display:flex;flex-direction:column;gap:12px}
+.ctrl .box{padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.ctrl h3{font-size:22px}
+.recbtn{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:999px;font-size:22px;font-weight:600;background:var(--t4);color:#fff}
+.recbtn.rec{animation:pulse 1.2s infinite;background:#B32A14}
+.recbtn:disabled{opacity:.5}
+.dot{width:14px;height:14px;border-radius:50%;background:#fff}
+audio.player{width:100%}
+.timer{font-size:20px;color:var(--muted);text-align:center}
+/* test */
+.tstart{display:grid;grid-template-columns:1fr 1fr;gap:26px;flex:1}
+.tinfo{padding:28px 32px;display:flex;flex-direction:column;gap:14px}
+.tinfo h3{font-size:28px}
+.tinfo li{font-size:23px;line-height:1.55;margin-left:24px;color:var(--ink2)}
+.tinfo label{font-size:22px;font-weight:600}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.ti{display:grid;grid-template-columns:36px 60px 1fr 180px;gap:12px;align-items:center;padding:10px 14px;border-radius:16px;background:var(--card);border:2px solid var(--line)}
+.ti .n{font-size:20px;font-weight:700;color:var(--muted)}
+.ti .tpl{width:52px;height:52px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
+.ti .tpl svg{width:22px;height:22px}
+.ti .tpl:disabled{background:#B9C2D6}
+.ti .tpl i{position:absolute;right:-6px;top:-6px;background:var(--t3);color:#fff;font-style:normal;font-size:13px;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ti .pyin{font-size:26px;padding:8px 12px;border-width:2px}
+.ti .pv{font-size:24px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti.ok{border-color:var(--t2);background:#F2FBF6}.ti.half{border-color:var(--t3);background:#FFF9EC}.ti.no{border-color:var(--t4);background:#FDF1EE}
+.ti .pv small{display:block;font-size:16px;color:var(--muted);font-weight:500}
+.locked{pointer-events:none}
+.rubric{display:flex;flex-direction:column;gap:12px}
+.rb{display:flex;flex-direction:column;gap:6px}
+.rb .lab{font-size:19px;font-weight:600}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:8px 0;border-radius:10px;background:var(--paper);border:2px solid var(--line);font-size:18px;font-weight:600}
+.seg button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.result{display:grid;grid-template-columns:420px 1fr;gap:26px;flex:1;min-height:0}
+.rscore{padding:30px;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;text-align:center}
+.rscore .total{font-size:120px;font-weight:700;line-height:1;color:var(--t2)}
+.rscore .grade{font-size:30px;font-weight:700}
+.rdetail{padding:24px 28px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.rdetail h3{font-size:24px}
+.rline{display:flex;justify-content:space-between;font-size:24px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.wrong{display:flex;flex-wrap:wrap;gap:8px}
+.wrong span{font-size:18px;padding:4px 10px;border-radius:10px;background:#FBE3DE;color:#8E2A18}
+.wrong span b{color:var(--ink)}
+.copybox{font-family:monospace;font-size:14px;width:100%;height:110px;border-radius:12px;border:2px solid var(--line);padding:10px}
+
+.savemsg{font-size:20px;min-height:0;margin-top:-18px}
+.savemsg.error{color:var(--t4)}.savemsg.saved{color:var(--t2)}
+#resSave.saved{background:var(--t2)}
+#resSave:disabled{cursor:default}
+.dzh{font-size:26px;color:var(--muted)}
+</style>
+<script>/* bộ lọc âm tiết có thật trong tiếng Phổ thông: âm tiết → chữ ví dụ cho thanh 1–4 (· = không có) */
+var PY_TONES={"a":"阿···","ai":"唉癌矮爱","an":"安·俺按","ang":"肮昂·盎","ao":"凹熬袄傲","ba":"八拔把爸","bai":"掰白百败","ban":"班·板半","bang":"帮·膀棒","bao":"包薄饱报","bei":"杯·北备","ben":"奔·本笨","beng":"绷甭·蹦","bi":"逼鼻比必","bian":"边·贬变","biao":"标·表·","bie":"憋别瘪别","bin":"宾··摈","bing":"冰·饼病","bo":"播博簸·","bu":"·不补不","ca":"擦···","cai":"猜才彩菜","can":"参残惨灿","cang":"仓藏··","cao":"操嘈草·","ce":"···厕","ceng":"·层·蹭","cha":"插茶·差","chai":"差柴··","chan":"搀馋产颤","chang":"猖常场唱","chao":"超朝吵·","che":"车·扯彻","chen":"郴晨·衬","cheng":"称成逞秤","chi":"吃迟尺翅","chong":"充重宠·","chou":"抽愁丑臭","chu":"出除楚处","chuai":"揣·揣踹","chuan":"穿船喘串","chuang":"窗床闯创","chui":"吹垂··","chun":"春纯蠢·","chuo":"戳··绰","ci":"疵词此次","cong":"聪从··","cou":"···凑","cu":"粗··促","cuan":"蹿··窜","cui":"催·璀脆","cun":"村存·寸","cuo":"搓··错","da":"答答打大","dai":"呆·逮带","dan":"单·胆蛋","dang":"当·挡当","dao":"刀·导到","de":"·得··","dei":"··得·","deng":"灯·等瞪","di":"低的底第","dian":"颠·点电","diao":"叼··掉","die":"跌蝶··","ding":"钉·顶定","diu":"丢···","dong":"东·懂动","dou":"都·抖豆","du":"都读堵度","duan":"端·短段","dui":"堆··对","dun":"吨·盹顿","duo":"多夺朵堕","e":"·额恶饿","en":"恩···","er":"·儿耳二","fa":"发罚法发","fan":"翻烦反饭","fang":"方房访放","fei":"非肥诽费","fen":"分坟粉分","feng":"风缝讽奉","fou":"··否·","fu":"夫服腐附","ga":"嘎噶·尬","gai":"该·改概","gan":"干·感干","gang":"刚·港杠","gao":"高·搞告","ge":"歌格·个","gei":"··给·","gen":"跟···","geng":"更·哽更","gong":"公·巩共","gou":"沟·狗够","gu":"估·鼓故","gua":"刮·寡挂","guai":"乖·拐怪","guan":"关·馆惯","guang":"光·广逛","gui":"规·轨贵","gun":"··滚棍","guo":"锅国果过","ha":"哈蛤··","hai":"·还海害","han":"酣寒喊汉","hang":"夯行··","hao":"·毫好号","he":"喝河·贺","hei":"黑···","hen":"·痕很恨","heng":"哼衡··","hong":"轰红哄哄","hou":"·猴吼后","hu":"乎湖虎护","hua":"花滑·话","huai":"·怀·坏","huan":"欢环缓换","huang":"荒黄晃晃","hui":"挥回悔会","hun":"婚浑·混","huo":"豁活火或","ji":"机级几记","jia":"家颊假假","jian":"间·检见","jiang":"江·讲降","jiao":"交·饺叫","jie":"接节姐介","jin":"今·仅进","jing":"经·景静","jiong":"··窘·","jiu":"究·九就","ju":"居橘举据","juan":"捐·卷卷","jue":"撅觉··","jun":"军··俊","ka":"咖·卡·","kai":"开·慨·","kan":"刊·砍看","kang":"康扛·抗","kao":"··考靠","ke":"科咳可客","ken":"··肯·","keng":"坑···","kong":"空·恐控","kou":"抠·口扣","ku":"哭·苦裤","kua":"夸·垮挎","kuai":"···块","kuan":"宽·款·","kuang":"框狂·矿","kui":"亏魁·馈","kun":"昆·捆困","kuo":"···括","la":"拉·喇辣","lai":"·来·赖","lan":"·篮懒烂","lang":"·郎朗浪","lao":"捞劳老涝","le":"肋··乐","lei":"勒雷累累","leng":"·棱冷愣","li":"哩离里历","lia":"··俩·","lian":"·联脸炼","liang":"·凉两亮","liao":"撩聊了料","lie":"咧·咧列","lin":"拎邻凛吝","ling":"·零领另","liu":"溜留柳六","long":"·龙拢·","lou":"·楼搂漏","lu":"·炉鲁路","luan":"·孪卵乱","lun":"抡轮·论","luo":"啰逻裸落","lü":"·驴旅绿","lüe":"···略","ma":"妈麻码骂","mai":"·埋买卖","man":"·馒满慢","mang":"·忙莽·","mao":"猫毛铆冒","mei":"·没每妹","men":"闷门·闷","meng":"·盟猛梦","mi":"眯迷米密","mian":"·眠免面","miao":"·描秒妙","mie":"···灭","min":"·民敏·","ming":"·明·命","miu":"···谬","mo":"摸模抹末","mou":"·谋某·","mu":"·模母目","n":"·嗯··","na":"·拿哪那","nai":"··奶耐","nan":"·男·难","nang":"·囊··","nao":"·挠脑闹","nei":"··馁内","nen":"···嫩","neng":"·能··","ni":"妮泥你匿","nian":"蔫年撵念","niang":"·娘·酿","niao":"··鸟尿","nie":"捏··聂","nin":"·您··","ning":"·宁·宁","niu":"·牛扭·","nong":"·农·弄","nu":"·奴努怒","nuan":"··暖·","nuo":"·挪·诺","nü":"··女·","nüe":"···虐","o":"·哦··","ou":"欧·偶·","pa":"趴爬·怕","pai":"拍排·派","pan":"攀盘·判","pang":"乓旁耪胖","pao":"抛刨跑泡","pei":"胚陪·配","pen":"喷盆··","peng":"抨朋捧碰","pi":"批啤匹辟","pian":"片便·片","piao":"飘朴·漂","pie":"撇···","pin":"拼频品聘","ping":"乒苹··","po":"泼婆颇破","pou":"剖···","pu":"扑葡普铺","qi":"七骑起气","qia":"掐··恰","qian":"千前浅歉","qiang":"腔强抢呛","qiao":"敲桥巧峭","qie":"切茄且切","qin":"亲琴寝沁","qing":"轻晴请庆","qiong":"·穷··","qiu":"秋球··","qu":"区渠取去","quan":"圈全犬劝","que":"缺瘸·却","qun":"·裙··","ran":"·然染·","rang":"·瓤壤让","rao":"·饶扰绕","re":"··惹热","ren":"·人忍认","reng":"扔仍··","ri":"···日","rong":"茸容冗·","rou":"·柔·肉","ru":"·如乳入","ruan":"··软·","rui":"··蕊锐","run":"···润","ruo":"···弱","sa":"撒·洒萨","sai":"塞··赛","san":"三·伞散","sang":"桑·嗓丧","sao":"骚·扫扫","se":"···色","sen":"森···","seng":"僧···","sha":"沙啥傻厦","shai":"筛··晒","shan":"衫·闪善","shang":"商·赏上","shao":"烧勺少绍","she":"奢蛇舍社","shei":"·谁··","shen":"身什审甚","sheng":"生绳省剩","shi":"师识始市","shou":"收·手受","shu":"书熟暑束","shua":"刷·耍·","shuai":"摔·甩帅","shuan":"拴··涮","shuang":"双·爽·","shui":"·谁水睡","shun":"··吮顺","shuo":"说··硕","si":"司·死四","song":"松·耸送","sou":"搜·擞嗽","su":"苏俗·诉","suan":"酸··算","sui":"虽随髓岁","sun":"孙·损·","suo":"缩·所·","ta":"他·塔踏","tai":"胎台·太","tan":"滩谈毯碳","tang":"汤糖躺趟","tao":"掏萄讨套","te":"···特","teng":"·疼··","ti":"踢题体替","tian":"天甜腆·","tiao":"挑条挑跳","tie":"贴·铁·","ting":"听庭挺·","tong":"通同桶痛","tou":"偷头·透","tu":"突图土兔","tuan":"湍团··","tui":"推颓腿退","tun":"吞豚··","tuo":"脱驮妥拓","wa":"挖娃瓦袜","wai":"歪··外","wan":"弯玩晚万","wang":"汪王网忘","wei":"微为尾位","wen":"温文稳问","weng":"翁··瓮","wo":"窝·我握","wu":"屋无午物","xi":"西习喜系","xia":"虾辖·下","xian":"先咸险现","xiang":"箱详想向","xiao":"消淆小校","xie":"些鞋写谢","xin":"新··信","xing":"星行醒兴","xiong":"兄熊··","xiu":"休·朽秀","xu":"须徐许续","xuan":"宣旋选炫","xue":"削学雪血","xun":"熏询·训","ya":"压牙雅亚","yan":"烟颜眼验","yang":"央阳养样","yao":"要摇咬要","ye":"椰爷也页","yi":"一一以一","yin":"阴银饮印","ying":"应迎影应","yo":"哟···","yong":"拥·泳用","you":"优游友右","yu":"迂鱼语育","yuan":"鸳元远院","yue":"约··月","yun":"晕云允运","za":"扎杂咋·","zai":"灾·载在","zan":"·咱攒暂","zang":"赃··脏","zao":"糟凿早造","ze":"·择··","zei":"·贼··","zen":"··怎·","zeng":"增··赠","zha":"扎闸眨炸","zhai":"摘宅窄寨","zhan":"粘·展站","zhang":"张·长丈","zhao":"招着找照","zhe":"遮折者这","zhei":"···这","zhen":"真·诊震","zheng":"争·整正","zhi":"知直只至","zhong":"钟·种重","zhou":"周轴帚骤","zhu":"猪逐主住","zhua":"抓·爪·","zhuai":"拽···","zhuan":"专·转赚","zhuang":"装··状","zhui":"追··缀","zhun":"谆·准·","zhuo":"桌着··","zi":"资·子字","zong":"综·总粽","zou":"邹·走奏","zu":"租足组·","zuan":"钻·纂攥","zui":"··嘴最","zun":"尊···","zuo":"·昨左作"};</script>
+</head>
+<body>
+<div id="viewport"><div id="deck" role="region" aria-label="Buổi 5 – Ôn tập tổng hợp ngữ âm"><div id="progress"></div>
+
+<section class="slide dark" id="s-cover" data-sec="Mở đầu">
+  <div class="brush" aria-hidden="true"><span style="color:#F2B84B">复</span><span style="color:#7FB3F0">习</span></div>
+  <p class="kick in"><span class="chip" style="background:#F2B84B;color:#1E2A4A">Buổi 5</span> HK-SCHOOL</p>
+  <h1 class="in" style="font-size:120px">Ôn tập<br>ngữ âm</h1>
+  <p class="lead in" style="font-size:30px;max-width:860px">Ôn tập tổng hợp bài 1–4: nghe viết pinyin, đọc đoạn văn và tổng ôn quy tắc.</p>
+</section>
+
+<section class="slide" id="s-draw" data-sec="Mở đầu">
+  <p class="kick in"><span class="chip" style="background:var(--t3)">Khởi động</span> Ôn bài 1 – 4</p>
+  <h2 class="in">Ghép âm: bốc âm</h2>
+  <p class="lead in">Bấm <b>Bốc âm</b>, cả lớp ghép ba phần lại và đọc to.</p>
+  <div class="draw-row in">
+    <div class="dcard"><span class="dl-lab">Thanh mẫu</span><span class="dval" id="dI">?</span></div>
+    <span class="dop">+</span>
+    <div class="dcard"><span class="dl-lab">Vận mẫu</span><span class="dval" id="dF">?</span></div>
+    <span class="dop">+</span>
+    <div class="dcard"><span class="dl-lab">Thanh điệu</span><span class="dval" id="dT">?</span><span class="dsub" id="dTn">&nbsp;</span></div>
+    <span class="dop">=</span>
+    <div class="dcard dres"><span class="dl-lab">Âm tiết</span><span class="dval" id="dR">?</span><span class="dsub dzh" id="dRx">&nbsp;</span></div>
+  </div>
+  <div class="row in" style="justify-content:center;gap:20px">
+    <button class="spk dbig" id="drawBtn">Bốc âm</button>
+    <button class="ghost dbig" id="revealBtn" disabled>Hiện đáp án</button>
+  </div>
+  <div class="dhist in"><span class="dh-lab">Đã bốc:</span><span id="dHist" class="dh-list">chưa có lượt nào</span></div>
+</section>
+
+<section class="slide" id="s-agenda" data-sec="Mở đầu">
+  <p class="kick in">Nội dung buổi học</p>
+  <h2 class="in">Ôn tập tổng hợp ngữ âm bài 1 – 4</h2>
+  <div class="agenda in">
+    <button data-go="s-typing"><span class="big t1">打</span><h3>Cách gõ chữ Hán</h3><p>Cài bàn phím pinyin, gõ nihao → 你好.</p></button>
+    <button data-go="s-listen"><span class="big t2">听</span><h3>Luyện nghe</h3><p>Nghe từ, viết lại bằng pinyin có dấu thanh.</p></button>
+    <button data-go="s-readA"><span class="big t3">读</span><h3>Luyện đọc</h3><p>Ba đoạn văn pinyin, nghe mẫu, ghi âm và nghe lại.</p></button>
+    <button data-go="s-sum"><span class="big t4">复</span><h3>Tổng ôn</h3><p>Những điểm cần nhớ trước khi làm bài thi.</p></button>
+  </div>
+</section>
+
+<section class="slide" id="s-typing" data-sec="Luyện tập">
+  <p class="kick in"><span class="chip">Hướng dẫn</span> Cách gõ chữ Hán 1</p>
+  <h2 class="in">Cài bàn phím pinyin để gõ chữ Hán</h2>
+  <div class="ime-setup in">
+    <div class="box ime-dev">
+      <div class="ime-tabs" id="imeTabs"></div>
+      <ol class="ime-steps" id="imeSteps"></ol>
+      <p class="ime-sw" id="imeSw"></p>
+    </div>
+    <div class="box ime-tips">
+      <h3>Gõ thế nào?</h3>
+      <div class="tip"><code>nihao</code><span class="arrow">→</span><span class="han">你好</span><span class="note">gõ pinyin <b>không dấu</b>, không gõ số</span></div>
+      <div class="tip"><code>␣ / 1–9</code><span class="arrow">→</span><span class="note">phím cách lấy chữ đầu tiên; bấm số hoặc chạm vào chữ để chọn chữ khác</span></div>
+      <div class="tip"><code>nv · lvse</code><span class="arrow">→</span><span class="han">女 · 绿色</span><span class="note">ü gõ bằng <b>v</b></span></div>
+      <div class="tip"><code>xuexiao</code><span class="arrow">→</span><span class="han">学校</span><span class="note">gõ <b>cả từ</b> để ra đúng chữ nhanh hơn</span></div>
+      <div class="tip"><code>xx · nh</code><span class="arrow">→</span><span class="han">谢谢 · 你好</span><span class="note">gõ tắt bằng chữ cái đầu</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-ime" data-sec="Luyện tập">
+  <p class="kick in"><span class="chip">Hướng dẫn</span> Cách gõ chữ Hán 2</p>
+  <h2 class="in">Thử gõ chữ Hán như trên bàn phím thật</h2>
+  <div class="ime in">
+    <div class="box ime-main">
+      <div class="ime-task"><span class="lab">Gõ chữ Hán của:</span><span class="vi" id="imeVi"></span><span class="py" id="imePy"></span><button class="ghost sm" id="imeSay" aria-label="Nghe">🔊 Nghe</button></div>
+      <div class="ime-out" id="imeOut" aria-live="polite"></div>
+      <div class="ime-pad">
+                <div class="ime-cands" id="imeCands"></div>
+        <input class="pyin" id="imeIn" placeholder="Gõ pinyin không dấu, vd: nihao" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+      <div class="row"><button class="spk" id="imeCheck">Kiểm tra</button><button class="ghost" id="imeNext">Từ khác →</button><button class="ghost" id="imeClr">Xoá</button><span class="fb" id="imeFb">&nbsp;</span></div>
+    </div>
+    <div class="side">
+      <div class="stat box"><span class="big" id="imeScore">0</span><span class="lab">từ đúng / <span id="imeCount">0</span> từ</span></div>
+      <div class="box ime-help"><b>Phím tắt</b><br>␣ phím cách: chọn chữ 1<br>1–9: chọn chữ theo số<br>Enter: giữ nguyên chữ Latin<br>⌫ khi ô trống: xoá chữ Hán cuối<br><br>Máy đã cài bàn phím tiếng Trung thì gõ thẳng vào ô cũng được.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-listen" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip">Luyện tập 1</span> Nghe → viết pinyin</p><h2 style="margin-top:10px">Nghe và viết pinyin</h2></div>
+  <div class="mode" id="lpMode"><button class="on" data-m="s">Từ đơn</button><button data-m="c">Từ ghép</button></div></div>
+  <div class="lp in">
+    <div class="lpcard box">
+      <button class="bigplay" id="lpPlay" aria-label="Nghe từ"><i data-ic="vol"></i></button>
+      <p class="ans" id="lpHint">Bấm loa để nghe, rồi gõ pinyin bên dưới.</p>
+      <input class="pyin" id="lpIn" style="max-width:640px;text-align:center" placeholder="Gõ pinyin, vd: ma3" autocomplete="off" spellcheck="false">
+      <p class="lp-rule">Gõ số thanh ngay sau âm tiết: <code>ma3</code> → mǎ · <code>nv3</code> → nǚ (v = ü) · <code>xie4xie</code> → xièxie (thanh nhẹ không gõ số) · gõ dấu trực tiếp cũng được</p>
+      <p class="prev" id="lpPrev">&nbsp;</p>
+      <div class="row"><button class="spk" id="lpCheck">Kiểm tra</button><button class="ghost" id="lpNext">Từ tiếp theo →</button><button class="ghost" id="lpSlow">Nghe chậm</button></div>
+      <p class="fb" id="lpFb">&nbsp;</p>
+      <p class="ans" id="lpAns">&nbsp;</p>
+    </div>
+    <div class="side">
+      <div class="stat box"><span class="big" id="lpScore">0</span><span class="lab">điểm / <span id="lpCount">0</span> câu đã làm</span></div>
+      <div class="stat box"><span class="lab">Các từ đã làm</span><div class="hist" id="lpHist"></div></div>
+      <button class="ghost" id="lpReset">Làm lại từ đầu</button>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s-readA" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip">Luyện tập 2</span> Đọc đoạn pinyin · Đoạn 1</p><h2 style="margin-top:10px">Giới thiệu bản thân</h2></div></div>
+  <div class="rd in" data-para="A">
+    <div class="para2 box" id="paraA"></div>
+    <div class="ctrl" id="ctrlA"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-readB" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip">Luyện tập 2</span> Đọc đoạn pinyin · Đoạn 2</p><h2 style="margin-top:10px">Một ngày ở trường</h2></div></div>
+  <div class="rd in" data-para="B">
+    <div class="para2 box" id="paraB"></div>
+    <div class="ctrl" id="ctrlB"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-readC" data-sec="Luyện tập">
+  <div class="toolbar in"><div><p class="kick"><span class="chip">Luyện tập 2</span> Đọc đoạn pinyin · Đoạn 3</p><h2 style="margin-top:10px">Gia đình tôi</h2></div></div>
+  <div class="rd in" data-para="T">
+    <div class="para2 box" id="paraT"></div>
+    <div class="ctrl" id="ctrlT"></div>
+  </div>
+</section>
+
+<section class="slide" id="s-sum" data-sec="Tổng ôn">
+  <p class="kick in">Tổng ôn ngữ âm bài 1 – 4</p>
+  <h2 class="in">Những điểm cần nhớ trước khi thi</h2>
+  <div class="sum in">
+    <div class="sm box"><h3><span class="no">1</span>Thanh mẫu</h3><p>b p m f · d t n l · g k h · j q x · zh ch sh r · z c s</p><p>Cặp bật hơi: <b>b–p, d–t, g–k, j–q, zh–ch, z–c</b></p></div>
+    <div class="sm box"><h3><span class="no">2</span>Thanh điệu</h3><p><span class="t1">ā</span> 55 · <span class="t2">á</span> 35 · <span class="t3">ǎ</span> 214 · <span class="t4">à</span> 51 · thanh nhẹ không dấu</p><p>3 + 3 → <b>2 + 3</b>: nǐ hǎo → ní hǎo</p></div>
+    <div class="sm box"><h3><span class="no">3</span>Biến âm 一 · 不</h3><p>不 + thanh 4 → <b>bú</b> (bú shì)</p><p>一 + thanh 4 → <b>yí</b>; + thanh 1, 2, 3 → <b>yì</b>; dãy số: <b>yāo</b></p></div>
+    <div class="sm box"><h3><span class="no">4</span>Quy tắc viết y · w</h3><p>i → <b>yi</b>, ia → <b>ya</b>, in → <b>yin</b></p><p>u → <b>wu</b>, uo → <b>wo</b>; ü → <b>yu</b></p></div>
+    <div class="sm box"><h3><span class="no">5</span>ü và rút gọn</h3><p>j q x + ü bỏ hai chấm: <b>ju, que, xuan</b></p><p>iou → <b>iu</b>, uei → <b>ui</b>, uen → <b>un</b></p></div>
+    <div class="sm box"><h3><span class="no">6</span>Dấu thanh đặt ở đâu</h3><p>Có <b>a</b> đặt trên a, không có a thì <b>e</b>, gặp <b>ou</b> đặt trên o, còn lại đặt trên nguyên âm cuối: <b>guì, diū</b></p></div>
+  </div>
+</section>
+
+<section class="slide dark" id="s-end" data-sec="Tổng ôn">
+  <p class="brush" aria-label="下课了"><span style="color:#F2B84B">下</span><span style="color:#7FB3F0">课</span><span style="color:#FF8A73">了</span></p>
+  <p style="font-size:52px;font-weight:500"><span style="color:#FF8A73">xià</span> <span style="color:#FF8A73">kè</span> <span style="color:#A9B4CF">le</span></p>
+  <p class="lead" style="margin-top:16px">Về nhà luyện nghe – viết pinyin thêm và ôn lại các quy tắc để chuẩn bị cho bài thi ngữ âm nhé!</p>
+  <button class="spk" data-say="下课了" style="margin-top:24px;background:#F2B84B;color:#1E2A4A"><i data-ic="vol"></i>Nghe</button>
+</section>
+
+</div></div>
+
+<nav id="bar" aria-label="Điều khiển">
+  <button class="nav" id="prev" aria-label="Trang trước"><i data-ic="left"></i></button>
+  <div id="secs"></div>
+  <span id="count"></span>
+  <button class="nav" id="next" aria-label="Trang sau"><i data-ic="right"></i></button>
+  <button class="nav" id="fs" aria-label="Toàn màn hình"><i data-ic="full"></i></button>
+</nav>
+<div id="toast" role="status"></div>
+
+<script>const IMG = {};
+const IC = {
+ vol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>',
+ dice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>',
+ left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>',
+ right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>',
+ full:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'
+};
+const icons = root => root.querySelectorAll('i[data-ic]').forEach(i=>{i.outerHTML=IC[i.dataset.ic]});
+
+const TM = {1:'āēīōūǖĀĒĪŌŪ',2:'áéíóúǘÁÉÍÓÚ',3:'ǎěǐǒǔǚǍĚǏǑǓ',4:'àèìòùǜÀÈÌÒÙ'};
+function toneOf(s){for(const t in TM){for(const c of TM[t]) if(s.includes(c)) return +t;} return 0;}
+const py = s => s===' '?' ':`<span class="t${toneOf(s)}">${s}</span>`;
+const pyw = arr => arr.map(py).join('');
+
+/* speech */
+let zhVoice=null;
+const VKEY='hochsk-voice'; let VOICE_RATE=1, voicePref=null, warnedG=false;
+try{const _s=JSON.parse(localStorage.getItem(VKEY)||'{}'); voicePref=_s.name||null; VOICE_RATE=+_s.rate||1;}catch(e){}
+function zhVoices(){ if(!('speechSynthesis' in window)) return []; return speechSynthesis.getVoices().filter(v=>/^(zh|cmn)/i.test(v.lang) && !/(HK|TW|yue|Hant|MO)/i.test(v.lang+' '+v.name)); }
+function voiceRank(v){ const n=v.name;
+  if(/Xiaoxiao|Xiaoyi|Yunxi|Yunjian|Yunyang|Xiaochen|Xiaohan|Xiaomo|Xiaoxuan|Xiaorui|Xiaoshuang|Yunfeng|Yunhao|Yunze/i.test(n)) return 0;
+  if(/Natural|Neural|Online/i.test(n)) return 1;
+  if(/Ting-?Ting|Lili|Li-?mu|Yu-?shu|Tian-?Tian|Shasha/i.test(n)) return 2;
+  if(/Huihui|Yaoyao|Kangkang/i.test(n)) return 3;
+  if(/Google/i.test(n)) return 5; return 4; }
+function loadVoices(){ if(!('speechSynthesis' in window)) return; const vs=zhVoices().sort((a,b)=>voiceRank(a)-voiceRank(b)); zhVoice=(voicePref&&vs.find(v=>v.name===voicePref))||vs[0]||null; if(window.renderVoicePanel) renderVoicePanel(); }
+if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+let warned=false;
+function say(text, rate=0.75){ if(zhVoice && voiceRank(zhVoice)>=4 && !warnedG){ warnedG=true; toast('Đang dùng giọng chưa chuẩn. Mở bằng Microsoft Edge để có giọng Xiaoxiao chuẩn Phổ thông, hoặc bấm “🔊 Giọng đọc” để chọn giọng.'); }
+  if(!text) return;
+  stopAudio();
+  if(!('speechSynthesis' in window)){ toast('Trình duyệt này không hỗ trợ đọc âm thanh.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang='zh-CN'; u.rate=(rate)*VOICE_RATE; if(zhVoice) u.voice=zhVoice;
+  if(!zhVoice && !warned){ warned=true; toast('Chưa thấy giọng đọc tiếng Trung trên máy — âm thanh có thể không đúng. Hãy dùng Chrome/Edge hoặc cài giọng tiếng Trung.'); }
+  speechSynthesis.speak(u);
+}
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),4200); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-say]'); if(b && b.dataset.say) say(b.dataset.say); });
+
+
+function stopAudio(){}
+
+
+
+/* ---------- pinyin utilities ---------- */
+const MK={a:'āáǎà',e:'ēéěè',i:'īíǐì',o:'ōóǒò',u:'ūúǔù','ü':'ǖǘǚǜ'};
+const UNMK={}; for(const b in MK) [...MK[b]].forEach((c,i)=>UNMK[c]=[b,i+1]);
+function markSyl(s,t){ if(!t||t>4) return s; let k=-1;
+  if(s.includes('a')) k=s.indexOf('a'); else if(s.includes('e')) k=s.indexOf('e'); else if(s.includes('ou')) k=s.indexOf('o');
+  else for(let x=s.length-1;x>=0;x--) if('iouü'.includes(s[x])){k=x;break;}
+  return k<0?s:s.slice(0,k)+MK[s[k]][t-1]+s.slice(k+1); }
+function numToMarks(str){ return str.replace(/u:/gi,'ü').replace(/v/g,'ü').replace(/V/g,'Ü').replace(/([a-zA-ZüÜ]+)([0-5])/g,(m,s,t)=>{ const low=s.toLowerCase(); const r=markSyl(low,+t); return s[0]!==low[0]? r[0].toUpperCase()+r.slice(1) : r; }); }
+function analyze(str){ let s=str.toLowerCase().replace(/u:/g,'ü').replace(/v/g,'ü'); let letters='', tones=[];
+  for(const c of s){ if(UNMK[c]){ letters+=UNMK[c][0]; tones.push(UNMK[c][1]); } else if(/[1-4]/.test(c)) tones.push(+c); else if(/[a-zü]/.test(c)) letters+=c; }
+  letters=letters.replace(/([jqxy])ü/g,'$1u'); return {letters,tones:tones.join('')}; }
+function grade(input, expected){ const a=analyze(input), b=analyze(expected); if(!a.letters) return 0; if(a.letters!==b.letters) return 0; return a.tones===b.tones?1:0.5; }
+const colorPy = s => s.replace(/([A-Za-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]+)/g, w=>`<span class="t${toneOf(w)}">${w}</span>`);
+function bindPreview(inp,out){ const f=()=>{ out.innerHTML=inp.value.trim()?colorPy(numToMarks(inp.value)):'&nbsp;'; }; inp.addEventListener('input',f); f(); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+/* ---------- word pools (bài 1–4) ---------- */
+const SINGLE=[['八','bā','số tám'],['爸','bà','bố'],['马','mǎ','con ngựa'],['鱼','yú','con cá'],['五','wǔ','số năm'],['米','mǐ','gạo'],['笔','bǐ','cái bút'],['土','tǔ','đất'],['七','qī','số bảy'],['去','qù','đi'],['学','xué','học'],['家','jiā','nhà'],['书','shū','sách'],['茶','chá','trà'],['是','shì','là'],['四','sì','số bốn'],['十','shí','số mười'],['日','rì','ngày'],['菜','cài','món ăn'],['字','zì','chữ'],['水','shuǐ','nước'],['好','hǎo','tốt'],['我','wǒ','tôi'],['他','tā','anh ấy'],['喝','hē','uống'],['吃','chī','ăn'],['六','liù','số sáu'],['九','jiǔ','số chín'],['女','nǚ','nữ'],['绿','lǜ','xanh lá'],['雨','yǔ','mưa'],['月','yuè','tháng, trăng'],['北','běi','phía bắc'],['门','mén','cửa'],['山','shān','núi'],['三','sān','số ba'],['草','cǎo','cỏ'],['走','zǒu','đi bộ'],['热','rè','nóng'],['冷','lěng','lạnh'],['看','kàn','xem'],['听','tīng','nghe'],['说','shuō','nói'],['读','dú','đọc'],['写','xiě','viết'],['想','xiǎng','nghĩ, muốn'],['钱','qián','tiền'],['心','xīn','tim'],['熊','xióng','con gấu'],['船','chuán','thuyền'],['云','yún','mây'],['远','yuǎn','xa'],['猫','māo','con mèo'],['狗','gǒu','con chó'],['花','huā','hoa'],['车','chē','xe'],['买','mǎi','mua'],['卖','mài','bán']];
+const COMPOUND=[['谢谢','xièxie','cảm ơn'],['老师','lǎoshī','giáo viên'],['学校','xuéxiào','trường học'],['银行','yínháng','ngân hàng'],['熊猫','xióngmāo','gấu trúc'],['邮局','yóujú','bưu điện'],['机票','jīpiào','vé máy bay'],['语言','yǔyán','ngôn ngữ'],['地图','dìtú','bản đồ'],['努力','nǔlì','cố gắng'],['超市','chāoshì','siêu thị'],['说话','shuōhuà','nói chuyện'],['长城','Chángchéng','Trường Thành'],['上午','shàngwǔ','buổi sáng'],['迟到','chídào','đến muộn'],['汉语','Hànyǔ','tiếng Hán'],['中国','Zhōngguó','Trung Quốc'],['明天','míngtiān','ngày mai'],['再见','zàijiàn','tạm biệt'],['喜欢','xǐhuan','thích'],['家人','jiārén','người nhà'],['电影','diànyǐng','phim'],['朋友','péngyou','bạn bè'],['飞机','fēijī','máy bay'],['火车','huǒchē','tàu hỏa'],['生日','shēngrì','sinh nhật'],['休息','xiūxi','nghỉ ngơi'],['名字','míngzi','tên'],['工作','gōngzuò','công việc'],['北京','Běijīng','Bắc Kinh'],['妈妈','māma','mẹ'],['哥哥','gēge','anh trai'],['越南','Yuènán','Việt Nam'],['河内','Hénèi','Hà Nội']];
+
+const IME_DICT=[["的","de"],["的","di"],["一","yi"],["一","yi"],["是","shi"],["是","shi"],["不","bu"],["不","bu"],["了","le"],["了","liao"],["我","wo"],["我","wo"],["你","ni"],["你","ni"],["他","ta"],["他","ta"],["她","ta"],["她","ta"],["在","zai"],["在","zai"],["有","you"],["有","you"],["这","zhe"],["这","zhe"],["那","na"],["那","na"],["人","ren"],["人","ren"],["好","hao"],["好","hao"],["大","da"],["大","da"],["小","xiao"],["小","xiao"],["多","duo"],["多","duo"],["少","shao"],["少","shao"],["也","ye"],["也","ye"],["很","hen"],["很","hen"],["都","dou"],["都","dou"],["吗","ma"],["吗","ma"],["呢","ne"],["呢","ne"],["吧","ba"],["吧","ba"],["去","qu"],["去","qu"],["来","lai"],["来","lai"],["说","shuo"],["说","shuo"],["看","kan"],["看","kan"],["想","xiang"],["想","xiang"],["要","yao"],["要","yao"],["会","hui"],["能","neng"],["能","neng"],["个","ge"],["个","ge"],["们","men"],["们","men"],["上","shang"],["上","shang"],["下","xia"],["下","xia"],["中","zhong"],["字","zi"],["字","zi"],["爱","ai"],["爱","ai"],["谢谢","xie xie"],["你好","ni hao"],["我们","wo men"],["你们","ni men"],["他们","ta men"],["什么","shen me"],["中国","zhong guo"],["学生","xue sheng"],["老师","lao shi"],["学习","xue xi"],["学校","xue xiao"],["喜欢","xi huan"],["现在","xian zai"],["今天","jin tian"],["明天","ming tian"],["朋友","peng you"],["工作","gong zuo"],["时候","shi hou"],["知道","zhi dao"],["可以","ke yi"],["再见","zai jian"],["对不起","dui bu qi"],["没关系","mei guan xi"],["名字","ming zi"],["汉语","han yu"],["爸爸","ba ba"],["妈妈","ma ma"],["哥哥","ge ge"],["姐姐","jie jie"],["弟弟","di di"],["妹妹","mei mei"],["家","jia"],["家","jia"],["吃","chi"],["吃","chi"],["喝","he"],["喝","he"],["水","shui"],["水","shui"],["茶","cha"],["茶","cha"],["米饭","mi fan"],["医生","yi sheng"],["一起","yi qi"],["东西","dong xi"],["怎么","zen me"],["哪儿","na er"],["这儿","zhe er"],["那儿","na er"],["认识","ren shi"],["高兴","gao xing"],["请","qing"],["请","qing"],["问","wen"],["问","wen"],["叫","jiao"],["叫","jiao"],["几","ji"],["几","ji"],["岁","sui"],["岁","sui"],["年","nian"],["年","nian"],["月","yue"],["月","yue"],["日","ri"],["日","ri"],["号","hao"],["号","hao"],["星期","xing qi"],["八","ba"],["百","bai"],["白天","bai tian"],["半","ban"],["包子","bao zi"],["杯子","bei zi"],["边","bian"],["病","bing"],["不客气","bu ke qi"],["不要","bu yao"],["菜","cai"],["唱","chang"],["超市","chao shi"],["车","che"],["穿","chuan"],["出租车","chu zu che"],["打电话","da dian hua"],["大家","da jia"],["到","dao"],["大学","da xue"],["大学生","da xue sheng"],["第","di"],["店","dian"],["电话","dian hua"],["电脑","dian nao"],["电视","dian shi"],["电影","dian ying"],["电影院","dian ying yuan"],["读","du"],["对","dui"],["多少","duo shao"],["读书","du shu"],["二","er"],["儿子","er zi"],["饭","fan"],["饭店","fan dian"],["房间","fang jian"],["非常","fei chang"],["飞机","fei ji"],["分","fen"],["分钟","fen zhong"],["歌","ge"],["给","gei"],["公司","gong si"],["狗","gou"],["贵","gui"],["国","guo"],["还","hai"],["孩子","hai zi"],["汉字","han zi"],["好吃","hao chi"],["好看","hao kan"],["好听","hao ting"],["好玩儿","hao wan er"],["后","hou"],["回","hui"],["火车","huo che"],["见","jian"],["件","jian"],["饺子","jiao zi"],["家人","jia ren"],["鸡蛋","ji dan"],["今年","jin nian"],["九","jiu"],["觉得","jue de"],["开","kai"],["开车","kai che"],["看病","kan bing"],["看见","kan jian"],["课","ke"],["口","kou"],["块","kuai"],["冷","leng"],["里","li"],["零","ling"],["六","liu"],["卖","mai"],["买","mai"],["忙","mang"],["猫","mao"],["没事","mei shi"],["面包","mian bao"],["面条儿","mian tiao er"],["明年","ming nian"],["哪","na"],["那边","na bian"],["那个","na ge"],["哪个","na ge"],["那里","na li"],["哪里","na li"],["男","nan"],["男朋友","nan peng you"],["那些","na xie"],["哪些","na xie"],["您","nin"],["牛奶","niu nai"],["女","nv"],["女儿","nv er"],["女朋友","nv peng you"],["女士","nv shi"],["便宜","pian yi"],["漂亮","piao liang"],["苹果","ping guo"],["七","qi"],["前","qian"],["钱","qian"],["千","qian"],["起床","qi chuang"],["请问","qing wen"],["去年","qu nian"],["热","re"],["三","san"],["上班","shang ban"],["商店","shang dian"],["上课","shang ke"],["上午","shang wu"],["上学","shang xue"],["谁","shui"],["生病","sheng bing"],["十","shi"],["事","shi"],["时间","shi jian"],["手机","shou ji"],["书","shu"],["书店","shu dian"],["睡","shui"],["水果","shui guo"],["睡觉","shui jiao"],["说话","shuo hua"],["四","si"],["它","ta"],["太","tai"],["它们","ta men"],["她们","ta men"],["天","tian"],["天气","tian qi"],["听","ting"],["听见","ting jian"],["同学","tong xue"],["外","wai"],["外边","wai bian"],["玩","wan"],["晚","wan"],["晚饭","wan fan"],["晚上","wan shang"],["问题","wen ti"],["五","wu"],["午饭","wu fan"],["下雨","xia yu"],["下班","xia ban"],["下课","xia ke"],["先生","xian sheng"],["小朋友","xiao peng you"],["小时","xiao shi"],["小学","xiao xue"],["小学生","xiao xue sheng"],["下午","xia wu"],["写","xie"],["些","xie"],["新","xin"],["星期日","xing qi ri"],["星期天","xing qi tian"],["休息","xiu xi"],["学","xue"],["雪","xue"],["一半","yi ban"],["一点儿","yi dian er"],["衣服","yi fu"],["一下","yi xia"],["一些","yi xie"],["医院","yi yuan"],["椅子","yi zi"],["有的","you de"],["有些","you xie"],["雨","yu"],["元","yuan"],["再","zai"],["早","zao"],["早饭","zao fan"],["早上","zao shang"],["怎么样","zen me yang"],["找","zhao"],["这边","zhe bian"],["这个","zhe ge"],["这里","zhe li"],["真","zhen"],["正在","zheng zai"],["这些","zhe xie"],["只","zhi"],["中文","zhong wen"],["中午","zhong wu"],["中学","zhong xue"],["中学生","zhong xue sheng"],["住","zhu"],["桌子","zhuo zi"],["坐","zuo"],["做","zuo"],["做饭","zuo fan"],["昨天","zuo tian"],["啊","a"],["爱好","ai hao"],["白色","bai se"],["班","ban"],["帮","bang"],["帮忙","bang mang"],["包","bao"],["本子","ben zi"],["比","bi"],["笔","bi"],["不好意思","bu hao yi si"],["不错","bu cuo"],["长","zhang"],["车站","che zhan"],["出","chu"],["床","chuang"],["出国","chu guo"],["出来","chu lai"],["出门","chu men"],["出去","chu qu"],["词","ci"],["次","ci"],["从","cong"],["从小","cong xiao"],["错","cuo"],["打车","da che"],["打开","da kai"],["但","dan"],["但是","dan shi"],["得","de"],["地","di"],["地铁","di tie"],["动","dong"],["懂","dong"],["饭馆","fan guan"],["飞","fei"],["高","gao"],["告诉","gao su"],["高中","gao zhong"],["跟","gen"],["个子","ge zi"],["公交车","gong jiao che"],["过来","guo lai"],["过年","guo nian"],["还是","hai shi"],["黑色","hei se"],["红茶","hong cha"],["红色","hong se"],["后面","hou mian"],["画","hua"],["坏","huai"],["回来","hui lai"],["回去","hui qu"],["间","jian"],["教","jiao"],["教室","jiao shi"],["机场","ji chang"],["记得","ji de"],["介绍","jie shao"],["进","jin"],["近","jin"],["经常","jing chang"],["进来","jin lai"],["进去","jin qu"],["机票","ji piao"],["就","jiu"],["酒店","jiu dian"],["咖啡","ka fei"],["开始","kai shi"],["开学","kai xue"],["考","kao"],["考试","kao shi"],["可能","ke neng"],["快","kuai"],["快乐","kuai le"],["快要","kuai yao"],["裤子","ku zi"],["篮球","lan qiu"],["累","lei"],["离","li"],["里面","li mian"],["楼","lou"],["路","lu"],["绿茶","lv cha"],["绿色","lv se"],["路上","lu shang"],["旅游","lv you"],["慢","man"],["每","mei"],["没意思","mei yi si"],["门","men"],["门口","men kou"],["门票","men piao"],["名","ming"],["拿","na"],["奶茶","nai cha"],["奶奶","nai nai"],["那么","na me"],["男孩儿","nan hai er"],["那样","na yang"],["鸟","niao"],["女孩儿","nv hai er"],["旁边","pang bian"],["跑","pao"],["跑步","pao bu"],["票","piao"],["前面","qian mian"],["起来","qi lai"],["晴","qing"],["球","qiu"],["妻子","qi zi"],["让","rang"],["肉","rou"],["商场","shang chang"],["上来","shang lai"],["上面","shang mian"],["上去","shang qu"],["上网","shang wang"],["生日","sheng ri"],["身体","shen ti"],["时","shi"],["事情","shi qing"],["手","shou"],["手表","shou biao"],["书包","shu bao"],["舒服","shu fu"],["送","song"],["虽然","sui ran"],["所以","suo yi"],["疼","teng"],["题","ti"],["踢","ti"],["条","tiao"],["跳舞","tiao wu"],["头","tou"],["外国","wai guo"],["外面","wai mian"],["完","wan"],["万","wan"],["忘","wang"],["往","wang"],["网上","wang shang"],["位","wei"],["为什么","wei shen me"],["洗","xi"],["下来","xia lai"],["下面","xia mian"],["笑","xiao"],["小孩儿","xiao hai er"],["小时候","xiao shi hou"],["下去","xia qu"],["姓","xing"],["姓名","xing ming"],["洗手间","xi shou jian"],["希望","xi wang"],["眼睛","yan jing"],["颜色","yan se"],["药","yao"],["药店","yao dian"],["爷爷","ye ye"],["一会儿","yi hui er"],["已经","yi jing"],["阴","yin"],["因为","yin wei"],["意思","yi si"],["游","you"],["右","you"],["有意思","you yi si"],["右边","you bian"],["游泳","you yong"],["鱼","yu"],["远","yuan"],["运动","yun dong"],["丈夫","zhang fu"],["着","zhe"],["这么","zhe me"],["正","zheng"],["这样","zhe yang"],["周","zhou"],["准备","zhun bei"],["自己","zi ji"],["走","zou"],["走路","zou lu"],["最","zui"],["左","zuo"],["左边","zuo bian"],["足球","zu qiu"],["阿","a"],["唉","ai"],["癌","ai"],["矮","ai"],["安","an"],["俺","an"],["按","an"],["肮","ang"],["昂","ang"],["盎","ang"],["凹","ao"],["熬","ao"],["袄","ao"],["傲","ao"],["八","ba"],["拔","ba"],["把","ba"],["爸","ba"],["掰","bai"],["白","bai"],["百","bai"],["败","bai"],["班","ban"],["板","ban"],["半","ban"],["帮","bang"],["膀","bang"],["棒","bang"],["包","bao"],["薄","bao"],["饱","bao"],["报","bao"],["杯","bei"],["北","bei"],["备","bei"],["奔","ben"],["本","ben"],["笨","ben"],["绷","beng"],["甭","beng"],["蹦","beng"],["逼","bi"],["鼻","bi"],["比","bi"],["必","bi"],["边","bian"],["贬","bian"],["变","bian"],["标","biao"],["表","biao"],["憋","bie"],["别","bie"],["瘪","bie"],["宾","bin"],["摈","bin"],["冰","bing"],["饼","bing"],["病","bing"],["播","bo"],["博","bo"],["簸","bo"],["补","bu"],["擦","ca"],["猜","cai"],["才","cai"],["彩","cai"],["菜","cai"],["参","can"],["残","can"],["惨","can"],["灿","can"],["仓","cang"],["藏","cang"],["操","cao"],["嘈","cao"],["草","cao"],["厕","ce"],["层","ceng"],["蹭","ceng"],["插","cha"],["差","cha"],["柴","chai"],["搀","chan"],["馋","chan"],["产","chan"],["颤","chan"],["猖","chang"],["常","chang"],["场","chang"],["唱","chang"],["超","chao"],["朝","chao"],["吵","chao"],["车","che"],["扯","che"],["彻","che"],["郴","chen"],["晨","chen"],["衬","chen"],["称","cheng"],["成","cheng"],["逞","cheng"],["秤","cheng"],["迟","chi"],["尺","chi"],["翅","chi"],["充","chong"],["重","chong"],["宠","chong"],["抽","chou"],["愁","chou"],["丑","chou"],["臭","chou"],["出","chu"],["除","chu"],["楚","chu"],["处","chu"],["揣","chuai"],["踹","chuai"],["穿","chuan"],["船","chuan"],["喘","chuan"],["串","chuan"],["窗","chuang"],["床","chuang"],["闯","chuang"],["创","chuang"],["吹","chui"],["垂","chui"],["春","chun"],["纯","chun"],["蠢","chun"],["戳","chuo"],["绰","chuo"],["疵","ci"],["词","ci"],["此","ci"],["次","ci"],["聪","cong"],["从","cong"],["凑","cou"],["粗","cu"],["促","cu"],["蹿","cuan"],["窜","cuan"],["催","cui"],["璀","cui"],["脆","cui"],["村","cun"],["存","cun"],["寸","cun"],["搓","cuo"],["错","cuo"],["答","da"],["打","da"],["呆","dai"],["逮","dai"],["带","dai"],["单","dan"],["胆","dan"],["蛋","dan"],["当","dang"],["挡","dang"],["刀","dao"],["导","dao"],["到","dao"],["得","de"],["灯","deng"],["等","deng"],["瞪","deng"],["低","di"],["底","di"],["第","di"],["颠","dian"],["点","dian"],["电","dian"],["叼","diao"],["掉","diao"],["跌","die"],["蝶","die"],["钉","ding"],["顶","ding"],["定","ding"],["丢","diu"],["东","dong"],["懂","dong"],["动","dong"],["抖","dou"],["豆","dou"],["读","du"],["堵","du"],["度","du"],["端","duan"],["短","duan"],["段","duan"],["堆","dui"],["对","dui"],["吨","dun"],["盹","dun"],["顿","dun"],["夺","duo"],["朵","duo"],["堕","duo"],["额","e"],["恶","e"],["饿","e"],["恩","en"],["儿","er"],["耳","er"],["二","er"],["发","fa"],["罚","fa"],["法","fa"],["翻","fan"],["烦","fan"],["反","fan"],["饭","fan"],["方","fang"],["房","fang"],["访","fang"],["放","fang"],["非","fei"],["肥","fei"],["诽","fei"],["费","fei"],["分","fen"],["坟","fen"],["粉","fen"],["风","feng"],["缝","feng"],["讽","feng"],["奉","feng"],["否","fou"],["夫","fu"],["服","fu"],["腐","fu"],["附","fu"],["嘎","ga"],["噶","ga"],["尬","ga"],["该","gai"],["改","gai"],["概","gai"],["干","gan"],["感","gan"],["刚","gang"],["港","gang"],["杠","gang"],["高","gao"],["搞","gao"],["告","gao"],["歌","ge"],["格","ge"],["给","gei"],["跟","gen"],["更","geng"],["哽","geng"],["公","gong"],["巩","gong"],["共","gong"],["沟","gou"],["狗","gou"],["够","gou"],["估","gu"],["鼓","gu"],["故","gu"],["刮","gua"],["寡","gua"],["挂","gua"],["乖","guai"],["拐","guai"],["怪","guai"],["关","guan"],["馆","guan"],["惯","guan"],["光","guang"],["广","guang"],["逛","guang"],["规","gui"],["轨","gui"],["贵","gui"],["滚","gun"],["棍","gun"],["锅","guo"],["国","guo"],["果","guo"],["过","guo"],["哈","ha"],["蛤","ha"],["还","hai"],["海","hai"],["害","hai"],["酣","han"],["寒","han"],["喊","han"],["汉","han"],["夯","hang"],["行","hang"],["毫","hao"],["河","he"],["贺","he"],["黑","hei"],["痕","hen"],["恨","hen"],["哼","heng"],["衡","heng"],["轰","hong"],["红","hong"],["哄","hong"],["猴","hou"],["吼","hou"],["后","hou"],["乎","hu"],["湖","hu"],["虎","hu"],["护","hu"],["花","hua"],["滑","hua"],["话","hua"],["怀","huai"],["坏","huai"],["欢","huan"],["环","huan"],["缓","huan"],["换","huan"],["荒","huang"],["黄","huang"],["晃","huang"],["挥","hui"],["回","hui"],["悔","hui"],["婚","hun"],["浑","hun"],["混","hun"],["豁","huo"],["活","huo"],["火","huo"],["或","huo"],["机","ji"],["级","ji"],["记","ji"],["颊","jia"],["假","jia"],["间","jian"],["检","jian"],["见","jian"],["江","jiang"],["讲","jiang"],["降","jiang"],["交","jiao"],["饺","jiao"],["接","jie"],["节","jie"],["姐","jie"],["介","jie"],["今","jin"],["仅","jin"],["进","jin"],["经","jing"],["景","jing"],["静","jing"],["窘","jiong"],["究","jiu"],["九","jiu"],["就","jiu"],["居","ju"],["橘","ju"],["举","ju"],["据","ju"],["捐","juan"],["卷","juan"],["撅","jue"],["觉","jue"],["军","jun"],["俊","jun"],["咖","ka"],["卡","ka"],["开","kai"],["慨","kai"],["刊","kan"],["砍","kan"],["康","kang"],["扛","kang"],["抗","kang"],["考","kao"],["靠","kao"],["科","ke"],["咳","ke"],["可","ke"],["客","ke"],["肯","ken"],["坑","keng"],["空","kong"],["恐","kong"],["控","kong"],["抠","kou"],["口","kou"],["扣","kou"],["哭","ku"],["苦","ku"],["裤","ku"],["夸","kua"],["垮","kua"],["挎","kua"],["块","kuai"],["宽","kuan"],["款","kuan"],["框","kuang"],["狂","kuang"],["矿","kuang"],["亏","kui"],["魁","kui"],["馈","kui"],["昆","kun"],["捆","kun"],["困","kun"],["括","kuo"],["拉","la"],["喇","la"],["辣","la"],["赖","lai"],["篮","lan"],["懒","lan"],["烂","lan"],["郎","lang"],["朗","lang"],["浪","lang"],["捞","lao"],["劳","lao"],["老","lao"],["涝","lao"],["肋","le"],["乐","le"],["勒","lei"],["雷","lei"],["累","lei"],["棱","leng"],["冷","leng"],["愣","leng"],["哩","li"],["离","li"],["里","li"],["历","li"],["俩","lia"],["联","lian"],["脸","lian"],["炼","lian"],["凉","liang"],["两","liang"],["亮","liang"],["撩","liao"],["聊","liao"],["料","liao"],["咧","lie"],["列","lie"],["拎","lin"],["邻","lin"],["凛","lin"],["吝","lin"],["零","ling"],["领","ling"],["另","ling"],["溜","liu"],["留","liu"],["柳","liu"],["六","liu"],["龙","long"],["拢","long"],["楼","lou"],["搂","lou"],["漏","lou"],["炉","lu"],["鲁","lu"],["路","lu"],["孪","luan"],["卵","luan"],["乱","luan"],["抡","lun"],["轮","lun"],["论","lun"],["啰","luo"],["逻","luo"],["裸","luo"],["落","luo"],["驴","lv"],["旅","lv"],["绿","lv"],["略","lve"],["妈","ma"],["麻","ma"],["码","ma"],["骂","ma"],["埋","mai"],["买","mai"],["卖","mai"],["馒","man"],["满","man"],["慢","man"],["忙","mang"],["莽","mang"],["猫","mao"],["毛","mao"],["铆","mao"],["冒","mao"],["没","mei"],["每","mei"],["妹","mei"],["闷","men"],["门","men"],["盟","meng"],["猛","meng"],["梦","meng"],["眯","mi"],["迷","mi"],["米","mi"],["密","mi"],["眠","mian"],["免","mian"],["面","mian"],["描","miao"],["秒","miao"],["妙","miao"],["灭","mie"],["民","min"],["敏","min"],["明","ming"],["命","ming"],["谬","miu"],["摸","mo"],["模","mo"],["抹","mo"],["末","mo"],["谋","mou"],["某","mou"],["母","mu"],["目","mu"],["拿","na"],["哪","na"],["奶","nai"],["耐","nai"],["男","nan"],["难","nan"],["囊","nang"],["挠","nao"],["脑","nao"],["闹","nao"],["馁","nei"],["内","nei"],["嫩","nen"],["妮","ni"],["泥","ni"],["匿","ni"],["蔫","nian"],["撵","nian"],["念","nian"],["娘","niang"],["酿","niang"],["鸟","niao"],["尿","niao"],["捏","nie"],["聂","nie"],["您","nin"],["宁","ning"],["牛","niu"],["扭","niu"],["农","nong"],["弄","nong"],["奴","nu"],["努","nu"],["怒","nu"],["暖","nuan"],["挪","nuo"],["诺","nuo"],["女","nv"],["虐","nve"],["哦","o"],["欧","ou"],["偶","ou"],["趴","pa"],["爬","pa"],["怕","pa"],["拍","pai"],["排","pai"],["派","pai"],["攀","pan"],["盘","pan"],["判","pan"],["乓","pang"],["旁","pang"],["耪","pang"],["胖","pang"],["抛","pao"],["刨","pao"],["跑","pao"],["泡","pao"],["胚","pei"],["陪","pei"],["配","pei"],["喷","pen"],["盆","pen"],["抨","peng"],["朋","peng"],["捧","peng"],["碰","peng"],["批","pi"],["啤","pi"],["匹","pi"],["辟","pi"],["片","pian"],["便","pian"],["飘","piao"],["朴","piao"],["漂","piao"],["撇","pie"],["拼","pin"],["频","pin"],["品","pin"],["聘","pin"],["乒","ping"],["苹","ping"],["泼","po"],["婆","po"],["颇","po"],["破","po"],["剖","pou"],["扑","pu"],["葡","pu"],["普","pu"],["铺","pu"],["七","qi"],["骑","qi"],["起","qi"],["气","qi"],["掐","qia"],["恰","qia"],["千","qian"],["前","qian"],["浅","qian"],["歉","qian"],["腔","qiang"],["强","qiang"],["抢","qiang"],["呛","qiang"],["敲","qiao"],["桥","qiao"],["巧","qiao"],["峭","qiao"],["切","qie"],["茄","qie"],["且","qie"],["亲","qin"],["琴","qin"],["寝","qin"],["沁","qin"],["轻","qing"],["晴","qing"],["庆","qing"],["穷","qiong"],["秋","qiu"],["球","qiu"],["区","qu"],["渠","qu"],["取","qu"],["圈","quan"],["全","quan"],["犬","quan"],["劝","quan"],["缺","que"],["瘸","que"],["却","que"],["裙","qun"],["然","ran"],["染","ran"],["瓤","rang"],["壤","rang"],["让","rang"],["饶","rao"],["扰","rao"],["绕","rao"],["惹","re"],["热","re"],["忍","ren"],["认","ren"],["扔","reng"],["仍","reng"],["茸","rong"],["容","rong"],["冗","rong"],["柔","rou"],["肉","rou"],["如","ru"],["乳","ru"],["入","ru"],["软","ruan"],["蕊","rui"],["锐","rui"],["润","run"],["弱","ruo"],["撒","sa"],["洒","sa"],["萨","sa"],["塞","sai"],["赛","sai"],["三","san"],["伞","san"],["散","san"],["桑","sang"],["嗓","sang"],["丧","sang"],["骚","sao"],["扫","sao"],["色","se"],["森","sen"],["僧","seng"],["沙","sha"],["啥","sha"],["傻","sha"],["厦","sha"],["筛","shai"],["晒","shai"],["衫","shan"],["闪","shan"],["善","shan"],["商","shang"],["赏","shang"],["烧","shao"],["勺","shao"],["绍","shao"],["奢","she"],["蛇","she"],["舍","she"],["社","she"],["谁","shei"],["身","shen"],["什","shen"],["审","shen"],["甚","shen"],["生","sheng"],["绳","sheng"],["省","sheng"],["剩","sheng"],["师","shi"],["识","shi"],["始","shi"],["市","shi"],["收","shou"],["手","shou"],["受","shou"],["书","shu"],["熟","shu"],["暑","shu"],["束","shu"],["刷","shua"],["耍","shua"],["摔","shuai"],["甩","shuai"],["帅","shuai"],["拴","shuan"],["涮","shuan"],["双","shuang"],["爽","shuang"],["睡","shui"],["吮","shun"],["顺","shun"],["硕","shuo"],["司","si"],["死","si"],["四","si"],["松","song"],["耸","song"],["送","song"],["搜","sou"],["擞","sou"],["嗽","sou"],["苏","su"],["俗","su"],["诉","su"],["酸","suan"],["算","suan"],["虽","sui"],["随","sui"],["髓","sui"],["孙","sun"],["损","sun"],["缩","suo"],["所","suo"],["塔","ta"],["踏","ta"],["胎","tai"],["台","tai"],["太","tai"],["滩","tan"],["谈","tan"],["毯","tan"],["碳","tan"],["汤","tang"],["糖","tang"],["躺","tang"],["趟","tang"],["掏","tao"],["萄","tao"],["讨","tao"],["套","tao"],["特","te"],["疼","teng"],["踢","ti"],["题","ti"],["体","ti"],["替","ti"],["天","tian"],["甜","tian"],["腆","tian"],["挑","tiao"],["条","tiao"],["跳","tiao"],["贴","tie"],["铁","tie"],["听","ting"],["庭","ting"],["挺","ting"],["通","tong"],["同","tong"],["桶","tong"],["痛","tong"],["偷","tou"],["头","tou"],["透","tou"],["突","tu"],["图","tu"],["土","tu"],["兔","tu"],["湍","tuan"],["团","tuan"],["推","tui"],["颓","tui"],["腿","tui"],["退","tui"],["吞","tun"],["豚","tun"],["脱","tuo"],["驮","tuo"],["妥","tuo"],["拓","tuo"],["挖","wa"],["娃","wa"],["瓦","wa"],["袜","wa"],["歪","wai"],["外","wai"],["弯","wan"],["玩","wan"],["晚","wan"],["万","wan"],["汪","wang"],["王","wang"],["网","wang"],["忘","wang"],["微","wei"],["为","wei"],["尾","wei"],["位","wei"],["温","wen"],["文","wen"],["稳","wen"],["翁","weng"],["瓮","weng"],["窝","wo"],["握","wo"],["屋","wu"],["无","wu"],["午","wu"],["物","wu"],["西","xi"],["习","xi"],["喜","xi"],["系","xi"],["虾","xia"],["辖","xia"],["先","xian"],["咸","xian"],["险","xian"],["现","xian"],["箱","xiang"],["详","xiang"],["向","xiang"],["消","xiao"],["淆","xiao"],["校","xiao"],["些","xie"],["鞋","xie"],["写","xie"],["谢","xie"],["新","xin"],["信","xin"],["星","xing"],["醒","xing"],["兴","xing"],["兄","xiong"],["熊","xiong"],["休","xiu"],["朽","xiu"],["秀","xiu"],["须","xu"],["徐","xu"],["许","xu"],["续","xu"],["宣","xuan"],["旋","xuan"],["选","xuan"],["炫","xuan"],["削","xue"],["学","xue"],["雪","xue"],["血","xue"],["熏","xun"],["询","xun"],["训","xun"],["压","ya"],["牙","ya"],["雅","ya"],["亚","ya"],["烟","yan"],["颜","yan"],["眼","yan"],["验","yan"],["央","yang"],["阳","yang"],["养","yang"],["样","yang"],["摇","yao"],["咬","yao"],["椰","ye"],["爷","ye"],["页","ye"],["以","yi"],["阴","yin"],["银","yin"],["饮","yin"],["印","yin"],["应","ying"],["迎","ying"],["影","ying"],["哟","yo"],["拥","yong"],["泳","yong"],["用","yong"],["优","you"],["游","you"],["友","you"],["右","you"],["迂","yu"],["鱼","yu"],["语","yu"],["育","yu"],["鸳","yuan"],["元","yuan"],["远","yuan"],["院","yuan"],["约","yue"],["晕","yun"],["云","yun"],["允","yun"],["运","yun"],["扎","za"],["杂","za"],["咋","za"],["灾","zai"],["载","zai"],["咱","zan"],["攒","zan"],["暂","zan"],["赃","zang"],["脏","zang"],["糟","zao"],["凿","zao"],["早","zao"],["造","zao"],["择","ze"],["贼","zei"],["怎","zen"],["增","zeng"],["赠","zeng"],["闸","zha"],["眨","zha"],["炸","zha"],["摘","zhai"],["宅","zhai"],["窄","zhai"],["寨","zhai"],["粘","zhan"],["展","zhan"],["站","zhan"],["张","zhang"],["长","zhang"],["丈","zhang"],["招","zhao"],["着","zhao"],["找","zhao"],["照","zhao"],["遮","zhe"],["折","zhe"],["者","zhe"],["真","zhen"],["诊","zhen"],["震","zhen"],["争","zheng"],["整","zheng"],["正","zheng"],["知","zhi"],["直","zhi"],["只","zhi"],["至","zhi"],["钟","zhong"],["种","zhong"],["周","zhou"],["轴","zhou"],["帚","zhou"],["骤","zhou"],["猪","zhu"],["逐","zhu"],["主","zhu"],["住","zhu"],["抓","zhua"],["爪","zhua"],["拽","zhuai"],["专","zhuan"],["转","zhuan"],["赚","zhuan"],["装","zhuang"],["状","zhuang"],["追","zhui"],["缀","zhui"],["谆","zhun"],["准","zhun"],["桌","zhuo"],["资","zi"],["子","zi"],["综","zong"],["总","zong"],["粽","zong"],["邹","zou"],["走","zou"],["奏","zou"],["租","zu"],["足","zu"],["组","zu"],["钻","zuan"],["纂","zuan"],["攥","zuan"],["嘴","zui"],["最","zui"],["尊","zun"],["昨","zuo"],["左","zuo"],["作","zuo"],["店","dian"],["视","shi"],["弟","di"],["飞","fei"],["哥","ge"],["工","gong"],["孩","hai"],["件","jian"],["鸡","ji"],["课","ke"],["事","shi"],["名","ming"],["士","shi"],["宜","yi"],["钱","qian"],["么","me"],["十","shi"],["时","shi"],["候","hou"],["它","ta"],["五","wu"],["雨","yu"],["期","qi"],["息","xi"],["衣","yi"],["医","yi"],["椅","yi"],["再","zai"],["道","dao"],["坐","zuo"],["做","zuo"],["啊","a"],["笔","bi"],["意","yi"],["思","si"],["但","dan"],["地","di"],["画","hua"],["教","jiao"],["室","shi"],["近","jin"],["票","piao"],["酒","jiu"],["啡","fei"],["试","shi"],["快","kuai"],["步","bu"],["妻","qi"],["情","qing"],["舒","shu"],["舞","wu"],["完","wan"],["往","wang"],["洗","xi"],["笑","xiao"],["姓","xing"],["希","xi"],["望","wang"],["睛","jing"],["药","yao"],["已","yi"],["因","yin"],["自","zi"],["己","ji"]];
+const IME_TASKS=[["爱","ài","yêu"],["吧","ba","trợ từ ngữ khí: nhé"],["八","bā","tám"],["爸爸","bàba","bố"],["百","bǎi","trăm"],["白天","báitiān","ban ngày"],["半","bàn","một nửa"],["包子","bāozi","bánh bao"],["杯子","bēizi","cốc"],["边","biān","bên"],["病","bìng","bệnh"],["不","bù","không"],["不客气","bú kèqi","không có gì"],["不要","búyào","đừng"],["菜","cài","món ăn"],["茶","chá","trà"],["唱","chàng","hát"],["超市","chāoshì","siêu thị"],["车","chē","xe"],["吃","chī","ăn"],["穿","chuān","mặc"],["出租车","chūzūchē","taxi"],["大","dà","lớn"],["打电话","dǎ diànhuà","gọi điện thoại"],["大家","dàjiā","mọi người"],["到","dào","đến"],["大学","dàxué","đại học"],["大学生","dàxuéshēng","sinh viên đại học"],["的","de","của"],["第","dì","thứ"],["店","diàn","cửa hàng"],["电话","diànhuà","điện thoại"],["电脑","diànnǎo","máy tính"],["电视","diànshì","tivi"],["电影","diànyǐng","phim"],["电影院","diànyǐngyuàn","rạp chiếu phim"],["弟弟","dìdi","em trai"],["东西","dōngxi","đồ vật"],["都","dōu","đều"],["读","dú","đọc"],["对","duì","đúng"],["对不起","duìbuqǐ","xin lỗi"],["多","duō","nhiều"],["多少","duōshao","bao nhiêu"],["读书","dúshū","đọc sách"],["二","èr","số hai"],["儿子","érzi","con trai"],["饭","fàn","cơm"],["饭店","fàndiàn","nhà hàng"],["房间","fángjiān","phòng"],["非常","fēicháng","rất"],["飞机","fēijī","máy bay"],["分","fēn","phút"],["分钟","fēnzhōng","phút"],["高兴","gāoxìng","vui"],["个","gè","lượng từ phổ biến: cái"],["歌","gē","bài hát"],["哥哥","gēge","anh trai"],["给","gěi","cho"],["公司","gōngsī","công ty"],["工作","gōngzuò","làm việc"],["狗","gǒu","chó"],["贵","guì","đắt"],["国","guó","nước"],["还","hái","vẫn"],["孩子","háizi","trẻ em"],["汉语","Hànyǔ","tiếng Hán"],["汉字","Hànzì","chữ Hán"],["号","hào","số"],["好","hǎo","tốt"],["好吃","hǎochī","ngon"],["好看","hǎokàn","đẹp"],["好听","hǎotīng","hay"],["好玩儿","hǎowánr","vui"],["喝","hē","uống"],["很","hěn","rất"],["后","hòu","sau"],["回","huí","về"],["火车","huǒchē","tàu hỏa"],["几","jǐ","mấy"],["家","jiā","nhà"],["见","jiàn","gặp"],["件","jiàn","cái"],["叫","jiào","gọi"],["饺子","jiǎozi","bánh chẻo"],["家人","jiārén","người nhà"],["鸡蛋","jīdàn","trứng gà"],["姐姐","jiějie","chị gái"],["今年","jīnnián","năm nay"],["今天","jīntiān","hôm nay"],["九","jiǔ","chín"],["觉得","juéde","cảm thấy"],["开","kāi","mở"],["开车","kāichē","lái xe"],["看","kàn","nhìn"],["看病","kànbìng","khám bệnh"],["看见","kànjiàn","nhìn thấy"],["课","kè","bài học"],["可以","kěyǐ","có thể"],["口","kǒu","miệng"],["块","kuài","miếng"],["来","lái","đến"],["老师","lǎoshī","giáo viên"],["冷","lěng","lạnh"],["里","lǐ","trong"],["零","líng","số không"],["六","liù","sáu"],["吗","ma","trợ từ nghi vấn: không? à?"],["卖","mài","bán"],["买","mǎi","mua"],["妈妈","māma","mẹ"],["忙","máng","bận"],["猫","māo","mèo"],["没关系","méi guānxi","không sao"],["妹妹","mèimei","em gái"],["没事","méishì","không sao"],["们","men","hậu tố chỉ số nhiều"],["面包","miànbāo","bánh mì"],["面条儿","miàntiáor","mì sợi"],["米饭","mǐfàn","cơm"],["明年","míngnián","năm sau"],["明天","míngtiān","ngày mai"],["名字","míngzi","tên"],["那","nà","kia"],["哪","nǎ","nào"],["那边","nàbiān","đằng kia"],["那个","nàge","cái đó"],["哪个","nǎge","cái nào"],["那里","nàlǐ","ở đó"],["哪里","nǎlǐ","ở đâu"],["男","nán","nam"],["男朋友","nánpéngyou","bạn trai"],["那儿","nàr","đằng kia"],["哪儿","nǎr","ở đâu"],["那些","nàxiē","những cái đó"],["哪些","nǎxiē","những cái nào"],["能","néng","có thể"],["你","nǐ","bạn"],["你好","nǐ hǎo","xin chào"],["年","nián","năm"],["你们","nǐmen","các bạn"],["您","nín","ngài"],["牛奶","niúnǎi","sữa bò"],["女","nǚ","nữ"],["女儿","nǚ'ér","con gái"],["女朋友","nǚpéngyou","bạn gái"],["女士","nǚshì","quý bà"],["朋友","péngyou","bạn"],["便宜","piányi","rẻ"],["漂亮","piàoliang","đẹp"],["苹果","píngguǒ","quả táo"],["七","qī","bảy"],["前","qián","trước"],["钱","qián","tiền"],["千","qiān","nghìn"],["起床","qǐchuáng","thức dậy"],["请","qǐng","mời"],["请问","qǐngwèn","xin hỏi"],["去","qù","đi"],["去年","qùnián","năm ngoái"],["热","rè","nóng"],["人","rén","người"],["认识","rènshi","biết"],["日","rì","ngày"],["三","sān","ba"],["上","shàng","trên"],["上班","shàngbān","đi làm"],["商店","shāngdiàn","cửa hàng"],["上课","shàngkè","lên lớp"],["上午","shàngwǔ","buổi sáng"],["上学","shàngxué","đi học"],["少","shǎo","ít"],["谁","shéi/shuí","ai"],["生病","shēngbìng","bị ốm"],["什么","shénme","cái gì"],["十","shí","mười"],["事","shì","việc"],["是","shì","là"],["时候","shíhou","lúc"],["时间","shíjiān","thời gian"],["手机","shǒujī","điện thoại di động"],["书","shū","sách"],["书店","shūdiàn","hiệu sách"],["睡","shuì","ngủ"],["水","shuǐ","nước"],["水果","shuǐguǒ","trái cây"],["睡觉","shuìjiào","ngủ"],["说","shuō","nói"],["说话","shuōhuà","nói chuyện"],["四","sì","bốn"],["岁","suì","tuổi"],["他","tā","anh ấy"],["它","tā","nó"],["她","tā","cô ấy"],["太","tài","quá"],["他们","tāmen","họ"],["它们","tāmen","chúng nó"],["她们","tāmen","họ"],["天","tiān","trời"],["天气","tiānqì","thời tiết"],["听","tīng","nghe"],["听见","tīngjiàn","nghe thấy"],["同学","tóngxué","bạn học"],["外","wài","ngoài"],["外边","wàibian","bên ngoài"],["玩","wán","chơi"],["晚","wǎn","muộn"],["晚饭","wǎnfàn","bữa tối"],["晚上","wǎnshang","buổi tối"],["问","wèn","hỏi"],["问题","wèntí","vấn đề"],["我","wǒ","tôi"],["我们","wǒmen","chúng tôi"],["五","wǔ","năm"],["午饭","wǔfàn","bữa trưa"],["下","xià","dưới"],["下雨","xià yǔ","mưa"],["下班","xiàbān","tan làm"],["下课","xiàkè","tan học"],["想","xiǎng","muốn"],["先生","xiānsheng","ông"],["现在","xiànzài","bây giờ"],["小","xiǎo","nhỏ"],["小朋友","xiǎopéngyǒu","trẻ em"],["小时","xiǎoshí","giờ"],["小学","xiǎoxué","tiểu học"],["小学生","xiǎoxuéshēng","học sinh tiểu học"],["下午","xiàwǔ","buổi chiều"],["写","xiě","viết"],["些","xiē","một ít"],["谢谢","xièxie","cảm ơn"],["喜欢","xǐhuan","thích"],["新","xīn","mới"],["星期","xīngqī","tuần"],["星期日","xīngqīrì","Chủ nhật"],["星期天","xīngqītiān","Chủ nhật"],["休息","xiūxi","nghỉ ngơi"],["学","xué","học"],["雪","xuě","tuyết"],["学生","xuéshēng","học sinh"],["学习","xuéxí","học"],["学校","xuéxiào","trường học"],["要","yào","muốn"],["也","yě","cũng"],["一","yī","một"],["一半","yíbàn","một nửa"],["一点儿","yìdiǎnr","một chút"],["衣服","yīfu","quần áo"],["医生","yīshēng","bác sĩ"],["一下","yíxià","một chút"],["一些","yìxiē","một vài"],["医院","yīyuàn","bệnh viện"],["椅子","yǐzi","cái ghế"],["有","yǒu","có"],["有的","yǒude","có cái"],["有些","yǒuxiē","có một số"],["雨","yǔ","mưa"],["元","yuán","đồng"],["月","yuè","tháng"],["再","zài","lại"],["在","zài","ở"],["再见","zàijiàn","tạm biệt"],["早","zǎo","sớm"],["早饭","zǎofàn","bữa sáng"],["早上","zǎoshang","buổi sáng"],["怎么","zěnme","thế nào"],["怎么样","zěnmeyàng","thế nào"],["找","zhǎo","tìm"],["这","zhè","này"],["这边","zhèbiān","bên này"],["这个","zhège","cái này"],["这里","zhèlǐ","ở đây"],["真","zhēn","thật"],["正在","zhèngzài","đang"],["这儿","zhèr","ở đây"],["这些","zhèxiē","những cái này"],["只","zhī","lượng từ: con"],["知道","zhīdào","biết"],["中国","Zhōngguó","Trung Quốc"],["中文","Zhōngwén","tiếng Trung"],["中午","zhōngwǔ","buổi trưa"],["中学","zhōngxué","trung học"],["中学生","zhōngxuéshēng","học sinh trung học"],["住","zhù","ở"],["桌子","zhuōzi","cái bàn"],["字","zì","chữ"],["坐","zuò","ngồi"],["做","zuò","làm"],["做饭","zuò fàn","nấu cơm"],["昨天","zuótiān","hôm qua"],["啊","a","trợ từ ngữ khí"],["爱好","àihào","sở thích"],["白色","báisè","màu trắng"],["班","bān","lớp"],["帮","bāng","giúp"],["帮忙","bāngmáng","giúp đỡ"],["包","bāo","túi"],["本子","běnzi","quyển vở"],["比","bǐ","so với"],["笔","bǐ","bút"],["不错","búcuò","không tệ"],["长","cháng","dài"],["车站","chēzhàn","trạm"],["出","chū","ra"],["床","chuáng","giường"],["出国","chūguó","ra nước ngoài"],["出来","chūlái","đi ra"],["出门","chūmén","ra khỏi nhà"],["出去","chūqù","đi ra ngoài"],["词","cí","từ"],["次","cì","lần"],["从","cóng","từ"],["从小","cóngxiǎo","từ nhỏ"],["错","cuò","sai"],["打车","dǎchē","đi taxi"],["打开","dǎkāi","mở"],["但","dàn","nhưng"],["但是","dànshì","nhưng"],["得","de","trợ từ bổ ngữ"],["地","de","trợ từ trạng ngữ"],["地铁","dìtiě","tàu điện ngầm"],["动","dòng","động"],["懂","dǒng","hiểu"],["饭馆","fànguǎn","quán ăn"],["飞","fēi","bay"],["高","gāo","cao"],["告诉","gàosu","nói cho"],["高中","gāozhōng","trung học phổ thông"],["跟","gēn","với"],["个子","gèzi","vóc dáng"],["公交车","gōngjiāochē","xe buýt"],["过来","guòlái","đi qua đây"],["过年","guònián","ăn Tết"],["还是","háishi","hay là"],["黑色","hēisè","màu đen"],["红茶","hóngchá","trà đen"],["红色","hóngsè","màu đỏ"],["后面","hòumiàn","phía sau"],["画","huà","vẽ"],["坏","huài","hỏng"],["回来","huílái","quay lại đây"],["回去","huíqù","quay về"],["间","jiān","gian"],["教","jiāo","dạy"],["教室","jiàoshì","phòng học"],["机场","jīchǎng","sân bay"],["记得","jìde","nhớ"],["介绍","jièshào","giới thiệu"],["进","jìn","vào"],["近","jìn","gần"],["经常","jīngcháng","thường xuyên"],["进来","jìnlái","đi vào đây"],["进去","jìnqù","đi vào"],["机票","jīpiào","vé máy bay"],["就","jiù","liền"],["酒店","jiǔdiàn","khách sạn"],["咖啡","kāfēi","cà phê"],["开始","kāishǐ","bắt đầu"],["开学","kāixué","khai giảng"],["考","kǎo","thi"],["考试","kǎoshì","kỳ thi"],["可能","kěnéng","có thể"],["快","kuài","nhanh"],["快乐","kuàilè","vui vẻ"],["快要","kuàiyào","sắp"],["裤子","kùzi","quần"],["篮球","lánqiú","bóng rổ"],["累","lèi","mệt"],["离","lí","cách"],["里面","lǐmiàn","bên trong"],["楼","lóu","tầng"],["路","lù","đường"],["绿茶","lǜchá","trà xanh"],["绿色","lǜsè","màu xanh lá"],["路上","lùshang","trên đường"],["旅游","lǚyóu","du lịch"],["慢","màn","chậm"],["每","měi","mỗi"],["没意思","méi yìsi","vô vị"],["门","mén","cửa"],["门口","ménkǒu","cửa ra vào"],["门票","ménpiào","vé vào cửa"],["名","míng","tên"],["拿","ná","cầm"],["奶茶","nǎichá","trà sữa"],["奶奶","nǎinai","bà nội"],["那么","nàme","như vậy"],["男孩儿","nánháir","cậu bé"],["那样","nà yàng","như thế"],["鸟","niǎo","chim"],["女孩儿","nǚháir","cô bé"],["旁边","pángbiān","bên cạnh"],["跑","pǎo","chạy"],["跑步","pǎobù","chạy bộ"],["票","piào","vé"],["前面","qiánmiàn","phía trước"],["起来","qǐlái","đứng dậy"],["晴","qíng","trời quang"],["球","qiú","bóng"],["妻子","qīzi","vợ"],["让","ràng","để"],["肉","ròu","thịt"],["商场","shāngchǎng","trung tâm thương mại"],["上来","shànglái","lên đây"],["上面","shàngmiàn","phía trên"],["上去","shàngqù","đi lên"],["上网","shàngwǎng","lên mạng"],["生日","shēngrì","sinh nhật"],["身体","shēntǐ","cơ thể"],["时","shí","lúc"],["事情","shìqing","việc"],["手","shǒu","tay"],["手表","shǒubiǎo","đồng hồ đeo tay"],["书包","shūbāo","cặp sách"],["舒服","shūfu","thoải mái"],["送","sòng","tặng"],["虽然","suīrán","mặc dù"],["所以","suǒyǐ","cho nên"],["疼","téng","đau"],["题","tí","câu hỏi"],["踢","tī","đá"],["条","tiáo","lượng từ cho vật dài/hẹp"],["跳舞","tiàowǔ","nhảy múa"],["头","tóu","đầu"],["外国","wàiguó","nước ngoài"],["外面","wàimiàn","bên ngoài"],["完","wán","xong"],["万","wàn","mười nghìn"],["忘","wàng","quên"],["往","wǎng","hướng về"],["网上","wǎngshang","trên mạng"],["位","wèi","vị"],["为什么","wèi shénme","tại sao"],["洗","xǐ","rửa"],["下来","xiàlái","đi xuống đây"],["下面","xiàmiàn","phía dưới"],["笑","xiào","cười"],["小孩儿","xiǎoháir","trẻ con"],["小时候","xiǎoshíhou","lúc nhỏ"],["下去","xiàqù","đi xuống"],["姓","xìng","họ"],["姓名","xìngmíng","họ tên"],["洗手间","xǐshǒujiān","nhà vệ sinh"],["希望","xīwàng","hy vọng"],["眼睛","yǎnjing","mắt"],["颜色","yánsè","màu sắc"],["药","yào","thuốc"],["药店","yàodiàn","hiệu thuốc"],["爷爷","yéye","ông nội"],["一会儿","yíhuìr","một lát"],["已经","yǐjīng","đã"],["阴","yīn","âm u"],["因为","yīnwèi","bởi vì"],["一起","yìqǐ","cùng nhau"],["意思","yìsi","ý nghĩa"],["游","yóu","bơi"],["右","yòu","bên phải"],["有意思","yǒu yìsi","có ý nghĩa"],["右边","yòubian","bên phải"],["游泳","yóuyǒng","bơi"],["鱼","yú","cá"],["远","yuǎn","xa"],["运动","yùndòng","vận động"],["丈夫","zhàngfu","chồng"],["这么","zhème","thế này"],["正","zhèng","đang"],["这样","zhèyàng","như thế"],["周","zhōu","tuần"],["准备","zhǔnbèi","chuẩn bị"],["自己","zìjǐ","bản thân"],["走","zǒu","đi"],["走路","zǒulù","đi bộ"],["最","zuì","nhất"],["左","zuǒ","bên trái"],["左边","zuǒbian","bên trái"],["足球","zúqiú","bóng đá"]];
+/* ---------- cách gõ chữ Hán: hướng dẫn cài đặt ---------- */
+(function(){
+  const DEV={
+    'iPhone / iPad':{s:['Mở <b>Cài đặt</b> → <b>Cài đặt chung</b> → <b>Bàn phím</b>.','Chạm <b>Bàn phím</b> → <b>Thêm bàn phím mới…</b>','Chọn <b>Tiếng Trung, giản thể</b> → tích <b>Bính âm – QWERTY</b> → <b>Xong</b>.'],
+      w:'Khi nhắn tin: chạm biểu tượng 🌐 để chuyển sang bàn phím 简体拼音.'},
+    'Android':{s:['Dùng bàn phím <b>Gboard</b> (chưa có thì tải trên CH Play).','Mở Gboard → ⚙️ <b>Cài đặt</b> → <b>Ngôn ngữ</b> → <b>Thêm bàn phím</b>.','Tìm <b>中文（简体）</b> → chọn kiểu <b>Pinyin</b> (bính âm) → <b>Xong</b>.'],
+      w:'Khi nhắn tin: chạm 🌐 hoặc giữ phím cách để chuyển sang 中文 拼音.'},
+    'Windows':{s:['Bấm <b>Win + I</b> → <b>Time & language</b> → <b>Language & region</b>.','<b>Add a language</b> → chọn <b>中文(中华人民共和国) – Chinese (Simplified, China)</b> → Next → Install.','Bộ gõ <b>Microsoft Pinyin</b> được cài kèm, không cần tải thêm.'],
+      w:'Chuyển bàn phím: <b>Win + Space</b>. Trong bộ gõ, bấm <b>Shift</b> để đổi qua lại 中 (chữ Hán) / 英 (chữ Latin).'},
+    'MacBook':{s:['Mở <b>System Settings</b> → <b>Keyboard</b> → <b>Text Input</b> → <b>Edit…</b>','Bấm <b>+</b> → <b>Chinese, Simplified</b> → chọn <b>Pinyin – Simplified</b> → <b>Add</b>.','Có thể tắt các bộ gõ tiếng Trung khác cho gọn.'],
+      w:'Chuyển bàn phím: <b>Control + Space</b> (hoặc phím 🌐 fn). Bấm <b>Caps Lock</b> để gõ tạm chữ Latin.'}};
+  const tabs=document.getElementById('imeTabs'), st=document.getElementById('imeSteps'), sw=document.getElementById('imeSw');
+  const names=Object.keys(DEV);
+  function show(n){ tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.d===n)); st.innerHTML=DEV[n].s.map(x=>`<li><span>${x}</span></li>`).join(''); sw.innerHTML=DEV[n].w; }
+  tabs.innerHTML=names.map(n=>`<button data-d="${n}">${n}</button>`).join('');
+  tabs.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) show(b.dataset.d);});
+  const ua=navigator.userAgent; show(/iPhone|iPad/.test(ua)?names[0]:/Android/.test(ua)?names[1]:/Mac/.test(ua)?names[3]:names[2]);
+})();
+
+/* ---------- bàn phím pinyin mô phỏng ---------- */
+(function(){
+  const $=id=>document.getElementById(id);
+  const inp=$('imeIn'), out=$('imeOut'), cBox=$('imeCands');
+  const D=IME_DICT.map((d,i)=>({w:d[0],s:d[1].split(' '),i}));
+  let list=[], page=0, task=null, queue=[], score=0, count=0, done=false;
+  // trả về các vị trí kết thúc khi khớp lần lượt từng âm tiết (mỗi âm tiết gõ ít nhất chữ cái đầu)
+  function ends(buf,s){
+    let pos=[[0,true]];
+    for(const syl of s){ const nx=[];
+      for(const [p,full] of pos){ for(let k=syl.length;k>=1;k--){ if(buf.startsWith(syl.slice(0,k),p)) nx.push([p+k,full&&k===syl.length]); } }
+      if(!nx.length) return []; pos=nx; }
+    return pos;
+  }
+  function cands(buf){
+    const g=[[],[],[]], seen=new Set();
+    for(const d of D){ if(d.s[0][0]!==buf[0]) continue;
+      const e=ends(buf,d.s); if(!e.length) continue;
+      let best=null;
+      for(const [p,full] of e){ const grp=p===buf.length?(full?0:1):(full?2:-1); if(grp<0) continue;
+        const sc=grp*1000-p; if(!best||sc<best.sc) best={grp,sc,used:p}; }
+      if(best&&!seen.has(d.w)){ seen.add(d.w); g[best.grp].push({w:d.w,used:best.used,i:d.i}); }
+    }
+    g[2].sort((a,b)=>b.used-a.used||a.i-b.i);
+    return g[0].concat(g[1],g[2]).slice(0,45);
+  }
+  function render(){
+    const buf=inp.value.toLowerCase().replace(/[^a-zü]/g,'').replace(/ü/g,'v');
+    list=buf?cands(buf):[]; if(page*7>=list.length) page=0;
+    const sl=list.slice(page*7,page*7+7);
+    cBox.innerHTML=sl.map((c,k)=>`<button data-k="${k}"><small>${k+1}</small><span>${c.w}</span></button>`).join('')+
+      (list.length>7?`<button class="pg" data-pg="-1">‹</button><button class="pg" data-pg="1">›</button>`:'')+
+      (buf&&!list.length?'<span class="pg">không có chữ phù hợp</span>':'');
+  }
+  function pick(k){ const c=list[page*7+k]; if(!c) return;
+    const buf=inp.value.toLowerCase().replace(/[^a-zü]/g,'').replace(/ü/g,'v');
+    out.textContent+=c.w; inp.value=buf.slice(c.used); page=0; render(); inp.focus(); }
+  inp.addEventListener('input',()=>{ // gõ bằng bàn phím tiếng Trung thật: chuyển chữ Hán xuống ô kết quả
+    const h=inp.value.match(/[㐀-鿿，。？！、]/g); if(h){ out.textContent+=h.join(''); inp.value=inp.value.replace(/[㐀-鿿，。？！、]/g,''); }
+    page=0; render(); });
+  inp.addEventListener('keydown',e=>{
+    if(e.isComposing) return;
+    const has=inp.value.trim().length>0;
+    if(e.key===' '&&has){ e.preventDefault(); pick(0); }
+    else if(/^[1-9]$/.test(e.key)&&has){ e.preventDefault(); pick(+e.key-1); }
+    else if(e.key==='Enter'){ e.preventDefault(); if(has){ out.textContent+=inp.value.trim(); inp.value=''; render(); } else check(); }
+    else if(e.key==='Backspace'&&!inp.value){ out.textContent=[...out.textContent].slice(0,-1).join(''); }
+    else if((e.key==='='||e.key==='.'||e.key==='PageDown')&&has){ e.preventDefault(); if((page+1)*7<list.length){page++;render();} }
+    else if((e.key==='-'||e.key===','||e.key==='PageUp')&&has){ e.preventDefault(); if(page>0){page--;render();} }
+    e.stopPropagation();
+  });
+  inp.addEventListener('keyup',e=>e.stopPropagation());
+  cBox.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.pg){ const n=page+(+b.dataset.pg); if(n>=0&&n*7<list.length){page=n;render();} inp.focus(); return; }
+    pick(+b.dataset.k); });
+  function next(){ if(!queue.length) queue=shuffle(IME_TASKS.slice()); task=queue.pop(); done=false;
+    $('imeVi').textContent=task[2]; $('imePy').textContent=task[1]; out.textContent=''; inp.value=''; render();
+    const f=$('imeFb'); f.className='fb'; f.innerHTML='&nbsp;'; }
+  function check(){ if(!task) return; const a=out.textContent.trim(); const f=$('imeFb');
+    if(!a){ toast('Hãy gõ chữ Hán trước khi kiểm tra.'); return; }
+    const ok=a===task[0];
+    if(!done){ count++; if(ok) score++; done=true; $('imeScore').textContent=score; $('imeCount').textContent=count; }
+    f.className='fb '+(ok?'ok':'no'); f.textContent=ok?'Chính xác! '+task[0]:'Chưa đúng — đáp án: '+task[0];
+    if(ok) say(task[0]); }
+  $('imeCheck').onclick=check; $('imeNext').onclick=next;
+  $('imeClr').onclick=()=>{ out.textContent=''; inp.value=''; render(); inp.focus(); };
+  $('imeSay').onclick=()=>task&&say(task[0]);
+  next();
+})();
+
+
+/* ---------- practice: listen & write ---------- */
+(function(){
+  let mode='s', queue=[], cur=null, done=false, score=0, count=0;
+  const $=id=>document.getElementById(id); const inp=$('lpIn');
+  bindPreview(inp,$('lpPrev'));
+  function next(){ const pool=mode==='s'?SINGLE:COMPOUND; if(!queue.length) queue=shuffle(pool); cur=queue.pop(); done=false;
+    inp.value=''; inp.disabled=false; $('lpPrev').innerHTML='&nbsp;'; $('lpFb').innerHTML='&nbsp;'; $('lpFb').className='fb'; $('lpAns').innerHTML='&nbsp;';
+    $('lpHint').textContent=mode==='s'?'Từ đơn (1 âm tiết). Bấm loa để nghe.':'Từ ghép (2 âm tiết, viết liền). Bấm loa để nghe.'; }
+  function check(){ if(!cur||done) return; if(!inp.value.trim()){ toast('Hãy gõ pinyin trước khi kiểm tra.'); return; }
+    const g=grade(inp.value,cur[1]); done=true; inp.disabled=true; count++; score+=g;
+    const fb=$('lpFb'); fb.className='fb '+(g===1?'ok':g?'half':'no'); fb.textContent=g===1?'Chính xác!':g?'Đúng âm, sai thanh điệu':'Chưa đúng';
+    $('lpAns').innerHTML=`Đáp án: <b>${colorPy(cur[1])}</b> <span class="han" style="font-size:30px;color:var(--ink)">${cur[0]}</span> · ${cur[2]}`;
+    $('lpScore').textContent=String(score).replace('.',','); $('lpCount').textContent=count;
+    const h=document.createElement('span'); h.className=g===1?'ok':g?'half':'no'; h.textContent=cur[1]; $('lpHist').prepend(h); }
+  $('lpPlay').onclick=()=>cur&&say(cur[0],0.75); $('lpSlow').onclick=()=>cur&&say(cur[0],0.45);
+  $('lpCheck').onclick=check; $('lpNext').onclick=()=>{next(); say(cur[0],0.75); inp.focus({preventScroll:true});};
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ done? $('lpNext').click() : check(); } });
+  $('lpMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; mode=b.dataset.m; queue=[]; document.querySelectorAll('#lpMode button').forEach(x=>x.classList.toggle('on',x===b)); next();});
+  $('lpReset').onclick=()=>{score=0;count=0;$('lpScore').textContent='0';$('lpCount').textContent='0';$('lpHist').innerHTML='';queue=[];next();};
+  next();
+})();
+
+/* ---------- reading paragraphs ---------- */
+const PARA={
+ A:[['Dàjiā hǎo!','大家好！','Chào mọi người!'],['Wǒ jiào Xiǎo Yàn, wǒ shì Yuènán rén.','我叫小燕，我是越南人。','Mình tên là Tiểu Yến, mình là người Việt Nam.'],['Wǒ jīnnián shíjiǔ suì, shì dàxuéshēng.','我今年十九岁，是大学生。','Năm nay mình 19 tuổi, là sinh viên.'],['Wǒ zài Hénèi xuéxí Hànyǔ.','我在河内学习汉语。','Mình học tiếng Trung ở Hà Nội.'],['Wǒ de lǎoshī shì Zhōngguó rén, tā hěn hǎo.','我的老师是中国人，她很好。','Cô giáo của mình là người Trung Quốc, cô ấy rất tốt.'],['Wǒ hěn xǐhuan Hànyǔ, yě xǐhuan chī Zhōngguó cài.','我很喜欢汉语，也喜欢吃中国菜。','Mình rất thích tiếng Trung, cũng thích ăn món Trung Quốc.'],['Xièxie dàjiā!','谢谢大家！','Cảm ơn mọi người!']],
+ B:[['Jīntiān xīngqīyī.','今天星期一。','Hôm nay là thứ Hai.'],['Shàngwǔ bā diǎn, wǒ qù xuéxiào shàngkè.','上午八点，我去学校上课。','Tám giờ sáng, mình đến trường học.'],['Wǒmen bān yǒu shíwǔ ge xuésheng.','我们班有十五个学生。','Lớp mình có mười lăm học sinh.'],['Lǎoshī shuō: “Nǐmen hǎo!”','老师说：“你们好！”','Cô giáo nói: “Chào các em!”'],['Wǒmen shuō: “Lǎoshī hǎo!”','我们说：“老师好！”','Chúng mình nói: “Chúng em chào cô!”'],['Xiàkè yǐhòu, wǒ hé péngyou qù hē chá.','下课以后，我和朋友去喝茶。','Tan học, mình cùng bạn đi uống trà.']],
+ T:[['Wǒ jiā yǒu sì kǒu rén: bàba, māma, gēge hé wǒ.','我家有四口人：爸爸、妈妈、哥哥和我。','Nhà mình có bốn người: bố, mẹ, anh trai và mình.'],['Bàba shì yīshēng, māma shì lǎoshī.','爸爸是医生，妈妈是老师。','Bố là bác sĩ, mẹ là giáo viên.'],['Gēge zài Běijīng gōngzuò.','哥哥在北京工作。','Anh trai làm việc ở Bắc Kinh.'],['Wǒ shì xuésheng, wǒ xuéxí Hànyǔ.','我是学生，我学习汉语。','Mình là học sinh, mình học tiếng Trung.'],['Zhōumò wǒmen yìqǐ qù chāoshì, mǎi shuǐguǒ hé cài.','周末我们一起去超市，买水果和菜。','Cuối tuần cả nhà cùng đi siêu thị, mua hoa quả và rau.'],['Wǒ hěn ài wǒ de jiārén.','我很爱我的家人。','Mình rất yêu gia đình mình.']]};
+function renderPara(el,key,colored){ el.innerHTML=PARA[key].map((s,i)=>`<button class="sent" data-i="${i}" data-say="${s[1].replace(/[，。！：“”、]/g,' ')}"><span class="py">${colored?colorPy(s[0]):s[0]}</span><span class="zh">${s[1]}</span><span class="vi">${s[2]}</span></button>`).join(''); }
+function readAll(el,key,btn){ if(!('speechSynthesis' in window)) return toast('Trình duyệt này không hỗ trợ đọc âm thanh.');
+  speechSynthesis.cancel(); const ss=el.querySelectorAll('.sent'); let i=0;
+  const step=()=>{ ss.forEach(x=>x.classList.remove('on')); if(i>=ss.length){ if(btn) btn.textContent='▶ Đọc mẫu cả đoạn'; return; } ss[i].classList.add('on');
+    const u=new SpeechSynthesisUtterance(PARA[key][i][1]); u.lang='zh-CN'; u.rate=(0.75)*VOICE_RATE; if(zhVoice) u.voice=zhVoice; u.onend=()=>{i++; setTimeout(step,350);}; speechSynthesis.speak(u); };
+  if(btn) btn.textContent='Đang đọc…'; step(); }
+document.addEventListener('click',e=>{const s=e.target.closest('.sent'); if(!s) return; s.parentElement.querySelectorAll('.sent').forEach(x=>x.classList.toggle('on',x===s));});
+
+/* recorder */
+function makeRecorder(btn, audio, timerEl, onDone){
+  let rec=null, chunks=[], t0=0, tick=null, stream=null;
+  const label=btn.querySelector('span:last-child');
+  btn.onclick=async()=>{
+    if(rec && rec.state==='recording'){ rec.stop(); return; }
+    if(!navigator.mediaDevices || !window.MediaRecorder){ toast('Trình duyệt hoặc trang nhúng chưa cho phép ghi âm.'); return; }
+    try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }catch(err){ toast('Không mở được micro. Hãy cho phép quyền micro (trang nhúng cần allow="microphone").'); return; }
+    chunks=[]; try{ rec=new MediaRecorder(stream,{audioBitsPerSecond:24000}); }catch(e){ rec=new MediaRecorder(stream); } rec.ondataavailable=e=>chunks.push(e.data);
+    rec.onstop=()=>{ clearInterval(tick); stream.getTracks().forEach(t=>t.stop()); const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'}); audio.src=URL.createObjectURL(blob); audio.hidden=false; btn.classList.remove('rec'); label.textContent='Ghi âm lại'; if(onDone) onDone(blob); };
+    rec.start(); t0=Date.now(); btn.classList.add('rec'); label.textContent='Dừng ghi âm'; audio.hidden=true;
+    tick=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); timerEl.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); },250);
+  };
+}
+['A','B','T'].forEach(k=>{
+  const el=document.getElementById('para'+k), c=document.getElementById('ctrl'+k); renderPara(el,k,false);
+  c.innerHTML=`<div class="box"><h3>Hiển thị</h3><div class="row" style="flex-wrap:wrap;gap:10px"><button class="ghost" data-t="color">Tô màu thanh điệu</button><button class="ghost" data-t="zh">Hiện chữ Hán</button><button class="ghost" data-t="vi">Hiện nghĩa</button></div></div>
+   <div class="box"><h3>Nghe mẫu</h3><button class="spk" data-all style="justify-content:center">▶ Đọc mẫu cả đoạn</button><p style="font-size:18px;color:var(--muted)">Hoặc bấm vào từng câu để nghe riêng câu đó.</p></div>
+   <div class="box"><h3>Tự ghi âm</h3><button class="recbtn" data-rec><span class="dot"></span><span>Bắt đầu ghi âm</span></button><p class="timer">00:00</p><audio class="player" controls hidden></audio></div>`;
+  let colored=false; const wrap=el;
+  c.addEventListener('click',e=>{ const t=e.target.closest('[data-t]'); if(t){ const k2=t.dataset.t;
+      if(k2==='color'){ colored=!colored; renderPara(el,k,colored); t.textContent=colored?'Bỏ tô màu':'Tô màu thanh điệu'; }
+      else { const on=wrap.classList.toggle('show-'+k2); t.textContent=(on?'Ẩn ':'Hiện ')+(k2==='zh'?'chữ Hán':'nghĩa'); } }
+    const a=e.target.closest('[data-all]'); if(a) readAll(el,k,a); });
+  makeRecorder(c.querySelector('[data-rec]'),c.querySelector('audio'),c.querySelector('.timer'));
+});
+
+/* draw game */
+(function(){
+  const F1=['a','o','e','i','u','ü','ai','ei','ao','ou'], F2=['an','en','ang','eng','ong'];
+  const T1={b:'ba bo · bi bu · bai bei bao ·',p:'pa po · pi pu · pai pei pao pou',m:'ma mo me mi mu · mai mei mao mou',f:'fa fo · · fu · · fei · fou',d:'da · de di du · dai dei dao dou',t:'ta · te ti tu · tai · tao tou',n:'na · ne ni nu nü nai nei nao nou',l:'la · le li lu lü lai lei lao lou',g:'ga · ge · gu · gai gei gao gou',k:'ka · ke · ku · kai kei kao kou',h:'ha · he · hu · hai hei hao hou'};
+  const T2={b:'ban ben bang beng ·',p:'pan pen pang peng ·',m:'man men mang meng ·',f:'fan fen fang feng ·',d:'dan den dang deng dong',t:'tan · tang teng tong',n:'nan nen nang neng nong',l:'lan · lang leng long',g:'gan gen gang geng gong',k:'kan ken kang keng kong',h:'han hen hang heng hong'};
+  const FI=['ia','ie','iao','iou','ian','in','iang','ing','iong'];
+  const TI={j:'1 1 1 1 1 1 1 1 1',q:'1 1 1 1 1 1 1 1 1',x:'1 1 1 1 1 1 1 1 1',b:'· 1 1 · 1 1 · 1 ·',p:'· 1 1 · 1 1 · 1 ·',m:'· 1 1 · 1 1 · 1 ·',d:'· 1 1 1 1 · · 1 ·',t:'· 1 1 · 1 · · 1 ·',n:'· 1 1 1 1 1 1 1 ·',l:'1 1 1 1 1 1 1 1 ·'};
+  const FU=['ü','üe','üan','ün'], TU={n:'1 1 · ·',l:'1 1 · ·',j:'1 1 1 1',q:'1 1 1 1',x:'1 1 1 1'};
+  const POOL=[];
+  for(const ini in T1){ T1[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,F1[j]]); }); T2[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,F2[j]]); }); }
+  for(const ini in TI){ TI[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,FI[j]]); }); }
+  for(const ini in TU){ TU[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,FU[j]]); }); }
+  POOL.push(['j','i'],['q','i'],['x','i']);
+  const F3a=['a','e','-i','ai','ei','ao','ou','an','en','ang','eng','ong','u','uo','uei','uan','uen'];
+  const T3a={z:'za ze zi zai zei zao zou zan zen zang zeng zong zu zuo zui zuan zun',c:'ca ce ci cai · cao cou can cen cang ceng cong cu cuo cui cuan cun',s:'sa se si sai · sao sou san sen sang seng song su suo sui suan sun'};
+  const F3b=['a','e','-i','ai','ei','ao','ou','an','en','ang','eng','ong','u','ua','uo','uai','uei','uan','uen','uang'];
+  const T3b={zh:'zha zhe zhi zhai zhei zhao zhou zhan zhen zhang zheng zhong zhu zhua zhuo zhuai zhui zhuan zhun zhuang',ch:'cha che chi chai · chao chou chan chen chang cheng chong chu chua chuo chuai chui chuan chun chuang',sh:'sha she shi shai shei shao shou shan shen shang sheng · shu shua shuo shuai shui shuan shun shuang',r:'· re ri · · rao rou ran ren rang reng rong ru rua ruo · rui ruan run ·'};
+  const F3c=['ua','uo','uai','uei','uan','uen','uang'];
+  const T3c={d:'· 1 · 1 1 1 ·',t:'· 1 · 1 1 1 ·',n:'· 1 · · 1 · ·',l:'· 1 · · 1 1 ·',g:'1 1 1 1 1 1 1',k:'1 1 1 1 1 1 1',h:'1 1 1 1 1 1 1'};
+  for(const ini in T3a) T3a[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,F3a[j]]); });
+  for(const ini in T3b) T3b[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,F3b[j]]); });
+  for(const ini in T3c) T3c[ini].split(' ').forEach((s,j)=>{ if(s!=='·') POOL.push([ini,F3c[j]]); });
+
+  const INITS=[...new Set(POOL.map(p=>p[0]))], FINS=[...new Set(POOL.map(p=>p[1]))];
+  function written(ini,fin){ let f=fin; if(f==='iou') f='iu'; if(f==='-i') f='i'; if(f==='uei') f='ui'; if(f==='uen') f='un'; if('jqx'.includes(ini)) f=f.replace('ü','u'); return f; }
+  const VALID=[]; POOL.forEach(p=>{ const z=PY_TONES[p[0]+written(p[0],p[1])]; if(z) [...z].forEach((c,k)=>{ if(c!=='·') VALID.push([p[0],p[1],k+1,c]); }); });
+const MARK={a:'āáǎà',o:'ōóǒò',e:'ēéěè',i:'īíǐì',u:'ūúǔù','ü':'ǖǘǚǜ'};
+  const TSYM=['ˉ','ˊ','ˇ','ˋ'];
+  function addTone(fin,t){
+    let k;
+    if(fin.includes('a')) k=fin.indexOf('a');
+    else if(fin.includes('e')) k=fin.indexOf('e');
+    else if(fin.includes('ou')) k=fin.indexOf('o');
+    else { for(let x=fin.length-1;x>=0;x--) if('iouü'.includes(fin[x])){k=x;break;} }
+    return fin.slice(0,k)+MARK[fin[k]][t-1]+fin.slice(k+1);
+  }
+  const dI=document.getElementById('dI'), dF=document.getElementById('dF'), dT=document.getElementById('dT'), dTn=document.getElementById('dTn'), dR=document.getElementById('dR'), dRx=document.getElementById('dRx');
+  const drawBtn=document.getElementById('drawBtn'), revBtn=document.getElementById('revealBtn'), hist=document.getElementById('dHist');
+  const rnd=a=>a[Math.floor(Math.random()*a.length)];
+  let cur=null, last=null, history=[];
+  [dI,dF,dT,dR].forEach(e=>e.classList.add('q'));
+  function setTone(t){ dT.textContent=TSYM[t-1]; dT.className='dval t'+t; dTn.textContent='Thanh '+t; dTn.className='dsub t'+t; }
+  function land(el){ el.classList.remove('spin','q'); void el.offsetWidth; el.classList.add('land'); }
+  drawBtn.onclick=()=>{
+    if(drawBtn.disabled) return;
+    let pick; do{ pick=rnd(VALID); }while(last && pick[0]===last[0] && pick[1]===last[1] && pick[2]===last[2]);
+    cur={i:pick[0],f:pick[1],t:pick[2],zh:pick[3]}; last=pick;
+    drawBtn.disabled=true; revBtn.disabled=true;
+    dR.textContent='?'; dR.className='dval q'; dRx.innerHTML='&nbsp;'; dTn.innerHTML='&nbsp;'; dTn.className='dsub';
+    [dI,dF,dT].forEach(e=>{e.className='dval spin';});
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const tick=setInterval(()=>{ if(dI.classList.contains('spin')) dI.textContent=rnd(INITS); if(dF.classList.contains('spin')) dF.textContent=rnd(FINS); if(dT.classList.contains('spin')) dT.textContent=rnd(TSYM); },70);
+    const d=reduce?[0,0,0]:[700,1150,1600];
+    setTimeout(()=>{ dI.textContent=cur.i; land(dI); },d[0]);
+    setTimeout(()=>{ dF.textContent=cur.f; land(dF); },d[1]);
+    setTimeout(()=>{ clearInterval(tick); setTone(cur.t); land(dT); drawBtn.disabled=false; revBtn.disabled=false; revBtn.focus({preventScroll:true}); },d[2]);
+  };
+  revBtn.onclick=()=>{
+    if(!cur||revBtn.disabled) return;
+    const s=cur.i+addTone(written(cur.i,cur.f),cur.t);
+    dR.textContent=s; dR.className='dval t'+cur.t; dRx.textContent='Ví dụ: '+cur.zh; land(dR); dR.classList.add('t'+cur.t);
+    revBtn.disabled=true;
+    history.unshift(`<b class="t${cur.t}">${s} ${cur.zh}</b>`); history=history.slice(0,8); hist.innerHTML=history.join('');
+  };
+})();
+
+/* navigation */
+icons(document);
+const slides=[...document.querySelectorAll('.slide')];
+const secNames=[...new Set(slides.map(s=>s.dataset.sec))];
+const secsEl=document.getElementById('secs');
+secsEl.innerHTML=secNames.map(n=>`<button data-sec="${n}">${n}</button>`).join('');
+let cur=0;
+function go(i){
+  i=Math.max(0,Math.min(slides.length-1,i)); slides[cur].classList.remove('active'); cur=i; const s=slides[cur]; s.classList.add('active');
+  document.getElementById('count').textContent=`${cur+1} / ${slides.length}`;
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  secsEl.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.sec===s.dataset.sec));
+  try{ history.replaceState(null,'','#'+(cur+1)); }catch(e){}
+}
+secsEl.onclick=e=>{const b=e.target.closest('button'); if(b) go(slides.findIndex(s=>s.dataset.sec===b.dataset.sec));};
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(slides.findIndex(s=>s.id===b.dataset.go)));
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('fs').onclick=()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); };
+document.addEventListener('keydown',e=>{
+  if(e.target.closest && e.target.closest('input,textarea')) return;
+  if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();go(cur+1);}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(slides.length-1);
+  else if(e.key==='f'&&!e.metaKey&&!e.ctrlKey) document.getElementById('fs').click();
+});
+let tx=null; const vp=document.getElementById('viewport');
+vp.addEventListener('touchstart',e=>{tx=e.target.closest('canvas,input')?null:e.touches[0].clientX;},{passive:true});
+vp.addEventListener('touchend',e=>{ if(tx===null) return; const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>60) go(cur+(dx<0?1:-1)); tx=null; });
+function fit(){ const d=document.getElementById('deck'); const w=vp.clientWidth-24, h=vp.clientHeight-24; const k=Math.min(w/1600,h/900); d.style.transform=`scale(${k}) translate(-50%,-50%)`; }
+window.addEventListener('resize',fit); fit();
+window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1)); if(!isNaN(n)&&n-1!==cur) go(n-1);});
+const start=parseInt((location.hash||'').slice(1)); go(isNaN(start)?0:start-1);
+</script>
+
+<style>
+.vp-btn{position:fixed;left:12px;bottom:12px;z-index:90;display:flex;align-items:center;gap:6px;background:#1E2A4A;color:#fff;border:none;border-radius:999px;padding:8px 14px;font:600 13px 'Lexend',system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(20,30,60,.25)}
+.vp-btn:focus-visible{outline:3px solid #7FB3F0;outline-offset:2px}
+.vp-panel{position:fixed;left:12px;bottom:56px;z-index:91;width:min(380px,calc(100vw - 24px));max-height:70vh;overflow:auto;background:#fff;color:#1E2A4A;border-radius:16px;box-shadow:0 20px 50px rgba(20,30,60,.3);padding:16px;font:14px/1.5 'Lexend',system-ui,sans-serif;display:none}
+.vp-panel.on{display:block}
+.vp-panel h4{font-size:16px;margin:0 0 8px}
+.vp-list{display:flex;flex-direction:column;gap:6px;margin:8px 0 12px}
+.vp-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:2px solid #DDE3EE;border-radius:10px;cursor:pointer;text-align:left;background:#fff;font:inherit;color:inherit}
+.vp-item.sel{border-color:#1E2A4A;background:#EEF2F9}
+.vp-item small{color:#5B6683;margin-left:auto;white-space:nowrap}
+.vp-tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:#DDF3E8;color:#1F9E6A}
+.vp-tag.g{background:#FBE3DE;color:#B33A22}
+.vp-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.vp-row input{flex:1}
+.vp-tip{background:#FFF5DF;border-radius:10px;padding:10px 12px;font-size:13px;color:#6B4A00;margin-top:8px}
+.vp-test{background:#2F6FD0;color:#fff;border:none;border-radius:10px;padding:8px 14px;font:600 13px 'Lexend',system-ui,sans-serif;cursor:pointer}
+</style>
+<button class="vp-btn" id="vpBtn" aria-expanded="false" aria-controls="vpPanel">🔊 Giọng đọc</button>
+<div class="vp-panel" id="vpPanel" role="dialog" aria-label="Chọn giọng đọc"></div>
+<script>
+(function(){
+  const btn=document.getElementById('vpBtn'), panel=document.getElementById('vpPanel');
+  const save=()=>{ try{ localStorage.setItem(VKEY, JSON.stringify({name:zhVoice?zhVoice.name:null, rate:VOICE_RATE})); }catch(e){} };
+  const label=r=>r===0?'<span class="vp-tag">Chuẩn · Neural</span>':r===1?'<span class="vp-tag">Tự nhiên</span>':r===5?'<span class="vp-tag g">Google</span>':'';
+  window.renderVoicePanel=function(){
+    const vs=zhVoices().sort((a,b)=>voiceRank(a)-voiceRank(b)); const best=vs.length?voiceRank(vs[0]):9;
+    panel.innerHTML=`<h4>Giọng đọc tiếng Trung</h4>
+      ${vs.length?`<div class="vp-list">${vs.map((v,i)=>`<button class="vp-item ${zhVoice&&zhVoice.name===v.name?'sel':''}" data-i="${i}">${v.name.replace(/ - Chinese.*$/,'').replace(/^Microsoft /,'')} ${label(voiceRank(v))}<small>${v.localService?'trên máy':'online'}</small></button>`).join('')}</div>`:'<p>Máy này chưa có giọng đọc tiếng Trung.</p>'}
+      <div class="vp-row"><span>Tốc độ</span><input type="range" id="vpRate" min="0.6" max="1.3" step="0.05" value="${VOICE_RATE}"><b id="vpRateV">${Math.round(VOICE_RATE*100)}%</b></div>
+      <button class="vp-test" id="vpTest">▶ Nghe thử: 妈 麻 马 骂</button>
+      ${best>=4?`<p class="vp-tip"><b>Giọng hiện có chưa chuẩn.</b> Hãy mở trang bằng <b>Microsoft Edge</b>: Edge có sẵn giọng <b>Xiaoxiao</b> (giọng neural chuẩn tiếng Phổ thông), máy sẽ tự chọn giọng này.</p>`:''}`;
+    panel.querySelectorAll('.vp-item').forEach(b=>b.onclick=()=>{ zhVoice=vs[+b.dataset.i]; save(); renderVoicePanel(); say('你好，我是你的汉语老师。'); });
+    const r=panel.querySelector('#vpRate'); r.oninput=()=>{ VOICE_RATE=+r.value; panel.querySelector('#vpRateV').textContent=Math.round(VOICE_RATE*100)+'%'; }; r.onchange=save;
+    panel.querySelector('#vpTest').onclick=()=>say('妈，麻，马，骂');
+  };
+  btn.onclick=()=>{ const on=panel.classList.toggle('on'); btn.setAttribute('aria-expanded',on); if(on) renderVoicePanel(); };
+  document.addEventListener('click',e=>{ if(panel.classList.contains('on') && !panel.contains(e.target) && e.target!==btn){ panel.classList.remove('on'); btn.setAttribute('aria-expanded','false'); } });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') panel.classList.remove('on'); });
+  loadVoices();
+})();
+</script>
+</body>
+</html>

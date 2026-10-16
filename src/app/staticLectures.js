@@ -339,5 +339,12 @@ export const STATIC_LECTURES = [
   "level": "HSK1 3.0",
   "fileUrl": "/lectures/ngu-am-4/NGU_AM_4.html",
   "replaces": "ngữ âm 4"
+ },
+ {
+  "id": "static-ngu-am-5",
+  "lectureName": "Buổi 5 – Ôn tập tổng hợp ngữ âm",
+  "level": "HSK1 3.0",
+  "fileUrl": "/lectures/ngu-am-5/NGU_AM_5.html",
+  "replaces": ["ôn tập tổng hợp ngữ âm", "ngữ âm buổi 5", "ngữ âm buổi 05", "ngữ âm 5"]
  }
 ];

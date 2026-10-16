@@ -482,7 +482,7 @@ export default function HomePage() {
       const replacers = STATIC_LECTURES.filter(x => x.replaces);
       snapshot.forEach(d => {
         const x = { id: d.id, ...d.data() };
-        if (replacers.some(r => r.level === x.level && norm(x.lectureName).includes(norm(r.replaces)))) return; // đã có bản sửa tĩnh
+        if (replacers.some(r => r.level === x.level && [].concat(r.replaces).some(t => norm(x.lectureName).includes(norm(t))))) return; // đã có bản sửa tĩnh
         const k = numOf(x.lectureName); if (!k || !staticKey.has(x.level + "#" + k)) list.push(x);
       });
       list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
