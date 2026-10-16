@@ -654,6 +654,23 @@ svg.contour .neu{fill:none;stroke:var(--t0);stroke-width:11;stroke-linecap:round
 .nx-hn .a .han{font-size:17px;line-height:1.3}.nx-hn .a .p{font-size:12px;color:var(--ink2);line-height:1.3}
 .nx-hw.ans .nx-hn .a{display:flex}
 
+/* place-value big number */
+#s-places .pv{display:flex;justify-content:center;align-items:stretch;gap:6px;margin:34px auto 10px}
+.pv-col{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;width:96px;border-radius:16px;padding:10px 0 12px;transition:transform .15s}
+.pv-col:hover{transform:translateY(-4px)}
+.pv-zh{font-family:var(--han,serif);font-size:34px;line-height:1.1;font-weight:600;white-space:nowrap}
+.pv-py{font-size:17px;font-weight:600;margin:2px 0 6px;opacity:.85}
+.pv-d{font-size:120px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.pv-vi{font-size:16px;margin-top:8px;color:var(--muted);white-space:nowrap}
+.pv-dot{align-self:flex-end;font-size:120px;font-weight:800;line-height:1;margin-bottom:30px;color:var(--ink,#1e2a4a)}
+.pv-col.a{background:#FBE3DE;color:var(--t4)}.pv-col.b{background:#DCE8F8;color:var(--t1)}
+.pv-col.c{background:#DDF3E8;color:var(--t2)}.pv-col.d{background:#F6E7C8;color:#B7791F}
+.pv-legend{display:flex;justify-content:center;gap:14px;align-items:center;font-size:20px;margin-bottom:18px}
+.pv-legend .lg{padding:4px 14px;border-radius:999px;font-weight:600}
+.pv-legend .lg.a{background:#FBE3DE;color:var(--t4)}.pv-legend .lg.b{background:#DCE8F8;color:var(--t1)}
+.pv-legend .lg.c{background:#DDF3E8;color:var(--t2)}.pv-legend .lg.d{background:#F6E7C8;color:#B7791F}
+.pv-hint{color:var(--muted);margin-left:10px}
+
 </style>
 </head>
 <body>
@@ -771,12 +788,9 @@ svg.contour .neu{fill:none;stroke:var(--t0);stroke-width:11;stroke-linecap:round
 <section class="slide" id="s-places" data-sec="Hàng số">
   <p class="kick in"><span class="chip">03</span> Số đếm 数字 · 2</p>
   <h2 class="in">Bảng hàng số: tiếng Trung chia theo vạn</h2>
-  <div class="places in" id="places"></div>
-  <div class="group4 in">
-    <div class="g4"><span class="digits"><span class="dg c">100</span>.<span class="dg b">000</span>.<span class="dg a">000</span></span><span class="lab">Tiếng Việt: nhóm 3 chữ số</span></div>
-    <div class="g4"><span class="digits"><span class="dg c">1</span>.<span class="dg b">0000</span>.<span class="dg a">0000</span></span><span class="lab">Tiếng Trung: nhóm 4 chữ số — <span class="han">亿 · 万 · 个</span></span></div>
-  </div>
-  <p class="lead in" style="font-size:22px">Mẹo: tách số thành từng nhóm 4 chữ số từ phải sang. Nhóm giữa đọc kèm <b>万</b>, nhóm đầu đọc kèm <b>亿</b>.</p>
+  <div class="pv in" id="places"></div>
+  <div class="pv-legend in"><span class="lg d">nhóm 万亿</span><span class="lg c">nhóm 亿</span><span class="lg b">nhóm 万</span><span class="lg a">nhóm 个</span><span class="pv-hint">Chạm vào từng hàng để nghe</span></div>
+  <p class="lead in" style="font-size:22px">Mẹo: tách số thành từng nhóm 4 chữ số từ phải sang. Nhóm thứ 2 đọc kèm <b>万</b>, nhóm thứ 3 kèm <b>亿</b>, nhóm thứ 4 kèm <b>万亿</b> (1 nghìn tỷ = 一万亿).</p>
 </section>
 
 <section class="slide" id="s-r2" data-sec="Đọc số">
@@ -1133,8 +1147,18 @@ document.addEventListener('click',e=>{ const t=e.target.closest('[data-write]');
     <span class="p" style="color:${u[6]}">${u[1]}</span><span class="v">${u[2]}</span><span class="m">${u[3]}</span>
     <span class="ex"><span class="han">${u[4].split(' ')[0]}</span> ${u[4].split(' ').slice(1).join(' ')}</span>
     <div class="acts"><button class="spk" data-say="${u[5]}">🔊</button><button class="ghost" data-write="${u[0]}">✍ Tập viết</button></div></div>`).join('');
-  document.getElementById('places').innerHTML=[['十','shí','chục','10'],['百','bǎi','trăm','100'],['千','qiān','nghìn','1.000'],['万','wàn','vạn (mười nghìn)','1.0000'],['十万','shíwàn','trăm nghìn','10.0000'],['百万','bǎiwàn','triệu','100.0000'],['千万','qiānwàn','chục triệu','1000.0000'],['亿','yì','trăm triệu','1.0000.0000']]
-   .map(p=>`<button class="pl" data-say="${p[0]==='十'?'十':'一'+p[0]}"><span class="zh">${p[0]}</span><span class="p">${p[1]}</span><span class="v">${p[2]}</span><span class="n">${p[3]}</span></button>`).join('');
+  (function(){
+    const P=[['个','gè','đơn vị'],['十','shí','chục'],['百','bǎi','trăm'],['千','qiān','nghìn'],
+      ['万','wàn','vạn'],['十万','shíwàn','trăm nghìn'],['百万','bǎiwàn','triệu'],['千万','qiānwàn','chục triệu'],
+      ['亿','yì','trăm triệu'],['十亿','shíyì','tỷ'],['百亿','bǎiyì','chục tỷ'],['千亿','qiānyì','trăm tỷ'],['万亿','wànyì','nghìn tỷ']];
+    const G='abcd', cols=[];
+    for(let i=12;i>=0;i--){
+      const p=P[i], g=G[Math.floor(i/4)];
+      if(i<12&&i%4===3) cols.push('<span class="pv-dot">.</span>');
+      cols.push(`<button class="pv-col ${g}" data-say="${i===0?'一':(p[0]==='十'?'十':'一'+p[0])}"><span class="pv-zh">${p[0]}</span><span class="pv-py">${p[1]}</span><span class="pv-d">${i===12?1:0}</span><span class="pv-vi">${p[2]}</span></button>`);
+    }
+    document.getElementById('places').innerHTML=cols.join('');
+  })();
 })();
 
 /* --- 4. quy tắc đọc --- */
