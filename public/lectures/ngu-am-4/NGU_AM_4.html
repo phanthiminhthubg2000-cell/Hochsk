@@ -1103,9 +1103,11 @@ const WRITE=(function(){
     document.getElementById('wMeta').innerHTML=`Số: <b>${c[2]}</b> · ${c[3]}`;
     msg.textContent='Bấm “Viết theo” rồi viết lần lượt từng nét vào ô. Sai 2 lần máy sẽ gợi ý nét đúng.';
     const size=430;
-    if(!w){ box.style.width=size+'px'; box.style.height=size+'px'; box.dataset.ch=c[0]; box.innerHTML='';
-      w=mkWriter('wBox',{delayBetweenStrokes:350,strokeAnimationSpeed:0.8}); }
-    if(w){ w.cancelQuiz(); w.setCharacter(c[0]).then(()=>w.animateCharacter()); }
+    // tạo lại ô viết cho mỗi chữ (setCharacter làm hỏng lớp cắt nét trên một số trình duyệt)
+    if(w){ try{ w.cancelQuiz(); }catch(_){} }
+    delete WR['wBox']; box.style.width=size+'px'; box.style.height=size+'px'; box.dataset.ch=c[0]; box.innerHTML='';
+    w=mkWriter('wBox',{delayBetweenStrokes:350,strokeAnimationSpeed:0.8});
+    if(w) w.animateCharacter();
   }
   list.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) pick(+b.dataset.i);});
   document.getElementById('wAnim').onclick=()=>{ if(!w) return; w.cancelQuiz(); step=0; w.showCharacter(); w.animateCharacter(); msg.textContent='Quan sát thứ tự nét…'; };
