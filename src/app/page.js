@@ -317,6 +317,16 @@ const GAMES = [
     face: ["百", "万"],
   },
   {
+    key: "san-bo-thu",
+    title: "Săn bộ thủ",
+    zh: "找部首",
+    desc: "Mỗi lượt một bộ thủ — chạm thật nhanh vào mọi chữ có bộ đó, coi chừng chữ bẫy trông giống. Xong lượt có giải thích nghĩa bộ và từ ví dụ.",
+    tags: ["Bộ thủ", "HSK 1–4", "Tự chơi"],
+    href: "/game-san-bo-thu.html",
+    bg: "from-[#0B2E26] to-[#1E6B55]",
+    face: ["氵", "扌"],
+  },
+  {
     key: "bom",
     title: "Bom nổ chậm",
     zh: "传炸弹",
