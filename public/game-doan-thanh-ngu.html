@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Đoán thành ngữ · 看图猜成语</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF4E2;--bg2:#FFE3BF;--card:#FFFFFF;--ink:#2B1A0E;--muted:#7A6450;--line:#F0D9B8;--accent:#E8590C;--accent2:#FFB547;--ok:#1F9E6A;--no:#D9452B;--blue:#2F6FD8;
+  --han:'Noto Serif SC','Songti SC',serif;--ui:'Be Vietnam Pro',system-ui,sans-serif;--emo:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+html,body{height:100%}
+body{font-family:var(--ui);color:var(--ink);background:radial-gradient(900px 500px at 85% -10%,#FFD59A 0%,transparent 60%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100dvh;background-attachment:fixed;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-inset-bottom));min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:12px;min-height:48px}
+.back{font-weight:700;font-size:14px;padding:8px 12px;border-radius:12px;background:rgba(43,26,14,.07)}
+.brand{font-weight:800}.brand small{font-family:var(--han);color:var(--accent);margin-left:6px}
+.sp{flex:1}
+.pill{background:#fff;border:2px solid var(--line);border-radius:999px;padding:5px 12px;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill b{color:var(--accent)}
+.screen{flex:1;display:none;flex-direction:column}.screen.on{display:flex}
+.btn{height:52px;padding:0 24px;border-radius:16px;font-weight:800;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+.btn:active{transform:translateY(3px)}
+.btn.main{background:var(--accent);color:#fff;box-shadow:0 5px 0 #A63E05}
+.btn.main:active{box-shadow:0 2px 0 #A63E05}
+.btn.soft{background:#fff;border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+
+/* start */
+.hero{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:20px 0}
+.hero h1{font-size:clamp(36px,5vw,58px);font-weight:800;line-height:1.05;letter-spacing:-.5px}
+.hero h1 span{display:block;font-family:var(--han);color:var(--accent);font-size:.55em;letter-spacing:4px;margin-top:10px}
+.hero .lead{margin-top:14px;font-size:17px;line-height:1.6;color:var(--muted);max-width:500px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;max-width:520px}
+.mode{text-align:left;background:#fff;border:3px solid var(--line);border-radius:20px;padding:16px;transition:border-color .15s,transform .15s}
+.mode:hover{transform:translateY(-2px)}
+.mode.on{border-color:var(--accent);box-shadow:0 6px 0 #F3C79A}
+.mode b{display:block;font-size:17px}.mode span{font-size:13px;color:var(--muted);line-height:1.45;display:block;margin-top:4px}
+.mode i{font-style:normal;font-size:28px;font-family:var(--emo)}
+.opt{margin-top:16px}.opt .lab{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.seg{display:inline-flex;background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{padding:8px 14px;border-radius:10px;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--ink);color:#fff}
+.cta{margin-top:22px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.best{font-size:14px;color:var(--muted)}
+.demo{justify-self:center;width:100%;max-width:440px;background:#fff;border-radius:32px;padding:30px;box-shadow:0 24px 60px rgba(160,80,10,.18);transform:rotate(2deg);text-align:center}
+.demo .e{font-family:var(--emo);font-size:clamp(52px,7vw,80px);letter-spacing:6px;line-height:1.2}
+.demo .q{display:flex;justify-content:center;gap:10px;margin-top:18px}
+.demo .q span{width:58px;height:58px;border-radius:14px;border:3px dashed var(--line);display:grid;place-items:center;font-family:var(--han);font-size:34px;font-weight:900;color:var(--accent)}
+.demo .q span.f{border-style:solid;border-color:var(--accent);background:#FFF1E6}
+
+/* play */
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:10px}
+.puzzle{width:100%;max-width:860px;background:#fff;border-radius:32px;padding:clamp(20px,4vw,40px);text-align:center;box-shadow:0 18px 50px rgba(160,80,10,.14);position:relative}
+.puzzle .no{position:absolute;left:20px;top:16px;font-weight:800;font-size:13px;color:var(--muted)}
+.emo{font-family:var(--emo);font-size:clamp(56px,11vw,124px);line-height:1.15;letter-spacing:clamp(4px,1vw,14px);word-break:keep-all;animation:pop .4s ease-out}
+@keyframes pop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.slots{display:flex;justify-content:center;gap:clamp(6px,1.4vw,14px);margin-top:20px;flex-wrap:wrap}
+.slot{width:clamp(48px,9vw,84px);aspect-ratio:1;border-radius:16px;border:3px dashed var(--line);display:grid;place-items:center;font-family:var(--han);font-weight:900;font-size:clamp(28px,5.5vw,52px);color:var(--accent);background:#FFFCF6}
+.slot.f{border-style:solid;border-color:var(--accent);background:#FFF1E6;animation:pop .3s}
+.slot.ok{border-color:var(--ok);color:var(--ok);background:#E8F7EF}
+.hints{display:flex;flex-direction:column;gap:6px;margin-top:16px;min-height:10px}
+.hint{font-size:clamp(15px,2vw,19px);color:var(--muted);animation:pop .3s}
+.hint b{color:var(--ink)}
+.hint.py{font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--blue)}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:860px}
+.ch{background:#fff;border:3px solid var(--line);border-radius:18px;padding:14px 10px;font-family:var(--han);font-weight:900;font-size:clamp(26px,4.4vw,40px);letter-spacing:4px;box-shadow:0 5px 0 var(--line);transition:transform .1s}
+.ch:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+.ch.ok{border-color:var(--ok);background:#E8F7EF;color:var(--ok);box-shadow:0 5px 0 #A9DCC2}
+.ch.no{border-color:var(--no);background:#FDECE8;color:var(--no);box-shadow:0 5px 0 #F2B8AC;animation:shake .35s}
+.ch:disabled{cursor:default}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.teams{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.team{min-width:130px;background:#fff;border:3px solid var(--line);border-radius:18px;padding:10px 14px;text-align:center}
+.team b{display:block;font-size:30px;font-variant-numeric:tabular-nums}
+.team span{font-size:13px;font-weight:700;color:var(--muted)}
+.team button{margin-top:6px;width:100%;height:36px;border-radius:10px;background:var(--ink);color:#fff;font-weight:800;font-size:14px}
+.team button:disabled{background:#D9CBB6}
+.team.t0{border-color:#F6B0A0}.team.t1{border-color:#9EC1F5}.team.t2{border-color:#A5DDBF}.team.t3{border-color:#F5D58A}
+/* answer card */
+.ans{width:100%;max-width:860px;background:#2B1A0E;color:#FFF4E2;border-radius:28px;padding:22px 26px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:center;animation:pop .35s}
+.ans .big{font-family:var(--han);font-weight:900;font-size:clamp(40px,7vw,64px);color:var(--accent2);letter-spacing:6px;grid-row:1/4}
+.ans .py{font-size:20px;font-weight:700}
+.ans .hv{font-size:15px;opacity:.75}
+.ans .mean{grid-column:1/3;font-size:17px;line-height:1.55;margin-top:8px;border-top:1px solid rgba(255,244,226,.18);padding-top:12px}
+.ans .vn{grid-column:1/3;font-size:16px}
+.ans .vn b{color:var(--accent2)}
+.ans .say{grid-column:1/3;justify-self:start;margin-top:6px;background:rgba(255,244,226,.12);color:#FFF4E2;height:40px;padding:0 16px;border-radius:12px;font-weight:700;font-size:14px}
+.res{font-weight:800;font-size:18px}
+.res.ok{color:var(--ok)}.res.no{color:var(--no)}
+/* end */
+.end{flex:1;display:grid;place-items:center;padding:24px 0}
+.end .card{background:#fff;border-radius:28px;padding:30px 26px;max-width:560px;width:100%;text-align:center;box-shadow:0 18px 50px rgba(160,80,10,.14)}
+.end .trophy{font-family:var(--emo);font-size:64px}
+.end h2{font-size:26px;font-weight:800;margin-top:8px}
+.end .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.end .stats div{background:var(--bg);border-radius:16px;padding:12px}
+.end .stats b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.end .stats span{font-size:12px;font-weight:700;color:var(--muted)}
+.end .list{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.end .list span{font-family:var(--han);font-weight:900;font-size:18px;padding:6px 10px;border-radius:10px;background:#E8F7EF;color:var(--ok)}
+.end .list span.x{background:#FDECE8;color:var(--no)}
+.end .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;gap:18px;padding-top:6px}
+  .demo{order:-1;max-width:320px;padding:20px}
+  .modes{grid-template-columns:1fr}
+  .choices{gap:8px}
+  .ans{grid-template-columns:1fr}.ans .big{grid-row:auto}
+  .brand small{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="/?tab=play">← Chơi</a>
+    <span class="brand">Đoán thành ngữ<small>看图猜成语</small></span>
+    <span class="sp"></span>
+    <span class="pill" id="hud" hidden>Câu <b id="hNo">1</b>/<span id="hTot">10</span><span id="hScoreWrap"> · Điểm <b id="hScore">0</b></span></span>
+  </div>
+
+  <section class="screen on" id="sStart">
+    <div class="hero">
+      <div>
+        <h1>Đoán thành ngữ<span>看图猜成语</span></h1>
+        <p class="lead">Mỗi câu là một chuỗi biểu tượng giấu một thành ngữ tiếng Trung. Nhìn, đoán, rồi mở gợi ý nếu bí: nghĩa tiếng Việt → pinyin → chữ đầu tiên.</p>
+        <div class="modes" id="modes">
+          <button class="mode on" data-m="solo"><i>🙋</i><b>Tự chơi</b><span>Chọn 1 trong 4 đáp án. Càng ít gợi ý càng nhiều điểm.</span></button>
+          <button class="mode" data-m="class"><i>🧑‍🏫</i><b>Cả lớp</b><span>Giáo viên chiếu, lớp chia đội giơ tay trả lời, giáo viên cộng điểm.</span></button>
+        </div>
+        <div class="opt"><div class="lab">Số câu</div><div class="seg" id="optN"><button data-v="10" class="on">10</button><button data-v="15">15</button><button data-v="20">20</button></div></div>
+        <div class="opt" id="optTeamsBox" hidden><div class="lab">Số đội</div><div class="seg" id="optTeams"><button data-v="2" class="on">2 đội</button><button data-v="3">3 đội</button><button data-v="4">4 đội</button></div></div>
+        <div class="cta"><button class="btn main" id="startBtn">Bắt đầu</button><span class="best" id="best"></span></div>
+      </div>
+      <div class="demo" aria-hidden="true">
+        <div class="e">🖌️🐍➕🦶</div>
+        <div class="q"><span class="f">画</span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="sPlay">
+    <div class="stage">
+      <div class="puzzle">
+        <span class="no" id="pNo"></span>
+        <div class="emo" id="pEmo" role="img"></div>
+        <div class="slots" id="pSlots"></div>
+        <div class="hints" id="pHints"></div>
+      </div>
+      <div class="ctrl" id="ctrl">
+        <button class="btn soft" id="hintBtn">💡 Gợi ý <span id="hintLeft"></span></button>
+        <button class="btn soft" id="revealBtn" hidden>👀 Xem đáp án</button>
+      </div>
+      <div class="choices" id="choices"></div>
+      <div class="teams" id="teams" hidden></div>
+      <div class="ans" id="ans" hidden></div>
+      <div class="ctrl"><span class="res" id="res"></span><button class="btn main" id="nextBtn" hidden>Câu tiếp →</button></div>
+    </div>
+  </section>
+
+  <section class="screen" id="sEnd">
+    <div class="end"><div class="card">
+      <div class="trophy" id="eTrophy">🏆</div>
+      <h2 id="eTitle"></h2>
+      <div class="stats" id="eStats"></div>
+      <div class="btns"><button class="btn main" id="againBtn">Chơi lại</button><button class="btn soft" id="homeBtn">Đổi chế độ</button></div>
+      <div class="list" id="eList"></div>
+    </div></div>
+  </section>
+</div>
+<script>
+// [thành ngữ, pinyin, Hán Việt, emoji gợi ý, nghĩa, tương đương tiếng Việt]
+const CY=[
+["画蛇添足","huà shé tiān zú","Họa xà thiêm túc","🖌️🐍➕🦶","Vẽ rắn thêm chân: làm thừa, hóa hỏng việc.","Vẽ rắn thêm chân"],
+["对牛弹琴","duì niú tán qín","Đối ngưu đàn cầm","🐂🪕👂","Gảy đàn cho trâu nghe: nói với người không hiểu, phí công.","Đàn gảy tai trâu / Nước đổ đầu vịt"],
+["井底之蛙","jǐng dǐ zhī wā","Tỉnh để chi oa","🕳️⬇️🐸","Con ếch dưới đáy giếng: người hiểu biết hạn hẹp.","Ếch ngồi đáy giếng"],
+["一石二鸟","yì shí èr niǎo","Nhất thạch nhị điểu","1️⃣🪨2️⃣🐦","Một hòn đá trúng hai con chim: một việc được hai lợi.","Một mũi tên trúng hai đích"],
+["守株待兔","shǒu zhū dài tù","Thủ chu đãi thố","🌳🧍⏳🐇","Ôm gốc cây chờ thỏ: trông chờ may mắn, không chịu cố gắng.","Ôm cây đợi thỏ"],
+["亡羊补牢","wáng yáng bǔ láo","Vong dương bổ lao","🐑💨🔨🏚️","Mất cừu mới sửa chuồng: sai rồi sửa vẫn còn kịp.","Mất bò mới lo làm chuồng"],
+["杯弓蛇影","bēi gōng shé yǐng","Bôi cung xà ảnh","🍷🏹➡️🐍","Thấy bóng cây cung trong chén rượu tưởng là rắn: đa nghi, tự dọa mình.","Sợ bóng sợ gió"],
+["画龙点睛","huà lóng diǎn jīng","Họa long điểm tình","🖌️🐉👁️","Vẽ rồng rồi điểm mắt: thêm chi tiết then chốt làm cả tác phẩm sống động.","Vẽ rồng điểm mắt"],
+["掩耳盗铃","yǎn ěr dào líng","Yểm nhĩ đạo linh","🙉🦹🔔","Bịt tai đi trộm chuông: tự lừa dối mình.","Bịt tai trộm chuông"],
+["狐假虎威","hú jiǎ hǔ wēi","Hồ giả hổ uy","🦊🐅😤","Cáo mượn oai hổ: dựa thế người khác để dọa nạt.","Cáo mượn oai hùm"],
+["马到成功","mǎ dào chéng gōng","Mã đáo thành công","🐎➡️🏆","Ngựa đến là thắng: vừa bắt tay vào đã thành công (lời chúc).","Mã đáo thành công"],
+["一见钟情","yí jiàn zhōng qíng","Nhất kiến chung tình","1️⃣👀💘","Vừa gặp đã yêu.","Yêu từ cái nhìn đầu tiên"],
+["半途而废","bàn tú ér fèi","Bán đồ nhi phế","🛣️½🛑","Đi nửa đường thì bỏ: làm dở dang.","Bỏ dở giữa chừng"],
+["九牛一毛","jiǔ niú yì máo","Cửu ngưu nhất mao","9️⃣🐂1️⃣🦱","Một sợi lông trên chín con trâu: phần cực nhỏ, không đáng kể.","Hạt cát giữa sa mạc"],
+["三心二意","sān xīn èr yì","Tam tâm nhị ý","3️⃣❤️2️⃣💭","Ba lòng hai ý: không chuyên tâm, do dự.","Đứng núi này trông núi nọ"],
+["一心一意","yì xīn yí yì","Nhất tâm nhất ý","1️⃣❤️1️⃣💭","Một lòng một ý: toàn tâm toàn ý.","Một lòng một dạ"],
+["七上八下","qī shàng bā xià","Thất thượng bát hạ","7️⃣⬆️8️⃣⬇️","Lòng dạ thấp thỏm, bồn chồn không yên.","Bồn chồn như lửa đốt"],
+["人山人海","rén shān rén hǎi","Nhân sơn nhân hải","🧑⛰️🧑🌊","Người như núi như biển: rất đông người.","Biển người"],
+["自言自语","zì yán zì yǔ","Tự ngôn tự ngữ","🧍💬🔁","Tự nói một mình.","Lẩm bẩm một mình"],
+["入乡随俗","rù xiāng suí sú","Nhập hương tùy tục","🧳➡️🏘️🎎","Đến nơi nào theo phong tục nơi đó.","Nhập gia tùy tục"],
+["雪中送炭","xuě zhōng sòng tàn","Tuyết trung tống thán","❄️🤲🔥","Đưa than giữa trời tuyết: giúp người đúng lúc khó khăn.","Một miếng khi đói bằng một gói khi no"],
+["锦上添花","jǐn shàng tiān huā","Cẩm thượng thiêm hoa","🧣➕🌸","Thêu hoa trên gấm: tốt lại càng thêm tốt.","Thêu hoa trên gấm"],
+["火上浇油","huǒ shàng jiāo yóu","Hỏa thượng kiêu du","🔥⬅️🛢️","Đổ dầu vào lửa: làm sự việc càng tệ hơn.","Đổ thêm dầu vào lửa"],
+["鸡飞蛋打","jī fēi dàn dǎ","Kê phi đản đả","🐔💨🥚💥","Gà bay mất, trứng vỡ: mất cả hai, trắng tay.","Mất cả chì lẫn chài"],
+["对症下药","duì zhèng xià yào","Đối chứng hạ dược","🤒🎯💊","Bốc thuốc đúng bệnh: giải quyết đúng gốc vấn đề.","Bắt đúng bệnh, bốc đúng thuốc"],
+["一举两得","yì jǔ liǎng dé","Nhất cử lưỡng đắc","1️⃣🏋️2️⃣🎁","Làm một việc được hai lợi.","Một công đôi việc"],
+["五颜六色","wǔ yán liù sè","Ngũ nhan lục sắc","5️⃣🎨6️⃣🌈","Năm màu sáu sắc: nhiều màu sặc sỡ.","Đủ màu sắc"],
+["大海捞针","dà hǎi lāo zhēn","Đại hải lao châm","🌊🤿🪡","Mò kim dưới biển: việc cực khó tìm.","Mò kim đáy bể"],
+["胸有成竹","xiōng yǒu chéng zhú","Hung hữu thành trúc","🫀🎋😎","Trong lòng đã có sẵn hình cây trúc: đã tính kỹ, rất tự tin.","Đã liệu trước, nắm chắc trong tay"],
+["塞翁失马","sài wēng shī mǎ","Tái ông thất mã","👴🐎❓🍀","Ông lão ở biên ải mất ngựa: trong họa có phúc.","Trong cái rủi có cái may"],
+["刻舟求剑","kè zhōu qiú jiàn","Khắc chu cầu kiếm","🔪🛶🔍🗡️","Khắc dấu trên thuyền để tìm kiếm rơi xuống sông: cứng nhắc, không biết thay đổi.","Khắc thuyền tìm gươm"],
+["拔苗助长","bá miáo zhù zhǎng","Bạt miêu trợ trưởng","✋🌱⬆️📏","Nhổ mạ lên cho mau lớn: nóng vội làm hỏng việc.","Dục tốc bất đạt"],
+["叶公好龙","yè gōng hào lóng","Diệp công hiếu long","👨❤️🐉😱","Diệp công thích rồng nhưng gặp rồng thật lại sợ: ngoài miệng thích, thật lòng thì không.","Nói một đằng làm một nẻo"],
+["卧虎藏龙","wò hǔ cáng lóng","Ngọa hổ tàng long","🛌🐅🙈🐉","Hổ nằm rồng ẩn: nơi có nhiều nhân tài chưa lộ diện.","Ngọa hổ tàng long"],
+["龙飞凤舞","lóng fēi fèng wǔ","Long phi phượng vũ","🐉🕊️🦚💃","Rồng bay phượng múa: nét chữ phóng khoáng, bay bướm.","Rồng bay phượng múa"],
+["鹤立鸡群","hè lì jī qún","Hạc lập kê quần","🦩🐔🐔🐔","Hạc đứng giữa bầy gà: nổi bật hẳn lên.","Hạc giữa bầy gà"],
+["如鱼得水","rú yú dé shuǐ","Như ngư đắc thủy","🐟💧😊","Như cá gặp nước: gặp được môi trường hợp với mình.","Như cá gặp nước"],
+["虎头蛇尾","hǔ tóu shé wěi","Hổ đầu xà vĩ","🐯➕🐍","Đầu hổ đuôi rắn: bắt đầu hoành tráng, kết thúc qua loa.","Đầu voi đuôi chuột"],
+["笨鸟先飞","bèn niǎo xiān fēi","Bổn điểu tiên phi","🐦🤪🛫1️⃣","Chim vụng bay trước: biết mình chậm thì bắt đầu sớm hơn.","Cần cù bù thông minh"],
+["水滴石穿","shuǐ dī shí chuān","Thủy tích thạch xuyên","💧💧🪨🕳️","Giọt nước nhỏ mãi làm thủng đá: kiên trì sẽ thành công.","Nước chảy đá mòn"],
+["一路平安","yí lù píng ān","Nhất lộ bình an","🛣️🕊️✈️","Cả chặng đường bình an (lời chúc người đi xa).","Thượng lộ bình an"],
+["心花怒放","xīn huā nù fàng","Tâm hoa nộ phóng","❤️🌸💥😄","Hoa trong lòng nở rộ: vui sướng vô cùng.","Vui như mở cờ trong bụng"],
+["一针见血","yì zhēn jiàn xiě","Nhất châm kiến huyết","💉🩸🎯","Một mũi kim thấy máu: nói trúng ngay chỗ then chốt.","Nói trúng tim đen"],
+["爱屋及乌","ài wū jí wū","Ái ốc cập ô","❤️🏠➕⬛🐦","Yêu ngôi nhà, yêu cả con quạ trên mái: yêu ai yêu cả những gì liên quan.","Yêu ai yêu cả đường đi lối về"],
+["车水马龙","chē shuǐ mǎ lóng","Xa thủy mã long","🚗💧🐎🐉","Xe như nước chảy, ngựa như rồng: phố xá tấp nập.","Xe cộ nườm nượp"],
+["风雨同舟","fēng yǔ tóng zhōu","Phong vũ đồng chu","🌬️🌧️👫🛶","Cùng thuyền trong mưa gió: cùng nhau vượt khó.","Cùng hội cùng thuyền"],
+["指鹿为马","zhǐ lù wéi mǎ","Chỉ lộc vi mã","👉🦌🟰🐎","Chỉ hươu bảo là ngựa: cố tình đổi trắng thay đen.","Đổi trắng thay đen"],
+["望梅止渴","wàng méi zhǐ kě","Vọng mai chỉ khát","👀🍑🚫🥵","Nghĩ đến quả mơ chua để đỡ khát: tự an ủi bằng ảo tưởng.","Vẽ bánh cho đỡ đói"],
+["熟能生巧","shú néng shēng qiǎo","Thục năng sinh xảo","🔁🔁🔁➡️✨","Làm nhiều thành quen, quen thì sinh khéo.","Có công mài sắt có ngày nên kim"],
+["不翼而飞","bú yì ér fēi","Bất dực nhi phi","🚫🪽💨📦","Không có cánh mà bay: đồ vật bỗng dưng biến mất.","Không cánh mà bay"],
+["半斤八两","bàn jīn bā liǎng","Bán cân bát lượng","½⚖️🟰8️⃣","Nửa cân và tám lạng (bằng nhau theo cân cũ): ngang ngửa nhau.","Kẻ tám lạng người nửa cân"],
+["东张西望","dōng zhāng xī wàng","Đông trương tây vọng","👈👀👉👀","Nhìn đông ngó tây: nhìn ngang nhìn dọc.","Nhìn ngang ngó dọc"],
+["手忙脚乱","shǒu máng jiǎo luàn","Thủ mang cước loạn","✋💨🦶🌀","Tay bận chân rối: luống cuống.","Luống cuống tay chân"],
+["眉开眼笑","méi kāi yǎn xiào","Mi khai nhãn tiếu","🤨➡️😄","Mày giãn mắt cười: mặt mày hớn hở.","Mặt mày hớn hở"],
+["口是心非","kǒu shì xīn fēi","Khẩu thị tâm phi","👄✅❤️❌","Miệng nói phải, lòng nghĩ trái.","Nói một đằng nghĩ một nẻo"],
+["一刀两断","yì dāo liǎng duàn","Nhất đao lưỡng đoạn","1️⃣🔪2️⃣✂️","Một nhát dao chặt làm hai: cắt đứt quan hệ dứt khoát.","Cắt đứt quan hệ"],
+["种瓜得瓜","zhòng guā dé guā","Chủng qua đắc qua","🌱🍈➡️🍈","Trồng dưa được dưa: làm gì được nấy.","Gieo nhân nào gặt quả nấy"],
+["盲人摸象","máng rén mō xiàng","Manh nhân mô tượng","🧑‍🦯✋🐘","Người mù sờ voi: chỉ thấy một phần mà tưởng là toàn bộ.","Thầy bói xem voi"],
+["杞人忧天","qǐ rén yōu tiān","Kỷ nhân ưu thiên","🧑😰🌌⬇️","Người nước Kỷ lo trời sập: lo lắng vô cớ.","Lo bò trắng răng"],
+["班门弄斧","bān mén nòng fǔ","Ban môn lộng phủ","🚪👷🪓","Múa rìu trước cửa Lỗ Ban: khoe tài trước người giỏi hơn.","Múa rìu qua mắt thợ"],
+["老马识途","lǎo mǎ shí tú","Lão mã thức đồ","👴🐎🗺️","Ngựa già nhớ đường: người từng trải thông thạo việc.","Gừng càng già càng cay"],
+["打草惊蛇","dǎ cǎo jīng shé","Đả thảo kinh xà","👊🌿😱🐍","Đánh cỏ làm rắn sợ: hành động thiếu cẩn thận khiến đối phương đề phòng.","Rút dây động rừng"],
+["一箭双雕","yí jiàn shuāng diāo","Nhất tiễn song điêu","🏹🦅🦅","Một mũi tên bắn hai con chim điêu: một việc được hai mục đích.","Một mũi tên trúng hai đích"],
+["走马观花","zǒu mǎ guān huā","Tẩu mã quan hoa","🏇👀🌺","Cưỡi ngựa xem hoa: xem qua loa, không kỹ.","Cưỡi ngựa xem hoa"],
+["闻鸡起舞","wén jī qǐ wǔ","Văn kê khởi vũ","👂🐓🌅🤺","Nghe gà gáy dậy múa kiếm: chăm chỉ rèn luyện.","Siêng năng rèn luyện"],
+["狼吞虎咽","láng tūn hǔ yàn","Lang thôn hổ yết","🐺🍖🐯😋","Nuốt như sói, ăn như hổ: ăn ngấu nghiến.","Ăn ngấu nghiến"],
+["鸦雀无声","yā què wú shēng","Nha tước vô thanh","🐦🐦🔇","Quạ sẻ không kêu: im phăng phắc.","Im phăng phắc"],
+["天长地久","tiān cháng dì jiǔ","Thiên trường địa cửu","🌌🌍♾️","Trời dài đất lâu: mãi mãi, bền lâu.","Trời đất bền lâu"],
+["百闻不如一见","bǎi wén bù rú yí jiàn","Bách văn bất như nhất kiến","💯👂🚫1️⃣👀","Nghe trăm lần không bằng thấy một lần.","Trăm nghe không bằng một thấy"],
+];
+
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a};
+const store={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(_){}}};
+const ITEMS=CY.map(a=>({w:a[0],py:a[1],hv:a[2],e:a[3],m:a[4],vn:a[5]}));
+let MODE='solo', N=10, TEAMS=2;
+let qs=[], qi=0, hintN=0, done=false, score=0, right=0, log=[], teamPts=[];
+let zhVoice=null; function pickVoice(){ const v=speechSynthesis.getVoices(); zhVoice=v.find(x=>/zh[-_]CN/i.test(x.lang))||v.find(x=>/^zh/i.test(x.lang))||null; }
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+function say(t){ if(!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='zh-CN'; if(zhVoice) u.voice=zhVoice; u.rate=.75; speechSynthesis.speak(u); }
+function seg(id,cb){ $(id).addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; $(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); cb(+b.dataset.v);}); }
+seg('optN',v=>N=v); seg('optTeams',v=>TEAMS=v);
+$('modes').addEventListener('click',e=>{const b=e.target.closest('.mode'); if(!b) return; MODE=b.dataset.m; $('modes').querySelectorAll('.mode').forEach(x=>x.classList.toggle('on',x===b)); $('optTeamsBox').hidden=MODE!=='class'; showBest();});
+function showBest(){ const b=store.get('cy_best'); $('best').textContent=MODE==='solo'&&b?`Kỷ lục: ${b} điểm`:''; }
+showBest();
+function show(id){ ['sStart','sPlay','sEnd'].forEach(s=>$(s).classList.toggle('on',s===id)); $('hud').hidden=id!=='sPlay'; scrollTo(0,0); }
+const HINTS=3;
+function start(){
+  qs=shuffle(ITEMS).slice(0,Math.min(N,ITEMS.length)); qi=0; score=0; right=0; log=[]; teamPts=Array(TEAMS).fill(0);
+  $('hTot').textContent=qs.length; $('hScoreWrap').hidden=MODE!=='solo'; $('hScore').textContent=0;
+  show('sPlay'); q();
+}
+function q(){
+  const it=qs[qi]; hintN=0; done=false;
+  $('hNo').textContent=qi+1; $('pNo').textContent=`Câu ${qi+1}`;
+  $('pEmo').textContent=it.e; $('pEmo').setAttribute('aria-label','Chuỗi biểu tượng câu '+(qi+1));
+  $('pEmo').style.animation='none'; void $('pEmo').offsetWidth; $('pEmo').style.animation='';
+  $('pSlots').innerHTML=[...it.w].map(()=>'<span class="slot"></span>').join('');
+  $('pHints').innerHTML=''; $('ans').hidden=true; $('res').textContent=''; $('nextBtn').hidden=true;
+  $('hintBtn').disabled=false; $('hintLeft').textContent=`(${HINTS})`;
+  if(MODE==='solo'){
+    $('revealBtn').hidden=true; $('teams').hidden=true; $('choices').hidden=false;
+    const others=shuffle(ITEMS.filter(x=>x.w!==it.w&&x.w.length===it.w.length));
+    // ưu tiên đáp án nhiễu có chung chữ hoặc chung biểu tượng
+    const share=others.filter(x=>[...x.w].some(c=>it.w.includes(c))||[...x.e].some(c=>/\p{Extended_Pictographic}/u.test(c)&&it.e.includes(c)));
+    const opts=shuffle([it,...[...new Set([...share.slice(0,2),...others])].slice(0,3)]);
+    $('choices').innerHTML=opts.map(o=>`<button class="ch" data-w="${o.w}">${o.w}</button>`).join('');
+  } else {
+    $('revealBtn').hidden=false; $('choices').hidden=true; $('teams').hidden=true;
+  }
+}
+function hint(){
+  if(done||hintN>=HINTS) return; const it=qs[qi]; hintN++;
+  if(hintN===1) $('pHints').insertAdjacentHTML('beforeend',`<div class="hint">Nghĩa: <b>${it.m}</b></div>`);
+  if(hintN===2) $('pHints').insertAdjacentHTML('beforeend',`<div class="hint py">${it.py}</div>`);
+  if(hintN===3){ const s=$('pSlots').children[0]; s.textContent=it.w[0]; s.classList.add('f'); }
+  $('hintLeft').textContent=`(${HINTS-hintN})`; if(hintN>=HINTS) $('hintBtn').disabled=true;
+}
+function reveal(ok){
+  done=true; const it=qs[qi];
+  [...$('pSlots').children].forEach((s,i)=>{ s.textContent=it.w[i]; s.classList.add('f'); if(ok!==false) s.classList.add('ok'); });
+  $('ans').innerHTML=`<div class="big">${it.w}</div><div class="py">${it.py}</div><div class="hv">Hán Việt: ${it.hv}</div><div></div>
+    <div class="mean">${it.m}</div><div class="vn">Tiếng Việt tương đương: <b>${it.vn}</b></div><button class="say" id="sayBtn">🔊 Nghe đọc</button>`;
+  $('ans').hidden=false; $('sayBtn').onclick=()=>say(it.w); say(it.w);
+  $('hintBtn').disabled=true; $('revealBtn').hidden=true;
+  $('nextBtn').hidden=false; $('nextBtn').textContent=qi+1<qs.length?'Câu tiếp →':'Xem kết quả';
+  setTimeout(()=>$('nextBtn').scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+$('hintBtn').onclick=hint;
+$('choices').addEventListener('click',e=>{
+  const b=e.target.closest('.ch'); if(!b||done) return; const it=qs[qi]; const ok=b.dataset.w===it.w;
+  $('choices').querySelectorAll('.ch').forEach(x=>{ x.disabled=true; if(x.dataset.w===it.w) x.classList.add('ok'); });
+  if(!ok) b.classList.add('no');
+  const pts=ok?100-hintN*25:0; score+=pts; if(ok) right++; $('hScore').textContent=score;
+  $('res').className='res '+(ok?'ok':'no'); $('res').textContent=ok?`Chính xác! +${pts}`:'Chưa đúng rồi';
+  log.push([it.w,ok]); reveal(ok);
+});
+$('revealBtn').onclick=()=>{
+  reveal(); const pts=Math.max(1,3-hintN);
+  $('teams').hidden=false;
+  $('teams').innerHTML=teamPts.map((p,i)=>`<div class="team t${i}"><span>Đội ${i+1}</span><b id="tp${i}">${p}</b><button data-t="${i}">+${pts} điểm</button></div>`).join('');
+  $('res').className='res'; $('res').textContent='Đội nào trả lời đúng?';
+};
+$('teams').addEventListener('click',e=>{ const b=e.target.closest('button[data-t]'); if(!b) return; const t=+b.dataset.t; teamPts[t]+=Math.max(1,3-hintN); $('tp'+t).textContent=teamPts[t]; $('teams').querySelectorAll('button').forEach(x=>x.disabled=true); log.push([qs[qi].w,true]); $('res').textContent=`Đội ${t+1} ghi điểm!`; });
+$('nextBtn').onclick=()=>{ if(MODE==='class'&&log.length<=qi) log.push([qs[qi].w,false]); qi++; if(qi<qs.length) q(); else end(); };
+function end(){
+  if(MODE==='solo'){
+    const best=+store.get('cy_best')||0, rec=score>best; if(rec) store.set('cy_best',score);
+    $('eTrophy').textContent=right/qs.length>=.8?'🏆':right/qs.length>=.5?'🎉':'💪';
+    $('eTitle').textContent=(rec?'Kỷ lục mới! ':'')+`Đoán đúng ${right}/${qs.length} thành ngữ`;
+    $('eStats').innerHTML=`<div><b>${score}</b><span>điểm</span></div><div><b>${right}</b><span>câu đúng</span></div><div><b>${Math.round(right/qs.length*100)}%</b><span>chính xác</span></div>`;
+  } else {
+    const max=Math.max(...teamPts), win=teamPts.map((p,i)=>p===max?i+1:0).filter(Boolean);
+    $('eTrophy').textContent='🏆'; $('eTitle').textContent=max?`${win.length>1?'Hòa: Đội '+win.join(', '):'Đội '+win[0]} thắng!`:'Chưa đội nào ghi điểm';
+    $('eStats').innerHTML=teamPts.map((p,i)=>`<div><b>${p}</b><span>Đội ${i+1}</span></div>`).join('');
+    $('eStats').style.gridTemplateColumns=`repeat(${Math.min(TEAMS,4)},1fr)`;
+  }
+  $('eList').innerHTML=log.map(([w,ok])=>`<span class="${ok?'':'x'}">${w}</span>`).join('');
+  show('sEnd');
+}
+$('startBtn').onclick=start; $('againBtn').onclick=start; $('homeBtn').onclick=()=>{ show('sStart'); showBest(); };
+document.addEventListener('keydown',e=>{ if(!$('sPlay').classList.contains('on')) return;
+  if(e.key==='Enter'&&!$('nextBtn').hidden) $('nextBtn').click();
+  else if((e.key==='h'||e.key==='H')&&!$('hintBtn').disabled) hint();
+  else if(e.key===' '&&MODE==='class'&&!$('revealBtn').hidden){ e.preventDefault(); $('revealBtn').click(); }
+  else if(MODE==='solo'&&/^[1-4]$/.test(e.key)&&!done) $('choices').children[+e.key-1]?.click(); });
+</script>
+</body>
+</html>

@@ -327,6 +327,16 @@ const GAMES = [
     face: ["氵", "扌"],
   },
   {
+    key: "doan-thanh-ngu",
+    title: "Đoán thành ngữ",
+    zh: "看图猜成语",
+    desc: "Nhìn chuỗi biểu tượng, đoán thành ngữ tiếng Trung. Gợi ý nghĩa → pinyin → chữ đầu; xem đáp án có Hán Việt và câu tiếng Việt tương đương.",
+    tags: ["69 thành ngữ", "Tự chơi", "Chia đội cả lớp"],
+    href: "/game-doan-thanh-ngu.html",
+    bg: "from-[#7A2E05] to-[#E8590C]",
+    face: ["成", "语"],
+  },
+  {
     key: "bom",
     title: "Bom nổ chậm",
     zh: "传炸弹",
