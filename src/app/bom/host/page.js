@@ -29,6 +29,7 @@ export default function BombHost() {
   const [code, setCode] = useState("");
   const [qr, setQr] = useState("");
   const [players, setPlayers] = useState([]);
+  const [order, setOrder] = useState([]);
   const [room, setRoom] = useState(null);
   const [err, setErr] = useState("");
   const [fuseP, setFuseP] = useState(0);
@@ -37,6 +38,7 @@ export default function BombHost() {
 
   const G = useRef({ pool: [], q: null, holder: null, fuseEnd: 0, fuseTotal: 1, round: 0, used: new Set(), done: new Set(), paused: false, pauseLeft: 0, lastTick: 0 });
   const playersRef = useRef([]);
+  const orderRef = useRef([]); // thứ tự truyền bom = thứ tự vào phòng
   const unsub = useRef([]);
   const AC = useRef(null);
 
@@ -97,6 +99,9 @@ export default function BombHost() {
       const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       list.sort((a, b) => (b.score || 0) - (a.score || 0) || (a.booms || 0) - (b.booms || 0));
       playersRef.current = list; setPlayers(list);
+      const ms = (p) => (p.joinedAt && p.joinedAt.toMillis ? p.joinedAt.toMillis() : Number.MAX_SAFE_INTEGER);
+      const ord = list.slice().sort((a, b) => ms(a) - ms(b) || a.id.localeCompare(b.id));
+      orderRef.current = ord; setOrder(ord);
     }));
     unsub.current.push(onSnapshot(doc(db, ROOMS, c), (s) => setRoom(s.data() || null)));
     // nghe câu trả lời
@@ -115,19 +120,32 @@ export default function BombHost() {
     return q;
   }
   const nameOf = (pid) => playersRef.current.find((p) => p.id === pid)?.name || "?";
+  // người kế tiếp theo vòng tròn; nếu người hiện tại đã rời phòng thì đi tiếp từ vị trí cũ
+  function nextOf(pid) {
+    const ord = orderRef.current, g = G.current;
+    if (!ord.length) return null;
+    let i = ord.findIndex((p) => p.id === pid);
+    if (i < 0) i = (g.pos ?? -1);
+    else g.pos = i;
+    const j = (i + 1) % ord.length;
+    return ord[j].id;
+  }
+  const posOf = (pid) => orderRef.current.findIndex((p) => p.id === pid);
 
   async function startRound(c = code) {
     const g = G.current, list = playersRef.current;
     if (!list.length) { setErr("Chưa có học sinh nào vào phòng."); return; }
     g.round += 1;
-    const others = list.filter((p) => p.id !== g.holder);
-    g.holder = pickOne(others.length ? others : list).id;
+    // ván đầu: bạn số 1 · ván sau: bạn ngồi sau người vừa bị nổ
+    g.holder = g.holder ? nextOf(g.holder) : orderRef.current[0].id;
+    g.pos = posOf(g.holder);
     const f = FUSES.find((x) => x.k === fuse);
     g.fuseTotal = (f.min + Math.random() * (f.max - f.min)) * 1000;
     g.fuseEnd = Date.now() + g.fuseTotal; g.paused = false;
     const q = nextQuestion();
     setPhase("play");
-    await updateDoc(doc(db, ROOMS, c), { status: "play", round: g.round, holder: g.holder, holderName: nameOf(g.holder), q: publicQuestion(q), last: null, passes: 0 });
+    const nx = nextOf(g.holder);
+    await updateDoc(doc(db, ROOMS, c), { status: "play", round: g.round, holder: g.holder, holderName: nameOf(g.holder), next: nx, nextName: nameOf(nx), q: publicQuestion(q), last: null, passes: 0 });
     tone(523, 0, 0.15, "triangle"); tone(784, 0.12, 0.2, "triangle");
   }
 
@@ -141,12 +159,12 @@ export default function BombHost() {
     const pRef = doc(db, ROOMS, c, "players", a.pid);
     if (ok) {
       updateDoc(pRef, { score: increment(10), correct: increment(1) }).catch(() => {});
-      const others = playersRef.current.filter((p) => p.id !== a.pid);
-      const to = others.length ? pickOne(others).id : a.pid;
-      g.holder = to;
+      const to = nextOf(a.pid) || a.pid;
+      g.holder = to; g.pos = posOf(to);
+      const nx = nextOf(to);
       const q = nextQuestion();
       tone(660, 0, 0.1, "triangle"); tone(990, 0.08, 0.15, "triangle");
-      await updateDoc(doc(db, ROOMS, c), { holder: to, holderName: nameOf(to), q: publicQuestion(q), last: { type: "ok", pid: a.pid, name: nameOf(a.pid), word: w, at: Date.now() }, passes: increment(1) });
+      await updateDoc(doc(db, ROOMS, c), { holder: to, holderName: nameOf(to), next: nx, nextName: nameOf(nx), q: publicQuestion(q), last: { type: "ok", pid: a.pid, name: nameOf(a.pid), word: w, at: Date.now() }, passes: increment(1) });
     } else {
       updateDoc(pRef, { wrong: increment(1) }).catch(() => {});
       const q = nextQuestion();
@@ -240,7 +258,7 @@ export default function BombHost() {
             <ul className="mt-6 space-y-2 text-[17px] text-[#3F5546] text-left inline-block">
               <li>📱 Học sinh quét mã QR, nhập tên, chơi trên điện thoại.</li>
               <li>💣 Bom rơi vào tay ai, người đó phải trả lời câu hỏi.</li>
-              <li>✅ Đúng → bom chuyền sang bạn khác · ❌ Sai → câu mới, bom vẫn trong tay.</li>
+              <li>✅ Đúng → bom chuyền sang <b>bạn kế tiếp theo thứ tự</b> · ❌ Sai → câu mới, bom vẫn trong tay.</li>
               <li>💥 Ngòi nổ ngẫu nhiên — bom nổ ở tay ai, người đó bị trừ điểm.</li>
               <li>📺 Màn hình này phát trực tiếp cho cả lớp xem.</li>
             </ul>
@@ -317,15 +335,16 @@ export default function BombHost() {
             </div>
             <div className="flex flex-wrap gap-2.5 min-h-[120px] content-start">
               {players.length === 0 && <div className="text-[#5B7262]">Đang chờ học sinh quét mã…</div>}
-              {players.map((p) => (
-                <span key={p.id} className="inline-flex items-center gap-2 pl-4 pr-2 py-2 rounded-full bg-white border border-[#C9D6BE] font-bold text-lg" style={{ animation: "pop .3s" }}>
+              {order.map((p, i) => (
+                <span key={p.id} className="inline-flex items-center gap-2 pl-2 pr-2 py-2 rounded-full bg-white border border-[#C9D6BE] font-bold text-lg" style={{ animation: "pop .3s" }}>
+                  <b className="w-7 h-7 rounded-full bg-[#E8590C] text-white text-sm grid place-items-center">{i + 1}</b>
                   {p.name}
                   <button onClick={() => kick(p.id)} aria-label={`Mời ${p.name} ra khỏi phòng`} className="w-7 h-7 rounded-full hover:bg-[#FDE8E8] text-[#9AAB9E] hover:text-[#C0392B]">×</button>
                 </span>
               ))}
             </div>
             <button disabled={players.length < 1} onClick={() => startRound()} className="h-16 rounded-2xl bg-[#E8590C] hover:bg-[#C94A08] disabled:opacity-40 text-white text-xl font-extrabold">💣 Châm ngòi — bắt đầu!</button>
-            <p className="text-sm text-[#5B7262]">Nên có từ 3 bạn trở lên. Học sinh vào muộn vẫn được tham gia giữa chừng.</p>
+            <p className="text-sm text-[#5B7262]">Bom được truyền <b>theo thứ tự số</b> (thứ tự vào phòng): 1 → 2 → 3 → … rồi quay lại 1. Nên có từ 3 bạn trở lên. Bạn vào muộn được xếp cuối hàng.</p>
           </section>
         </main>
       )}
@@ -347,6 +366,7 @@ export default function BombHost() {
                 <Bomb p={fuseP} danger={fuseP > 0.7} />
                 <div className="text-sm font-bold text-[#5B7262] mt-2">Bom đang ở tay</div>
                 <div className="text-3xl md:text-4xl font-extrabold text-[#C0392B] text-center break-words">{holderName}</div>
+                {room?.nextName && <div className="mt-2 text-sm font-bold text-[#5B7262] text-center">Tiếp theo ➜ <span className="text-[#13261C]">{room.nextName}</span></div>}
               </div>
               <div>
                 {q ? (

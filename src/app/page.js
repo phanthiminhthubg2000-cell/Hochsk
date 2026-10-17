@@ -340,7 +340,7 @@ const GAMES = [
     key: "bom",
     title: "Bom nổ chậm",
     zh: "传炸弹",
-    desc: "Học sinh quét QR, chơi trên điện thoại. Bom rơi vào tay ai thì người đó trả lời — đúng thì chuyền bom, ngòi nổ ngẫu nhiên. Màn hình giáo viên phát trực tiếp.",
+    desc: "Học sinh quét QR, chơi trên điện thoại. Bom rơi vào tay ai thì người đó trả lời — đúng thì chuyền cho bạn kế tiếp theo thứ tự, ngòi nổ ngẫu nhiên. Màn hình giáo viên phát trực tiếp.",
     tags: ["Quét QR", "Điện thoại", "Cả lớp"],
     href: "/bom/host",
     bg: "from-[#3A1206] to-[#C2410C]",

@@ -174,7 +174,9 @@ export default function BombPlayer() {
         <div className="text-lg font-bold text-[#5B7262] mt-3">Bom đang ở chỗ</div>
         <div className="text-4xl font-extrabold text-[#C0392B] break-words">{room.holderName}</div>
         {lastMine && room.last.type === "ok" && <div className="mt-6 p-4 rounded-2xl bg-[#E7F5EC] text-[#1E5C38] font-bold" style={{ animation: "pop .3s" }}>✅ Chính xác! +10 · Bạn đã chuyền bom đi 😮‍💨</div>}
-        <div className="mt-6 text-[#5B7262]">Sẵn sàng nhé — bom có thể bay sang bạn bất cứ lúc nào!</div>
+        {room.next === pid
+          ? <div className="mt-6 p-4 rounded-2xl bg-[#FFF4DE] text-[#8A5A00] font-extrabold text-lg" style={{ animation: "pop .3s" }}>⚠️ Bạn là người tiếp theo — chuẩn bị!</div>
+          : <div className="mt-6 text-[#5B7262]">Tiếp theo: <b>{room.nextName}</b> · bom đi theo thứ tự, sắp đến lượt bạn đấy!</div>}
       </div>
     );
   }
