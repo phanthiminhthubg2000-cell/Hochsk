@@ -106,7 +106,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 .next{background:linear-gradient(180deg,#3fe28c,#159a52);color:#04230f;box-shadow:0 5px 0 #0c6a37}
 .note{text-align:center;color:var(--mute);font-size:14px;min-height:20px}
 /* ladder */
-.ladder{width:250px;flex:none;background:rgba(6,16,60,.75);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column-reverse;gap:4px;align-self:center}
+.ladder{width:250px;flex:none;max-height:86vh;overflow-y:auto;background:rgba(6,16,60,.75);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column-reverse;gap:4px;align-self:center}
 .ladder div{display:flex;justify-content:space-between;padding:7px 12px;border-radius:10px;font-weight:800;font-size:16px;color:#c6d4ff}
 .ladder div i{font-style:normal;color:var(--mute);width:26px}
 .ladder div.safe{color:#fff}
@@ -154,8 +154,8 @@ button{font:inherit;cursor:pointer;color:inherit}
   <div class="setup-grid">
     <div class="hero">
       <div class="disc"><span>百万</span></div>
-      <h1>10 câu hỏi. <em>1.000.000 lá</em>.</h1>
-      <p>Câu hỏi khó dần · 3 quyền trợ giúp · 2 mốc an toàn. Bạn đi được đến câu thứ mấy?</p>
+      <h1><span id="heroN">10</span> câu hỏi. <em>1.000.000 lá</em>.</h1>
+      <p>Số câu = <b>số từ vựng</b> của bài đã chọn · câu hỏi khó dần · 3 quyền trợ giúp · cứ 5 câu có một mốc an toàn. Bạn đi được đến câu thứ mấy?</p>
     </div>
     <div class="panel">
       <div class="lbl">Cấp độ</div>
@@ -179,9 +179,9 @@ button{font:inherit;cursor:pointer;color:inherit}
   </div>
   <div class="guide panel" id="guide">
     <ol>
-      <li>Mỗi lượt <b>10 câu</b>, mỗi câu 4 đáp án A · B · C · D. Câu càng về sau càng khó (câu 8–10 có đáp án gây nhiễu cùng âm khác thanh điệu).</li>
+      <li>Mỗi lượt có <b><span class="nQ">10</span> câu</b> — đúng bằng <b>tổng số từ vựng</b> của các bài đã chọn, mỗi từ xuất hiện một lần. Mỗi câu 4 đáp án A · B · C · D. Câu càng về sau càng khó (nhóm câu cuối có đáp án gây nhiễu cùng âm khác thanh điệu).</li>
       <li>Chọn đáp án → bấm <b>🔒 Chốt đáp án</b>. Đúng thì leo lên bậc tiếp theo trên thang điểm.</li>
-      <li><b>Mốc an toàn</b> ở câu 5 (2.000 lá) và câu 10. Trả lời sai sẽ lùi về mốc an toàn gần nhất.</li>
+      <li><b>Mốc an toàn</b> ở các câu 5, 10, 15… và câu cuối. Trả lời sai sẽ lùi về mốc an toàn gần nhất.</li>
       <li>3 quyền trợ giúp, mỗi quyền dùng 1 lần: <b>50:50</b> (bỏ 2 đáp án sai) · <b>👥 Hỏi cả lớp</b> (biểu đồ bình chọn — cô có thể cho cả lớp giơ tay thật) · <b>🔄 Đổi câu</b> (thay câu hỏi khác cùng độ khó).</li>
       <li>Không chắc chắn? Bấm <b>🏳 Dừng cuộc chơi</b> để giữ số lá đang có.</li>
       <li>Phím tắt: <b>A B C D</b> chọn · <b>Enter</b> chốt · <b>F</b> toàn màn hình.</li>
@@ -226,7 +226,7 @@ button{font:inherit;cursor:pointer;color:inherit}
     <div class="rmsg" id="rMsg"></div>
     <div class="rsub" id="rSub"></div>
     <div class="rbtn">
-      <button class="main" id="newBtn">▶ Lượt mới (10 từ khác)</button>
+      <button class="main" id="newBtn">▶ Lượt mới (xáo lại câu hỏi)</button>
       <button id="homeBtn">⚙ Đổi bài</button>
     </div>
     <div class="rlist" id="rList"></div>
@@ -247,8 +247,11 @@ const rnd=a=>a[Math.random()*a.length|0];
 let tt;function toast(m,ms){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),ms||2600)}
 const fmt=n=>n.toLocaleString('vi-VN');
 const V=window.VOCAB;
-const LADDER=[100,200,500,1000,2000,5000,10000,50000,200000,1000000];
-const SAFE=[4,9];
+let LADDER=[100,200,500,1000,2000,5000,10000,50000,200000,1000000];
+let SAFE=[4,9];
+function nice(v){if(v<1000)return Math.round(v/50)*50;if(v<10000)return Math.round(v/500)*500;const m=Math.pow(10,Math.floor(Math.log10(v))-1);return Math.round(v/m)*m}
+function buildLadder(n){n=Math.max(1,n);const L=[];for(let i=0;i<n;i++){let v=n===1?1000000:nice(100*Math.pow(10000,i/(n-1)));if(L.length&&v<=L[L.length-1])v=L[L.length-1]+(v<1000?50:v<10000?500:1000);L.push(v)}L[n-1]=1000000;
+  for(let i=n-2;i>=0;i--)if(L[i]>=L[i+1])L[i]=L[i+1]-1;LADDER=L;SAFE=[];for(let i=4;i<n-2;i+=5)SAFE.push(i);SAFE.push(n-1)}
 const LET='ABCD';
 const KEY='hskg_millionaire_v1';
 let S={lv:0,les:[0],t:30,sound:true};
@@ -265,7 +268,7 @@ function renderSetup(){
   $('#lesBox').innerHTML=`<button data-les="all" class="${all?'on':''}"><b>✔</b>Tất cả ${L.length} bài</button>`+L.map((l,i)=>`<button data-les="${i}" class="${S.les.includes(i)?'on':''}"><b>${l.n}</b><span class="hz">${esc(l.t)}</span></button>`).join('');
   $$('#timeSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.t===S.t));
   $('#swSound').classList.toggle('on',S.sound);
-  $('#poolInfo').textContent=`· ${pool().length} từ`;
+  $('#poolInfo').textContent=`· ${pool().length} từ`;const N=pool().length;$('#heroN').textContent=N;$$('.nQ').forEach(e=>e.textContent=N);
   $('#lvNote').textContent=hasVi()?'Câu hỏi trộn: 汉字 ↔ nghĩa tiếng Việt ↔ pinyin.':'HSK 5: câu hỏi trộn 汉字 ↔ 释义 (giải thích tiếng Trung) ↔ pinyin.';
 }
 function pool(){const L=V[S.lv].lessons;const seen=new Set();const out=[];S.les.forEach(i=>L[i]&&L[i].w.forEach(w=>{if(!seen.has(w[0])){seen.add(w[0]);out.push(w)}}));return out}
@@ -282,7 +285,7 @@ function toneVariants(py){
 }
 
 /* ---------- questions ---------- */
-// độ khó theo câu: 0-2 dễ · 3-6 vừa · 7-9 khó
+// độ khó theo câu: 30% đầu dễ · 40% giữa vừa · 30% cuối khó
 function modesFor(w,lvl){
   const m=[];const vi=!!w[2],df=!!w[3];
   if(lvl===0){m.push('py2hz');if(vi)m.push('hz2vi','hz2vi');if(df)m.push('hz2def')}
@@ -291,7 +294,7 @@ function modesFor(w,lvl){
   return m}
 const KEYOF={hz2vi:2,vi2hz:0,hz2def:3,def2hz:0,py2hz:0,hz2py:1,hz2pyT:1};
 function makeQ(w,qi){
-  const lvl=qi<3?0:qi<7?1:2;const P=pool();
+  const n=G?G.words.length:10;const lvl=qi<n*.3?0:qi<n*.7?1:2;const P=pool();
   const mode=rnd(modesFor(w,lvl));const key=KEYOF[mode];
   const need=/vi/.test(mode)?2:/def/.test(mode)?3:0;
   let ds=[];
@@ -319,16 +322,14 @@ const vcls=k=>k===0?'hz':k===3?'df':'';
 /* ---------- round ---------- */
 const USED=new Set();
 function newWords(){const p=pool();if(p.length<4){toast('Hãy chọn bài có ít nhất 4 từ.');return null}
-  let fresh=shuf(p.filter(w=>!USED.has(w[0])));
-  if(fresh.length<11){USED.clear();fresh=fresh.concat(shuf(p.filter(w=>!fresh.includes(w))))}
-  const ws=fresh.slice(0,11);while(ws.length<11)ws.push(rnd(p));ws.forEach(w=>USED.add(w[0]));return ws}
+  return shuf(p)}
 let G=null;
 function start(){const ws=newWords();if(!ws)return;initAudio();
-  G={words:ws.slice(0,10),spare:ws.slice(10),i:0,sel:-1,lives:{f:1,a:1,s:1},log:[],state:'ask'};
+  buildLadder(ws.length);G={words:ws,spare:[],i:0,sel:-1,lives:{f:1,a:1,s:1},log:[],state:'ask'};
   show('game');$('#l50').disabled=$('#lAud').disabled=$('#lSwap').disabled=false;renderLadder();ask()}
 function ask(){
   const q=G.q=makeQ(G.words[G.i],G.i);G.sel=-1;G.state='ask';
-  $('#qno').textContent=`CÂU ${G.i+1} · ${fmt(LADDER[G.i])} LÁ`;
+  $('#qno').textContent=`CÂU ${G.i+1}/${G.words.length} · ${fmt(LADDER[G.i])} LÁ`;
   $('#qtext').innerHTML=qHTML(q);
   $('#answers').innerHTML=q.opts.map((o,k)=>`<button class="ans" data-k="${k}"><b>${LET[k]}:</b><span class="v ${vcls(q.key)}">${esc(o)}</span></button>`).join('');
   $('#lockBtn').disabled=true;$('#lockBtn').hidden=false;$('#nextBtn').hidden=true;$('#quitBtn').hidden=false;$('#note').textContent='';
@@ -342,7 +343,7 @@ function reveal(k){
   G.log.push({w:q.w,ok,pick:k>=0?q.opts[k]:'(hết giờ)'});
   $('#lockBtn').hidden=true;
   if(ok){beep('ok');$('#note').innerHTML=`✓ Chính xác! <b class="hz">${esc(q.w[0])}</b> · ${esc(q.w[1])}${q.w[2]?' · '+esc(q.w[2]):''}`;
-    if(G.i===9){setTimeout(()=>end('win'),1600);return}
+    if(G.i===G.words.length-1){setTimeout(()=>end('win'),1600);return}
     if(SAFE.includes(G.i)){toast(`🛡 Mốc an toàn ${fmt(LADDER[G.i])} lá!`);confetti(80)}
     $('#nextBtn').hidden=false;$('#quitBtn').hidden=false}
   else{beep('bad');$('#note').innerHTML=`✗ Đáp án đúng: <b>${LET[q.ans]}</b> · <span class="hz">${esc(q.w[0])}</span> · ${esc(q.w[1])}${q.w[2]?' · '+esc(q.w[2]):''}`;$('#quitBtn').hidden=true;setTimeout(()=>end('lose'),2600)}
@@ -351,7 +352,7 @@ function next(){G.i++;ask()}
 function quit(){if(!G)return;if(G.state==='ask'){stopTimer();G.state='rev'}
   confirmBox(`Dừng cuộc chơi và mang về <b style="color:var(--gold)">${fmt(G.i>0?LADDER[G.i-1]:0)}</b> lá?`,()=>end('quit'),()=>{if(G.log.length===G.i){G.state='ask';startTimer(true)}})}
 function prizeFor(kind){
-  if(kind==='win')return LADDER[9];
+  if(kind==='win')return LADDER[LADDER.length-1];
   if(kind==='quit')return G.log.length>G.i&&G.log[G.i].ok?LADDER[G.i]:(G.i>0?LADDER[G.i-1]:0);
   let p=0;SAFE.forEach(s=>{if(G.i>s)p=LADDER[s]});return p}
 function end(kind){stopTimer();const p=prizeFor(kind);G.state='end';show('result');
@@ -361,7 +362,7 @@ function end(kind){stopTimer();const p=prizeFor(kind);G.state='end';show('result
   $('#rSub').textContent=`Trả lời đúng ${c}/${G.log.length} câu · Trợ giúp đã dùng: ${3-(G.lives.f+G.lives.a+G.lives.s)}/3`;
   $('#rList').innerHTML=G.log.map((x,i)=>`<div><span class="m ${x.ok?'ok':'bad'}">${x.ok?'✓':'✗'}</span><span class="w">${esc(x.w[0])}</span><span class="d">Câu ${i+1} · <em>${esc(x.w[1])}</em>${x.w[2]?'<br>'+esc(x.w[2]):(x.w[3]?'<br><span class="hz">'+esc(x.w[3])+'</span>':'')}${x.ok?'':`<br><span style="color:var(--bad)">Đã chọn: ${esc(x.pick)}</span>`}</span></div>`).join('');
   if(kind==='win'){confetti(260);beep('win')}else beep('end')}
-function renderLadder(){$('#ladder').innerHTML=LADDER.map((v,i)=>`<div class="${SAFE.includes(i)?'safe ':''}${G&&i===G.i?'cur ':''}${G&&i<G.i?'done':''}"><i>${i+1}</i><span>${fmt(v)}</span></div>`).join('')}
+function renderLadder(){$('#ladder').innerHTML=LADDER.map((v,i)=>`<div class="${SAFE.includes(i)?'safe ':''}${G&&i===G.i?'cur ':''}${G&&i<G.i?'done':''}"><i>${i+1}</i><span>${fmt(v)}</span></div>`).join('');const c=$('#ladder .cur');if(c)c.scrollIntoView({block:'center',inline:'center'})}
 
 /* ---------- lifelines ---------- */
 function use50(){if(!G.lives.f||G.state!=='ask')return;G.lives.f=0;$('#l50').disabled=true;
@@ -379,7 +380,7 @@ function useAud(){if(!G.lives.a||G.state!=='ask')return;G.lives.a=0;$('#lAud').d
   setTimeout(()=>$$('.poll i').forEach(e=>e.style.height=(e.dataset.h*1.7)+'px'),60);
   $('#mClose').onclick=()=>{closeModal();startTimer(true)};beep('life')}
 function useSwap(){if(!G.lives.s||G.state!=='ask')return;G.lives.s=0;$('#lSwap').disabled=true;
-  G.words[G.i]=G.spare.length?G.spare.pop():rnd(pool());toast('🔄 Đã đổi câu hỏi mới!');ask()}
+  const cur=G.words[G.i];const later=G.words.slice(G.i+1);const cand=later.length?later:pool().filter(w=>w!==cur);const w=rnd(cand);const j=G.words.indexOf(w);if(j>G.i){G.words[j]=cur}G.words[G.i]=w;toast('🔄 Đã đổi câu hỏi mới!');ask()}
 
 /* ---------- modal ---------- */
 function modal(h){$('#mbox').innerHTML=h;$('#modal').classList.add('on')}
