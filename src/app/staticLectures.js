@@ -181,6 +181,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk5-2/LESSON_30.html"
  },
  {
+  "id": "static-hsk5-2-31",
+  "lectureName": "Bài 31 · 登门槛效应",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_31.html"
+ },
+ {
   "id": "static-hsk1-3-01",
   "lectureName": "Bài 1 · AI小语，你好！",
   "level": "HSK1 3.0",
