@@ -397,6 +397,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk2-3/LESSON_15.html"
  },
  {
+  "id": "static-hsk4-3-01",
+  "lectureName": "Bài 1 · 我们来中国学习了",
+  "level": "HSK4.1 3.0",
+  "fileUrl": "/lectures/hsk4-3/LESSON_01.html"
+ },
+ {
   "id": "static-ngu-am-1",
   "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
   "level": "HSK1 3.0",
