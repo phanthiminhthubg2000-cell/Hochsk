@@ -73,7 +73,7 @@ export const HSK3_BRIDGE = String.raw`
     var A = g("ANSWERS"), L = g("LISTENING"), R = g("READING"), W = g("WRITING") || {};
     var mk = function(key){ return nums(key).map(function(n){ var y = S(A[n]), a = S(key[n]); return { n: n, your: y, ans: a, ok: y !== "" && y === a }; }); };
     var wAuto = (W.part1 || []).map(function(it){ var y = S(A[it.num]), a = S(it.answer); return { n: it.num, your: y, ans: a, ok: y !== "" && y === a }; });
-    var items = (W.part2 || []).map(function(it){ return { n: it.num, text: S(A[it.num]) }; });
+    var items = (W.part2 || []).map(function(it){ return { n: it.num, text: S(A[it.num]), word: S(it.word), img: S(it.img), ref: S(it.sample) }; });
     return { listening: sec(mk(L.answers)), reading: sec(mk(R.answers)), writing: { items: items, auto: wAuto.length ? sec(wAuto) : null } };
   }
 
@@ -86,7 +86,9 @@ export const HSK3_BRIDGE = String.raw`
     document.querySelectorAll("textarea, input[type=text], input.write-sentence").forEach(function(el){
       var n = Number(el.dataset.q || (String(el.id || "").match(/(\d+)$/) || [])[1]);
       if (!n || seen[n]) return; seen[n] = 1;
-      items.push({ n: n, text: S(el.value), ref: S(REF[n]) });
+      var q = document.getElementById("q" + n) || el.closest("[data-q]");
+      var t = q && q.querySelector(".q-title"), im = q && q.querySelector("img"), w = q && q.querySelector(".writing-word");
+      items.push({ n: n, text: S(el.value), ref: S(REF[n]), word: w ? S(w.textContent) : "", prompt: t ? S(t.textContent) : "", img: im ? S(im.currentSrc || im.src) : "" });
     });
     items.sort(function(a,b){ return a.n-b.n; });
     return { listening: sec(mk(LK)), reading: sec(mk(RK)), writing: { items: items } };
@@ -129,5 +131,34 @@ export const HSK3_BRIDGE = String.raw`
   }
   setInterval(tick, 1000);
   window.__hsk3BridgeCollect = function(){ if (!F) F = family(); if (F === "A1") F = "A"; if (!F) return null; try { return F === "A" ? collectA() : F === "B" ? collectB() : collectC(); } catch (e) { return null; } };
+})();
+`;
+
+// ============================================================
+// CHẾ ĐỘ HỌC VIÊN: ẩn mọi thứ dành cho giáo viên trong đề cũ
+// (nút trình chiếu hiện đáp án, đáp án tham khảo phần viết, ô chấm điểm tay,
+//  lời nhắc "chụp màn hình gửi giáo viên" — bài viết đã tự gửi cho giáo viên).
+// ============================================================
+export const HSK3_STUDENT_MODE = String.raw`
+(function(){
+  if (window.__hsk3Student) return; window.__hsk3Student = true;
+  var css = [
+    "#btnPresent,#presentBtn,#presenter,#presentStage,#teacherToolbar,#teacherIndicator,.teacher-answer-panel,.presentation-exit{display:none!important}",
+    ".teacher-note,.student-manual-note,.manual-reference-answer,.manual-grade-side,.manual-grade-footer,.manual-review,#btnFinalizeManual,#btnFinalizeManualSection{display:none!important}",
+    ".manual-grade-card{grid-template-columns:auto 1fr!important}",
+    ".review-ref,.review-score,.pending-note,#writingReview .snapshot-head .meta{display:none!important}",
+    ".__hsk3Note{grid-column:1/-1;margin:0 0 12px;padding:12px 14px;border-radius:12px;background:#E7F5EC;color:#1E5C38;font:600 14px/1.5 system-ui,sans-serif}"
+  ].join("\n");
+  var st = document.createElement("style"); st.id = "__hsk3StudentCss"; st.textContent = css;
+  (document.head || document.documentElement).appendChild(st);
+  var MSG = "✉️ Bài viết đã được gửi cho giáo viên chấm. Điểm và nhận xét sẽ hiện ở trang chủ khi giáo viên chấm xong.";
+  function note(){
+    document.querySelectorAll(".manual-grading-list, .writing-review-grid").forEach(function(box){
+      if (box.querySelector(".__hsk3Note")) return;
+      var d = document.createElement("div"); d.className = "__hsk3Note"; d.textContent = MSG; box.insertBefore(d, box.firstChild);
+    });
+  }
+  note();
+  try { new MutationObserver(note).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
 `;

@@ -24,6 +24,45 @@ function htmlFrameProps(item) {
 }
 
 
+// Lấy đề (từ cho sẵn / yêu cầu) + tranh + đáp án tham khảo của các câu viết mở từ chính file đề,
+// dùng cho bài nộp cũ chưa kèm thông tin này.
+async function loadWritingMeta(examId) {
+  try {
+    let html = "";
+    if (String(examId || "").startsWith("static-")) {
+      const list = await fetch("/hsk3-exam/exams.json").then(r => r.json()).catch(() => []);
+      const ex = list.find(x => x.id === examId); if (ex?.fileUrl) html = await fetch(ex.fileUrl).then(r => r.text());
+    } else {
+      const snap = await getDoc(doc(db, "hsk3_exams_bank", examId));
+      const ex = snap.exists() ? snap.data() : null; if (!ex) return {};
+      if (ex.htmlContent) html = ex.htmlContent;
+      else if (ex.fileUrl) { const fp = htmlFrameProps(ex); html = await fetch(fp.src).then(r => r.text()); }
+    }
+    if (!html) return {};
+    const meta = {};
+    // Kiểu đề HSK3: const WRITING = {"part1":[...],"part2":[{num,word,sample,img}]}
+    const m = html.match(/const\s+WRITING\s*=\s*(\{[\s\S]*?\})\s*;\s*(?:const|let|var|function)\s/);
+    if (m) {
+      const p2 = m[1].slice(Math.max(0, m[1].search(/["']?part2["']?\s*:/)));
+      (p2.match(/\{[^{}]*\}/g) || []).forEach(obj => {
+        const it = {}; const re = /["']?(num|word|sample|img)["']?\s*:\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\d+))/g; let x;
+        while ((x = re.exec(obj))) it[x[1]] = x[2] ?? x[3] ?? x[4];
+        if (it.num) meta[Number(it.num)] = { word: it.word || "", img: it.img || "", ref: it.sample || "" };
+      });
+    }
+    // Kiểu đề HSK4: <article id="qNN"> có .q-title và ảnh; đáp án tham khảo trong WRITING_REF
+    const d = new DOMParser().parseFromString(html, "text/html");
+    d.querySelectorAll("[id^=q][data-q]").forEach(q => {
+      const n = Number(q.dataset.q); if (!q.querySelector("textarea, input.write-sentence")) return;
+      const t = q.querySelector(".q-title"), im = q.querySelector("img"), w = q.querySelector(".writing-word");
+      meta[n] = { ...(meta[n] || {}), word: meta[n]?.word || (w?.textContent || "").trim(), prompt: (t?.textContent || "").trim(), img: meta[n]?.img || im?.getAttribute("src") || "" };
+    });
+    const r = html.match(/WRITING_REF\s*=\s*\{([\s\S]*?)\};/);
+    if (r) { const re = /["']?(\d+)["']?\s*:\s*(['"])((?:(?!\2)[^\\]|\\.)*)\2/g; let x; while ((x = re.exec(r[1]))) { const n = Number(x[1]); meta[n] = { ...(meta[n] || {}), ref: meta[n]?.ref || x[3].replace(/\\n/g, "\n").replace(/\\(.)/g, "$1") }; } }
+    return meta;
+  } catch (e) { console.warn("Không đọc được đề để lấy tranh/câu hỏi:", e); return {}; }
+}
+
 const LEVEL_OPTIONS = [
   "Msutong HSK1",
   "Msutong HSK2",
@@ -138,6 +177,16 @@ export default function TeacherDashboard() {
   // --- STATES CHẤM BÀI HSK 3.0 ---
   const [pendingHsk3Submissions, setPendingHsk3Submissions] = useState([]);
   const [selectedHsk3Submission, setSelectedHsk3Submission] = useState(null);
+  const [writingMeta, setWritingMeta] = useState({});
+  useEffect(() => {
+    setWritingMeta({});
+    const sub = selectedHsk3Submission;
+    if (!sub || !Array.isArray(sub.writingItems) || !sub.writingItems.length) return;
+    if (sub.writingItems.every(it => it.img || it.word || it.prompt)) return;
+    let alive = true;
+    loadWritingMeta(sub.examId).then(m => { if (alive) setWritingMeta(m || {}); });
+    return () => { alive = false; };
+  }, [selectedHsk3Submission]);
   const [hsk3ScoreInput, setHsk3ScoreInput] = useState("");
   const [hsk3FeedbackInput, setHsk3FeedbackInput] = useState("");
   const [isLoadingHsk3Submissions, setIsLoadingHsk3Submissions] = useState(true);
@@ -1353,15 +1402,27 @@ export default function TeacherDashboard() {
                           {selectedHsk3Submission.writingAutoTotal ? (
                             <div className="rounded-2xl border border-[#A7F3D0] bg-[#ECFDF5] p-3 text-sm"><b>Viết phần 1 (tự chấm):</b> đúng {selectedHsk3Submission.writingAutoCorrect}/{selectedHsk3Submission.writingAutoTotal} câu <span className="text-xs text-slate-500 break-words">· {selectedHsk3Submission.writingAutoDetail}</span></div>
                           ) : null}
-                          {Array.isArray(selectedHsk3Submission.writingItems) && selectedHsk3Submission.writingItems.length > 0 ? selectedHsk3Submission.writingItems.map((it) => (
-                            <div key={it.n}>
-                              <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Bài viết câu {it.n} · {(it.text || "").replace(/\s/g, "").length} chữ</label>
-                              <div className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] text-base leading-8 whitespace-pre-wrap" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}>
-                                {it.text || <span className="text-slate-400">(Học viên chưa viết)</span>}
+                          {Array.isArray(selectedHsk3Submission.writingItems) && selectedHsk3Submission.writingItems.length > 0 ? selectedHsk3Submission.writingItems.map((raw) => {
+                            const it = { ...(writingMeta[raw.n] || {}), ...Object.fromEntries(Object.entries(raw).filter(([, v]) => v !== "" && v != null)) };
+                            const zh = { fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" };
+                            return (
+                            <div key={it.n} className="rounded-2xl border-2 border-[#E2E8F0] p-4 flex flex-col sm:flex-row gap-4">
+                              {it.img ? (
+                                <a href={it.img} target="_blank" rel="noreferrer" className="shrink-0 self-start"><img src={it.img} alt={`Tranh câu ${it.n}`} className="w-full sm:w-40 rounded-xl border border-[#E2E8F0] object-cover" /></a>
+                              ) : null}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Câu {it.n} · {(it.text || "").replace(/\s/g, "").length} chữ</p>
+                                {(it.word || it.prompt) && (
+                                  <p className="mt-1 text-lg font-black text-[#142033]" style={zh}>{it.word ? <>Từ cho sẵn: <span className="text-[#059669]">{it.word}</span></> : it.prompt}</p>
+                                )}
+                                <div className="mt-2 w-full p-3 rounded-xl border-2 border-[#A7F3D0] bg-[#F0FDF4] text-base leading-8 whitespace-pre-wrap" style={zh}>
+                                  {it.text || <span className="text-slate-400">(Học viên chưa viết)</span>}
+                                </div>
+                                {it.ref && <p className="mt-1.5 text-xs text-slate-500 whitespace-pre-wrap" style={zh}><b>Đáp án tham khảo:</b> {it.ref}</p>}
                               </div>
-                              {it.ref && <p className="mt-1.5 text-xs text-slate-500" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}><b>Tham khảo:</b> {it.ref}</p>}
                             </div>
-                          )) : (selectedHsk3Submission.bridge ? [] : [71, 72]).map((n) => (
+                            );
+                          }) : (selectedHsk3Submission.bridge ? [] : [71, 72]).map((n) => (
                             <div key={n}>
                               <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Bài viết câu {n} · {selectedHsk3Submission[`writing${n}Count`] || 0} chữ (yêu cầu ≥ {n === 71 ? 100 : 200})</label>
                               <div className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] text-base leading-8 whitespace-pre-wrap" style={{ fontFamily: "'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif" }}>

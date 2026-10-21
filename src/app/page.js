@@ -10,7 +10,7 @@ import { STATIC_LECTURES } from "./staticLectures";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { db } from "../firebase";
-import { HSK3_BRIDGE } from "./hsk3Bridge";
+import { HSK3_BRIDGE, HSK3_STUDENT_MODE } from "./hsk3Bridge";
 import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { useHskkResultSaver } from "../hskkResultSaver";
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
@@ -56,6 +56,9 @@ function htmlFrameProps(item) {
   }
   return { src: url };
 }
+
+// Một câu viết mở gửi cho giáo viên: câu trả lời + đề (từ cho sẵn / yêu cầu) + tranh + đáp án tham khảo
+const wItem = (x) => ({ n: Number(x.n) || 0, text: String(x.text || "").slice(0, 8000), ref: String(x.ref || "").slice(0, 4000), word: String(x.word || "").slice(0, 200), prompt: String(x.prompt || "").slice(0, 1000), img: /^https?:\/\//.test(String(x.img || "")) ? String(x.img).slice(0, 500) : "" });
 
 // Thu bài làm từ iframe đề thi (đề không tự gửi kết quả): đọc các lựa chọn / ô viết + nội dung trang
 function captureExamFrame() {
@@ -444,7 +447,7 @@ export default function HomePage() {
           listeningDetail: brief(d.listening?.detail),
           readingDetail: brief(d.reading?.detail),
           bridge: d.bridge || null,
-          writingItems: Array.isArray(d.writing?.items) ? d.writing.items.slice(0, 20).map(x => ({ n: Number(x.n) || 0, text: String(x.text || "").slice(0, 8000), ref: String(x.ref || "").slice(0, 4000) })) : [],
+          writingItems: Array.isArray(d.writing?.items) ? d.writing.items.slice(0, 20).map(wItem) : [],
           writingAutoCorrect: d.writing?.auto?.correct ?? null,
           writingAutoTotal: d.writing?.auto?.total ?? null,
           writingAutoDetail: brief(d.writing?.auto?.detail),
@@ -1264,7 +1267,7 @@ export default function HomePage() {
                       const r = fw && fw.__hsk3BridgeCollect && fw.__hsk3BridgeCollect();
                       if (r) {
                         const brief = (det) => (Array.isArray(det) ? det.map((x) => `${x.n}:${x.your || "-"}${x.ok ? "✓" : "✗" + x.ans}`).join(" ") : "");
-                        const it = (r.writing?.items || []).slice(0, 20).map(x => ({ n: Number(x.n) || 0, text: String(x.text || "").slice(0, 8000), ref: String(x.ref || "").slice(0, 4000) }));
+                        const it = (r.writing?.items || []).slice(0, 20).map(wItem);
                         Object.assign(cap, {
                           autoResult: true, partialSubmit: true, bridge: "manual",
                           listeningScore: r.listening?.score ?? null, listeningCorrect: r.listening?.correct ?? null, listeningTotal: r.listening?.total ?? null,
@@ -1313,6 +1316,8 @@ export default function HomePage() {
                   const w = e.currentTarget.contentWindow, d = e.currentTarget.contentDocument;
                   if (!w || !d || w.__hsk3Bridge) return;
                   const sc = d.createElement("script"); sc.textContent = HSK3_BRIDGE; (d.body || d.documentElement).appendChild(sc);
+                  // Học viên: ẩn nút trình chiếu (lộ đáp án), đáp án tham khảo và ô chấm điểm dành cho giáo viên
+                  if (!isTeacher) { const s2 = d.createElement("script"); s2.textContent = HSK3_STUDENT_MODE; (d.body || d.documentElement).appendChild(s2); }
                 } catch (_) {}
               }}
               title={activeHskExamView.examName}
