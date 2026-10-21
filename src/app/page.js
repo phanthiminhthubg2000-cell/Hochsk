@@ -216,6 +216,9 @@ const GAME_STYLE = {
   "nghieng-dau": { ink: "#5B33B0", soft: "#EEE7FB", badge: "📷 Camera", meta: "1 máy chiếu · cả lớp" },
   "trieu-phu": { ink: "#1D47B8", soft: "#E6EDFC", badge: "🏆 10 câu", meta: "1 máy chiếu · cả lớp" },
   "bom": { ink: "#C2410C", soft: "#FDEBDD", badge: "📱 Nhiều máy", meta: "Mỗi HS 1 điện thoại" },
+  "keo-co": { badge: "📱 Nhiều máy · 2 đội" },
+  "dua": { badge: "📱 Nhiều máy" },
+  "nhanh": { badge: "📱 Nhiều máy" },
 };
 
 function GameCover({ g }) {
@@ -348,6 +351,36 @@ const GAMES = [
     href: "/bom/host",
     bg: "from-[#3A1206] to-[#C2410C]",
     face: ["炸", "弹"],
+  },
+  {
+    key: "keo-co",
+    title: "Kéo co",
+    zh: "拔河",
+    desc: "Cả lớp chia 2 đội Đỏ – Xanh, quét QR chơi trên điện thoại. Ai cũng trả lời liên tục, mỗi câu đúng kéo dây về phía đội mình. Hết giờ dây nghiêng bên nào, đội đó thắng.",
+    tags: ["Quét QR", "2 đội", "Cả lớp cùng lúc"],
+    href: "/choi/keo-co",
+    bg: "from-[#5B1414] via-[#3A2A5A] to-[#123A7A]",
+    face: ["拔", "河"],
+  },
+  {
+    key: "dua",
+    title: "Đua về đích",
+    zh: "赛跑",
+    desc: "Mỗi bạn một con vật trên đường đua chiếu lên màn hình. Trả lời đúng trên điện thoại thì tiến 1 bước, sai thì lùi. Ba bạn về đích đầu tiên giành huy chương.",
+    tags: ["Quét QR", "Cá nhân", "Cả lớp cùng lúc"],
+    href: "/choi/dua",
+    bg: "from-[#1F4D1A] to-[#7FB069]",
+    face: ["赛", "跑"],
+  },
+  {
+    key: "nhanh",
+    title: "Ai nhanh nhất",
+    zh: "抢答",
+    desc: "Cả lớp cùng thấy một câu hỏi, trả lời trên điện thoại. Đúng càng nhanh càng nhiều điểm, có thưởng chuỗi đúng. Sau mỗi câu hiện đáp án, số bạn chọn và bảng xếp hạng.",
+    tags: ["Quét QR", "Tính điểm tốc độ", "Bảng xếp hạng"],
+    href: "/choi/nhanh",
+    bg: "from-[#3B1C6B] to-[#E8590C]",
+    face: ["抢", "答"],
   },
 ];
 
