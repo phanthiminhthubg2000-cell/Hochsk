@@ -151,6 +151,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk5-2/LESSON_25.html"
  },
  {
+  "id": "static-hsk5-2-26",
+  "lectureName": "Bài 26 · 你属于哪一种“忙”？",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_26.html"
+ },
+ {
   "id": "static-hsk1-3-01",
   "lectureName": "Bài 1 · AI小语，你好！",
   "level": "HSK1 3.0",
