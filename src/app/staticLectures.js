@@ -193,6 +193,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk5-2/LESSON_32.html"
  },
  {
+  "id": "static-hsk5-2-33",
+  "lectureName": "Bài 33 · 以堵治堵——缓解交通有妙招",
+  "level": "HSK5.2 2.0",
+  "fileUrl": "/lectures/hsk5-2/LESSON_33.html"
+ },
+ {
   "id": "static-hsk1-3-01",
   "lectureName": "Bài 1 · AI小语，你好！",
   "level": "HSK1 3.0",
