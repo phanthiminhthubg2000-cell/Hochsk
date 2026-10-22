@@ -18,6 +18,9 @@ import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverT
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 
 // 6 CẤP ĐỘ HSK 3.0 (kho đề thi)
+// Phòng thi HSK 3.0 dùng chung (chọn cấp độ + đề ngay trong phòng thi)
+const EXAM_CENTER = { id: "hsk-exam-center", examName: "Phòng thi HSK 3.0", level: "HSK 3.0", fileUrl: "/hsk-exam/index.html", center: true };
+
 const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 1",
   "HSK 3.0 - Cấp độ 2",
@@ -466,9 +469,9 @@ export default function HomePage() {
           userName: user?.fullName || d.name || "Học viên ẩn danh",
           userEmail: user?.primaryEmailAddress?.emailAddress || d.email || "Không có",
           studentTypedName: d.name || "",
-          examId: activeHskExamView.id,
-          examName: activeHskExamView.examName,
-          level: activeHskExamView.level,
+          examId: activeHskExamView.center ? `hsk-exam/${d.examId || ""}` : activeHskExamView.id,
+          examName: activeHskExamView.center ? `HSK ${String(d.level || "").replace(/\D+/g, " ").trim().split(" ").pop() || ""} · ${d.exam || ""}` : activeHskExamView.examName,
+          level: activeHskExamView.center ? (d.level || activeHskExamView.level) : activeHskExamView.level,
           status: "pending_teacher",
           autoResult: true,
           listeningScore: d.listening?.score ?? null,
@@ -729,11 +732,6 @@ export default function HomePage() {
   const greet = hour < 11 ? "Chào buổi sáng" : hour < 14 ? "Chào buổi trưa" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
   const firstName = user?.firstName || (user?.fullName || "").split(" ").pop() || "bạn";
   const inFullscreen = selectedLecture || activeHskExamView || activeHskkExam;
-  const newestExam = useMemo(() => {
-    const t = (e) => e.createdAt?.toMillis?.() || 0;
-    const arr = hsk3ExamsList.filter(e => t(e) > Date.now() - 21 * 86400000).sort((a, b) => t(b) - t(a));
-    return arr[0] || null; // chỉ hiện "Đề mới" cho đề giáo viên tải lên trong 3 tuần gần đây
-  }, [hsk3ExamsList]);
 
   // ============================================================
   // KHỐI GIAO DIỆN DÙNG CHUNG
@@ -1150,34 +1148,15 @@ export default function HomePage() {
               <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] items-start">
                 <div className="flex flex-col gap-5 min-w-0">
                   {examTab === "hsk3" && (
-                    <>
-                      {newestExam && (
-                        <section className="rounded-[22px] bg-[#1E5C38] text-white p-5 md:p-6 flex flex-col gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1 min-w-0"><div className="text-xs font-semibold uppercase tracking-[0.08em] text-[#BFE3CB]">Đề mới của giáo viên</div><div className="font-extrabold text-xl mt-0.5 truncate">{newestExam.examName}</div></div>
-                            <span className="text-xs font-bold text-[#13261C] bg-[#FFB547] px-2.5 py-1 rounded-full shrink-0">Mới</span>
-                          </div>
-                          <div className="text-sm text-[#D4EFDC]">{newestExam.level}</div>
-                          <button onClick={() => setActiveHskExamView(newestExam)} className="h-12 rounded-[14px] bg-white text-[#1E5C38] font-bold hover:bg-[#E7F5EC] transition-colors">Bắt đầu làm bài</button>
-                        </section>
-                      )}
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {HSK3_LEVELS.map((lvl, i) => {
-                          const exams = hsk3ExamsList.filter(e => e.level === lvl).sort((a, b) => (a.examName || "").localeCompare(b.examName || "", undefined, { numeric: true }));
-                          return (
-                            <section key={lvl} className={`rounded-[18px] p-4 flex flex-col gap-2 ${exams.length ? "bg-white border border-[#DDE6D3]" : "border border-dashed border-[#C9D6BE]"}`}>
-                              <div className="flex items-baseline justify-between"><h3 className="font-extrabold text-lg">HSK {i + 1}</h3><span className="text-xs text-[#5B7262]">{exams.length ? `${exams.length} đề` : "Sắp có"}</span></div>
-                              {exams.map(ex => (
-                                <button key={ex.id} onClick={() => setActiveHskExamView(ex)} className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl bg-[#F4F7EF] hover:bg-[#E7F5EC] text-left">
-                                  <span className="flex-1 min-w-0 truncate text-sm font-semibold">{ex.examName}</span>
-                                  <span className="text-xs font-bold text-[#1E7A45] shrink-0">Vào thi</span>
-                                </button>
-                              ))}
-                            </section>
-                          );
-                        })}
+                    <section className="rounded-[22px] bg-[#FBF7DF] border border-[#E9DFB0] px-5 py-10 md:py-14 flex flex-col items-center text-center gap-4">
+                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1F3F8A] to-[#2C5BB6] text-white grid place-items-center text-4xl md:text-5xl font-extrabold shadow-md" style={{ fontFamily: "STKaiti, KaiTi, serif" }}>汉</div>
+                      <div>
+                        <div className="text-[#1F2F6E] font-extrabold tracking-wide">HSK GARDEN · 汉语水平模拟考试系统</div>
+                        <p className="text-sm text-[#5B7262] mt-2 max-w-md">Phòng thi mô phỏng giao diện thi HSK 3.0 trên máy. Vào phòng thi, điền thông tin thí sinh rồi chọn <b>cấp độ</b> và <b>đề thi</b>.</p>
                       </div>
-                    </>
+                      <button onClick={() => setActiveHskExamView(EXAM_CENTER)} className="h-14 px-10 rounded-[14px] bg-[#E07A2B] hover:bg-[#C9661D] text-white text-lg font-bold shadow-sm transition-colors">Vào phòng thi</button>
+                      <p className="text-xs text-[#8A7A4A]">Đeo tai nghe trước khi vào thi · Phần nghe chỉ phát một lần</p>
+                    </section>
                   )}
 
                   {examTab === "hskk" && (
@@ -1287,6 +1266,18 @@ export default function HomePage() {
             </div>
             <button
               onClick={async () => {
+                if (activeHskExamView.center) {
+                  const fw = document.querySelector("iframe[data-hsk3-frame]")?.contentWindow;
+                  const st = fw && fw.__HSK;
+                  if (hsk3SavedRef.current) { alert("Bài làm đã được gửi cho giáo viên."); setActiveHskExamView(null); return; }
+                  if (st && st.started && !st.finished) {
+                    if (window.confirm("Nộp bài ngay bây giờ? Các câu chưa làm sẽ tính là bỏ trống.")) fw.__HSK_fn.finish();
+                    return;
+                  }
+                  if (st && st.finished) { alert("Đang gửi bài cho giáo viên, vui lòng chờ vài giây rồi bấm lại."); return; }
+                  setActiveHskExamView(null);
+                  return;
+                }
                 if (hsk3SavedRef.current) {
                   alert("Bài làm (kể cả phần Viết) đã được gửi tự động cho giáo viên.");
                   setActiveHskExamView(null);
@@ -1347,7 +1338,7 @@ export default function HomePage() {
               onLoad={(e) => {
                 try {
                   const w = e.currentTarget.contentWindow, d = e.currentTarget.contentDocument;
-                  if (!w || !d || w.__hsk3Bridge) return;
+                  if (!w || !d || w.__hsk3Bridge || activeHskExamView.center) return;
                   const sc = d.createElement("script"); sc.textContent = HSK3_BRIDGE; (d.body || d.documentElement).appendChild(sc);
                   // Học viên: ẩn nút trình chiếu (lộ đáp án), đáp án tham khảo và ô chấm điểm dành cho giáo viên
                   if (!isTeacher) { const s2 = d.createElement("script"); s2.textContent = HSK3_STUDENT_MODE; (d.body || d.documentElement).appendChild(s2); }

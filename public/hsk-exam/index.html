@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSK 3.0 模拟考试 · HSK GARDEN</title>
+<style>:root{--g:#79b51c;--g2:#8cc63f;--gd:#5a8f10;--gl:#eef6e0;--o:#e07a2b;--od:#c9661d;--red:#e2231a;--ink:#333;--mut:#777;--line:#dfe9cf;--card:#fbfdf7;--fs:15px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB",Arial,sans-serif;color:var(--ink);background:#fbf7df;font-size:var(--fs);-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+ radial-gradient(1200px 700px at 8% 10%,rgba(255,248,214,.95),transparent 60%),
+ radial-gradient(900px 600px at 95% 90%,rgba(226,240,214,.9),transparent 60%),
+ linear-gradient(135deg,#fdf8e1 0%,#f8f6e6 45%,#eef5e6 100%)}
+.deco{position:fixed;z-index:-1;font-family:"STKaiti","KaiTi","Kaiti SC",serif;color:rgba(140,120,70,.10);font-size:56px;line-height:1.1;writing-mode:vertical-rl;user-select:none;pointer-events:none}
+.deco.l{left:10px;top:110px}.deco.r{right:16px;top:110px}
+button{font-family:inherit;cursor:pointer}
+.hide{display:none!important}
+.clock{position:fixed;top:14px;right:24px;color:#d0661c;font-size:22px;letter-spacing:.5px;font-variant-numeric:tabular-nums;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;margin:22px 0 18px 7vw;text-decoration:none}
+.brand .lg{width:52px;height:52px;border-radius:8px;background:linear-gradient(135deg,#1f3f8a,#2c5bb6);color:#fff;display:grid;place-items:center;font:800 26px/1 "STKaiti","KaiTi",serif;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.brand .tx{color:#1f2f6e;font-weight:800;font-size:13px;line-height:1.2;letter-spacing:.3px}
+.brand .tx small{display:block;font-weight:600;font-size:11px;letter-spacing:3px;color:#27367a}
+.btn{border:0;border-radius:4px;padding:12px 34px;font-size:17px;color:#fff;background:var(--o);min-width:150px;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.btn:hover{background:var(--od)}
+.btn.g{background:var(--g)}.btn.g:hover{background:var(--gd)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:8px 22px;font-size:14px;min-width:110px}
+.panel{background:rgba(250,252,246,.94);border:1px solid #dfe8cf;border-radius:4px;box-shadow:0 1px 8px rgba(120,140,80,.08);position:relative}
+.ptag{position:absolute;top:-14px;left:44px;background:var(--g);color:#fff;padding:7px 26px;font-size:18px;border-radius:2px 2px 2px 0;box-shadow:0 2px 3px rgba(0,0,0,.08)}
+.ptag::after{content:"";position:absolute;right:-8px;top:0;border-left:8px solid var(--gd);border-bottom:8px solid transparent}
+.foot{text-align:center;color:#a5a5a5;font-size:12px;padding:18px 10px 20px}
+/* ---------- welcome ---------- */
+#sLang{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 16px}
+#sLang .biglg{width:150px;height:150px;border-radius:12px;background:linear-gradient(135deg,#1f3f8a,#2c5bb6);color:#fff;display:grid;place-items:center;font:800 76px/1 "STKaiti","KaiTi",serif;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+#sLang .org{margin-top:16px;color:#1f2f6e;font-weight:800;font-size:22px;letter-spacing:.5px}
+#sLang .org small{display:block;font-size:15px;letter-spacing:6px;font-weight:700;margin-top:4px}
+#sLang h1{font-weight:400;font-size:clamp(22px,4vw,46px);margin:60px 0 6px;color:#3a3a3a;letter-spacing:1px}
+#sLang h2{font-weight:400;font-size:clamp(13px,1.8vw,22px);margin:0 0 64px;color:#333}
+#sLang .row{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+/* ---------- login ---------- */
+.wrapC{max-width:1200px;margin:0 auto 10px;padding:0 16px}
+#sLogin .panel{display:grid;grid-template-columns:1.05fr 1fr;min-height:560px}
+.notice{padding:36px 30px 20px 36px;border-right:4px solid #cfcfcf;max-height:620px;overflow:auto}
+.notice h3{color:#d0661c;font-size:22px;margin:0 0 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.notice h3 label{font-size:15px;color:#333;font-weight:400;display:flex;align-items:center;gap:6px;cursor:pointer}
+.notice h3 input{width:18px;height:18px;accent-color:#1677ff}
+.notice p{margin:0 0 12px;line-height:2.05;font-size:14.5px}
+.login{padding:36px 36px 30px}
+.login h3{color:#d0661c;font-size:22px;margin:0 0 26px;display:flex;align-items:center;gap:8px}
+.frow{display:grid;grid-template-columns:110px 1fr;align-items:center;margin-bottom:14px;font-weight:700;font-size:15px}
+.frow input,.frow select{height:40px;border:1px solid #d9d9d9;border-radius:3px;padding:0 10px;font-size:15px;background:#fff;width:100%;font-family:inherit}
+.frow input:focus,.frow select:focus{outline:2px solid #b7d98a;border-color:#9ccc5c}
+.lerr{color:var(--red);font-size:13px;min-height:20px;margin:-4px 0 6px 110px}
+.lbtns{display:flex;gap:40px;justify-content:center;margin-top:20px}
+/* ---------- device check ---------- */
+.dev{display:grid;grid-template-columns:1fr 1fr;gap:36px;padding:70px 44px 34px}
+.dbox{border:1px solid #dfe8cf;background:#fff;min-height:360px;display:flex;flex-direction:column}
+.dbox h4{margin:0;padding:18px 26px;font-weight:400;font-size:17px;border-bottom:1px solid #eef1ea}
+.dbox .bd{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px}
+.stat{width:100%;background:#f5f5f5;padding:10px 12px;margin-bottom:10px}
+.stat small{display:block;color:#888;font-size:12px}.stat b{color:#13a89e;font-size:19px;font-weight:500}
+.dfoot{display:flex;justify-content:center;gap:44px;padding:8px 0 34px}
+.hp{width:180px;height:150px}
+.mic{margin:70px 50px 30px;background:#6ccb2f;border-radius:4px;height:220px;display:flex;justify-content:flex-end;align-items:center;gap:22px;padding:0 30px}
+.mic .c{display:flex;flex-direction:column;align-items:center;gap:12px;color:#fff;font-size:17px}
+.rb{width:52px;height:52px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#fff,#e9efe3);box-shadow:0 2px 6px rgba(0,0,0,.18);display:grid;place-items:center;color:#7bbf3a;font-size:22px}
+.rb.big{width:70px;height:70px;font-size:28px;color:#888}
+.rb.small{width:30px;height:30px;font-size:16px;color:#e0672b}
+.rb.on{background:radial-gradient(circle at 35% 30%,#ffe6e6,#ffb3b3);color:#d11}
+.mlv{height:8px;width:180px;background:#ffffff66;border-radius:4px;overflow:hidden}.mlv i{display:block;height:100%;width:0;background:#fff}
+/* ---------- download ---------- */
+.dl{padding:110px 40px 60px;text-align:center}
+.bar{height:34px;border-radius:17px;background:#e9efe3;max-width:840px;margin:70px auto 30px;overflow:hidden;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(-45deg,#8ccf4c 0 12px,#9edb5e 12px 24px);border-radius:17px;transition:width .2s}
+.bar span{position:relative;line-height:34px;font-size:15px}
+/* ---------- exam ---------- */
+#sExam{min-height:100vh}
+.ex{display:grid;grid-template-columns:150px minmax(0,1fr) 150px;gap:18px;max-width:1260px;margin:0 auto;padding:0 18px}
+.nav{background:rgba(255,255,255,.75);border-radius:4px;align-self:start;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;font-size:13px}
+.nav .sh{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 6px;font-weight:700;border-bottom:1px solid #e6e6e6;color:#333}
+.nav .sh .ic{font-size:18px}
+.nav .sh .pm{border:1px solid #ccc;width:13px;height:13px;font-size:10px;line-height:11px;text-align:center;color:#999}
+.nav .sh.lock{color:#bbb}
+.nav .pt{background:#efefef;padding:10px 12px 10px 12px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #fff}
+.nav .it{display:flex;align-items:center;gap:8px;padding:10px 10px 10px 12px;border-bottom:1px solid #eee;background:#fff;cursor:pointer}
+.nav .it.cur{background:#d9eebc;font-weight:700}
+.nav .it .pen{margin-left:auto;font-size:12px;opacity:.85}
+.nav .it .st{color:#ddd;font-size:13px}.nav .it .st.on{color:#f0a020}
+.nav .arr{display:inline-block;width:11px;height:11px;border-radius:2px;background:#9a9a9a;color:#fff;font-size:8px;line-height:11px;text-align:center}
+.nav .cur .arr,.nav .pt.cur .arr{background:#6aa81a}
+.main{min-width:0}
+.mhead{background:#f5f5f2;border:1px solid #e8e8e0;display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px 8px;position:sticky;top:0;z-index:4}
+.mhead .ttl{font-size:15px;padding-top:4px}
+.tm{text-align:right;min-width:170px}
+.tm b{color:var(--red);font-weight:400;font-size:13.5px;font-variant-numeric:tabular-nums}
+.tm .pg{height:6px;background:#e6e6e6;border-radius:3px;margin-top:5px;overflow:hidden}.tm .pg i{display:block;height:100%;background:#9fd060;width:0}
+.mbody{background:rgba(255,255,255,.88);border:1px solid #e3ead6;border-top:0;min-height:calc(100vh - 160px);padding:22px 28px 30px}
+.qcard{border:1px solid #d9e8c3;border-radius:3px;background:#fff;position:relative;margin-bottom:22px}
+.qtag{position:absolute;top:-1px;left:18px;background:var(--g);color:#fff;padding:3px 24px;font-size:15px;border-radius:0 0 2px 2px}
+.qtag::after{content:"";position:absolute;right:-7px;top:0;border-left:7px solid var(--gd);border-bottom:7px solid transparent}
+.qcard .star{position:absolute;right:12px;top:8px;border:0;background:none;color:#ddd;font-size:18px}
+.qcard .star.on{color:#f0a020}
+.passage{padding:42px 30px 20px 36px;font-size:calc(var(--fs) + 1px);line-height:1.75}
+.passage p{margin:0 0 4px;text-indent:2em}
+.passage .bl{display:inline-block;min-width:3.2em;border-bottom:1px solid #333;text-align:center;text-indent:0;padding:0 4px;font-weight:500}
+.passage .bl.fill{color:#1a6fd6}
+.passage img{float:right;width:min(46%,240px);margin:4px 0 8px 16px;border-radius:2px}
+.passage::after{content:"";display:block;clear:both}
+.para{display:flex;gap:6px;margin:0 0 14px;text-indent:0!important}
+.para .lt{flex:0 0 auto;border:1px solid #555;font-size:12px;line-height:14px;padding:0 4px;height:16px;margin-top:5px;font-family:Georgia,serif;background:#f4f4f4}
+.seq{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;margin:20px 0 0;text-indent:0}
+.seq .bx{display:flex;flex-direction:column;align-items:center;gap:6px}
+.seq .bx b{width:44px;height:44px;border:1px solid #555;display:grid;place-items:center;font-size:20px;color:#1a6fd6;font-family:Georgia,serif;background:#fff}
+.seq .bx small{font-size:13px}
+.seq .ar{margin-top:14px;color:#555}
+.q{border:1px solid #e6edd9;border-radius:2px;margin:0 0 14px;background:#fff}
+.q .qh{display:flex;align-items:stretch;border-bottom:1px solid #eef3e6;min-height:40px}
+.q .qn{background:var(--g);color:#fff;min-width:36px;display:grid;place-items:center;font-size:16px;padding:0 6px}
+.q .qs{padding:8px 12px;font-size:calc(var(--fs) + 1px);line-height:1.6;align-self:center}
+.opt{display:flex;align-items:center;gap:14px;padding:9px 16px;cursor:pointer;font-size:calc(var(--fs) + 2px);line-height:1.5;border-radius:2px}
+.opt:hover{background:#f6fbef}
+.opt input{width:19px;height:19px;accent-color:#1677ff;margin:0;flex:0 0 auto}
+.opt .k{width:14px;flex:0 0 auto}
+.orow{display:flex;align-items:stretch;border:1px solid #e6edd9;margin-bottom:10px;background:#fff}
+.orow .qn{background:var(--g);color:#fff;min-width:34px;display:grid;place-items:center;font-size:16px}
+.orow label{flex:1;display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;font-size:16px}
+.orow input{width:18px;height:18px;accent-color:#1677ff;margin:0}
+.wprompt{padding:40px 30px 10px 36px;font-size:calc(var(--fs) + 1px);line-height:1.7;text-indent:2em}
+.wimg{display:block;margin:6px auto 12px;width:min(100%,430px);border:1px solid #333}
+.wta{display:block;width:calc(100% - 64px);margin:6px 32px 8px;min-height:240px;border:1px solid #888;padding:10px 12px;font-size:17px;line-height:1.8;font-family:inherit;resize:vertical}
+.wct{margin:0 32px 18px;color:#777;font-size:13px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.wct b{color:#1a6fd6;font-weight:600}.wct b.ok{color:#2b8a3e}
+.mnav{display:flex;justify-content:center;gap:34px;padding:26px 0 10px}
+.side{align-self:start;position:sticky;top:10px}
+.cand{background:linear-gradient(180deg,#7ab81f,#6aab14);color:#fff;border-radius:3px;padding:14px 12px 18px;font-size:12.5px;line-height:1.35}
+.cand .av{width:60px;height:60px;border-radius:50%;margin:0 auto 10px;background:#fff;overflow:hidden;display:block}
+.cand p{margin:0 0 9px;word-break:break-all}
+.sbtns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.sbtns button{background:#fff;border:1px solid #e3e3e3;border-radius:3px;padding:8px 2px;font-size:12px;color:#333}
+.sbtns .sub{grid-column:1/-1;background:#f8a23a;border-color:#f8a23a;color:#fff;padding:9px;font-size:13px}
+.wm{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden;opacity:.05}
+.wm div{position:absolute;white-space:nowrap;transform:rotate(-24deg);font-size:15px;color:#555}
+/* modals */
+.mask{position:fixed;inset:0;background:rgba(40,40,30,.42);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.dlg{background:linear-gradient(180deg,#fffdf0,#f7fbef);width:min(760px,100%);max-height:calc(100vh - 32px);overflow:auto;border-radius:3px;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.dlg .dh{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#f5f5f0;border-bottom:1px solid #eee;position:sticky;top:0}
+.dlg .dh b{font-weight:600}
+.dlg .dh button{border:0;background:none;font-size:22px;color:#666}
+.dlg .db{padding:26px 34px 30px;line-height:1.9;font-size:14.5px}
+.dlg .dbtns{display:flex;justify-content:center;gap:26px;padding:0 0 24px}
+.card{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:8px}
+.card button{height:40px;border:1px solid #cfd8c0;background:#fff;border-radius:3px;font-size:14px}
+.card button.done{background:#7ab81f;color:#fff;border-color:#7ab81f}
+.card button.mk{box-shadow:inset 0 -3px 0 #f0a020}
+.leg{display:flex;gap:16px;font-size:12.5px;color:#666;margin-bottom:14px;flex-wrap:wrap}.leg i{display:inline-block;width:14px;height:14px;border:1px solid #cfd8c0;vertical-align:-2px;margin-right:4px}
+.fsz{display:flex;gap:12px;justify-content:center}.fsz button{padding:10px 20px;border:1px solid #ccc;background:#fff;border-radius:3px}.fsz button.on{border-color:#7ab81f;background:#eef7e2}
+/* play overlay */
+.playov{position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:20px}
+/* results */
+.res{max-width:820px;margin:0 auto;padding:0 16px}
+.res .panel{min-height:70vh;padding:44px 6% 30px}
+.res .tip{background:#fdf3e2;border:1px solid #f1dfbf;color:#8a6d3b;padding:8px 14px;margin:-18px -6% 30px;font-size:13.5px}
+table.rt{width:100%;border-collapse:collapse;background:#fff;font-size:14px}
+table.rt th,table.rt td{border:1px solid #e3ead6;padding:8px;text-align:center}
+table.rt th{font-weight:700;background:#fafcf6}
+table.rt a{color:#1a3ad6;text-decoration:underline;cursor:pointer}
+.ok{color:#2b8a3e}.no{color:#e2231a}
+.sent{margin:18px auto 0;font-size:13.5px;text-align:center;color:#555}
+.end{text-align:center;padding:90px 20px}
+.end h2{color:#d0661c;margin:22px 0 12px;font-size:24px}
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .ex{grid-template-columns:120px minmax(0,1fr);gap:12px;padding:0 10px}
+  .side{grid-column:1/-1;position:static;order:-1}
+  .cand{display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px;padding:10px 12px}
+  .cand .av{width:40px;height:40px;margin:0}
+  .cand p{margin:0}
+  .sbtns{grid-template-columns:repeat(5,1fr)}
+  .sbtns .sub{grid-column:auto}
+}
+@media (max-width:720px){
+  body{--fs:14.5px}
+  .brand{margin:12px 0 10px 12px}.brand .lg{width:40px;height:40px;font-size:20px}
+  .clock{font-size:14px;top:8px;right:10px}
+  #sLogin .panel{grid-template-columns:1fr}
+  .notice{border-right:0;border-bottom:3px solid #ddd;max-height:300px;padding:28px 18px 10px}
+  .login{padding:26px 18px}
+  .frow{grid-template-columns:86px 1fr}.lerr{margin-left:86px}
+  .lbtns{gap:16px}
+  .dev{grid-template-columns:1fr;padding:44px 14px 20px;gap:18px}.dbox{min-height:0}
+  .mic{margin:50px 12px 20px;height:auto;padding:24px 10px;justify-content:center;flex-wrap:wrap}
+  .dfoot{gap:16px}
+  .btn{min-width:120px;padding:11px 20px}
+  .ex{grid-template-columns:1fr;padding:0 6px;gap:8px}
+  .nav{position:sticky;top:0;z-index:6;display:flex;overflow-x:auto;max-height:none;white-space:nowrap;border:1px solid #e6e6e6}
+  .nav .sh,.nav .pt{display:none}
+  .nav .it{border-bottom:0;border-right:1px solid #eee;padding:9px 12px}
+  .nav .it.lockd{display:none}
+  .mhead{top:42px;flex-wrap:wrap;gap:4px}
+  .tm{min-width:0;flex:1}
+  .mbody{padding:16px 8px 20px}
+  .passage{padding:36px 14px 14px 14px}
+  .passage img{float:none;display:block;margin:6px auto 10px;width:min(80%,260px)}
+  .wprompt{padding:36px 14px 6px}
+  .wta{width:calc(100% - 20px);margin:6px 10px}
+  .wct{margin:0 10px 14px}
+  .opt{padding:9px 10px}
+  .orow label{padding:9px 4px;gap:4px;font-size:15px}
+  .clock{display:none}
+  .cand{padding:7px 10px;font-size:12px}.cand .av{display:none}.cand p:nth-of-type(3),.cand p:nth-of-type(4),.cand p:nth-of-type(5){display:none}
+  .sbtns{grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}.sbtns button{padding:7px 0;font-size:11.5px}.sbtns .sub{grid-column:auto;padding:7px 0;font-size:12px}
+  .deco{display:none}
+  .dlg .db{padding:18px 16px 22px}
+}
+table.rt td:first-child,table.rt a{white-space:nowrap}
+
+/* ---------- phòng thi chung: bổ sung ---------- */
+.zp{display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.25;vertical-align:middle}
+.zp small{font-size:.72em;color:#6a7a5a;font-family:Arial,sans-serif;letter-spacing:.2px}
+.zp.c{align-items:center;text-align:center}
+.exbox{margin:44px 26px 6px;padding:10px 14px;background:#f7f9f2;border:1px dashed #cfdcb8;border-radius:3px;font-size:14px;color:#555;line-height:1.7}
+.exbox b.exl{color:#d0661c;font-weight:700;margin-right:6px}
+.exbox .exa{color:#2b8a3e;font-weight:700}
+.exbox img{height:64px;border:1px solid #ccc;margin:4px 6px 0 0;vertical-align:middle}
+.exbox img.ok{outline:3px solid #7ab81f}
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:44px 26px 10px}
+.refs.after{padding-top:6px}
+.refs .ri{position:relative;border:1px solid #d9e2cc;background:#fff;border-radius:3px;padding:6px;display:flex;flex-direction:column;align-items:center}
+.refs .ri img{width:100%;height:120px;object-fit:contain}
+.refs .ri .k{position:absolute;left:6px;top:6px;background:var(--g);color:#fff;font-weight:700;font-size:13px;width:22px;height:22px;display:grid;place-items:center;border-radius:2px}
+.refs .ri.used{opacity:.45}
+.refs.txt{grid-template-columns:1fr;gap:6px}
+.refs.txt .ri{flex-direction:row;align-items:center;gap:10px;padding:8px 10px;justify-content:flex-start}
+.refs.txt .ri .k{position:static;flex:0 0 auto}
+.refs.words{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+.refs.words .ri{flex-direction:row;gap:8px;justify-content:center;padding:8px}
+.refs.words .ri .k{position:static}
+.refs .rt2{font-size:calc(var(--fs) + 1px)}
+.passage.short{padding-top:44px}
+.qbody{padding:8px 14px 12px}
+.qbody .pz{font-size:calc(var(--fs) + 1px);line-height:1.7;margin:0 0 6px}
+.qimg{display:block;max-width:min(100%,320px);max-height:200px;margin:6px 0 8px;border:1px solid #ddd}
+.iopts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:10px 14px 14px}
+.iopt{border:2px solid #e2e8d6;border-radius:4px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 6px}
+.iopt img{width:100%;height:130px;object-fit:contain}
+.iopt input{width:18px;height:18px;accent-color:#1677ff;margin:0}
+.iopt.on{border-color:#7ab81f;background:#f3f9ea}
+.iopt .row{display:flex;align-items:center;gap:6px;font-weight:700}
+.mrow{display:flex;flex-wrap:wrap;gap:6px 10px;padding:4px 14px 12px}
+.mrow label{display:flex;align-items:center;gap:5px;border:1px solid #e3e9d8;border-radius:3px;padding:6px 12px;cursor:pointer;font-size:16px;background:#fff}
+.mrow label.on{border-color:#7ab81f;background:#eef7e2}
+.mrow input{width:17px;height:17px;accent-color:#1677ff;margin:0}
+.mrow label.dis{opacity:.4}
+.ibox{display:inline-block;width:3.2em;height:1.8em;border:0;border-bottom:2px solid #1a6fd6;text-align:center;font-size:calc(var(--fs) + 3px);font-family:inherit;margin:0 3px;background:#f6faff;vertical-align:baseline}
+.ibox.wide{width:min(100%,560px);text-align:left;padding:0 8px;border:1px solid #9ab;border-radius:3px;height:2.2em}
+.ipy{display:inline-flex;flex-direction:column;align-items:center;vertical-align:bottom}
+.ipy small{font-size:12px;color:#6a7a5a;font-family:Arial,sans-serif}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.chips button{border:1px solid #cfd8c0;background:#fff;border-radius:3px;padding:6px 12px;font-size:calc(var(--fs) + 2px);font-family:inherit}
+.chips button.used{opacity:.35}
+.bline{min-height:46px;border:1px dashed #9ab37a;border-radius:3px;background:#fbfdf6;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:calc(var(--fs) + 2px)}
+.bline .ph{color:#aaa;font-size:14px}
+.bline span.w{background:#e7f3d5;border:1px solid #b9d98f;border-radius:3px;padding:3px 9px;cursor:pointer}
+.btools{display:flex;gap:10px;margin-top:6px}
+.btools button{border:1px solid #ddd;background:#fff;border-radius:3px;padding:4px 12px;font-size:12.5px;color:#555}
+.wq{border-top:1px solid #eef3e6;padding:12px 14px}
+.wq:first-child{border-top:0}
+.wword{display:inline-block;background:#fff4e2;border:1px solid #f0d3a6;color:#a3540c;padding:2px 12px;border-radius:3px;margin:4px 0 6px;font-size:calc(var(--fs) + 2px)}
+.wta.sm{min-height:90px;width:100%;margin:6px 0}
+.noitems{padding:60px 20px;text-align:center;color:#888}
+.paperpick{display:none}
+.paperpick.on{display:grid}
+.lempty{color:#999;font-size:13px;margin:-6px 0 8px 110px}
+@media (max-width:720px){.iopts{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px}.iopt img{height:84px}.refs{padding:40px 8px 8px;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.refs .ri img{height:80px}.refs.txt,.refs.words{grid-template-columns:1fr}.exbox{margin:40px 8px 6px}.lempty{margin-left:86px}}
+.bl{display:inline-block;min-width:3em;border-bottom:1px solid #333;text-align:center;padding:0 4px;margin:0 2px;font-weight:600}
+.bl.fill{color:#1a6fd6}
+.refs.set{display:block;text-align:center}.refs.set img{max-width:min(100%,640px);border:1px solid #ddd}
+.passage.after{padding-top:10px}
+</style></head>
+<body>
+<div class="deco l">杰出英才<br>智成大路</div><div class="deco r">桃花潭水<br>春闻上谱</div>
+
+<section class="scr" id="sLang">
+  <div class="clock"></div>
+  <div class="biglg">汉</div>
+  <div class="org">HSK GARDEN · HÀNH TRÌNH HSK<small>汉 语 水 平 模 拟 考 试 系 统</small></div>
+  <h1 id="welTxt"></h1><h2 id="welTxt2"></h2>
+  <div class="row"><button class="btn" type="button" data-lang="zh">中 文</button><button class="btn" type="button" data-lang="en">English</button></div>
+  <div class="foot" style="margin-top:80px">HSK GARDEN · 新版HSK（3.0）模拟考试 · 仅供学习练习使用</div>
+</section>
+
+<section class="scr hide" id="sLogin">
+  <div class="clock"></div>
+  <div class="brand"><span class="lg">汉</span><span class="tx">HSK GARDEN · HÀNH TRÌNH HSK<small>汉语水平模拟考试系统</small></span></div>
+  <div class="wrapC"><div class="panel">
+    <div class="notice"><h3 id="nTitle">考场须知<label><input type="checkbox" id="nRead"><span id="nReadTx"></span></label></h3><div id="noticeBody"></div></div>
+    <form class="login" id="loginForm" autocomplete="on">
+      <h3><span>🔒</span><span id="lTitle"></span></h3>
+      <div class="frow"><span></span><input id="fName" name="name" maxlength="60"></div>
+      <div class="frow"><span></span><input id="fMail" name="email" type="email" maxlength="80"></div>
+      <div class="frow"><span></span><select id="fGender"></select></div>
+      <div class="frow"><span></span><input id="fNat" maxlength="40"></div>
+      <div class="frow"><span></span><select id="fSubj"></select></div>
+      <div class="frow paperpick" id="rowPaper"><span></span><select id="fPaper"></select></div>
+      <div class="lerr" id="lErr"></div>
+      <div class="lbtns"><button class="btn" type="button" id="btnLogin"></button><button class="btn g" type="button" id="btnBack1"></button></div>
+    </form>
+  </div></div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
+</section>
+
+<section class="scr hide" id="sDev">
+  <div class="clock"></div>
+  <div class="brand"><span class="lg">汉</span><span class="tx">HSK GARDEN · HÀNH TRÌNH HSK<small>汉语水平模拟考试系统</small></span></div>
+  <div class="wrapC" style="max-width:1100px"><div class="panel"><span class="ptag" id="devTag"></span>
+    <div class="dev">
+      <div class="dbox"><h4 id="earT"></h4><div class="bd">
+        <svg class="hp" viewBox="0 0 200 170"><defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#f4f4f4"/><stop offset=".5" stop-color="#9a9a9a"/><stop offset="1" stop-color="#e8e8e8"/></linearGradient></defs><path d="M30 105 C30 35 170 35 170 105" fill="none" stroke="url(#hg)" stroke-width="12"/><ellipse cx="38" cy="118" rx="26" ry="38" fill="#d9d9d9" stroke="#999"/><ellipse cx="44" cy="118" rx="16" ry="28" fill="#555"/><ellipse cx="162" cy="118" rx="26" ry="38" fill="#d9d9d9" stroke="#999"/><ellipse cx="156" cy="118" rx="16" ry="28" fill="#555"/></svg>
+        <button class="btn g sm" type="button" id="btnTone" style="margin-top:20px"></button></div></div>
+      <div class="dbox"><h4 id="netT"></h4><div class="bd" style="justify-content:flex-start">
+        <div class="stat"><small id="netStL"></small><b id="netSt"></b></div>
+        <div class="stat"><small id="netSpL"></small><b id="netSp"></b></div>
+        <div style="flex:1"></div><button class="btn g sm" type="button" id="btnRecheck"></button></div></div>
+    </div>
+    <div class="dfoot"><button class="btn" type="button" id="btnDevNext"></button><button class="btn g" type="button" id="btnBack2"></button></div>
+  </div></div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
+</section>
+
+<section class="scr hide" id="sMic">
+  <div class="clock"></div>
+  <div class="brand"><span class="lg">汉</span><span class="tx">HSK GARDEN · HÀNH TRÌNH HSK<small>汉语水平模拟考试系统</small></span></div>
+  <div class="wrapC" style="max-width:1100px"><div class="panel"><span class="ptag" id="micTag"></span>
+    <div class="mic">
+      <div class="mlv" id="mLv"><i></i></div>
+      <div class="c"><div style="display:flex;align-items:center;gap:8px"><button class="rb small" type="button" id="bPlus">+</button><button class="rb" type="button" id="bTry">▶</button><button class="rb small" type="button" id="bMinus">−</button></div><span id="lTry"></span></div>
+      <div class="c"><button class="rb big" type="button" id="bRec">🎙</button><span id="lRec"></span></div>
+      <div class="c"><button class="rb" type="button" id="bPb">▶</button><span id="lPb"></span></div>
+    </div>
+    <div style="text-align:center;padding:10px 0 40px"><button class="btn" type="button" id="btnMicNext"></button></div>
+  </div></div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
+</section>
+
+<section class="scr hide" id="sDl">
+  <div class="clock"></div>
+  <div class="brand"><span class="lg">汉</span><span class="tx">HSK GARDEN · HÀNH TRÌNH HSK<small>汉语水平模拟考试系统</small></span></div>
+  <div class="wrapC" style="max-width:1100px"><div class="panel"><span class="ptag" id="dlTag"></span>
+    <div class="dl">
+      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" stroke="#7cc23a" stroke-width="9" stroke-linejoin="round"><path d="M34 14h50l26 26v82H34z"/><path d="M84 14v26h26"/><path d="M50 62h44M50 80h30M50 98h24" stroke-linecap="round"/><path d="M96 78v38M80 102l16 16 16-16" stroke-linecap="round"/></svg>
+      <div class="bar" id="dlBar"><i></i><span id="dlPct">0%</span></div>
+      <p id="dlMsg" style="margin:0 0 40px"></p>
+      <button class="btn" type="button" id="btnDlNext" disabled></button>
+    </div>
+  </div></div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
+</section>
+
+<section class="scr hide" id="sExam">
+  <div class="wm" id="wm"></div>
+  <div class="brand" style="margin-left:max(18px,calc(50vw - 612px))"><span class="lg">汉</span><span class="tx">HSK GARDEN · HÀNH TRÌNH HSK<small>汉语水平模拟考试系统</small></span></div>
+  <div class="ex">
+    <nav class="nav" id="nav"></nav>
+    <main class="main">
+      <div class="mhead"><span class="ttl" id="mTitle"></span><div class="tm"><b id="tmLbl"></b><div class="pg" id="tmPg"><i></i></div></div></div>
+      <div class="mbody" id="mBody"></div>
+    </main>
+    <aside class="side">
+      <div class="cand"><span class="av"></span><p>考试科目：<span id="cSubj"></span></p><p>姓名：<span id="cName"></span></p><p>邮箱：<span id="cMail"></span></p><p>性别：<span id="cGender"></span></p><p>国籍：<span id="cNat"></span></p></div>
+      <div class="sbtns"><button type="button" id="bNotice">考场须知</button><button type="button" id="bTips">考试提示</button><button type="button" id="bCard">答题卡</button><button type="button" id="bFont">字体大小</button><button type="button" class="sub" id="bSubmit">提交</button></div>
+    </aside>
+  </div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试 · 仅供学习练习使用</div>
+</section>
+
+<section class="scr hide" id="sRes">
+  <div class="brand"><span class="lg">汉</span><span class="tx">HSK GARDEN · HÀNH TRÌNH HSK<small>汉语水平模拟考试系统</small></span></div>
+  <div class="res"><div class="panel"><span class="ptag" style="font-size:15px;padding:5px 18px">作答结果（客观题）</span>
+    <div class="tip">仅判断客观题作答，主观题系统不自动阅卷。</div>
+    <table class="rt" id="resTbl"></table>
+    <div style="display:flex;justify-content:center;gap:30px;margin-top:22px"><button class="btn sm" type="button" id="btnCand">考生信息</button><button class="btn sm g" type="button" id="btnConfirm">确认</button></div>
+    <p class="sent" id="sentMsg"></p>
+  </div></div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
+</section>
+
+<section class="scr hide" id="sEnd">
+  <div class="clock"></div>
+  <div class="res" style="padding-top:60px"><div class="panel end">
+    <svg width="130" height="110" viewBox="0 0 130 110"><rect x="10" y="6" width="96" height="66" rx="4" fill="#6b7183"/><rect x="16" y="12" width="84" height="50" fill="#e9edf3"/><path d="M16 12h84L40 62H16z" fill="#fff" opacity=".7"/><rect x="50" y="72" width="16" height="12" fill="#6b7183"/><rect x="34" y="84" width="48" height="6" rx="3" fill="#6b7183"/><path d="M80 80c10 0 14 8 22 10" stroke="#6b7183" fill="none" stroke-width="2"/><ellipse cx="110" cy="94" rx="12" ry="7" fill="#f2c27b"/></svg>
+    <h2>考试结束</h2><p>请携带好相关物品离场！</p>
+  </div></div>
+  <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
+</section>
+
+<script>/* =====================================================================
+   HSK GARDEN · Phòng thi HSK 3.0 (dùng chung cho HSK 1–5)
+   Luồng: chọn ngôn ngữ → 考场须知 + đăng nhập (chọn cấp + đề) → kiểm tra thiết bị
+          → micro → tải đề → làm bài (听力 → 阅读 → 书写) → kết quả → gửi giáo viên
+   Đề nằm ở /hsk-exam/papers/<id>.json, danh sách ở /hsk-exam/papers.json
+   ===================================================================== */
+(function () {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const pad = (n) => String(n).padStart(2, "0");
+  const mmss = (t) => { t = Math.max(0, Math.ceil(t)); return pad(Math.floor(t / 60)) + ":" + pad(t % 60); };
+  const LET = "ABCDEFGHIJ";
+  const CN = ["", "一", "二", "三", "四", "五", "六"];
+  const cnt = (t) => (String(t || "").match(/[^\s　]/g) || []).length;
+  const norm = (x) => String(x == null ? "" : x).replace(/[\s，。、？！?!,.；;：:"'‘’“”（）()《》〈〉…·]/g, "").toLowerCase();
+
+  // ---------- trạng thái ----------
+  const S = {
+    lang: "zh",
+    cand: { name: "", email: "", gender: "女", nat: "Vietnam", level: "", paperId: "" },
+    list: [], P: null, U: [], Q: [],
+    ans: {}, wr: {}, bld: {}, mark: {},
+    sec: null, cur: 0, deadline: 0, secDur: 0,
+    fs: 15, audio: null, audioUrl: null, lastPlaying: -1, timed: false,
+    started: 0, finished: false, result: null, sent: false,
+  };
+  window.__HSK = S;
+
+  // ---------- chữ ----------
+  const TXT = {
+    zh: { wel: "欢迎参加中文水平考试HSK3.0模拟考试 请选择语言", wel2: "Welcome to the HSK 3.0 Chinese Proficiency Mock Test  Please choose language", notice: "考场须知", read: "我已阅读考场须知", login: "登录", name: "姓名：", email: "邮箱：", gender: "性别：", nat: "国籍：", subj: "考试科目：", paper: "试卷：", choose: "请选择", male: "男", female: "女", btnLogin: "登录", back: "返回", errName: "请填写姓名。", errRead: "请先阅读并勾选“我已阅读考场须知”。", errSubj: "请选择考试科目。", errPaper: "请选择试卷。", env: "环境检测", ear: "耳机检测", net: "网络检测", netSt: "网络状态", netSp: "检测网速", ok: "正常", off: "离线", play: "播放", stop: "停止", recheck: "重新检测", next: "下一步", mic: "麦克风调试", tryL: "试听", rec: "录音", pb: "播放", skip: "跳过", dl: "试卷下载", dling: "试卷下载中，请稍候……", dlok: "下载完毕，请点击下一步进行考试.", local: "本地试卷", loading: "正在加载试卷……", noPaper: "暂无试卷" },
+    en: { wel: "欢迎参加中文水平考试HSK3.0模拟考试 请选择语言", wel2: "Welcome to the HSK 3.0 Chinese Proficiency Mock Test  Please choose language", notice: "Exam Rules", read: "I have read the exam rules", login: "Login", name: "Name:", email: "Email:", gender: "Gender:", nat: "Nationality:", subj: "Subject:", paper: "Paper:", choose: "Please choose", male: "Male", female: "Female", btnLogin: "Login", back: "Back", errName: "Please enter your name.", errRead: "Please read the rules and tick the checkbox.", errSubj: "Please choose a subject.", errPaper: "Please choose a test paper.", env: "Device Check", ear: "Headphones", net: "Network", netSt: "Network status", netSp: "Speed", ok: "Normal", off: "Offline", play: "Play", stop: "Stop", recheck: "Check again", next: "Next", mic: "Microphone Test", tryL: "Listen", rec: "Record", pb: "Play", skip: "Skip", dl: "Downloading Test", dling: "Downloading the test paper…", dlok: "Download complete. Click Next to start the test.", local: "Local paper", loading: "Loading paper…", noPaper: "No paper yet" },
+  };
+  const T = (k) => (TXT[S.lang] || TXT.zh)[k] || k;
+  const SECN = { L: "听力", R: "阅读", W: "书写" };
+  const SECI = { L: "🎧", R: "📖", W: "✍" };
+
+  function rules() {
+    const P = S.P;
+    const base = ["欢迎参加中文网络考试，请认真阅读考试纪律和考试注意事项。", "<b>一、考试纪律</b>", "1. 请将护照和准考证放在桌子左前方，便于监考检查。", "2. 除护照、准考证以外的个人物品须事先放到主考指定的位置。", "3. 在规定的时间内，作答规定的试题。", "4. 考试将统一开始，听力考试结束前，考生不得离开考场。考试中间没有休息时间，如有特殊原因考生需要中途离场的，须经主考同意。", "5. 考试过程请保持安静，不许与其他考生说话、不许观看其他考生的答题界面，如有问题请举手示意，待监考人员走近后小声提问。", "6. 考生须听从主考指令，遵守考试规则，如考生存在替考、作弊及不听从主考指令等行为，将取消考试成绩。", "<b>二、注意事项</b>", "1. 考试过程中，考生只需使用键盘、鼠标和耳机进行考试，不发放草稿纸。", "2. 听力部分录音自动播放，录音只播放一遍。"];
+    if (P) {
+      const r = secRange("R"), w = secRange("W");
+      let s = "3. ";
+      if (r) s += `阅读部分 ${Math.round(P.dur.R / 60)} 分钟`;
+      if (w) s += `，书写部分 ${Math.round(P.dur.W / 60)} 分钟`;
+      base.push(s + "，倒计时结束后系统自动进入下一部分或自动交卷。");
+    } else base.push("3. 阅读、书写部分倒计时结束后系统自动进入下一部分或自动交卷。");
+    base.push("4. 书写部分请使用中文输入法作答；作答过程中请勿刷新或关闭页面，否则答案将丢失。");
+    return base;
+  }
+  function tips() {
+    const out = [];
+    for (const k of ["L", "R", "W"]) {
+      const r = secRange(k); if (!r) continue;
+      if (k === "L") out.push(`<b>听力</b>（第${r[0]}-${r[1]}题）：录音自动播放，只播放一遍。${S.timed ? "页面右上角显示本题剩余时间，时间到后自动进入下一题。" : "录音播放期间可以点击左侧题号或“上一题/下一题”切换题目；录音结束后自动进入阅读部分。"}`);
+      if (k === "R") out.push(`<b>阅读</b>（第${r[0]}-${r[1]}题，${Math.round(S.P.dur.R / 60)}分钟）：可以在阅读部分的各题之间自由切换。`);
+      if (k === "W") out.push(`<b>书写</b>（第${r[0]}-${r[1]}题，${Math.round(S.P.dur.W / 60)}分钟）：请使用中文输入法作答。`);
+    }
+    out.push("点击题目右上角的 ★ 可以标记题目；“答题卡”可查看本部分作答情况；“字体大小”可调整文字大小。");
+    out.push("客观题交卷后由系统自动判分；主观题（看图写句子、作文）由老师批改。");
+    return out;
+  }
+
+  // ---------- tiện ích ----------
+  function show(id) { $$("section.scr").forEach((s) => s.classList.toggle("hide", s.id !== id)); window.scrollTo(0, 0); }
+  function modal(title, body, btns, o = {}) {
+    const m = document.createElement("div");
+    m.className = "mask";
+    m.innerHTML = `<div class="dlg" style="${o.w ? `width:min(${o.w}px,100%)` : ""}"><div class="dh"><b>${title || ""}</b>${o.noClose ? "" : '<button type="button" data-x aria-label="close">×</button>'}</div><div class="db">${body}</div>${btns && btns.length ? `<div class="dbtns">${btns.map((b, i) => `<button type="button" class="btn sm ${b.g ? "g" : ""}" data-b="${i}">${b.t}</button>`).join("")}</div>` : ""}</div>`;
+    const close = () => m.remove();
+    m.addEventListener("click", (e) => {
+      if (e.target.closest("[data-x]")) { close(); o.onClose && o.onClose(); }
+      const b = e.target.closest("[data-b]");
+      if (b) { close(); const f = btns[+b.dataset.b].f; f && f(); }
+    });
+    document.body.appendChild(m);
+    return { close, el: m };
+  }
+  function clock() {
+    const d = new Date();
+    const s = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    $$(".clock").forEach((c) => (c.textContent = s));
+  }
+  setInterval(clock, 1000);
+
+  // chữ Hán (+ pinyin)
+  function zh(v, cls) {
+    if (v == null) return "";
+    if (typeof v === "string") return v;
+    if (v.img) return `<img class="qimg" src="${esc(v.img)}" alt="">`;
+    const hz = v.hz || v.txt || "";
+    return v.py ? `<span class="zp ${cls || ""}"><small>${v.py}</small><span>${hz}</span></span>` : `<span>${hz}</span>`;
+  }
+
+  // ---------- danh sách đề ----------
+  async function loadList() {
+    try {
+      const r = await fetch("papers.json", { cache: "no-store" });
+      S.list = (await r.json()).filter((p) => p && !p.hidden);
+    } catch (e) { S.list = []; }
+    if ($("#sLogin") && !$("#sLogin").classList.contains("hide")) fillLogin();
+  }
+  const levelsAvail = () => [...new Set(S.list.map((p) => +p.level))].sort((a, b) => a - b);
+
+  function fillPapers() {
+    const lv = +$("#fSubj").value || 0;
+    const row = $("#rowPaper"), sel = $("#fPaper");
+    if (!lv) { row.classList.remove("on"); sel.innerHTML = ""; return; }
+    const ps = S.list.filter((p) => +p.level === lv);
+    sel.innerHTML = `<option value="">${T("choose")}</option>` + ps.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+    if (ps.some((p) => p.id === S.cand.paperId)) sel.value = S.cand.paperId;
+    else if (ps.length === 1) sel.value = ps[0].id;
+    row.classList.add("on");
+  }
+  function fillLogin() {
+    $("#nTitle").firstChild.textContent = T("notice");
+    $("#nReadTx").textContent = T("read");
+    $("#noticeBody").innerHTML = rules().map((t) => `<p>${t}</p>`).join("");
+    $("#lTitle").textContent = T("login");
+    $("#fName").previousElementSibling.textContent = T("name");
+    $("#fMail").previousElementSibling.textContent = T("email");
+    $("#fGender").previousElementSibling.textContent = T("gender");
+    $("#fNat").previousElementSibling.textContent = T("nat");
+    $("#fSubj").previousElementSibling.textContent = T("subj");
+    $("#fPaper").previousElementSibling.textContent = T("paper");
+    $("#fGender").innerHTML = `<option value="男">${T("male")}</option><option value="女">${T("female")}</option>`;
+    $("#fGender").value = S.cand.gender;
+    const lv = levelsAvail();
+    $("#fSubj").innerHTML = `<option value="">${S.list.length ? T("choose") : T("loading")}</option>` + lv.map((l) => `<option value="${l}">HSK${CN[l]}级</option>`).join("");
+    if (S.cand.level && lv.includes(+S.cand.level)) $("#fSubj").value = S.cand.level;
+    $("#fName").value = S.cand.name; $("#fMail").value = S.cand.email; $("#fNat").value = S.cand.nat;
+    $("#btnLogin").textContent = T("btnLogin"); $("#btnBack1").textContent = T("back");
+    fillPapers();
+  }
+
+  async function doLogin() {
+    const err = $("#lErr");
+    if (!$("#nRead").checked) { err.textContent = T("errRead"); return; }
+    const name = $("#fName").value.trim();
+    if (!name) { err.textContent = T("errName"); $("#fName").focus(); return; }
+    const lv = $("#fSubj").value;
+    if (!lv) { err.textContent = T("errSubj"); return; }
+    const pid = $("#fPaper").value;
+    if (!pid) { err.textContent = T("errPaper"); return; }
+    Object.assign(S.cand, { name, email: $("#fMail").value.trim(), gender: $("#fGender").value, nat: $("#fNat").value.trim() || "—", level: lv, paperId: pid });
+    const meta = S.list.find((p) => p.id === pid);
+    err.textContent = T("loading");
+    $("#btnLogin").disabled = true;
+    try {
+      const r = await fetch(meta.file, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      setPaper(await r.json(), meta);
+    } catch (e) {
+      err.textContent = "Không tải được đề: " + (e.message || e);
+      $("#btnLogin").disabled = false;
+      return;
+    }
+    $("#btnLogin").disabled = false;
+    err.textContent = "";
+    devScreen();
+    show("sDev");
+  }
+
+  // ---------- chuẩn bị đề ----------
+  function setPaper(P, meta) {
+    P.level = +P.level || +meta.level;
+    P.subject = P.subject || `HSK${CN[P.level]}级`;
+    const D = { 1: { R: 17 * 60, W: 0 }, 2: { R: 22 * 60, W: 10 * 60 }, 3: { R: 30 * 60, W: 20 * 60 }, 4: { R: 40 * 60, W: 25 * 60 }, 5: { R: 35 * 60, W: 40 * 60 } }[P.level] || { R: 30 * 60, W: 30 * 60 };
+    P.dur = Object.assign({}, D, P.dur || {});
+    S.P = P; S.U = P.units;
+    S.Q = [];
+    S.U.forEach((u, i) => u.qs.forEach((q) => S.Q.push({ ...q, u: i, sec: u.sec })));
+    S.timed = S.U.filter((u) => u.sec === "L").every((u) => Array.isArray(u.t));
+    S.ans = {}; S.wr = {}; S.bld = {}; S.mark = {};
+    document.title = `${P.subject} · ${P.name || meta.name} · HSK GARDEN`;
+  }
+  const secUnits = (k) => S.U.map((u, i) => (u.sec === k ? i : -1)).filter((i) => i >= 0);
+  function secRange(k) {
+    if (!S.P) return null;
+    const ns = S.Q.filter((q) => q.sec === k).map((q) => q.n);
+    return ns.length ? [Math.min(...ns), Math.max(...ns)] : null;
+  }
+  const secOrder = () => ["L", "R", "W"].filter((k) => secUnits(k).length);
+  const isOpen = (q) => q.t === "w";
+  const answered = (q) => (q.t === "w" ? cnt(S.wr[q.n]) > 0 : q.t === "b" ? !!(S.bld[q.n] || []).length || !!S.ans[q.n] : !!S.ans[q.n]);
+
+  // ---------- kiểm tra thiết bị ----------
+  let actx = null, tone = null, vol = 0.25;
+  function ac() { if (!actx) { const C = window.AudioContext || window.webkitAudioContext; C && (actx = new C()); } actx && actx.state === "suspended" && actx.resume(); return actx; }
+  function playTone(on, btn) {
+    if (tone) { tone.forEach((o) => { try { o.stop(); } catch (e) {} }); tone = null; }
+    if (!on) return;
+    const c = ac(); if (!c) return;
+    const notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 659.25], arr = [];
+    for (let r = 0; r < 4; r++) notes.forEach((f, i) => {
+      const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.value = f;
+      const t = c.currentTime + 2.4 * r + 0.4 * i;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.04); g.gain.linearRampToValueAtTime(0, t + 0.36);
+      o.connect(g).connect(c.destination); o.start(t); o.stop(t + 0.38); arr.push(o);
+    });
+    tone = arr;
+    arr[arr.length - 1].onended = () => { tone = null; if (btn) { btn.dataset.on = ""; btn.textContent = btn.dataset.l1; } };
+  }
+  function net() {
+    const on = navigator.onLine !== false;
+    $("#netSt").textContent = T(on ? "ok" : "off");
+    const c = navigator.connection;
+    const v = c && c.downlink ? (c.downlink * 1000 / 8).toFixed(2) + " kb/s" : T("local") + " · " + T("ok");
+    $("#netSp").textContent = "…"; setTimeout(() => ($("#netSp").textContent = v), 600);
+  }
+  function devScreen() {
+    $("#devTag").textContent = T("env"); $("#earT").textContent = T("ear"); $("#netT").textContent = T("net");
+    $("#netStL").textContent = T("netSt"); $("#netSpL").textContent = T("netSp");
+    const b = $("#btnTone"); b.dataset.l1 = T("play"); b.dataset.l2 = T("stop"); b.textContent = T("play"); b.dataset.on = "";
+    $("#btnRecheck").textContent = T("recheck"); $("#btnDevNext").textContent = T("next"); $("#btnBack2").textContent = T("back");
+    net();
+  }
+  let rec = null, recUrl = null, recStream = null, raf = 0;
+  function micScreen() { $("#micTag").textContent = T("mic"); $("#lTry").textContent = T("tryL"); $("#lRec").textContent = T("rec"); $("#lPb").textContent = T("pb"); $("#btnMicNext").textContent = T(recUrl ? "next" : "skip"); }
+  async function toggleRec() {
+    const b = $("#bRec");
+    if (rec && rec.state === "recording") { rec.stop(); return; }
+    try { recStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { modal("麦克风", "无法使用麦克风（" + esc(e.message || e.name) + "）。<br>本试卷没有口语题，可以点击“跳过”继续考试。", [{ t: "确定", g: 1 }]); return; }
+    const chunks = [];
+    rec = new MediaRecorder(recStream);
+    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    rec.onstop = () => { cancelAnimationFrame(raf); $("#mLv i").style.width = "0"; b.classList.remove("on"); recStream.getTracks().forEach((t) => t.stop()); recUrl && URL.revokeObjectURL(recUrl); recUrl = URL.createObjectURL(new Blob(chunks, { type: rec.mimeType || "audio/webm" })); micScreen(); };
+    rec.start(); b.classList.add("on");
+    const c = ac();
+    if (c) {
+      const an = c.createAnalyser(); an.fftSize = 512; c.createMediaStreamSource(recStream).connect(an);
+      const buf = new Uint8Array(an.fftSize);
+      const loop = () => { an.getByteTimeDomainData(buf); let m = 0; for (const v of buf) m = Math.max(m, Math.abs(v - 128)); $("#mLv i").style.width = Math.min(100, 1.6 * m) + "%"; raf = requestAnimationFrame(loop); };
+      loop();
+    }
+    setTimeout(() => { rec && rec.state === "recording" && rec.stop(); }, 5000);
+  }
+
+  // ---------- tải đề / file nghe ----------
+  function setBar(p) { $("#dlBar i").style.width = p + "%"; $("#dlPct").textContent = p + "%"; }
+  function dlDone() { $("#dlMsg").textContent = T("dlok"); $("#btnDlNext").disabled = false; setBar(100); }
+  function useAudio(src) { const a = new Audio(); a.preload = "auto"; a.src = src; S.audio = a; S.audioUrl = src; }
+  async function download() {
+    $("#dlTag").textContent = T("dl"); $("#dlMsg").textContent = T("dling"); $("#btnDlNext").textContent = T("next"); $("#btnDlNext").disabled = true; setBar(0);
+    // tải trước ảnh của đề
+    const imgs = new Set();
+    JSON.stringify(S.P).replace(/"(\/[^"]+\.(?:jpe?g|png|webp|gif))"/gi, (m, u) => imgs.add(u));
+    imgs.forEach((u) => { const i = new Image(); i.src = u; });
+    const urls = [].concat(S.P.audio || []).filter(Boolean);
+    if (!urls.length || !secUnits("L").length) { setTimeout(dlDone, 300); return; }
+    let lastErr = "";
+    for (const u of urls) {
+      try {
+        const r = await fetch(u, { cache: "force-cache" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const len = +r.headers.get("content-length") || 0, parts = [];
+        if (r.body && r.body.getReader) {
+          const rd = r.body.getReader(); let got = 0;
+          for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; setBar(len ? Math.min(99, Math.round(got / len * 100)) : Math.min(95, Math.round(got / 90000))); }
+        } else parts.push(new Uint8Array(await r.arrayBuffer()));
+        if ((parts[0] || [])[0] === 60) throw new Error("không phải file âm thanh");
+        const type = /\.m4a(\?|$)/i.test(u) ? "audio/mp4" : "audio/mpeg";
+        useAudio(URL.createObjectURL(new Blob(parts, { type })));
+        dlDone(); return;
+      } catch (e) {
+        lastErr = e.message || String(e);
+        // máy chủ khác không cho tải trực tiếp → vẫn phát được bằng thẻ audio
+        if (/^https?:/i.test(u) && !u.startsWith(location.origin)) { useAudio(u); dlDone(); return; }
+      }
+    }
+    $("#dlMsg").innerHTML = `<span class="no">未能下载听力录音（${esc(lastErr)}）。</span><br><span style="font-size:13px;color:#666">Không tải được file nghe. Chọn file nghe từ máy để tiếp tục:</span><br><input type="file" accept="audio/*" id="pickAudio" style="margin-top:10px">`;
+    $("#pickAudio").onchange = (e) => { const f = e.target.files[0]; if (!f) return; useAudio(URL.createObjectURL(f)); dlDone(); };
+  }
+
+  // ---------- vào thi ----------
+  function startExam() {
+    playTone(false);
+    $("#cName").textContent = S.cand.name; $("#cMail").textContent = S.cand.email || "—"; $("#cGender").textContent = S.cand.gender; $("#cNat").textContent = S.cand.nat; $("#cSubj").textContent = S.P.subject;
+    const w = $("#wm"), mark = esc(S.cand.email || S.cand.name); let h = "";
+    for (let r = -1; r < 14; r++) for (let c = -1; c < 6; c++) h += `<div style="left:${320 * c + (r % 2) * 160}px;top:${120 * r}px">${mark} ${mark}</div>`;
+    w.innerHTML = h;
+    show("sExam");
+    S.started = Date.now();
+    enterSec(secOrder()[0]);
+    window.addEventListener("beforeunload", guard);
+  }
+  function guard(e) { if (!S.finished) { e.preventDefault(); e.returnValue = ""; } }
+
+  function enterSec(k) {
+    S.sec = k;
+    const us = secUnits(k);
+    S.cur = us[0];
+    if (k === "L") {
+      S.lastPlaying = -1;
+      const a = S.audio;
+      if (a) {
+        a.currentTime = 0;
+        a.onended = () => endListening();
+        a.onpause = () => { if (S.sec === "L" && !a.ended) pauseOverlay(); };
+        a.onplay = hideOverlay;
+        const p = a.play(); p && p.catch && p.catch(() => pauseOverlay());
+      }
+    } else {
+      if (S.audio) { S.audio.onpause = null; S.audio.onended = null; S.audio.pause(); }
+      hideOverlay();
+      S.secDur = S.P.dur[k] || 1800;
+      S.deadline = Date.now() + S.secDur * 1000;
+    }
+    drawNav(); drawUnit(); tick();
+  }
+  function pauseOverlay() {
+    if ($("#playOv")) return;
+    const o = document.createElement("div"); o.className = "playov"; o.id = "playOv";
+    o.innerHTML = '<div style="font-size:18px;font-weight:700">听力录音已暂停 · Âm thanh đang tạm dừng</div><div style="color:#666;font-size:14px">请点击按钮继续播放</div><button class="btn g" type="button">▶ 继续播放</button>';
+    o.querySelector("button").onclick = () => { const p = S.audio.play(); p && p.catch && p.catch(() => {}); };
+    document.body.appendChild(o);
+  }
+  function hideOverlay() { const o = $("#playOv"); o && o.remove(); }
+  function nextSecOf(k) { const o = secOrder(); return o[o.indexOf(k) + 1]; }
+  function goNextSec(from) {
+    const nx = nextSecOf(from);
+    if (!nx) { finish(); return; }
+    const r = secRange(nx);
+    modal(`${SECN[from]}考试结束`, `${SECN[from]}部分已结束，即将进入<b>${SECN[nx]}</b>部分（第${r[0]}-${r[1]}题，共${Math.round(S.P.dur[nx] / 60)}分钟）。`, [{ t: "开始" + SECN[nx], g: 1, f: () => enterSec(nx) }], { noClose: 1 });
+  }
+  function endListening() {
+    if (S.sec !== "L") return;
+    S.sec = "_";
+    if (S.audio) { S.audio.onpause = null; S.audio.pause(); }
+    hideOverlay();
+    goNextSec("L");
+  }
+  function tick() {
+    const lbl = $("#tmLbl"), bar = $("#tmPg i");
+    if (S.sec === "L") {
+      const a = S.audio, ct = a ? a.currentTime : 0, us = secUnits("L");
+      if (S.timed) {
+        let idx = us[us.length - 1];
+        for (const i of us) if (ct < S.U[i].t[1]) { idx = i; break; }
+        const u = S.U[idx];
+        if (idx !== S.lastPlaying) { S.lastPlaying = idx; if (S.cur !== idx) { S.cur = idx; drawNav(); drawUnit(); } }
+        lbl.textContent = `第${u.label}题 ${mmss(u.t[1] - ct)}`;
+        bar.style.width = Math.min(100, Math.max(0, (ct - u.t[0]) / (u.t[1] - u.t[0]) * 100)) + "%";
+        if (a && ct >= S.U[us[us.length - 1]].t[1] - 0.05 && !a.paused) endListening();
+      } else {
+        const d = a && isFinite(a.duration) ? a.duration : 0;
+        lbl.textContent = "听力录音剩余 " + (d ? mmss(d - ct) : "--:--");
+        bar.style.width = d ? Math.min(100, ct / d * 100) + "%" : "0";
+      }
+    } else if (S.sec === "R" || S.sec === "W") {
+      const left = (S.deadline - Date.now()) / 1000;
+      lbl.textContent = (S.sec === "R" ? "阅读题剩余时间 " : "书写题剩余时间 ") + mmss(left);
+      bar.style.width = Math.min(100, 100 * (1 - left / S.secDur)) + "%";
+      if (left <= 0) {
+        const k = S.sec; S.sec = "_";
+        if (nextSecOf(k)) goNextSec(k);
+        else { modal("考试时间到", "考试时间已到，系统自动交卷。", [{ t: "确定", g: 1, f: finish }], { noClose: 1 }); }
+      }
+    }
+  }
+  setInterval(() => { if (S.sec && S.sec !== "done" && S.sec !== "_") tick(); }, 250);
+
+  // ---------- thanh điều hướng trái ----------
+  const PNAME = ["", "第一部分", "第二部分", "第三部分", "第四部分", "第五部分"];
+  function drawNav() {
+    let h = "";
+    for (const k of secOrder()) {
+      const open = S.sec === k;
+      h += `<div class="sh ${open ? "" : "lock"}"><span class="ic">${SECI[k]}</span>${SECN[k]}<span class="pm">${open ? "-" : "+"}</span></div>`;
+      if (!open) continue;
+      const us = secUnits(k);
+      const parts = [...new Set(us.map((i) => S.U[i].part || 1))];
+      for (const p of parts) {
+        const pu = us.filter((i) => (S.U[i].part || 1) === p);
+        h += `<div class="pt ${pu.includes(S.cur) ? "cur" : ""}"><span class="arr">▸</span>${PNAME[p] || "第" + p + "部分"}</div>`;
+        h += pu.map((i) => {
+          const u = S.U[i], done = u.qs.some(answered);
+          return `<div class="it ${i === S.cur ? "cur" : ""}" data-go="${i}"><span class="arr">▸</span>${esc(u.label)}<span class="pen">${done ? "✏️" : ""}</span><span class="st ${S.mark[i] ? "on" : ""}">★</span></div>`;
+        }).join("");
+      }
+    }
+    $("#nav").innerHTML = h;
+    const c = $(".it.cur", $("#nav"));
+    c && window.innerWidth <= 720 && c.scrollIntoView({ inline: "center", block: "nearest" });
+  }
+
+  // ---------- vẽ một màn câu hỏi ----------
+  function refLetters(u) { return (u.ref && u.ref.items ? u.ref.items.map((x) => x.k) : LET.slice(0, 6).split("")); }
+  function usedElsewhere(u, q) {
+    if (!u.unique) return new Set();
+    const s = new Set();
+    for (const qq of u.qs) if (qq.n !== q.n && S.ans[qq.n]) s.add(S.ans[qq.n]);
+    if (u.exUsed) s.add(u.exUsed);
+    return s;
+  }
+  function drawRef(u) {
+    const r = u.ref; if (!r || !r.items) return "";
+    const used = new Set(u.unique ? u.qs.map((q) => S.ans[q.n]).filter(Boolean) : []);
+    if (u.exUsed) used.add(u.exUsed);
+    if (r.kind === "set") return `<div class="refs set ${u.ex ? "after" : ""}"><img src="${esc(r.img)}" alt=""></div>`;
+    if (r.kind === "img") return `<div class="refs ${u.ex ? "after" : ""}">${r.items.map((x) => `<div class="ri ${used.has(x.k) ? "used" : ""}"><span class="k">${x.k}</span><img src="${esc(x.img)}" alt=""></div>`).join("")}</div>`;
+    const cls = r.kind === "words" ? "words" : "txt";
+    return `<div class="refs ${cls} ${u.ex ? "after" : ""}">${r.items.map((x) => `<div class="ri ${used.has(x.k) ? "used" : ""}"><span class="k">${x.k}</span><span class="rt2">${zh(x)}</span></div>`).join("")}</div>`;
+  }
+  function blank(n) {
+    const v = S.ans[n];
+    return `<span class="bl ${v ? "fill" : ""}" data-bl="${n}">${v ? `${n} ${esc(v)}` : `&nbsp;${n}&nbsp;`}</span>`;
+  }
+  function drawPassage(u) {
+    if (!u.passage) return "";
+    const IMG = S.P.img || {};
+    const paras = u.passage.map((t) => {
+      let x = String(t).replace(/<u><b>(.*?)<\/b><\/u>/g, "\u0001$1\u0002");
+      x = esc(x).replace(/\u0001/g, "<u><b>").replace(/\u0002/g, "</b></u>").replace(/\{(\d+)\}/g, (m, n) => blank(+n));
+      return `<p>${x}</p>`;
+    });
+    if (u.img && (IMG[u.img] || /^\//.test(u.img))) {
+      const k = Math.min(u.imgAfter || 0, paras.length - 1);
+      paras[k] = paras[k].replace(/^<p>/, `<p><img src="${IMG[u.img] || u.img}" alt="">`);
+    }
+    return `<div class="passage ${u.ref ? "after" : u.ex ? "short" : ""}">${paras.join("")}</div>`;
+  }
+  function qChoice(q, u) {
+    const imgOpts = q.o.every((o) => o && typeof o === "object" && o.img);
+    let h = `<div class="q" data-q="${q.n}"><div class="qh"><span class="qn">${q.n}</span>${q.s ? `<span class="qs">${zh(q.s)}</span>` : ""}</div>`;
+    if (q.p || q.img) h += `<div class="qbody">${q.p ? `<div class="pz">${zh(q.p)}</div>` : ""}${q.img ? `<img class="qimg" src="${esc(q.img)}" alt="">` : ""}</div>`;
+    if (imgOpts) {
+      h += `<div class="iopts">${q.o.map((o, i) => `<label class="iopt ${S.ans[q.n] === LET[i] ? "on" : ""}"><img src="${esc(o.img)}" alt=""><span class="row"><input type="radio" name="q${q.n}" value="${LET[i]}" ${S.ans[q.n] === LET[i] ? "checked" : ""}>${LET[i]}</span></label>`).join("")}</div>`;
+    } else {
+      h += q.o.map((o, i) => `<label class="opt"><input type="radio" name="q${q.n}" value="${LET[i]}" ${S.ans[q.n] === LET[i] ? "checked" : ""}><span class="k">${LET[i]}</span><span>${zh(o)}</span></label>`).join("");
+    }
+    return h + "</div>";
+  }
+  function qMatch(q, u) {
+    const L = q.L || refLetters(u), used = usedElsewhere(u, q);
+    let stem = "";
+    if (q.img) stem += `<img class="qimg" src="${esc(q.img)}" alt="">`;
+    if (q.pre != null) stem += `<div class="pz">${q.pre}<span class="bl ${S.ans[q.n] ? "fill" : ""}" data-bl="${q.n}">${S.ans[q.n] ? esc(S.ans[q.n]) : "&nbsp;&nbsp;&nbsp;"}</span>${q.post || ""}${q.py ? `<div style="font-size:12.5px;color:#6a7a5a">${q.py}</div>` : ""}</div>`;
+    else if (q.s) stem += `<div class="pz">${zh(q.s)}</div>`;
+    return `<div class="q" data-q="${q.n}"><div class="qh"><span class="qn">${q.n}</span>${q.head ? `<span class="qs">${zh(q.head)}</span>` : ""}</div>${stem ? `<div class="qbody">${stem}</div>` : ""}<div class="mrow">${L.map((k) => `<label class="${S.ans[q.n] === k ? "on" : ""} ${used.has(k) ? "dis" : ""}"><input type="radio" name="q${q.n}" value="${k}" ${S.ans[q.n] === k ? "checked" : ""}>${k}</label>`).join("")}</div></div>`;
+  }
+  function qInput(q) {
+    const v = esc(S.ans[q.n] || "");
+    let box = `<input class="ibox ${q.wide ? "wide" : ""}" data-in="${q.n}" value="${v}" maxlength="${q.wide ? 80 : 4}" autocomplete="off">`;
+    if (q.bpy) box = `<span class="ipy"><small>${esc(q.bpy)}</small>${box}</span>`;
+    let stem = q.pre != null || q.post != null ? `${zh(q.pre || "")}${box}${zh(q.post || "")}` : `${q.s ? zh(q.s) + "<br>" : ""}${box}`;
+    return `<div class="q" data-q="${q.n}"><div class="qh"><span class="qn">${q.n}</span>${q.head ? `<span class="qs">${zh(q.head)}</span>` : ""}</div><div class="qbody"><div class="pz">${stem}</div>${q.py ? `<div style="font-size:12.5px;color:#6a7a5a">${q.py}</div>` : ""}</div></div>`;
+  }
+  function qBuild(q) {
+    const sel = S.bld[q.n] || [];
+    const line = sel.length ? sel.map((wi, j) => `<span class="w" data-unb="${q.n}" data-j="${j}">${esc(q.w[wi])}</span>`).join("") : `<span class="ph">点击下面的词语，组成句子 · Bấm các từ bên dưới để xếp thành câu</span>`;
+    return `<div class="q" data-q="${q.n}"><div class="qh"><span class="qn">${q.n}</span><span class="qs">${q.head ? zh(q.head) : "完成句子"}</span></div><div class="qbody"><div class="bline">${line}</div><div class="chips">${q.w.map((w, i) => `<button type="button" class="${sel.includes(i) ? "used" : ""}" data-bw="${q.n}" data-i="${i}" ${sel.includes(i) ? "disabled" : ""}>${esc(w)}</button>`).join("")}</div><div class="btools"><button type="button" data-bclr="${q.n}">重做 · Làm lại</button></div></div></div>`;
+  }
+  function qWrite(q, big) {
+    const v = esc(S.wr[q.n] || ""), c = cnt(S.wr[q.n]);
+    if (big) return `${q.prompt ? `<div class="wprompt">${esc(q.prompt)}</div>` : ""}${q.img ? `<img class="wimg" src="${esc((S.P.img || {})[q.img] || q.img)}" alt="">` : ""}<textarea class="wta" data-w="${q.n}" spellcheck="false" placeholder="请在此处作答（使用中文输入法）">${v}</textarea><div class="wct"><span>${q.min ? `要求：不少于 ${q.min} 字` : ""}</span><span>已输入 <b id="wc${q.n}" class="${q.min && c >= q.min ? "ok" : ""}">${c}</b> 字</span></div>`;
+    return `<div class="q" data-q="${q.n}"><div class="qh"><span class="qn">${q.n}</span><span class="qs">${q.head ? zh(q.head) : "看图，用词语写句子。"}</span></div><div class="qbody">${q.img ? `<img class="qimg" src="${esc(q.img)}" alt="">` : ""}${q.word ? `<div class="wword">${esc(q.word)}</div>` : ""}${q.prompt ? `<div class="pz">${esc(q.prompt)}</div>` : ""}<textarea class="wta sm" data-w="${q.n}" spellcheck="false" placeholder="请在此处作答（使用中文输入法）">${v}</textarea><div class="wct" style="margin:0"><span></span><span>已输入 <b id="wc${q.n}">${c}</b> 字</span></div></div></div>`;
+  }
+  function drawUnit() {
+    const i = S.cur, u = S.U[i];
+    $("#mTitle").textContent = u.head || "";
+    let h = `<div class="qcard"><span class="qtag">${esc(u.label)}</span><button type="button" class="star ${S.mark[i] ? "on" : ""}" data-star="${i}" aria-label="mark">★</button>`;
+    if (u.ex) h += `<div class="exbox"><b class="exl">例如</b>${u.ex}</div>`;
+    const bigWrite = u.qs.length === 1 && u.qs[0].t === "w" && (u.qs[0].min || 0) >= 50;
+    if (u.order) {
+      h += `<div class="passage">${u.order.map((t, j) => `<p class="para"><span class="lt">${LET[j]}</span><span>${esc(t)}</span></p>`).join("")}<div class="seq">${u.qs.map((q, j) => `${j ? '<span class="ar">→</span>' : ""}<span class="bx"><b>${S.ans[q.n] || ""}</b><small>${q.n}.</small></span>`).join("")}</div></div>`;
+    } else if (bigWrite) {
+      h += qWrite(u.qs[0], true);
+    } else {
+      h += drawRef(u) + drawPassage(u);
+      if (!u.ex && !u.ref && !u.passage) h += '<div style="height:38px"></div>';
+    }
+    h += "</div>";
+    if (u.order) {
+      h += u.qs.map((q) => `<div class="orow" data-q="${q.n}"><span class="qn">${q.n}</span>${u.order.map((_, j) => `<label><input type="radio" name="q${q.n}" value="${LET[j]}" ${S.ans[q.n] === LET[j] ? "checked" : ""}> ${LET[j]}</label>`).join("")}</div>`).join("");
+    } else if (!bigWrite) {
+      h += u.qs.map((q) => q.t === "m" ? qMatch(q, u) : q.t === "i" ? qInput(q) : q.t === "b" ? qBuild(q) : q.t === "w" ? qWrite(q, false) : qChoice(q, u)).join("");
+    }
+    const us = secUnits(u.sec), pos = us.indexOf(i);
+    h += `<div class="mnav">${pos > 0 ? '<button type="button" class="btn sm" data-prev>上一题</button>' : ""}${pos < us.length - 1 ? '<button type="button" class="btn sm g" data-next>下一题</button>' : ""}</div>`;
+    $("#mBody").innerHTML = h;
+  }
+  function go(i) {
+    if (S.U[i].sec !== S.sec) return;
+    S.cur = i; drawNav(); drawUnit();
+    window.scrollTo(0, 0);
+  }
+  function setAns(n, v) {
+    S.ans[n] = v;
+    const u = S.U[S.cur];
+    if (u.order) $$(".seq .bx", $("#mBody")).forEach((b, j) => (b.querySelector("b").textContent = S.ans[u.qs[j].n] || ""));
+    else if (u.unique || u.ref || u.qs.some((q) => q.t === "c" || !q.t)) {
+      const y = window.scrollY; drawUnit(); window.scrollTo(0, y);
+    }
+    const bl = $(`[data-bl="${n}"]`);
+    if (bl && !u.order) { bl.classList.add("fill"); }
+    drawNav();
+  }
+
+  // ---------- thẻ trả lời, cỡ chữ, nộp ----------
+  function secDone(k) { return S.Q.filter((q) => q.sec === k && answered(q)).length; }
+  function submitSec() {
+    const k = S.sec; if (!["L", "R", "W"].includes(k)) return;
+    const left = S.Q.filter((q) => q.sec === k).length - secDone(k), nx = nextSecOf(k);
+    const msg = nx ? `确定提交<b>${SECN[k]}</b>部分吗？${k === "L" ? "提交后录音将停止，" : ""}提交后将进入${SECN[nx]}部分，不能再返回修改。` : "确定<b>交卷</b>吗？交卷后将不能再修改答案。";
+    modal("提交", msg + (left ? `<br><span class="no">本部分还有 ${left} 题未作答。</span>` : ""), [{ t: "取消" }, { t: "确定提交", g: 1, f: () => { if (k === "L") endListening(); else if (nx) { S.sec = "_"; enterSec(nx); } else finish(); } }]);
+  }
+  function card() {
+    const k = S.sec; if (!["L", "R", "W"].includes(k)) return;
+    const qs = S.Q.filter((q) => q.sec === k);
+    const m = modal("答题卡", `<div class="leg"><span><i style="background:#7ab81f;border-color:#7ab81f"></i>已作答</span><span><i></i>未作答</span><span><i style="box-shadow:inset 0 -3px 0 #f0a020"></i>已标记</span></div><div class="card">${qs.map((q) => `<button type="button" class="${answered(q) ? "done" : ""} ${S.mark[q.u] ? "mk" : ""}" data-cq="${q.u}">${q.n}</button>`).join("")}</div><p style="margin:16px 0 0;color:#666;font-size:13px">已作答 ${secDone(k)} / ${qs.length}</p>`, []);
+    m.el.addEventListener("click", (e) => { const b = e.target.closest("[data-cq]"); if (b) { m.close(); go(+b.dataset.cq); } });
+  }
+  function fontSize() {
+    const m = modal("字体大小", `<div class="fsz">${[[14, "小"], [15, "标准"], [17, "大"], [19, "特大"]].map(([v, l]) => `<button type="button" data-fs="${v}" class="${S.fs === v ? "on" : ""}">${l}</button>`).join("")}</div>`, []);
+    m.el.addEventListener("click", (e) => { const b = e.target.closest("[data-fs]"); if (b) { S.fs = +b.dataset.fs; document.body.style.setProperty("--fs", S.fs + "px"); m.close(); } });
+  }
+
+  // ---------- chấm & gửi ----------
+  function keyOk(q) {
+    if (q.t === "b") {
+      const your = (S.bld[q.n] || []).map((i) => q.w[i]).join("") || S.ans[q.n] || "";
+      return { your, ok: !!your && [].concat(q.a).some((a) => norm(a) === norm(your)), ans: [].concat(q.a)[0] };
+    }
+    if (q.t === "i") {
+      const your = String(S.ans[q.n] || "").trim();
+      return { your, ok: !!your && [].concat(q.a).some((a) => norm(a) === norm(your)), ans: [].concat(q.a)[0] };
+    }
+    const your = S.ans[q.n] || "";
+    return { your, ok: your !== "" && your === q.a, ans: q.a };
+  }
+  const sum = (list) => { const c = list.filter((x) => x.ok).length; return { correct: c, total: list.length, score: list.length ? Math.round(c / list.length * 100) : null, detail: list }; };
+  function finish() {
+    if (S.finished) return;
+    S.finished = true; S.sec = "done";
+    if (S.audio) { S.audio.onpause = null; S.audio.pause(); }
+    hideOverlay();
+    window.removeEventListener("beforeunload", guard);
+    const det = (k, auto) => S.Q.filter((q) => q.sec === k && !isOpen(q) && (auto ? true : true)).map((q) => { const r = keyOk(q); return { n: q.n, your: r.your, ans: r.ans, ok: r.ok }; });
+    const L = det("L"), R = det("R"), Wa = det("W");
+    const open = S.Q.filter(isOpen).map((q) => ({ n: q.n, text: S.wr[q.n] || "", word: q.word || "", img: /^\//.test(q.img || "") ? location.origin + q.img : "", ref: q.ref || "", prompt: q.prompt || "" }));
+    const big = S.Q.filter((q) => isOpen(q) && (q.min || 0) >= 50);
+    S.result = {
+      listening: sum(L), reading: sum(R),
+      writing: { items: open, auto: Wa.length ? sum(Wa) : null },
+      durationMin: Math.round((Date.now() - S.started) / 60000),
+    };
+    if (big[0]) { S.result.writing.q71 = S.wr[big[0].n] || ""; S.result.writing.c71 = cnt(S.wr[big[0].n]); }
+    if (big[1]) { S.result.writing.q72 = S.wr[big[1].n] || ""; S.result.writing.c72 = cnt(S.wr[big[1].n]); }
+    drawResult();
+    show("sRes");
+    send();
+  }
+  function drawResult() {
+    const r = S.result;
+    let h = `<tr><th></th><th>总分</th><th>得分</th><th>正确题数</th><th>操作</th></tr>`;
+    if (r.listening.total) h += `<tr><td>听力</td><td>100</td><td>${r.listening.score}</td><td>${r.listening.correct} / ${r.listening.total}</td><td><a data-det="L">查看详情</a></td></tr>`;
+    if (r.reading.total) h += `<tr><td>阅读</td><td>100</td><td>${r.reading.score}</td><td>${r.reading.correct} / ${r.reading.total}</td><td><a data-det="R">查看详情</a></td></tr>`;
+    if (secRange("W")) {
+      const a = r.writing.auto, o = r.writing.items.length;
+      h += `<tr><td>书写</td><td>100</td><td colspan="2" style="color:#8a6d3b">${a ? `客观题 ${a.correct} / ${a.total}` : ""}${a && o ? " · " : ""}${o ? `主观题 ${o} 题由老师批改` : ""}</td><td>${a ? '<a data-det="WA">查看详情</a> ' : ""}${o ? '<a data-det="W">查看作答</a>' : ""}</td></tr>`;
+    }
+    $("#resTbl").innerHTML = h;
+  }
+  function detail(k) {
+    const r = S.result;
+    if (k === "W") {
+      modal("书写作答", r.writing.items.map((x) => `<p style="margin:0 0 4px"><b>第${x.n}题</b>${x.word ? `（${esc(x.word)}）` : ""} · ${cnt(x.text)} 字</p><div style="white-space:pre-wrap;background:#fff;border:1px solid #e3ead6;padding:10px 12px;margin-bottom:16px;line-height:1.8">${esc(x.text) || '<span style="color:#aaa">（未作答）</span>'}</div>`).join(""), []);
+      return;
+    }
+    const list = k === "L" ? r.listening.detail : k === "R" ? r.reading.detail : r.writing.auto.detail;
+    modal("查看详情", `<table class="rt"><tr><th>题号</th><th>对错</th><th>你的答案</th><th>正确答案</th></tr>${list.map((x) => `<tr><td>${x.n}</td><td class="${x.ok ? "ok" : "no"}">${x.ok ? "✓" : "×"}</td><td>${esc(x.your) || "—"}</td><td>${esc(x.ans)}</td></tr>`).join("")}</table>`, [], { w: 560 });
+  }
+  function send() {
+    if (window.parent === window) { $("#sentMsg").textContent = ""; return; }
+    const r = S.result;
+    const msg = { source: "hsk-garden-hsk3", type: "HSK3_SUBMIT", center: true, examId: S.P.id, exam: S.P.name, level: `HSK 3.0 - Cấp độ ${S.P.level}`, name: S.cand.name, email: S.cand.email, gender: S.cand.gender, nationality: S.cand.nat, listening: r.listening, reading: r.reading, writing: r.writing, durationMin: r.durationMin, answers: Object.assign({}, S.ans, S.wr) };
+    try { window.parent.postMessage(msg, "*"); $("#sentMsg").innerHTML = "⏳ Đang gửi bài cho giáo viên…"; } catch (e) {}
+    setTimeout(() => { if (!S.sent) $("#sentMsg").innerHTML = "Bấm <b>📤 Nộp bài &amp; Thoát</b> ở thanh phía trên để gửi bài cho giáo viên."; }, 5000);
+  }
+  const AV = '<svg viewBox="0 0 120 150" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="150" fill="#e9eef5"/><circle cx="60" cy="58" r="27" fill="#c9d3e0"/><path d="M14 150c3-34 22-52 46-52s43 18 46 52z" fill="#c9d3e0"/></svg>';
+  function candInfo() {
+    modal("考生信息", `<div style="display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap"><span style="width:120px;height:150px;background:#eef2e8;display:block">${AV}</span><div><p style="margin:0 0 8px">姓名：${esc(S.cand.name)}</p><p style="margin:0 0 8px">性别：${esc(S.cand.gender)}</p><p style="margin:0 0 8px">国籍：${esc(S.cand.nat)}</p><p style="margin:0 0 8px">邮箱：${esc(S.cand.email || "—")}</p><p style="margin:0 0 8px">考试科目：${esc(S.P.subject)}</p><p style="margin:0">试卷：${esc(S.P.name)}</p></div></div>`, []);
+  }
+
+  window.addEventListener("message", (e) => {
+    const d = e.data;
+    if (!d || d.source !== "hsk-garden-dashboard") return;
+    if (d.type === "HSK3_INIT") {
+      if (d.name && !S.cand.name) S.cand.name = d.name;
+      if (d.email && !S.cand.email) S.cand.email = d.email;
+      if (!$("#sLogin").classList.contains("hide")) { $("#fName").value ||= S.cand.name; $("#fMail").value ||= S.cand.email; }
+    }
+    if (d.type === "HSK3_SAVED") { S.sent = true; $("#sentMsg").innerHTML = '<span class="ok">✅ Đã gửi bài cho giáo viên.</span>'; }
+    if (d.type === "HSK3_ERROR") $("#sentMsg").innerHTML = '<span class="no">⚠ Chưa gửi được bài: ' + esc(d.message || "") + "</span>";
+  });
+
+  // ---------- gắn sự kiện ----------
+  document.addEventListener("DOMContentLoaded", () => {
+    $("#welTxt").textContent = TXT.zh.wel; $("#welTxt2").textContent = TXT.zh.wel2;
+    $$("[data-lang]").forEach((b) => (b.onclick = () => { S.lang = b.dataset.lang; fillLogin(); show("sLogin"); }));
+    $("#fSubj").addEventListener("change", () => { S.cand.level = $("#fSubj").value; fillPapers(); });
+    $("#btnLogin").onclick = doLogin;
+    $("#btnBack1").onclick = () => show("sLang");
+    $("#loginForm").addEventListener("submit", (e) => { e.preventDefault(); doLogin(); });
+    $("#btnTone").onclick = (e) => { const b = e.currentTarget, on = !b.dataset.on; b.dataset.on = on ? "1" : ""; b.textContent = on ? b.dataset.l2 : b.dataset.l1; playTone(on, b); };
+    $("#btnRecheck").onclick = net;
+    $("#btnDevNext").onclick = () => { playTone(false); $("#btnTone").dataset.on = ""; micScreen(); show("sMic"); };
+    $("#btnBack2").onclick = () => { playTone(false); show("sLogin"); };
+    $("#bTry").onclick = () => playTone(true);
+    $("#bPlus").onclick = () => { vol = Math.min(0.6, vol + 0.1); playTone(true); };
+    $("#bMinus").onclick = () => { vol = Math.max(0.05, vol - 0.1); playTone(true); };
+    $("#bRec").onclick = toggleRec;
+    $("#bPb").onclick = () => { recUrl && new Audio(recUrl).play(); };
+    $("#btnMicNext").onclick = () => { playTone(false); rec && rec.state === "recording" && rec.stop(); show("sDl"); download(); };
+    $("#btnDlNext").onclick = startExam;
+    $("#nav").addEventListener("click", (e) => { const g = e.target.closest("[data-go]"); g && go(+g.dataset.go); });
+    const mb = $("#mBody");
+    mb.addEventListener("click", (e) => {
+      const us = secUnits(S.sec);
+      if (e.target.closest("[data-prev]")) go(us[us.indexOf(S.cur) - 1]);
+      else if (e.target.closest("[data-next]")) go(us[us.indexOf(S.cur) + 1]);
+      const st = e.target.closest("[data-star]");
+      if (st) { const i = +st.dataset.star; S.mark[i] = !S.mark[i]; st.classList.toggle("on", !!S.mark[i]); drawNav(); }
+      const bw = e.target.closest("[data-bw]");
+      if (bw) { const n = +bw.dataset.bw; (S.bld[n] = S.bld[n] || []).push(+bw.dataset.i); const y = window.scrollY; drawUnit(); window.scrollTo(0, y); drawNav(); }
+      const ub = e.target.closest("[data-unb]");
+      if (ub) { const n = +ub.dataset.unb; (S.bld[n] || []).splice(+ub.dataset.j, 1); const y = window.scrollY; drawUnit(); window.scrollTo(0, y); drawNav(); }
+      const bc = e.target.closest("[data-bclr]");
+      if (bc) { S.bld[+bc.dataset.bclr] = []; const y = window.scrollY; drawUnit(); window.scrollTo(0, y); drawNav(); }
+    });
+    mb.addEventListener("change", (e) => { const t = e.target; if (t.type === "radio") setAns(+t.name.slice(1), t.value); });
+    mb.addEventListener("input", (e) => {
+      const w = e.target.closest("[data-w]");
+      if (w) {
+        const n = +w.dataset.w; S.wr[n] = w.value;
+        const c = cnt(w.value), el = $("#wc" + n), q = S.Q.find((x) => x.n === n);
+        if (el) { el.textContent = c; el.classList.toggle("ok", !!(q && q.min && c >= q.min)); }
+        if (c <= 1) drawNav();
+      }
+      const inp = e.target.closest("[data-in]");
+      if (inp) { S.ans[+inp.dataset.in] = inp.value.trim(); drawNav(); }
+    });
+    $("#bNotice").onclick = () => modal("考场须知", rules().map((t) => `<p style="margin:0 0 6px">${t}</p>`).join(""), []);
+    $("#bTips").onclick = () => modal("考试提示", tips().map((t) => `<p style="margin:0 0 10px">${t}</p>`).join(""), []);
+    $("#bCard").onclick = card;
+    $("#bFont").onclick = fontSize;
+    $("#bSubmit").onclick = submitSec;
+    $("#resTbl").addEventListener("click", (e) => { const d = e.target.closest("[data-det]"); d && detail(d.dataset.det); });
+    $("#btnCand").onclick = candInfo;
+    $("#btnConfirm").onclick = () => show("sEnd");
+    $$(".av").forEach((a) => (a.innerHTML = AV));
+    clock();
+    try {
+      const q = new URLSearchParams(location.search);
+      if (q.get("name")) S.cand.name = q.get("name");
+      if (q.get("email")) S.cand.email = q.get("email");
+      if (q.get("level")) S.cand.level = q.get("level");
+      if (q.get("paper")) S.cand.paperId = q.get("paper");
+    } catch (e) {}
+    if (window.parent !== window) { try { window.parent.postMessage({ source: "hsk-garden-hsk3", type: "HSK3_READY" }, "*"); } catch (e) {} }
+    loadList();
+    show("sLang");
+  });
+  window.__HSK_fn = { enterSec, finish, endListening, go };
+})();
+</script>
+</body></html>

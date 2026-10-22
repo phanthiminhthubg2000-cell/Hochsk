@@ -1,0 +1,86 @@
+[
+ {
+  "id": "hsk1-01",
+  "level": 1,
+  "name": "模拟试卷 1",
+  "file": "papers/hsk1-01.json"
+ },
+ {
+  "id": "hsk1-02",
+  "level": 1,
+  "name": "模拟试卷 2",
+  "file": "papers/hsk1-02.json"
+ },
+ {
+  "id": "hsk1-03",
+  "level": 1,
+  "name": "模拟试卷 3",
+  "file": "papers/hsk1-03.json"
+ },
+ {
+  "id": "hsk2-01",
+  "level": 2,
+  "name": "模拟试卷 1",
+  "file": "papers/hsk2-01.json"
+ },
+ {
+  "id": "hsk2-02",
+  "level": 2,
+  "name": "模拟试卷 2",
+  "file": "papers/hsk2-02.json"
+ },
+ {
+  "id": "hsk2-03",
+  "level": 2,
+  "name": "模拟试卷 3",
+  "file": "papers/hsk2-03.json"
+ },
+ {
+  "id": "hsk3-01",
+  "level": 3,
+  "name": "全真模拟试卷 1",
+  "file": "papers/hsk3-01.json"
+ },
+ {
+  "id": "hsk3-02",
+  "level": 3,
+  "name": "全真模拟试卷 2",
+  "file": "papers/hsk3-02.json"
+ },
+ {
+  "id": "hsk3-03",
+  "level": 3,
+  "name": "全真模拟试卷 3",
+  "file": "papers/hsk3-03.json"
+ },
+ {
+  "id": "hsk4-01",
+  "level": 4,
+  "name": "全真模拟试卷 1",
+  "file": "papers/hsk4-01.json"
+ },
+ {
+  "id": "hsk4-02",
+  "level": 4,
+  "name": "全真模拟试卷 2",
+  "file": "papers/hsk4-02.json"
+ },
+ {
+  "id": "hsk4-03",
+  "level": 4,
+  "name": "全真模拟试卷 3",
+  "file": "papers/hsk4-03.json"
+ },
+ {
+  "id": "hsk5-01",
+  "level": 5,
+  "name": "全真模拟试卷 1",
+  "file": "papers/hsk5-01.json"
+ },
+ {
+  "id": "hsk5-02",
+  "level": 5,
+  "name": "全真模拟试卷 2",
+  "file": "papers/hsk5-02.json"
+ }
+]
