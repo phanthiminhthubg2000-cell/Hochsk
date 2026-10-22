@@ -416,6 +416,7 @@ export const STATIC_LECTURES = [
  {"id": "static-hsk4-3-13","lectureName": "Bài 13 · 美好的日子","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_13.html"},
  {"id": "static-hsk4-3-14","lectureName": "Bài 14 · 合适才买","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_14.html"},
  {"id": "static-hsk4-3-15","lectureName": "Bài 15 · 我去应聘了","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_15.html"},
+ {"id": "static-hsk4-3-16","lectureName": "Bài 16 · 计划赶不上变化","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_16.html"},
  {
   "id": "static-ngu-am-1",
   "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
