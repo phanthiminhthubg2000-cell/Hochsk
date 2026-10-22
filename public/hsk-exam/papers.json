@@ -72,6 +72,12 @@
   "file": "papers/hsk4-03.json"
  },
  {
+  "id": "hsk5-00",
+  "level": 5,
+  "name": "样卷（标准样题）",
+  "file": "papers/hsk5-00.json"
+ },
+ {
   "id": "hsk5-01",
   "level": 5,
   "name": "全真模拟试卷 1",
