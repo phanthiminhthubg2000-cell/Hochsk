@@ -60,7 +60,7 @@
       <div class="frow paperpick on"><span>试卷</span><select id="fPaper"></select></div>
       <label class="prow"><input type="checkbox" id="fPrac"><span>练习模式</span><small>Luyện tập: được tạm dừng, nghe lại, bỏ qua</small></label>
       <div class="lerr" id="lErr"></div>
-      <div class="lbtns"><button class="btn" type="button" id="btnLogin">登 录</button>${EMBED ? "" : '<button class="btn g" type="button" id="btnBack">返 回</button>'}</div>
+      <div class="lbtns"><button class="btn" type="button" id="btnLogin">登 录</button>${EMBED && !E.back ? "" : '<button class="btn g" type="button" id="btnBack">返 回</button>'}</div>
     </form>
   </div></div>${FOOT}
 </section>
@@ -160,9 +160,9 @@
     };
     const own = [{ level: E.level, title: SUBJ + " · " + PAPER, file: location.pathname }];
     fill(own);
-    fetch("exams.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(l => { if (Array.isArray(l) && l.length) fill(l); }).catch(() => { });
+    if (/\/hskk-exam\//.test(location.pathname)) fetch("exams.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(l => { if (Array.isArray(l) && l.length) fill(l); }).catch(() => { });
   })();
-  $("#btnBack") && ($("#btnBack").onclick = () => history.length > 1 ? history.back() : location.href = "/");
+  $("#btnBack") && ($("#btnBack").onclick = () => { if (E.back) location.href = E.back + location.search; else if (history.length > 1) history.back(); else location.href = "/"; });
   $("#btnLogin").onclick = () => {
     const err = m => $("#lErr").textContent = m;
     if (!$("#nRead").checked) return err("请先阅读考场须知并勾选“我已阅读”。· Hãy đọc và tích “我已阅读”.");
@@ -411,9 +411,10 @@
     const tip = R.submitted ? "录音已提交，老师评分后会通知你。· Đã nộp bài. Kết quả sẽ hiện ở mục thông báo khi giáo viên chấm xong." : EMBED && n ? "录音尚未提交。· Bài chưa nộp được — có thể tải .zip gửi giáo viên." : "Đang mở đề ngoài hệ thống: hãy tải .zip để gửi giáo viên.";
     $("#resBody").innerHTML = `<div class="tip">${tip}</div><p style="margin:0 0 14px;color:#555">${SUBJ} · ${esc(PAPER)} · ${esc(R.name)} · 已录音 ${n} / ${qs.length}</p>
       <table class="rv"><tr><th style="width:96px">题号</th><th style="width:220px">我的录音</th><th>题目 / 参考答案</th></tr>${rows}</table>
-      <div class="resbtns">${!R.submitted && EMBED && n ? '<button class="btn" type="button" id="rSub">重新提交 · Nộp lại</button>' : ""}${n ? '<button class="btn sm g" type="button" id="rZip">下载录音（.zip）</button>' : ""}<button class="btn sm" type="button" id="rAgain">重新考试</button></div>`;
+      <div class="resbtns">${!R.submitted && EMBED && n ? '<button class="btn" type="button" id="rSub">重新提交 · Nộp lại</button>' : ""}${n ? '<button class="btn sm g" type="button" id="rZip">下载录音（.zip）</button>' : ""}<button class="btn sm" type="button" id="rAgain">重新考试</button>${E.back ? '<button class="btn sm g" type="button" id="rBack">返回复习</button>' : ""}</div>`;
     $("#rSub") && ($("#rSub").onclick = () => { show("sEnd"); submit(); });
     $("#rZip") && ($("#rZip").onclick = async () => { const b = $("#rZip"); b.disabled = true; b.textContent = "正在打包……"; download(await zip(recQs().map(q => ({ name: fname(q), blob: R.recs[q] }))), `HSK${E.level}_KouYu_${slug(R.name)}.zip`); b.disabled = false; b.textContent = "下载录音（.zip）"; });
+    $("#rBack") && ($("#rBack").onclick = () => { if (Object.keys(R.recs).length && !R.submitted && !confirm("Bài chưa nộp, bản ghi sẽ mất. Vẫn quay lại?")) return; R.running = false; R.recs = {}; R.submitted = true; location.href = E.back + location.search; });
     $("#rAgain").onclick = () => { if (confirm("Làm lại sẽ xoá các bản ghi âm hiện tại. Tiếp tục?")) { R.running = false; R.recs = {}; location.reload(); } };
   }
   const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();

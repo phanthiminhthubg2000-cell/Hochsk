@@ -411,6 +411,8 @@ export const STATIC_LECTURES = [
  {"id": "static-hsk4-3-08","lectureName": "Bài 8 · 该放松时就放松","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_08.html"},
  {"id": "static-hsk4-3-09","lectureName": "Bài 9 · 遇见你，刚刚好","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_09.html"},
  {"id": "static-hsk4-3-10","lectureName": "Bài 10 · 南方不懂北方的冷","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_10.html"},
+ {"id": "static-hsk4-3-on1","lectureName": "Ôn tập 1 · Ngữ pháp · Nghe · Đọc · Viết (Bài 1–10)","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_ON1.html"},
+ {"id": "static-hsk4-3-on2","lectureName": "Ôn tập 2 · Khẩu ngữ HSKK (Bài 1–10)","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_ON2.html"},
  {"id": "static-hsk4-3-11","lectureName": "Bài 11 · 活到老学到老","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_11.html"},
  {"id": "static-hsk4-3-12","lectureName": "Bài 12 · 幸福的家庭","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_12.html"},
  {"id": "static-hsk4-3-13","lectureName": "Bài 13 · 美好的日子","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_13.html"},

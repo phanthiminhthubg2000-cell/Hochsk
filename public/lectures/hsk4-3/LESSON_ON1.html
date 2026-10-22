@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>复习（一）· HSK4 上册 · HSK GARDEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--main:#a8433a;--deep:#6e2a24;--accent:#d9895b;--soft:#fbeee8;--cream:#fffaf6;--line:#ecd3c8;--ink:#3d2420;--muted:#86685f;--ok:#2f7d4f;--okbg:#e5f3ea;--no:#b23b32;--nobg:#fbe4e1;--gold:#c99b42}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Be Vietnam Pro","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--cream) 0%,var(--soft) 55%,#f7efe4 100%);min-height:100vh;font-size:20px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.zh,.serif{font-family:"Noto Serif SC","Songti SC","SimSun",serif}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+b,strong{font-weight:700}
+/* ---------- topbar ---------- */
+.topbar{position:fixed;bottom:16px;right:18px;z-index:400;display:flex;gap:8px}
+.topbar button{border:1px solid var(--line);background:rgba(255,255,255,.92);padding:8px 14px;border-radius:999px;font-size:15px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.topbar button.on{background:var(--main);color:#fff;border-color:var(--main)}
+/* ---------- home ---------- */
+.home{min-height:100vh;padding:clamp(18px,3vh,36px) clamp(24px,5vw,90px);display:flex;flex-direction:column;justify-content:center;align-items:center}
+.home-box{width:100%;max-width:1560px;border:1px solid var(--line);border-radius:30px;background:rgba(255,255,255,.55);padding:clamp(24px,4vh,48px) clamp(24px,3vw,56px) 22px;box-shadow:0 20px 60px rgba(110,42,36,.08)}
+.home-top{text-align:center;margin-bottom:clamp(18px,4vh,44px)}
+.kicker{font-size:15px;letter-spacing:.3em;font-weight:700;color:var(--main);margin-bottom:6px}
+.home h1{margin:0;font-family:"Noto Serif SC",serif;font-weight:900;font-size:clamp(48px,7.4vw,112px);line-height:1.12;color:var(--ink)}
+.home h1 .t2{color:var(--main);border-bottom:6px solid var(--accent);padding:0 6px;margin-left:10px}
+.tagline{font-family:"Noto Serif SC",serif;font-size:clamp(20px,2vw,30px);letter-spacing:.12em;color:var(--muted);margin-top:14px}
+.vnline{font-size:17px;color:var(--muted);margin-top:4px}
+.home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,1.4vw,22px)}
+.home-card{position:relative;overflow:hidden;text-align:left;border:1px solid var(--line);border-top:5px solid var(--deep);background:rgba(255,255,255,.88);border-radius:20px;padding:18px 20px 16px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.home-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(110,42,36,.14);border-color:var(--accent)}
+.home-card:after{content:"";position:absolute;right:-40px;top:-40px;width:120px;height:120px;border-radius:50%;background:var(--soft)}
+.home-card .ic{font-size:30px;position:relative;z-index:1}
+.home-card .no{font-size:13px;letter-spacing:.2em;font-weight:800;color:var(--main);margin-top:4px}
+.home-card .tt{font-family:"Noto Serif SC",serif;font-size:clamp(24px,2vw,32px);font-weight:900;color:var(--ink)}
+.home-card .st{font-size:15px;color:var(--muted);line-height:1.4}
+.home-card.star .tt:after{content:" ★";color:var(--gold);font-size:.7em}
+.home-foot{display:flex;justify-content:space-between;font-size:13px;letter-spacing:.25em;color:var(--muted);margin-top:18px}
+@media(max-width:900px){.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(61,36,32,.42);display:none;align-items:center;justify-content:center;padding:2vh 2vw}
+.modal.open{display:flex}
+.panel{width:min(1560px,97vw);height:94vh;background:#fffdfb;border-radius:26px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+.mhead{position:relative;padding:18px 90px 0 40px;background:linear-gradient(90deg,var(--soft),#fff8ef);border-bottom:1px solid var(--line)}
+.eyebrow{font-size:14px;letter-spacing:.2em;font-weight:800;color:var(--main)}
+.mtitle{font-family:"Noto Serif SC",serif;font-size:clamp(30px,3vw,44px);font-weight:900;color:var(--deep);line-height:1.2;margin:2px 0 10px}
+.close{position:absolute;right:26px;top:22px;width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:26px;color:var(--main);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-size:16px;font-weight:600;color:var(--muted)}
+.tab.on{background:var(--main);border-color:var(--main);color:#fff}
+.mbody{flex:1;overflow:auto;padding:28px clamp(20px,4vw,70px) 60px}
+.sec{display:none;max-width:1320px;margin:0 auto}
+.sec.on{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+h3.h{font-family:"Noto Serif SC",serif;font-size:30px;color:var(--deep);margin:0 0 14px}
+h4.h{font-size:22px;color:var(--main);margin:26px 0 10px}
+.lead{color:var(--muted);font-size:18px;margin:0 0 18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:16px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1000px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.note{background:#fff6e6;border-left:5px solid var(--gold);padding:12px 18px;border-radius:12px;margin:16px 0;font-size:18px}
+.vn{color:#5b4a44}
+body.hide-vn .vn{filter:blur(7px);user-select:none;cursor:pointer;transition:filter .2s}
+body.hide-vn .vn.peek{filter:none}
+.btn{border:1px solid var(--line);background:#fff;padding:7px 16px;border-radius:12px;font-weight:600;font-size:16px}
+.btn.pri{background:var(--main);border-color:var(--main);color:#fff}
+.btn.sm{padding:4px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spk{border:1px solid var(--line);background:#fff;border-radius:50%;width:36px;height:36px;display:inline-grid;place-items:center;color:var(--main);flex:0 0 auto;vertical-align:middle;padding:0;margin:0 4px}
+.spk svg{width:17px;height:17px}.spk.playing{background:var(--main);color:#fff}
+.score{display:inline-block;font-weight:800;color:var(--deep);background:var(--soft);border-radius:999px;padding:4px 14px;font-size:16px}
+/* reveal */
+.rv{border:1px dashed var(--accent);background:transparent;border-radius:10px;padding:2px 12px;color:var(--muted);font-size:17px;text-align:left}
+.rv.shown{border-style:solid;border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:600}
+/* MC */
+.q{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:14px}
+.q .stem{font-size:22px;font-weight:600;margin-bottom:8px}
+.q .ops{display:flex;flex-wrap:wrap;gap:8px}
+.op{border:1px solid var(--line);background:#fffaf7;border-radius:12px;padding:8px 18px;font-size:20px;text-align:left;font-family:"Noto Serif SC",serif}
+.op.ok{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+.op.no{border-color:var(--no);background:var(--nobg);color:var(--no)}
+.q .ex{display:none;margin-top:10px;font-size:17px;color:var(--muted)}
+.q.done .ex{display:block}
+.q.vert .ops{flex-direction:column}
+/* vocab grid */
+.vgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+@media(max-width:1200px){.vgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.vcard{position:relative;text-align:left;border:1px solid var(--line);border-radius:18px;background:#fffaf5;padding:14px 16px;min-height:118px;transition:.15s}
+.vcard:hover{border-color:var(--main);transform:translateY(-2px)}
+.vcard .n{font-size:12px;letter-spacing:.15em;font-weight:800;color:var(--main)}
+.vcard .hz{font-family:"Noto Serif SC",serif;font-size:32px;font-weight:900;color:var(--ink);line-height:1.3}
+.vcard .py{font-size:16px;color:var(--muted)}
+.vcard .st{position:absolute;right:12px;top:8px;color:var(--gold);font-size:20px}
+.vcard .mv{font-size:14px;margin-top:2px}
+.hide-py .py{visibility:hidden}
+/* tables */
+table.t{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:10px 0 18px}
+table.t th{background:var(--soft);color:var(--deep);padding:12px 14px;font-size:19px;text-align:left}
+table.t td{border-top:1px solid var(--line);padding:12px 14px;font-size:20px;vertical-align:top}
+table.t.c th,table.t.c td{text-align:center}
+/* detail */
+.dmodal{z-index:200}
+.dpanel{width:min(1080px,95vw);max-height:92vh;overflow:auto;background:#fffdfb;border-radius:24px;padding:30px 40px 34px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.dword{font-family:"Noto Serif SC",serif;font-size:66px;font-weight:900;color:var(--deep);line-height:1.15}
+.dpy{font-size:28px;color:var(--main);margin-right:10px}
+.dpos{display:inline-block;background:var(--soft);color:var(--deep);border-radius:8px;padding:2px 10px;font-size:17px;font-weight:700;vertical-align:middle}
+.dstar{color:var(--gold);font-weight:800;font-size:18px;margin-left:8px}
+.dlab{font-size:17px;letter-spacing:.12em;font-weight:800;color:var(--main);margin:20px 0 6px;text-transform:uppercase}
+.dgloss{font-family:"Noto Serif SC",serif;font-size:27px;line-height:1.6;color:var(--ink);background:var(--soft);border-radius:14px;padding:10px 16px}
+.dvn{font-size:26px;font-weight:700}
+.dsent{font-family:"Noto Serif SC",serif;font-size:25px;line-height:1.7}
+.dsent mark{background:none;color:var(--main);font-weight:900;border-bottom:3px solid var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;font-size:20px;font-family:"Noto Serif SC",serif}
+.dnav{display:flex;justify-content:space-between;margin-top:24px}
+/* text */
+.para{font-family:"Noto Serif SC",serif;font-size:30px;line-height:2.05;margin:0 0 20px;text-indent:2em}
+.vlink{color:var(--main);font-weight:700;border-bottom:2px solid var(--accent);cursor:pointer}
+.good{font-weight:900;color:var(--deep);background:linear-gradient(transparent 62%,rgba(217,137,91,.32) 62%);cursor:pointer;border-radius:3px}
+.good .vlink{color:inherit}
+.idea{background:var(--soft);border-radius:14px;padding:12px 18px;margin:0 0 20px;font-size:19px}
+.idea b.k{color:var(--main)}
+.legend{font-size:16px;color:var(--muted);margin-bottom:14px}
+.legend .vlink,.legend .good{cursor:default}
+/* popover */
+.pop{position:fixed;z-index:300;max-width:min(560px,92vw);background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 20px;box-shadow:0 18px 50px rgba(0,0,0,.2);display:none;font-size:18px}
+.pop.open{display:block}
+.pop .ph{font-family:"Noto Serif SC",serif;font-size:34px;font-weight:900;color:var(--deep)}
+.pop .pg{font-family:"Noto Serif SC",serif;font-size:21px;margin:6px 0}
+.pop .fr{font-family:"Noto Serif SC",serif;background:var(--soft);border-radius:10px;padding:6px 12px;font-size:20px;font-weight:700;color:var(--deep);margin:6px 0}
+.pop .x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:22px;color:var(--muted)}
+/* good list */
+.gcard{border-left:6px solid var(--accent)}
+.gcard .gz{font-family:"Noto Serif SC",serif;font-size:25px;font-weight:900;color:var(--deep)}
+.gcard .fr{font-family:"Noto Serif SC",serif;display:inline-block;background:var(--soft);border-radius:10px;padding:4px 12px;font-weight:700;color:var(--deep);margin:6px 0}
+.gcard .ap{font-family:"Noto Serif SC",serif;font-size:21px}
+/* grammar */
+.form{font-family:"Noto Serif SC",serif;display:inline-block;background:var(--deep);color:#fff;border-radius:12px;padding:6px 16px;margin:4px 6px 4px 0;font-size:21px}
+.exl{font-family:"Noto Serif SC",serif;font-size:23px;margin:6px 0}
+.err{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;font-family:"Noto Serif SC",serif;font-size:21px}
+.err .why{grid-column:1/-1;font-family:"Be Vietnam Pro",sans-serif;font-size:16px;color:var(--muted);margin-top:-4px}
+.err .b{color:var(--no)}.err .g{color:var(--ok);font-weight:700}
+.bk{font-family:"Noto Serif SC",serif;font-size:22px;line-height:1.8}
+.hint{font-size:16px;color:var(--muted)}
+/* practice */
+.pitem{font-family:"Noto Serif SC",serif;font-size:24px;line-height:2.1;padding:10px 16px;border:1px solid var(--line);border-radius:14px;margin:10px 0;background:#fff}
+select.sel{font:inherit;font-size:21px;border:2px solid var(--accent);border-radius:10px;padding:0 6px;background:#fffaf5;color:var(--deep);margin:0 4px}
+select.sel.ok{border-color:var(--ok);background:var(--okbg)}select.sel.no{border-color:var(--no);background:var(--nobg)}
+.bank{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:700;letter-spacing:.2em;background:var(--soft);border-radius:14px;padding:12px 18px;margin-bottom:12px}
+.pos{display:inline-flex;gap:6px;margin-left:8px}
+.pos button{width:42px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fffaf7;font-weight:700}
+.pos button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.pos button.no{background:var(--nobg);border-color:var(--no);color:var(--no)}
+.tag{display:inline-block;background:var(--deep);color:#fff;border-radius:8px;padding:0 10px;font-size:18px;margin-left:6px}
+.totalbar{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.bar{flex:1;height:12px;background:var(--soft);border-radius:999px;overflow:hidden;max-width:420px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:14px;font-family:"Noto Serif SC",serif;font-size:21px;line-height:1.9;background:#fff;color:var(--ink);resize:vertical}
+/* svg body */
+.bodywrap{display:grid;grid-template-columns:420px 1fr;gap:30px;align-items:start}
+@media(max-width:900px){.bodywrap{grid-template-columns:1fr}}
+.bodysvg{width:100%;max-width:420px;background:#fff;border:1px solid var(--line);border-radius:18px}
+.bl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bl .it{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px 12px;font-size:20px}
+.bl .num{width:30px;height:30px;border-radius:50%;background:var(--main);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:0 0 auto}
+/* games */
+.fc{perspective:1200px;width:min(640px,90%);height:340px;margin:10px auto}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+.fc.flip .in{transform:rotateY(180deg)}
+.fc .f,.fc .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;border:1px solid var(--line)}
+.fc .f{background:#fff}
+.fc .b{background:var(--deep);color:#fff;transform:rotateY(180deg);gap:8px}
+.fc .hz{font-family:"Noto Serif SC",serif;font-size:76px;font-weight:900}
+.fc .py{font-size:26px;color:var(--muted)}
+.fc .b .vn{color:#ffe1cf;font-size:30px;font-weight:700}
+.fc .b .g{font-family:"Noto Serif SC",serif;font-size:22px;color:#fff}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:0 auto}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 16px;font-size:22px;min-height:62px;text-align:left;transition:.15s}
+.mi.zhc{font-family:"Noto Serif SC",serif;font-size:28px;font-weight:800;text-align:center}
+.mi.sel{border-color:var(--main);background:var(--soft)}
+.mi.done{visibility:hidden}
+.mi.bad{animation:shake .3s;border-color:var(--no)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:30px;color:var(--deep)}
+.ord .ans{min-height:64px;border:2px dashed var(--accent);border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;background:#fffaf5}
+.ord .pool{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.ck{border:1px solid var(--line);background:#fff;border-radius:12px;padding:6px 14px;font-family:"Noto Serif SC",serif;font-size:24px;box-shadow:0 2px 0 var(--line)}
+.ord.ok .ans{border-color:var(--ok);background:var(--okbg)}.ord.no .ans{border-color:var(--no);background:var(--nobg)}
+.ord .res{font-size:17px;margin-top:4px}
+/* HSK */
+.passage{font-family:"Noto Serif SC",serif;font-size:26px;line-height:2.1;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 24px;text-indent:2em}
+.blank{display:inline-block;min-width:66px;text-align:center;border-bottom:3px solid var(--accent);font-weight:800;color:var(--main);text-indent:0;padding:0 6px}
+.blank.ok{color:var(--ok);border-color:var(--ok)}.blank.no{color:var(--no);border-color:var(--no)}
+.wwords{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.wwords span{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:800;border:2px solid var(--line);border-radius:12px;padding:4px 16px;background:#fff}
+.wwords span.hit{background:var(--ok);border-color:var(--ok);color:#fff}
+.chk{list-style:none;padding:0;margin:0}
+.chk li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--line);font-size:17px}
+.chk .bx{width:22px;height:22px;border-radius:6px;border:2px solid var(--muted);flex:0 0 auto;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800;margin-top:3px}
+.chk li.ok .bx{background:var(--ok);border-color:var(--ok)}.chk li.ok{color:var(--ok)}
+.sample{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 24px;margin-bottom:18px}
+.sample .hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.sample .who{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;color:var(--deep)}
+.sample .meta{color:var(--muted);font-size:15px}
+.sample .ttl{text-align:center;font-family:"Noto Serif SC",serif;font-size:24px;font-weight:800;letter-spacing:.25em;margin:4px 0 8px}
+.sample .txt{font-family:"Noto Serif SC",serif;font-size:24px;line-height:2}
+.sample .tr{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:17px}
+.sample.showtr .tr{display:block}
+.mk{border-radius:4px;padding:1px 2px}
+.mark .p1{background:#efe4dc;box-shadow:inset 0 -3px 0 #a08a7d}
+.mark .p2{background:#f8e9d2;box-shadow:inset 0 -3px 0 var(--gold)}
+.mark .p3{background:#f9e1db;box-shadow:inset 0 -3px 0 var(--main)}
+.mark .p4{background:#e3efe6;box-shadow:inset 0 -3px 0 var(--ok)}
+.w5{color:var(--no);font-weight:800}
+.gd{font-weight:900;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:5px}
+.lg{display:flex;flex-wrap:wrap;gap:14px;font-size:15px;color:var(--muted);margin:6px 0 14px}
+.lg i{display:inline-block;width:13px;height:13px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.step{border-top:6px solid #a08a7d}
+.step .num{font-family:"Noto Serif SC",serif;font-size:40px;font-weight:900;line-height:1;color:#a08a7d}
+.step.s2{border-color:var(--gold)}.step.s2 .num{color:var(--gold)}
+.step.s3{border-color:var(--main)}.step.s3 .num{color:var(--main)}
+.step.s4{border-color:var(--ok)}.step.s4 .num{color:var(--ok)}
+.step h4{font-family:"Noto Serif SC",serif;font-size:24px;margin:8px 0 4px;color:var(--ink)}
+.step .zq{font-family:"Noto Serif SC",serif;font-size:17px;color:var(--muted);margin-top:6px}
+.formula{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+.formula span{background:#fff;border:1px solid var(--line);padding:6px 14px;border-radius:10px;font-weight:700;font-family:"Noto Serif SC",serif;font-size:19px}
+.formula span.k{background:var(--deep);color:#fff;border-color:var(--deep)}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--soft);border-radius:16px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;color:var(--muted);font-size:16px}
+.seg button.on{background:#fff;color:var(--deep);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.fl{perspective:900px;height:180px}
+.fl .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+.fl.flip .in{transform:rotateY(180deg)}
+.fl .f,.fl .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid var(--line)}
+.fl .f{background:#fff}.fl .b{background:var(--deep);color:#fff;transform:rotateY(180deg);gap:4px}
+.fl .hz{font-family:"Noto Serif SC",serif;font-size:34px;font-weight:900}
+.fl .py{color:var(--muted);font-size:15px}
+.fl .b .vn{color:#ffe1cf;font-weight:700}
+.fl .b .ex{font-family:"Noto Serif SC",serif;font-size:17px}
+.fl .tg{position:absolute;top:8px;left:10px;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--soft);color:var(--deep)}
+.fl .f .spk{position:absolute;top:8px;right:8px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;margin:6px 0;font-family:"Noto Serif SC",serif;font-size:18px}
+.opt.on{border-color:var(--ok);background:var(--okbg);box-shadow:inset 4px 0 0 var(--ok)}
+.out{background:var(--deep);color:#fff;border-radius:18px;padding:22px;font-family:"Noto Serif SC",serif;font-size:22px;line-height:1.9;min-height:110px}
+.out .phd{color:#e8c9bd;font-family:"Be Vietnam Pro",sans-serif;font-size:16px}
+.out.mark .mk{color:var(--ink)}
+.tl{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:10px 0 4px;font-size:13px;font-weight:700;color:#fff}
+.tl div{display:grid;place-items:center;white-space:nowrap;opacity:.35;transition:opacity .2s}
+.tl div.act{opacity:1}
+.fix{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:8px 0}
+.fix .bad{font-family:"Noto Serif SC",serif;font-size:21px;text-decoration:line-through;text-decoration-color:var(--no);text-decoration-thickness:2px}
+.fix .gd2{grid-column:1/-1;display:none;font-family:"Noto Serif SC",serif;font-size:21px;color:var(--ok)}
+.fix.open .gd2{display:block}
+.fix .why{color:var(--muted);font-family:"Be Vietnam Pro",sans-serif;font-size:15px}
+.tpl{background:var(--deep);color:#fff;border-radius:18px;padding:20px;font-family:"Noto Serif SC",serif;font-size:21px;line-height:2}
+.tpl .blk{color:#ffc9b0}
+.wl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.wl span{font-family:"Noto Serif SC",serif;padding:2px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:16px}
+.wl span.hit{background:var(--ok);border-color:var(--ok);color:#fff}
+.stat{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:16px;color:var(--muted)}
+.fig{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px 16px}
+.fig .nm{font-family:"Noto Serif SC",serif;font-size:28px;font-weight:900;color:var(--deep)}
+.fig .vnm{font-size:15px;color:var(--muted)}
+.fig .d{font-family:"Noto Serif SC",serif;font-size:17px;margin-top:4px}
+.fig .k{font-family:"Noto Serif SC",serif;font-size:17px;color:var(--main);font-weight:700}
+.trap{border-left:5px solid var(--no)}
+.foot{color:var(--muted);text-align:right;font-size:15px;margin-top:10px}
+
+/* HSK 3.0 exam */
+.xhead{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;color:#fff;background:var(--deep);border-radius:12px;padding:8px 18px;display:inline-block;margin-bottom:12px}
+.xunit{border-left:6px solid var(--main)}
+.xlabel{display:inline-block;font-weight:800;color:var(--main);border:2px solid var(--main);border-radius:8px;padding:0 10px;font-size:16px;margin-bottom:8px}
+.xpara{font-family:"Noto Serif SC",serif;font-size:24px;line-height:2.05;text-indent:2em;margin:0 0 10px}
+.xblank{display:inline-block;min-width:90px;text-indent:0;border-bottom:3px solid var(--accent);padding:0 6px;color:var(--main);text-align:center;font-weight:700}
+.xblank b{display:inline-block;background:var(--main);color:#fff;border-radius:6px;padding:0 6px;font-size:15px;margin-right:4px}
+.xblank.ok{border-color:var(--ok);color:var(--ok)}.xblank.no{border-color:var(--no);color:var(--no)}
+.xq{display:grid;grid-template-columns:44px 1fr;gap:6px 10px;align-items:start;padding:10px 0;border-top:1px dashed var(--line)}
+.xn{width:40px;height:40px;border-radius:10px;background:var(--soft);color:var(--deep);font-weight:900;display:grid;place-items:center;font-size:17px}
+.xstem{grid-column:2;font-family:"Noto Serif SC",serif;font-size:21px;font-weight:700}
+.xops{grid-column:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.xshort .xops{grid-template-columns:repeat(5,52px)}
+.xo{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:#fffaf7;border-radius:12px;padding:8px 14px;font-family:"Noto Serif SC",serif;font-size:20px}
+.xo .xl{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;font-family:"Be Vietnam Pro",sans-serif;font-size:14px;font-weight:800;color:var(--muted)}
+.xshort .xo{justify-content:center;padding:6px}
+.xo.on{border-color:var(--main);background:var(--soft)}.xo.on .xl{background:var(--main);border-color:var(--main);color:#fff}
+.xo.ok{border-color:var(--ok);background:var(--okbg)}.xo.ok .xl{background:var(--ok);border-color:var(--ok);color:#fff}
+.xo.no{border-color:var(--no);background:var(--nobg)}.xo.no .xl{background:var(--no);border-color:var(--no);color:#fff}
+.xwhy{grid-column:2;display:none;font-family:"Noto Serif SC",serif;font-size:17px;color:var(--muted);background:#fff8ec;border-radius:10px;padding:6px 12px}
+.graded .xwhy{display:block}.xshort .xwhy{display:none!important}
+.xwhyall{margin-top:10px}
+.xord{display:flex;gap:12px;align-items:flex-start;font-family:"Noto Serif SC",serif;font-size:21px;line-height:1.85;padding:8px 0;border-bottom:1px dashed var(--line)}
+.xl.big{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;margin-top:4px;font-family:"Be Vietnam Pro",sans-serif}
+.xordans{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:4px 20px;margin-top:10px}
+.xpanel{text-align:center;position:relative}
+.xpn{position:absolute;left:10px;top:8px;width:26px;height:26px;border-radius:50%;background:var(--main);color:#fff;font-weight:800;display:grid;place-items:center;font-size:14px}
+.xemo{font-size:54px;line-height:1.3}
+.xpanel .zh{font-size:19px}
+.xcard{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.ac{border:1px solid var(--line);border-radius:10px;background:#fff;text-align:center;padding:6px}
+.ac span{display:block;font-size:13px;color:var(--muted);font-weight:700}.ac b{font-size:20px;color:var(--deep)}
+.ac.ok{background:var(--okbg);border-color:var(--ok)}.ac.no{background:var(--nobg);border-color:var(--no)}
+.vcard .gz{position:absolute;right:10px;bottom:10px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;border-radius:6px;padding:1px 5px}
+.gzi{background:var(--accent);color:#fff;font-size:12px;border-radius:6px;padding:1px 5px}
+.gseg button{font-size:18px}
+
+.xpfig{border:1px solid var(--line);border-radius:18px;background:#fff;padding:10px;margin:8px 0 12px}
+.xpfig svg{width:100%;height:auto;display:block}
+.xpfig svg g{transition:opacity .35s}
+.xpfig svg .xpdim{opacity:.12}
+.xpfig svg .xpon .wflow{animation:xpflow 1s linear infinite}
+@keyframes xpflow{to{stroke-dashoffset:-18}}
+.xpfig svg .xpon .hi{stroke:#d9480f;stroke-width:2.2}
+.xpnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.xpcard .xpzh{font-size:22px;line-height:1.8}
+.xpcard .xpexp{font-size:19px;margin-top:8px}
+/* ===== v2 additions ===== */
+.home-grid.g3h{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:900px){.home-grid.g3h{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.home-hw{display:flex;align-items:center;gap:18px;width:100%;margin-top:clamp(12px,1.4vw,22px);text-align:left;border:2px dashed var(--accent);background:var(--soft);border-radius:20px;padding:16px 22px;transition:transform .18s,box-shadow .18s}
+.home-hw:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.1)}
+.home-hw .ic{font-size:34px}.home-hw .tx{flex:1}
+.home-hw .no{font-size:13px;letter-spacing:.2em;font-weight:800;color:var(--main)}
+.home-hw .tt{font-size:clamp(22px,1.8vw,28px);font-weight:800;color:var(--ink)}
+.home-hw .st{font-size:15px;color:var(--muted)}
+.home-hw .go{font-size:30px;color:var(--main);font-weight:800}
+.vlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(max-width:800px){.vlist{grid-template-columns:1fr}}
+.vrow{position:relative;display:flex;align-items:baseline;gap:12px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 14px;transition:.15s}
+.vrow:hover{border-color:var(--main)}
+.vrow .n{font-size:12px;font-weight:800;color:var(--main);min-width:20px}
+.vrow .hz{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;color:var(--ink);min-width:3.2em}
+.vrow .py{font-size:15px;color:var(--muted);min-width:6em}
+.vrow .pos{font-size:13px;color:var(--main);font-weight:700;min-width:3em}
+.vrow .vn{font-size:15px;flex:1}
+.vrow .gz{background:var(--accent);color:#fff;font-size:12px;font-weight:800;border-radius:6px;padding:1px 5px}
+.hide-py .vrow .py,.hide-py .vcard .py{visibility:hidden}
+.tscore{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:10px 0 16px}
+.team{border:2px solid var(--line);border-radius:18px;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;background:#fff;transition:.2s}
+.team .nm{font-size:22px;font-weight:800}.team .pt{font-size:44px;font-weight:900;font-family:"Noto Serif SC",serif}
+.team.t0 .nm,.team.t0 .pt{color:#c0392b}.team.t1 .nm,.team.t1 .pt{color:#2c6fb7}
+.team.t0.on{border-color:#c0392b;background:#fdecea;box-shadow:0 0 0 4px rgba(192,57,43,.15)}
+.team.t1.on{border-color:#2c6fb7;background:#e8f1fb;box-shadow:0 0 0 4px rgba(44,111,183,.15)}
+.tstage{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px 26px;min-height:300px}
+.tno{font-size:14px;letter-spacing:.12em;font-weight:800;color:var(--main);text-transform:uppercase}
+.tq{font-size:clamp(26px,2.4vw,36px);line-height:1.7;margin:14px 0 18px}
+.tops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.top{font-size:28px;border:2px solid var(--line);background:var(--cream);border-radius:16px;padding:12px}
+.top:hover:not(:disabled){border-color:var(--main)}
+.top.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.top.no{background:var(--nobg);border-color:var(--no);color:var(--no)}
+.tans{min-height:64px;margin:14px 0}.tpool{margin-bottom:12px}.tans .ck,.tpool .ck{font-size:24px}
+.tmsg{text-align:center;font-size:22px;margin-top:16px}.tmsg.ok{color:var(--ok)}.tmsg.no{color:var(--no)}
+.tend{text-align:center;padding:40px 0;font-size:24px}.tend .big{font-size:48px;font-weight:900;color:var(--main);margin-bottom:10px}
+.xpics{max-width:980px;margin:0 auto}.xpics .xpanel.haspic{padding:10px}.xpic svg{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line,#e5e0d8)}.xhint{margin-top:8px;text-align:left}.xhint summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--main);list-style:none}.xhint summary::before{content:"💡 "}.xhint .zh{margin-top:6px;font-size:18px}
+.xpcover{margin:0 0 14px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}.xpcover img{display:block;width:100%;height:auto;max-height:300px;object-fit:cover}
+.xpchap{display:inline-block;background:var(--main);color:#fff;border-radius:999px;padding:1px 10px;margin-right:4px;font-family:'Noto Serif SC',serif}
+.xpimgrow{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}.xpimg{margin:0}.xpimg img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}.xpimg figcaption{font-size:14px;color:#7a6a5c;text-align:center;margin-top:6px}
+@media(max-width:800px){.xpimgrow{grid-template-columns:1fr}}
+.xpvid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:center;margin:0 0 14px}.xpvframe{position:relative;width:100%;aspect-ratio:9/16;max-height:620px;border-radius:14px;overflow:hidden;background:#111}.xpvframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+@media(max-width:800px){.xpvid{grid-template-columns:1fr}.xpvframe{max-width:360px;margin:0 auto}}
+.xpvid.wide{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.xpvframe.wide{aspect-ratio:16/9;max-height:none}.xpvframe video{position:absolute;inset:0;width:100%;height:100%;background:#000}
+.xpsegs{margin:0 0 14px}.xpseg{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:12px 6px;border-top:1px dashed var(--line);border-radius:10px;transition:background .25s}.xpseg.on{background:var(--soft)}
+.xpt{font:inherit;font-weight:700;font-size:15px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 8px;cursor:pointer;color:var(--main);height:fit-content}
+.xpsh{font-weight:800;font-size:16px;color:var(--main);margin-bottom:4px}.xpsz{font-size:20px;line-height:1.8}.xpsv{font-size:17px;margin-top:4px;color:#5a4d42}.xpsw{font-size:15px;margin-top:6px;color:#7a6a5c}
+.xptgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}.xpterm{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:15px}.xpterm .py{color:var(--main);font-size:13px}
+@media(max-width:800px){.xpvid.wide{grid-template-columns:1fr}.xpseg{grid-template-columns:1fr}}
+
+
+</style></head><body>
+<script>window.LESSON={"META":{"kind":"on1","title":"复习（一）· 语法与听说读写","tagline":"第1—10课 · 语法总结 · 易混词 · HSK 3.0 听力 / 阅读 / 书写","vn":"Ôn tập 1 · Bài 1–10: tổng hợp ngữ pháp, từ dễ nhầm, luyện Nghe – Đọc – Viết theo form HSK 3.0","editor":"HSK GARDEN","theme":{"main":"#3f7d3a","deep":"#24521f","accent":"#c0702a","soft":"#e9f3e2","cream":"#fbfdf8","line":"#d5e4c8","ink":"#1f2d1a"}},"GROUPS":[["关联词 · 复句","Từ nối & câu phức",[["假设 · 条件","Giả thiết · điều kiện",[{"n":1,"word":"要是","title":"假设复句“要是……，就……”","forms":["要是 + giả thiết，(chủ ngữ) + 就 + kết quả","主语 + 要是 + giả thiết，就……"],"vn":"Vế trước nêu <b>giả thiết<\/b>, vế sau nêu <b>kết quả<\/b>. 要是 = 如果 nhưng khẩu ngữ hơn; có thể đứng trước hoặc sau chủ ngữ. Khi vế sau có chủ ngữ, <b>就 đứng sau chủ ngữ<\/b>.","text":"那太好了，要是申请到奖学金，就能减轻不少经济压力。","ex":[["你要是明天有时间，就跟我一起去爬山吧。","Nếu mai bạn rảnh thì đi leo núi với mình nhé."],["要是她不愿意参加比赛，我们就再问问别人。","Nếu cô ấy không muốn tham gia, chúng ta hỏi người khác."]],"err":[["要是下雨，就我们不去了。","要是下雨，我们就不去了。","就 đứng sau chủ ngữ của vế sau."]]},{"n":8,"word":"否则","title":"假设复句“……，否则……”","forms":["yêu cầu／lời khuyên／điều kiện，否则 + hậu quả"],"vn":"Vế trước nêu <b>yêu cầu, lời khuyên hoặc điều kiện<\/b>; vế sau nói <b>hậu quả<\/b> nếu không làm như vậy — “nếu không thì …”.","text":"还是别给自己太大压力，否则，失去健康就不值得了。","ex":[["今晚早点儿睡吧，否则明天早上起不来，又该迟到了。","Tối nay ngủ sớm đi, nếu không sáng mai không dậy nổi, lại muộn mất."],["吃不完的菜要放进冰箱，否则很容易坏。","Đồ ăn không hết phải cho vào tủ lạnh, nếu không rất dễ hỏng."]],"err":[["否则你早点儿睡，明天会迟到。","你早点儿睡，否则明天会迟到。","否则 đứng đầu vế sau (vế hậu quả)."]]},{"n":8,"word":"不管","title":"条件复句“不管……，都／也……”","forms":["不管 + điều kiện／tình huống／thay đổi，(chủ ngữ) + 都／也 + kết quả"],"vn":"Vế trước nêu <b>mọi điều kiện có thể<\/b>, vế sau nói kết quả <b>không thay đổi<\/b> — “bất kể … đều …”. Sau 不管 phải có từ nghi vấn (什么、哪儿、多……) hoặc dạng <b>A还是B<\/b> / <b>A不A<\/b>.","text":"不管去哪儿，能放松的地方都行。","ex":[["不管有什么想法，你都要说出来，让我们知道。","Dù có suy nghĩ gì, bạn đều phải nói ra cho chúng tôi biết."],["不管遇到多大困难，我们也要坚持，最后一定能完成任务。","Dù gặp khó khăn lớn thế nào, chúng ta cũng phải kiên trì, cuối cùng nhất định hoàn thành nhiệm vụ."]],"err":[["不管天气很好，我都去。","不管天气好不好，我都去。","Sau 不管 không dùng câu trần thuật đơn; phải có A不A / A还是B / từ nghi vấn."]]},{"n":9,"word":"不……也……","title":"紧缩复句“不……也……”","forms":["（chủ ngữ）不 + V，(chủ ngữ) 也 + kết quả"],"vn":"Câu phức rút gọn: <b>dù trong điều kiện phủ định<\/b> (không làm gì đó), kết quả vế sau <b>vẫn chắc chắn<\/b> — “không … cũng …”. Hay dùng trong khẩu ngữ.","text":"我不说你也懂我在想什么。","ex":[["他不复习也能考出好成绩。","Cậu ấy không ôn cũng thi được điểm tốt."],["我很清楚他为什么生气，不问我也知道。","Tôi biết rõ vì sao anh ấy giận, không hỏi tôi cũng biết."]],"err":[["我不说也你懂。","我不说你也懂。","也 đứng sau chủ ngữ vế sau, trước động từ."]]}]],["因果 · 目的","Nhân quả · mục đích",[{"n":2,"word":"由于","title":"连词／介词“由于”","forms":["由于 + nguyên nhân，所以／因此 + kết quả（连词）","由于 + danh từ，……（介词）"],"vn":"(1) <b>Liên từ<\/b>: đứng đầu vế trước nêu nguyên nhân, vế sau thường có <b>所以 / 因此<\/b>. (2) <b>Giới từ<\/b>: + danh từ chỉ nguyên nhân, lý do. Mang sắc thái <b>văn viết<\/b>.","text":"在中国，由于很多刚工作的年轻人工资还不太高，所以他们一开始也不买房，都选择租房。","ex":[["由于一直下大雨，所以我们决定不爬山了。","Do mưa to mãi nên chúng tôi quyết định không leo núi."],["由于大家的努力，这次运动会我们班获得了第一名。","Nhờ mọi người cố gắng, lớp tôi đạt giải nhất hội thao."]],"err":[["由于下雨，但是我们没去。","由于下雨，所以我们没去。","由于 đi với 所以 / 因此, không đi với 但是."]]},{"n":7,"word":"既然","title":"因果复句“既然……，就……”","forms":["既然 + tiền đề（đã là sự thật），(chủ ngữ) 就 + kết luận"],"vn":"Vế trước nêu <b>tiền đề<\/b> (đã thành sự thật), vế sau nêu <b>kết luận<\/b> rút ra từ tiền đề đó — “đã … thì …”. Vế sau hay là lời khuyên, đề nghị.","text":"既然出差时间不长，就要安排好时间，多获得有用的信息。","ex":[["既然大家都同意，我们就这么做吧。","Đã mọi người đều đồng ý thì chúng ta làm thế nhé."],["既然你们已经决定了，就不要再改了。","Đã quyết định rồi thì đừng đổi nữa."]],"err":[["既然下雨了，所以我们不去了。","既然下雨了，我们就不去了。","既然 đi với 就, không đi với 所以."]]},{"n":3,"word":"于是","title":"承接复句“……，于是……”","forms":["分句1，于是 + 分句2"],"vn":"Hai vế kể các hành động / sự việc <b>liên tiếp<\/b> theo thứ tự; <b>于是<\/b> đứng đầu vế sau. Giữa hai vế có quan hệ trước–sau, về logic là nối tiếp (việc sau do việc trước dẫn đến).","text":"在提供这些信息时，我们也会担心：我的个人信息能否得到保护？于是，有人在网上说出了自己的担心。","ex":[["她从小就想当医生，于是上大学时就选择了学医。","Từ nhỏ cô ấy muốn làm bác sĩ, thế là vào đại học chọn học y."],["最近总感冒，于是他决定病好后就开始锻炼身体。","Gần đây hay bị cảm, thế là anh ấy quyết định khỏi bệnh sẽ tập thể dục."]],"err":[["因为下雨，于是我们没去。","因为下雨，所以我们没去。","于是 không đi với 因为."]]},{"n":6,"word":"好","title":"目的复句“……，好……”","forms":["hành động／tình huống，好 + mục đích"],"vn":"Vế trước nêu một hành động / tình huống, vế sau (bắt đầu bằng <b>好<\/b>) nêu <b>mục đích<\/b> — “để (mà), để còn”.","text":"医生会问病人的情况，有时还会做一些检查，好给出合适的治疗方法。","ex":[["你们先了解一下情况，好做出决定。","Các bạn tìm hiểu tình hình trước để còn quyết định."],["我把电话号码告诉你，以后有什么事好联系我。","Tôi cho bạn số điện thoại để sau này có việc gì còn liên lạc."]],"err":[["好给出方法，医生做检查。","医生做检查，好给出方法。","Vế 好 (mục đích) đứng sau."]]}]],["转折","Chuyển ý (nhưng)",[{"n":2,"word":"不过","title":"转折复句“……，不过……”","forms":["分句1，不过 + 分句2"],"vn":"<b>不过<\/b> đứng đầu vế sau, biểu thị <b>chuyển ý<\/b> (nhưng, có điều). Ngữ khí nhẹ hơn 但是, hay dùng để bổ sung một điểm chưa hoàn hảo.","text":"这个小区的环境真不错，不过我听说，附近有十几家公司，很多刚毕业的学生都租住在这里。","ex":[["我们在动物园看见了很多动物，不过没看见大熊猫。","Ở sở thú chúng tôi thấy nhiều con vật, có điều không thấy gấu trúc."],["我刚来北京时还不太习惯这里的天气，不过很快就适应了。","Mới đến Bắc Kinh tôi chưa quen thời tiết, nhưng nhanh chóng thích nghi."]],"err":[["虽然房子很小，不过很干净。","虽然房子很小，但是很干净。","Cặp chuẩn là 虽然……但是……; 不过 thường không đi với 虽然 trong bài thi."]]},{"n":3,"word":"X是X","title":"转折复句“……X是X，就是／不过……”","forms":["形容词／动词 + 是 + 形容词／动词，就是／不过 + 补充"],"vn":"“X是X” là cấu trúc cố định, <b>thừa nhận<\/b> một tình huống / tính chất; vế sau dùng <b>就是、不过<\/b> để chuyển ý hoặc bổ sung, chỉ ra <b>hạn chế<\/b> của vế trước.","text":"北京大是大，不过这边的路基本上都是正南正北、正东正西的，很好找。","ex":[["这个房子便宜是便宜，就是离我的公司太远了。","Căn nhà này rẻ thì rẻ, có điều quá xa công ty tôi."],["我们想是想了，就是没想出更好的办法。","Chúng tôi nghĩ thì có nghĩ, chỉ là chưa ra cách nào tốt hơn."]],"err":[["便宜是贵，就是……","便宜是便宜，就是……","Hai chữ X phải giống nhau."]]},{"n":9,"word":"尽管","title":"转折复句“尽管……，但是／可是……”","forms":["尽管 + tình huống，但是／可是 + (还是) + kết quả ngược lại"],"vn":"Câu chuyển ý: <b>尽管<\/b> = “mặc dù” (như 虽然), nêu một tình huống; <b>但是／可是<\/b> dẫn ra kết quả hoặc tình huống <b>ngược lại<\/b>.","text":"他们尽管性格不同，但是有很多共同爱好。","ex":[["尽管时间紧张、压力很大，但是他们还是完成了任务。","Mặc dù thời gian gấp, áp lực lớn, họ vẫn hoàn thành nhiệm vụ."],["尽管她已经很累了，可是还是很耐心地给女儿读睡前故事。","Dù đã rất mệt, cô ấy vẫn kiên nhẫn đọc truyện cho con gái trước khi ngủ."]],"err":[["尽管下雨，所以我们没去。","尽管下雨，但是我们还是去了。","尽管 đi với 但是／可是 (chuyển ý), không đi với 所以."]]},{"n":10,"word":"而","title":"连词“而”","forms":["① A……，而B……（chuyển ý, đối lập）","② Adj + 而 + Adj（nối tiếp, bổ sung）","③ 因为……而……（nhân quả）"],"vn":"Liên từ <b>而<\/b> nối động từ, tính từ, cụm từ hoặc phân câu. Bài này học 3 cách dùng: ① <b>chuyển ý<\/b> — nối hai thành phần nghĩa trái ngược; ② <b>nối tiếp<\/b> ý; ③ <b>nhân quả<\/b> (因……而……).","text":"广州基本上没有冬天，而哈尔滨的冬天一般会从十月开始，到第二年的三四月才结束。","ex":[["在这个紧张而兴奋的日子里，我们都走出教室，为运动员们加油。","Trong ngày căng thẳng mà phấn khích này, chúng tôi đều ra khỏi lớp cổ vũ vận động viên."],["冬天，这个城市因为天气暖和而吸引了很多游客。","Mùa đông, thành phố này vì thời tiết ấm áp mà thu hút nhiều du khách."]],"err":[["因为天气冷，而所以我没出去。","我因为天气冷而没出去。","因为……而…… không dùng cùng 所以."]]}]],["并列 · 递进","Song song · tăng tiến",[{"n":1,"word":"一方面","title":"并列复句“一方面……，另一方面……”","forms":["一方面 + A，另一方面（也）+ B"],"vn":"Dùng để nói <b>hai mặt cùng tồn tại<\/b> — hai nguyên nhân, hai mục đích, hai tình huống. Vế sau hay có <b>也<\/b>.","text":"对他们来说，来到中国留学，一方面是为了学习语言和知识，另一方面也是为将来的工作和生活做准备。","ex":[["他经常在网上买东西，一方面因为便宜，另一方面因为方便。","Anh ấy hay mua đồ trên mạng, một mặt vì rẻ, mặt khác vì tiện."],["多做运动一方面能让身体更健康，另一方面也能减轻压力。","Vận động nhiều một mặt giúp khỏe hơn, mặt khác cũng giảm áp lực."]],"err":[["一方面他很聪明，另一方面他很懒。","他虽然很聪明，但是很懒。","Hai mặt trái ngược nhau → dùng 虽然……但是……."]]},{"n":4,"word":"既","title":"并列复句“既……，又／也……”","forms":["既 + A，又 + B","既 + A，也 + B","既……，又……，还……"],"vn":"Nối tính từ, động từ hoặc cụm từ, biểu thị <b>đồng thời có nhiều tính chất / tình huống<\/b> — “vừa … vừa …”.","text":"白家月就很喜欢骑车去学校，她觉得这样既方便，又能锻炼身体，还能保护环境。","ex":[["这家饭馆的菜既好吃，又便宜。","Món ở quán này vừa ngon vừa rẻ."],["我很喜欢这门课程，既能提高中文水平，也能学到历史知识。","Tôi rất thích môn này, vừa nâng cao tiếng Trung, vừa học được kiến thức lịch sử."]],"err":[["既他聪明，又他努力。","他既聪明，又努力。","Cùng chủ ngữ → chủ ngữ đứng trước 既."]]},{"n":3,"word":"不仅","title":"递进复句“不仅／不光……，还／而且……”","forms":["主语 + 不仅／不光 + A，还／而且 + B"],"vn":"Biểu thị quan hệ <b>tăng tiến<\/b>: vế sau là mở rộng, bổ sung, ý tiến thêm một bước. Bài này học câu <b>cùng một chủ ngữ<\/b>: chủ ngữ + 不仅……，还／而且…….","text":"现在我不仅会扫码结账，还会用手机在网上购物了。","ex":[["王老师不光教我们说中文，而且带我们了解中国文化。","Cô Vương không chỉ dạy chúng tôi nói tiếng Trung mà còn đưa chúng tôi tìm hiểu văn hóa."],["现在很多书店不仅卖书，还卖咖啡和奶茶。","Giờ nhiều hiệu sách không chỉ bán sách mà còn bán cà phê và trà sữa."]],"err":[["不仅我会说中文，还会写汉字。","我不仅会说中文，还会写汉字。","Cùng chủ ngữ → 不仅 đứng sau chủ ngữ."]]},{"n":3,"word":"甚至","title":"连词“甚至”","forms":["A，B，甚至（还）+ C","……，甚至连……都／也……"],"vn":"<b>甚至<\/b> nhấn mạnh một tình huống <b>nổi bật hơn<\/b>, vượt mức bình thường, ngoài dự đoán — “thậm chí”.","text":"在中国网购，不仅选择多、价格不高，而且送货很快，很多留学生甚至改变了自己的购物习惯。","ex":[["高铁速度真快，甚至还没看清楚，它就已经开过去了。","Tàu cao tốc nhanh thật, thậm chí chưa nhìn rõ nó đã chạy qua rồi."],["这个小区真不错，有小花园、球场，甚至还有一个超市。","Khu này thật tốt, có vườn hoa, sân bóng, thậm chí còn có siêu thị."]],"err":[["他甚至很喜欢吃水果。","他很喜欢吃水果，甚至连榴莲都爱吃。","甚至 cần có vế trước làm nền để “đẩy lên”."]]},{"n":2,"word":"并","title":"连词／副词“并”","forms":["động từ 1 ……，并 + động từ 2 ……（连词）","并 + 不／没（有）……（副词）"],"vn":"(1) <b>Liên từ<\/b>: nối hai động từ / cụm động từ / câu ngang hàng, có ý <b>tiến thêm một bước<\/b> (và, đồng thời). (2) <b>Phó từ<\/b>: đặt trước từ phủ định để <b>nhấn mạnh<\/b> “thực ra không phải vậy”.","text":"搬进去的时候，房东又向我介绍了一下房子里的东西，并告诉我这些东西怎么用。","ex":[["她考上了北京大学并申请到了奖学金。","Cô ấy đỗ Đại học Bắc Kinh và còn xin được học bổng."],["我并没有答应你就租这个房子，我还要再想想。","Tôi đâu có đồng ý thuê căn này, tôi còn phải nghĩ thêm."]],"err":[["我买了苹果并香蕉。","我买了苹果和香蕉。","并 (liên từ) nối động từ / câu, không nối hai danh từ."]]},{"n":4,"word":"再说","title":"连词“再说”","forms":["lý do 1，再说 + lý do 2"],"vn":"Liên từ <b>再说<\/b> dùng sau khi nêu một lý do / tình huống để <b>bổ sung thêm<\/b> một lý do / tình huống khác — “vả lại, hơn nữa”.","text":"没事，我提着这些东西就算锻炼身体了，再说邻居之间就是要互相帮助啊。","ex":[["今天太晚了，别去超市了，再说外面还在下雨呢。","Muộn rồi, đừng đi siêu thị, vả lại ngoài trời còn đang mưa."],["你就跟我们一起参加活动吧。你今天正好有时间，再说人多也更热闹。","Đi tham gia với chúng tôi đi, hôm nay bạn rảnh, vả lại đông người càng vui."]],"err":[["再说外面下雨，今天太晚了。","今天太晚了，再说外面还在下雨。","再说 đứng đầu vế sau, sau khi đã nêu lý do thứ nhất."]]}]]]],["副词 · 代词 · 形容词","Phó từ · đại từ · tính từ",[["范围 · 程度","Phạm vi · mức độ",[{"n":1,"word":"任何","title":"指示代词“任何”","forms":["任何 + 名词 + 都／也 + 动词","没有任何 + 名词"],"vn":"<b>任何<\/b> = 无论什么 — <b>bất kỳ, bất cứ<\/b>. Bổ nghĩa cho danh từ thường <b>không mang 的<\/b>; phía sau hay có <b>都 / 也<\/b>. Phủ định: <b>没有任何……<\/b> (không có bất kỳ … nào).","text":"不客气，你们以后有任何问题都可以来找我。","ex":[["明天我们8点出发，任何人也不能迟到。","Mai 8 giờ chúng ta xuất phát, bất kỳ ai cũng không được đến muộn."],["学校有任何通知，我都会第一时间告诉你。","Trường có bất kỳ thông báo nào, tôi đều báo bạn ngay."],["这件事我没有告诉任何人。","Việc này tôi chưa nói với bất kỳ ai."]],"err":[["任何的问题都可以问我。","任何问题都可以问我。","任何 + danh từ, không cần 的."],["任何人能参加。","任何人都能参加。","Thường phải có 都 / 也 phối hợp."]]},{"n":5,"word":"至少","title":"范围副词“至少”","forms":["至少 + số lượng／thời gian","至少 + 动词（……）"],"vn":"Phó từ phạm vi <b>至少<\/b> biểu thị thời gian, số lượng, mức độ… <b>không thấp hơn<\/b> một giới hạn tối thiểu — “ít nhất”.","text":"家月，你来中国至少两个月了，习惯吃中餐了吗？","ex":[["每年至少有两百名留学生来我校学习中文专业。","Mỗi năm ít nhất có 200 du học sinh đến trường tôi học tiếng Trung."],["我们虽然没有见过面，但至少在网上聊过很多次，也算比较熟悉了。","Tuy chưa gặp mặt, nhưng ít nhất đã chat nhiều lần, cũng coi như khá quen."]],"err":[["我等了你至少。","我至少等了你一个小时。","至少 đứng trước động từ / số lượng, không đứng cuối câu."]]},{"n":5,"word":"够","title":"副词／动词“够”","forms":["够 + 形容词 + 的（副词，mức độ cao）","够 + danh từ／够不够（động từ, đủ）","不够 + 形容词（chưa đủ）"],"vn":"(1) <b>Phó từ<\/b>: biểu thị mức độ cao, hay dùng trong <b>够……的<\/b> (khá là, thật là). (2) <b>Động từ<\/b>: số lượng đáp ứng nhu cầu hoặc đạt tới tiêu chuẩn, mức độ nào đó (đủ).","text":"你的中文水平够高的，这都听懂了！","ex":[["明天请家月和李文来家里吃饭，四个菜够不够？","Mai mời Gia Nguyệt và Lý Văn đến ăn, bốn món đủ không?"],["我尝了一下，还不够甜，再加一点儿糖吧。","Tôi nếm rồi, chưa đủ ngọt, thêm chút đường nhé."]],"err":[["这个菜够辣。","这个菜够辣的。","Nghĩa “khá là” cần dùng khung 够……的."]]},{"n":6,"word":"厉害","title":"形容词“厉害”","forms":["động từ + 得 + (phó từ) + 厉害","tính từ + 得 + 厉害"],"vn":"<b>厉害<\/b> đặt sau động từ hoặc tính từ để biểu thị <b>mức độ rất cao<\/b>: “động từ + 得 + (phó từ) + 厉害”, “tính từ + 得 + 厉害”.","text":"对，我还发烧，一直咳嗽，咳得很厉害。","ex":[["我昨天跑步跑多了，今天腿疼得厉害。","Hôm qua chạy nhiều quá, hôm nay chân đau dữ dội."],["这道菜辣得厉害，我吃了一口就不敢再吃了。","Món này cay kinh khủng, ăn một miếng là không dám ăn nữa."]],"err":[["我很厉害头疼。","我头疼得很厉害。","厉害 làm bổ ngữ sau 得."]]}]],["时间 · 频率","Thời gian · tần suất",[{"n":6,"word":"偶尔","title":"频率副词“偶尔”","forms":["chủ ngữ + 偶尔（才／会）+ động từ"],"vn":"Phó từ tần suất <b>偶尔<\/b> biểu thị hành động / tình huống xảy ra <b>rất ít lần<\/b> — “thỉnh thoảng”. Hay dùng với 才 / 会, đối lập với 经常 / 一般.","text":"她告诉医生，自己平时身体不错，偶尔才会生一次病。","ex":[["他经常在家看电影，偶尔才去电影院看。","Anh ấy hay xem phim ở nhà, thỉnh thoảng mới ra rạp."],["我一般都在学校食堂吃饭，偶尔会跟朋友一起出去吃。","Tôi thường ăn ở nhà ăn trường, thỉnh thoảng ra ngoài ăn với bạn."]],"err":[["我偶尔偶尔去。","我偶尔去。","Không lặp 偶尔 trong câu thông thường."]]},{"n":9,"word":"从来","title":"时间副词“从来”","forms":["从来 + 不／没（有）……（过）","从来都 + 是……（khẳng định）"],"vn":"Phó từ thời gian <b>从来<\/b>: <b>từ trước đến nay luôn như vậy<\/b>. Thường dùng trong <b>câu phủ định<\/b>, đôi khi dùng trong câu khẳng định (从来都是……).","text":"爱，从来都是相互尊重、理解与支持，不是吗？","ex":[["我从来没见过这个颜色的花，它叫什么名字啊？","Tôi chưa bao giờ thấy hoa màu này, nó tên gì vậy?"],["我从来不喜欢一个人旅游，每次都要和家人或朋友一起去。","Tôi xưa nay không thích đi du lịch một mình, lần nào cũng đi cùng gia đình hoặc bạn bè."]],"err":[["我从来没去过北京了。","我从来没去过北京。","从来没……过 không thêm 了 cuối câu."]]},{"n":10,"word":"再次","title":"频率副词“再次”","forms":["再次 + V"],"vn":"Phó từ tần suất <b>再次<\/b> đứng trước động từ, nghĩa là <b>lần thứ hai, một lần nữa<\/b>. Dùng được cho cả việc đã xảy ra và việc sẽ xảy ra; mang sắc thái trang trọng.","text":"今年的“世界环境日”，我们再次开展“绿色生活”活动。","ex":[["我去年冬天去过一次哈尔滨，很喜欢那里的雪；今年冬天，我计划再次去哈尔滨看雪。","Mùa đông năm ngoái tôi đi Cáp Nhĩ Tân một lần, rất thích tuyết; mùa đông năm nay định lại đi ngắm tuyết."],["再次感谢您的支持与关心！","Một lần nữa cảm ơn sự ủng hộ và quan tâm của ông!"]],"err":[["我们开展再次活动。","我们再次开展活动。","再次 đứng trước động từ."]]},{"n":9,"word":"此","title":"指示代词“此”","forms":["此 + (量词) + danh từ：此次、此人、此项、此生、此地 ／ 从此、对此"],"vn":"Đại từ chỉ thị <b>此<\/b> = “这、这个” (này, đây), dùng chủ yếu trong <b>văn viết<\/b> hoặc trường hợp trang trọng.","text":"此次出差，让两人熟悉了起来，从此成了好朋友。","ex":[["此人聪明、有能力，一定能顺利完成任务。","Người này thông minh, có năng lực, nhất định hoàn thành tốt nhiệm vụ."],["此材料很重要，必须直接交给他。","Tài liệu này rất quan trọng, phải trực tiếp đưa cho anh ấy."]],"err":[["我很喜欢此个手机。","我很喜欢这个手机。","Khẩu ngữ hằng ngày dùng 这; 此 không đi với 个."]]}]]]],["介词 · 固定格式","Giới từ · cấu trúc cố định",[["介词结构","Cụm giới từ",[{"n":1,"word":"随着","title":"介词“随着”","forms":["随着 + ……的发展／提高／变化，……","随着 + 小句（……越来越……），……"],"vn":"Sau <b>随着<\/b> là từ ngữ hoặc câu nhỏ <b>chỉ sự thay đổi<\/b>; cả cụm là điều kiện để việc ở vế sau xảy ra. 随着 thường đứng <b>đầu câu<\/b>.","text":"随着中国的发展，越来越多的外国学生来到中国的大学学习。","ex":[["随着中文水平的提高，我现在能看懂中文报纸了。","Cùng với trình độ tiếng Trung được nâng lên, giờ tôi đọc hiểu được báo tiếng Trung."],["随着小区的环境越来越好，来这里买房子的人也变多了。","Môi trường khu dân cư ngày càng tốt, người đến mua nhà cũng nhiều lên."]],"err":[["随着中国发展很快，……","随着中国的发展，……","Sau 随着 nên là cụm danh từ “……的发展”, hoặc câu chỉ thay đổi có 越来越."]]},{"n":5,"word":"等","title":"介词“等”","forms":["等 + thời gian／điều kiện，(chủ ngữ) 再／就 + ……","等……的时候，……已经……"],"vn":"Trong bài này <b>等<\/b> là giới từ, nghĩa là “<b>đợi đến (khi)<\/b>”, dùng để dẫn ra thời gian hoặc điều kiện.","text":"如果聚餐时有老人，年轻人要等老人坐下后再坐。","ex":[["等我写完作业，再跟你出去玩。","Đợi tớ làm xong bài tập rồi đi chơi với cậu."],["等我们到火车站的时候，火车已经开走了。","Đến lúc chúng tôi tới ga thì tàu đã chạy rồi."]],"err":[["我写完作业等，再出去玩。","等我写完作业，再出去玩。","等 đứng đầu, dẫn ra mốc thời gian."]]},{"n":7,"word":"在……方面","title":"固定格式“在……方面”","forms":["在 + lĩnh vực + 方面，……"],"vn":"Dùng để <b>giới hạn phạm vi<\/b> hoặc lĩnh vực được bàn đến — “về mặt …”.","text":"在内容方面，您觉得有需要改的吗？","ex":[["在时间安排方面，你可以再想一想。","Về mặt sắp xếp thời gian, bạn có thể nghĩ thêm."],["他才来中国两个月，在生活方面，还不太习惯。","Anh ấy mới đến Trung Quốc hai tháng, về mặt sinh hoạt vẫn chưa quen lắm."]],"err":[["在方面学习，他很好。","在学习方面，他很好。","Lĩnh vực đặt giữa 在 và 方面."]]},{"n":7,"word":"拿……来说","title":"固定格式“拿……来说”","forms":["（nhận định chung）。拿 + ví dụ + 来说，……"],"vn":"Dùng để <b>dẫn ra một khía cạnh hoặc ví dụ cụ thể<\/b> — “lấy … mà nói”.","text":"拿和客户交流来说，虽然她能把产品的优缺点说得很清楚，但实际效果并不理想。","ex":[["现在的生活很方便。拿购物来说，人们不出门就能买到想要的东西。","Cuộc sống giờ rất tiện. Lấy mua sắm mà nói, không ra khỏi nhà cũng mua được thứ muốn."],["在中国，南北方的生活习惯不同。拿吃饭来说，一般南方人更爱吃米饭。","Ở Trung Quốc, thói quen Nam Bắc khác nhau. Lấy ăn uống mà nói, người miền Nam thích ăn cơm hơn."]],"err":[["拿购物说来，……","拿购物来说，……","Thứ tự cố định: 拿……来说."]]},{"n":8,"word":"相比","title":"比较句“跟……相比”","forms":["跟／与 + A + 相比，B + (更／比较)……"],"vn":"Cấu trúc <b>so sánh<\/b> — “so với A, B …”. 跟 dùng trong khẩu ngữ, không trang trọng; văn viết, trang trọng thường dùng <b>与<\/b>.","text":"跟一直加班相比，休息好了再工作，效率更高。","ex":[["跟读研究生相比，我更想直接工作。","So với học cao học, tôi muốn đi làm luôn hơn."],["跟用现金相比，手机支付更方便些。","So với dùng tiền mặt, thanh toán bằng điện thoại tiện hơn."]],"err":[["跟用现金相比，手机支付很方便。","跟用现金相比，手机支付更方便。","Vế sau thường có 更／比较 để thể hiện so sánh."]]},{"n":7,"word":"使","title":"兼语句“主语＋使＋宾语＋动词短语”","forms":["chủ ngữ（sự việc／nguyên nhân）+ 使 + tân ngữ + cụm động từ"],"vn":"Câu kiêm ngữ với <b>使<\/b>: một tình huống / nguyên nhân <b>khiến<\/b> người hoặc sự vật thay đổi hoặc sinh ra kết quả. Tân ngữ của 使 đồng thời là chủ ngữ của cụm động từ sau.","text":"如果总是换工作，不但很难积累经验，还可能会使自己的发展受到影响。","ex":[["这个新方法使工作变得更加简单了。","Phương pháp mới này khiến công việc đơn giản hơn."],["参加这些交流活动使留学生更快适应了大学生活。","Tham gia các hoạt động giao lưu giúp du học sinh thích nghi nhanh hơn."]],"err":[["这件事使高兴我。","这件事使我很高兴。","Thứ tự: 使 + người + tính từ / động từ."]]}]],["口语格式","Cấu trúc khẩu ngữ",[{"n":2,"word":"就是了","title":"固定格式“×就是了”","forms":["（如果……，）+ động từ／cụm động từ + 就是了"],"vn":"Dùng trong <b>khẩu ngữ<\/b>, đặt <b>cuối câu<\/b> để khẳng định: “cứ … là được”, “… thôi mà”. Thường dùng khi trấn an, khuyên nhủ hoặc đồng ý.","text":"如果决定租了，告诉我就是了。","ex":[["我一定能办到，您放心就是了。","Tôi nhất định làm được, ông cứ yên tâm."],["这次考得不好没关系，下次努力就是了。","Lần này thi không tốt không sao, lần sau cố gắng là được."]],"err":[["就是了你告诉我。","你告诉我就是了。","就是了 luôn đứng cuối câu."]]},{"n":5,"word":"各×各的","title":"固定格式“各×各的”","forms":["各 + động từ + 各的（+ danh từ）"],"vn":"Biểu thị <b>mỗi người tự làm<\/b> cùng một loại hành động, độc lập, không ảnh hưởng nhau — “ai … nấy”.","text":"结账时，李文想请客，但大家觉得还是各付各的更合适。","ex":[["到了办公室，大家就开始各忙各的了。","Đến văn phòng, mọi người bắt đầu ai bận việc nấy."],["在图书馆里，大家都很安静，各看各的书。","Trong thư viện, mọi người rất yên lặng, ai đọc sách nấy."]],"err":[["我们各付钱。","我们各付各的。","Khung cố định: 各 + V + 各的."]]},{"n":6,"word":"有什么好×的","title":"固定格式“（没）有什么（好）×的”","forms":["没有什么（好）+ động từ／tính từ + 的","有什么好 + động từ + 的（câu hỏi tu từ）"],"vn":"Biểu thị <b>không cần thiết<\/b> làm việc gì, hoặc không có lý do để có cảm giác / trạng thái nào đó — “có gì đâu mà…, chẳng có gì phải…”.","text":"你跟我有什么好客气的。","ex":[["这种事在网上有很多，没有什么奇怪的。","Chuyện này trên mạng nhiều lắm, chẳng có gì lạ."],["我觉得这家商场里的东西都很一般，没有什么好买的。","Tôi thấy đồ ở trung tâm này bình thường, chẳng có gì đáng mua."]],"err":[["没有什么担心。","没有什么好担心的。","Cần đủ khung: 没有什么 + 好 + V + 的."]]},{"n":10,"word":"说什么也得","title":"固定格式“说什么／怎么（着）也得……”","forms":["(chủ ngữ) + 说什么／怎么（着）+ 也得 + V"],"vn":"Cấu trúc cố định biểu thị <b>bắt buộc phải<\/b> hoặc <b>quyết tâm<\/b> làm bằng được — “dù thế nào cũng phải …”. Thường dùng trong khẩu ngữ.","text":"更重要的是，说什么也得穿上厚一点儿的衣服。","ex":[["假期还有两天就结束了，我明天说什么也得把作业做完了。","Kỳ nghỉ còn hai ngày là hết, mai dù thế nào tôi cũng phải làm xong bài tập."],["我很后悔上次没参加这个活动，这次怎么着也得去。","Tôi rất hối hận lần trước không tham gia, lần này dù sao cũng phải đi."]],"err":[["说什么也要得去。","说什么也得去。","也得 + động từ, không thêm 要."]]},{"n":10,"word":"有的是","title":"固定短语“有的是”","forms":["(chủ ngữ) + 有的是 + danh từ"],"vn":"Cụm cố định <b>有的是<\/b> dùng trong khẩu ngữ, nghĩa là <b>có rất nhiều, có thừa<\/b> — nhấn mạnh số lượng nhiều.","text":"没问题，受得了，我有的是厚衣服。","ex":[["过年时，家里有的是好吃的、好喝的，孩子们特别开心。","Tết, trong nhà đồ ăn thức uống có thừa, bọn trẻ rất vui."],["这个市场特别大，有的是水果和菜，你想买什么菜都能买到。","Chợ này rất lớn, rau quả có rất nhiều, muốn mua gì cũng có."]],"err":[["我有的是很多时间。","我有的是时间。","有的是 đã mang nghĩa “rất nhiều”, không thêm 很多."]]},{"n":8,"word":"有A有B","title":"固定短语“有A有B”","forms":["有 + A + 有 + B（A, B phần lớn đơn âm tiết; nghĩa liên quan, gần hoặc trái nhau）"],"vn":"Cụm cố định <b>有A有B<\/b>: A và B thường là từ <b>một âm tiết<\/b>, nghĩa <b>liên quan, gần nhau hoặc đối lập<\/b> — dùng để miêu tả sự phong phú, đầy đủ.","text":"郊区有山有水，还有很多农家乐。","ex":[["超市里的苹果有大有小，有红有绿，看起来都非常好吃。","Táo trong siêu thị có to có nhỏ, có đỏ có xanh, trông đều rất ngon."],["春天，公园里到处都是人，有男有女，有大人有孩子，特别热闹。","Mùa xuân, công viên đâu cũng là người, có nam có nữ, có người lớn có trẻ em, rất náo nhiệt."]],"err":[["有山和有水","有山有水","Không chèn 和 giữa hai vế."]]}]],["补语 · 短语","Bổ ngữ · cụm cố định",[{"n":4,"word":"V得了／V不了","title":"可能补语“动词＋得／不＋了”","forms":["động từ + 得了（có thể làm được）","động từ + 不了（không thể làm được）","离合词：上不了网、帮不了忙"],"vn":"“得了 / 不了” (liǎo) đặt sau động từ hoặc chen giữa từ ly hợp, tạo <b>bổ ngữ khả năng<\/b>: hành động hay kết quả <b>có thể / không thể<\/b> thực hiện.","text":"我没带现金，手机没有信号，上不了网，买不了地铁票了。","ex":[["她刚才给我发信息，说她今天来不了了。","Cô ấy vừa nhắn tin, nói hôm nay không đến được."],["明天的足球比赛，你们班男生参加得了吗？","Trận bóng ngày mai, nam lớp bạn tham gia được không?"]],"err":[["我今天不能来了了。","我今天来不了了。","Dùng 来不了; chữ 了 cuối câu là ngữ khí, 了 trong 不了 đọc liǎo."]]},{"n":4,"word":"来得及","title":"固定短语“来得及／来不及”","forms":["来得及 + động từ（còn kịp làm）","来不及 + động từ（không kịp làm）","没来得及 + động từ（đã không kịp）"],"vn":"<b>来得及<\/b>: còn thời gian, kịp làm / kịp đến. <b>来不及<\/b>: thời gian gấp, không kịp. Việc <b>đã qua<\/b> mà không kịp thì nói <b>没来得及<\/b>.","text":"有些地铁站附近公司比较多，工作日站里还有早餐车，没来得及吃早饭的人在这里就能买到热包子和牛奶等。","ex":[["你现在才告诉我，我来不及通知大家了。","Giờ bạn mới nói, tôi không kịp báo mọi người rồi."],["中午12点的飞机，咱们9点出发来得及吗？","Máy bay 12 giờ trưa, 9 giờ mình đi có kịp không?"]],"err":[["昨天我来不及吃早饭。","昨天我没来得及吃早饭。","Việc đã qua → 没来得及."]]}]]]]],"BX":[{"pair":"获得 — 得到","book":false,"head":["","获得","得到"],"rows":[["共同点","都是动词，都表示“拿到、有了”。<br><span class='zh'>她<b>获得／得到<\/b>了奖学金。<\/span>",null],["不同点 1","<b>书面语<\/b>，宾语多是好的、<b>抽象<\/b>的、需要努力才有的：奖学金、机会、成功、第一名。<br><span class='zh'>他在比赛中<b>获得<\/b>了第一名。<\/span>","<b>口语、书面语都用<\/b>，宾语范围大，具体、抽象都可以：礼物、帮助、消息。<br><span class='zh'>我<b>得到<\/b>了一个好消息。<\/span>"],["不同点 2","一般不带不好的宾语。","可以带不好的宾语：得到批评、得到教训。<br><span class='zh'>他迟到了，<b>得到<\/b>了老师的批评。<\/span>"]],"opts":["获得","得到"],"quiz":[["她在这次比赛中____了第一名。",0,"正式、需要努力的好结果 → 获得（得到也可，但“获得第一名”更常用）。"],["生日那天，我____了很多礼物。",1,"具体的东西（礼物），口语 → 得到。"],["他上课总说话，____了老师的批评。",1,"不好的结果只能用“得到”。"],["成绩好、表现好的学生都有机会____奖学金。",0,"书面、正式 → 获得（课文用法）。"]],"n":1},{"pair":"适应 — 习惯","book":false,"head":["","适应","习惯"],"rows":[["共同点","都可以做动词，表示对新环境、新情况不再觉得不舒服。<br><span class='zh'>我已经<b>适应／习惯<\/b>了北京的天气。<\/span>",null],["不同点 1","强调<b>主动改变自己<\/b>去配合环境，过程性强：<span class='zh'>更快地<b>适应<\/b>大学生活<\/span>。","强调<b>时间长了<\/b>自然而然觉得正常：<span class='zh'>我<b>习惯<\/b>早上喝咖啡<\/span>。"],["不同点 2","只是动词。","还是<b>名词<\/b>：好习惯、生活习惯。<br><span class='zh'>早睡早起是个好<b>习惯<\/b>。<\/span>"]],"opts":["适应","习惯"],"quiz":[["早睡早起是一个好____。",1,"名词 → 只能用“习惯”。"],["通过交流，外国学生能更快地____中国的大学生活。",0,"主动配合新环境 → 适应（课文）。"],["我____每天晚上跑步。",1,"长时间形成的做法 → 习惯 + 动词短语。"],["刚来的时候，他不太____这里的工作环境。",0,"新环境、需要调整 → 适应。"]],"n":1},{"pair":"不过 — 但是","book":false,"head":["","不过","但是"],"rows":[["共同点","都是连词，表示转折，用在后一个分句开头。<br><span class='zh'>这个房子不大，<b>不过／但是<\/b>很干净。<\/span>",null],["不同点 1","转折语气<b>轻<\/b>，多用于口语，常常是补充一点不足。<br><span class='zh'>环境真不错，<b>不过<\/b>周末可能有点儿吵。<\/span>","转折语气<b>重<\/b>，口语、书面都用；常和“虽然”搭配。<br><span class='zh'><b>虽然<\/b>房租很贵，<b>但是<\/b>我还是决定租。<\/span>"],["不同点 2","一般<b>不<\/b>和“虽然”搭配。","常说“虽然……，但是……”。"]],"opts":["不过","但是"],"quiz":[["虽然这个小区离公司很远，____房租很便宜。",1,"和“虽然”搭配 → 但是。"],["这件衣服挺好看的，____有点儿大。",0,"口语、补充一点小问题 → 不过。"],["我们看见了很多动物，____没看见大熊猫。",0,"课文例句，语气轻 → 不过。"],["虽然他学中文时间不长，____说得很流利。",1,"虽然……但是……。"]],"n":2},{"pair":"恐怕 — 可能","book":false,"head":["","恐怕","可能"],"rows":[["共同点","都可以表示估计、不太肯定。<br><span class='zh'>他<b>恐怕／可能<\/b>不来了。<\/span>",null],["不同点 1","带有<b>担心<\/b>的语气，估计的多是<b>不好<\/b>的结果。<br><span class='zh'>周末太吵，<b>恐怕<\/b>会影响你休息。<\/span>","只是估计，<b>没有担心<\/b>的意思，好坏都可以。<br><span class='zh'>明天<b>可能<\/b>是晴天。<\/span>"],["不同点 2","只是副词。","还可以做形容词、名词：<span class='zh'>不可能／有可能<\/span>。"]],"opts":["恐怕","可能"],"quiz":[["这件事____不太容易办成，你要有准备。",0,"担心不好的结果 → 恐怕。"],["这次考试他一定能通过，不____不及格。",1,"“不可能”只能用可能。"],["明天____会是个好天气。",1,"好的估计，没有担心 → 可能。"],["已经八点了，我们____要迟到了。",0,"担心 → 恐怕。"]],"n":2},{"pair":"熟悉 — 了解","book":false,"head":["","熟悉","了解"],"rows":[["共同点","都可以表示知道得清楚。<br><span class='zh'>我很<b>熟悉／了解<\/b>他。<\/span>",null],["不同点 1","多因为<b>经常接触<\/b>而知道：熟悉路、熟悉环境、熟悉这个城市。<br><span class='zh'>我刚来，不<b>熟悉<\/b>路。<\/span>","重在<b>知道情况、原因<\/b>，可以通过学习、打听：了解情况、了解文化。<br><span class='zh'>我想<b>了解<\/b>一下中国的历史。<\/span>"],["不同点 2","可以做形容词：<span class='zh'>很熟悉的声音<\/span>。","可以说“了解一下”“去了解”（主动去知道）。"]],"opts":["熟悉","了解"],"quiz":[["我刚搬来，还不太____这里的路。",0,"经常走才知道路 → 熟悉。"],["我想先____一下这个公司的情况。",1,"主动去知道情况 → 了解一下。"],["电话里传来一个很____的声音。",0,"形容词 → 熟悉的声音。"],["通过这本书，我____了很多中国文化。",1,"通过学习知道 → 了解。"]],"n":3},{"pair":"于是 — 所以","book":false,"head":["","于是","所以"],"rows":[["共同点","都用在后一分句开头，表示前后有联系。<br><span class='zh'>下雨了，<b>于是／所以<\/b>我们没出去。<\/span>",null],["不同点 1","重在<b>先后承接<\/b>：前一件事发生后，接着发生后一件事；只用于<b>已经发生<\/b>的事。","重在<b>因果<\/b>：可以说已经发生的，也可以说将来、一般道理。<br><span class='zh'>明天考试，<b>所以<\/b>我今天要早点儿睡。<\/span>"],["不同点 2","不和“因为”搭配。","常说“因为……，所以……”。"]],"opts":["于是","所以"],"quiz":[["因为他病了，____今天没来上课。",1,"因为……所以…… → 所以。"],["她从小就想当医生，____上大学时选择了学医。",0,"先后承接，已经发生 → 于是（课文例句）。"],["明天要早起，____我得早点儿睡。",1,"将来的事 → 所以。"],["等了半个小时他们也没来，____我就一个人去了。",0,"接着发生的事 → 于是（课本练习）。"]],"n":3},{"pair":"往往 — 常常","book":false,"head":["","往往","常常"],"rows":[["共同点","都是副词，都表示某种情况经常出现。<br><span class='zh'>短距离出行时，人们<b>往往／常常<\/b>骑自行车。<\/span>",null],["不同点 1","是对<b>已有情况的规律性总结<\/b>，句中一般要有条件、情况：<span class='zh'>周末人们<b>往往<\/b>睡得很晚。<\/span>","只是说<b>次数多<\/b>，不一定有条件：<span class='zh'>我<b>常常<\/b>去图书馆。<\/span>"],["不同点 2","<b>不能<\/b>用于将来、主观愿望：<s>以后我往往来看你<\/s>。","可以用于将来：<span class='zh'>以后我会<b>常常<\/b>来看你。<\/span>"]],"opts":["往往","常常"],"quiz":[["以后你要____给家里打电话。",1,"将来、愿望 → 只能用常常。"],["天气不好的时候，坐地铁的人____特别多。",0,"有条件的规律 → 往往。"],["我____去那家咖啡馆看书。",1,"只说次数多，没有条件 → 常常。"],["第一次做的菜____不太好吃。",0,"经验规律 → 往往。"]],"n":4},{"pair":"严重 — 厉害","book":false,"head":["","严重","厉害"],"rows":[["共同点","都可以说病、问题的程度高。<br><span class='zh'>他的病很<b>严重／厉害<\/b>。<\/span>",null],["不同点 1","重在<b>影响大、情况坏<\/b>：严重的问题、严重的后果；不能做补语。","常做<b>补语<\/b>：疼得厉害、咳得厉害、辣得厉害。"],["不同点 2","只有不好的意思。","还有<b>夸人<\/b>的意思：<span class='zh'>他真<b>厉害<\/b>，什么都会！<\/span>"]],"opts":["严重","厉害"],"quiz":[["我还发烧，一直咳嗽，咳得很____。",1,"做补语 → 厉害（课文）。"],["这个问题很____，我们必须马上解决。",0,"情况坏、影响大 → 严重。"],["你一个人做了这么多菜，真____！",1,"夸人 → 厉害。"],["空气污染越来越____了。",0,"情况变坏 → 严重。"]],"n":6},{"pair":"偶尔 — 有时候","book":false,"head":["","偶尔","有时候"],"rows":[["共同点","都表示不是经常。<br><span class='zh'>我<b>偶尔／有时候<\/b>去电影院看电影。<\/span>",null],["不同点 1","次数<b>很少<\/b>，常和“才”一起用：偶尔才……。","次数比“偶尔”多一些，常常两个一起对比：<span class='zh'>有时候……，有时候……<\/span>。"],["不同点 2","—","可以说“有时候……，有时候……”，“偶尔”不这样用。"]],"opts":["偶尔","有时候"],"quiz":[["她平时身体不错，____才会生一次病。",0,"很少、和“才”搭配 → 偶尔（课文）。"],["周末我____去爬山，____在家看书。",1,"有时候……有时候……"],["他经常在家看电影，____才去电影院。",0,"次数很少 → 偶尔。"],["北京的春天____刮大风。",1,"一般的“有时”（偶尔也可）。"]],"n":6},{"pair":"经验 — 经历","book":false,"head":["","经验","经历"],"rows":[["共同点","都和以前做过的事有关。",null],["不同点 1","从做事中得到的<b>知识、本领<\/b>：工作经验、积累经验、有经验。","<b>亲身遇到的事情<\/b>：一次难忘的经历、看病的经历。"],["不同点 2","只是名词。","还是<b>动词<\/b>：<span class='zh'>他<b>经历<\/b>了很多困难。<\/span>"]],"opts":["经验","经历"],"quiz":[["你有这方面的工作____吗？",0,"本领、知识 → 经验（课文）。"],["这是我第一次在中国看病的____。",1,"亲身遇到的事 → 经历。"],["他____了很多困难才成功。",1,"动词 → 经历。"],["如果总是换工作，很难积累____。",0,"积累经验（课文）。"]],"n":7},{"pair":"尽管 — 虽然","book":false,"head":["","尽管","虽然"],"rows":[["共同点","都是连词，表示让步转折，后面常用“但是、可是、还是”。<br><span class='zh'><b>尽管／虽然<\/b>性格不同，但是他们有很多共同爱好。<\/span>",null],["不同点 1","语气更强一些，书面一些。","口语、书面都常用。"],["不同点 2","还是<b>副词<\/b>，表示“放心去做，不用考虑”：<span class='zh'>有问题<b>尽管<\/b>问我。<\/span>","只能做连词。"]],"opts":["尽管","虽然"],"quiz":[["你有什么问题____问，不用客气。",0,"副词“尽管”= cứ việc."],["他们____性格不同，但是有很多共同爱好。",0,"课文：尽管……但是……（虽然也可以）。"],["需要帮忙的话，____告诉我。",0,"副词 → 尽管。"],["这件衣服____有点儿贵，可是质量很好。（口语）",1,"口语常用 → 虽然。"]],"n":9},{"pair":"从来 — 一直","book":false,"head":["","从来","一直"],"rows":[["共同点","都是副词，都表示从过去到现在没有变。",null],["不同点 1","多用于<b>否定句<\/b>：从来不、从来没……过。","肯定、否定都常用：一直很忙、一直没来。"],["不同点 2","只表示<b>从过去到现在<\/b>。","还可以表示<b>将来<\/b>、表示方向：<span class='zh'>希望他们能<b>一直<\/b>走下去。／<b>一直<\/b>往前走。<\/span>"]],"opts":["从来","一直"],"quiz":[["我____没见过这个颜色的花。",0,"没……过 → 从来（课文）。"],["希望他们能____相互理解、相互支持。",1,"将来 → 一直（课文）。"],["你____往前走，就能看到地铁站。",1,"方向 → 一直。"],["他____不迟到。",0,"否定 → 从来。"]],"n":9}],"GP_SEL":[["你有____问题，都可以来找我。",["任何","每个","一些"],0,"任何 + danh từ, phía sau hay có 都.",1],["____明天下雨，我们就不去爬山了。",["虽然","不管","要是"],2,"要是……，就…… (giả thiết).",1],["____天气越来越冷，来公园锻炼的人少了。",["随着","对于","通过"],0,"随着 + sự thay đổi → kết quả thay đổi theo.",1],["这件衣服很漂亮，____有点儿贵。",["不过","而且","于是"],0,"Chuyển ý nhẹ: ……，不过……",2],["____工作太忙，他已经很久没回老家了。",["于是","由于","既然"],1,"由于 + nguyên nhân, (所以) + kết quả.",2],["他不仅会说汉语，____会说日语。",["就","才","还"],2,"不仅……，还／而且……",3],["这个问题太简单了，____小孩子都知道。",["于是","甚至","而且"],1,"甚至 + ví dụ ở mức cao nhất (… 都 / 也).",3],["这个房子离公司太远了，____房租也不便宜，我们再看看别的吧。",["否则","于是","再说"],2,"再说 = hơn nữa, bổ sung thêm lý do.",4],["____你已经决定了，就别再犹豫了。",["要是","尽管","既然"],2,"既然 + sự thật, 就 + kết luận / lời khuyên.",7],["快点儿走吧，____就赶不上火车了。",["不管","否则","于是"],1,"……，否则 + hậu quả xấu.",8],["____工作多忙，他每天都坚持跑步。",["尽管","虽然","不管"],2,"不管 + 多 / 什么 / 怎么…, 都……",8],["____外面很冷，但是他还是出去跑步了。",["尽管","既然","不管"],0,"尽管 + sự thật, 但是 / 可是 / 还是……",9],["我____没去过上海，真想去看看。",["一直","从来","偶尔"],1,"从来 + 没(有)…过 / 不… (từ trước đến nay chưa từng).",9],["南方的冬天很暖和，____北方的冬天非常冷。",["再说","于是","而"],2,"而 nối hai vế đối lập.",10],["这家饭馆的菜很好吃，我们____去吃过三次了。",["至少","偶尔","从来"],0,"至少 + số lượng (ít nhất).",5],["别着急，飞机十点才起飞，现在去还____。",["来不及","受不了","来得及"],2,"Còn đủ thời gian → 来得及.",4]],"GP_ORD":[["跟上个月|相比，|这个月的工资|高了不少",8],["这次旅行|使|我|认识了|很多新朋友",7],["拿|我|来说，|我|每天都|骑车上班",7],["你的|中文水平|够|高的",5],["吃完饭以后，|大家|各付|各的",5],["这点儿|小事|有什么|好|担心的",6],["明天|我|说什么|也得|去看看他",10],["图书馆里|有的是|关于历史的|书",10],["在学习|方面，|他|一直|很认真",7],["这么多菜|我们两个人|吃得了|吗？",4]],"GP_DONE":[["一方面，学中文能了解中国文化，____",["所以我很喜欢中文","但是中文很难","另一方面也能找到更好的工作"],2,1],["这件衣服好是好，____",["所以我买了两件","而且很便宜","就是有点儿贵"],2,3],["她既会唱歌，____",["才会跳舞","就会跳舞","又会跳舞"],2,4],["你别担心，有问题直接告诉我____",["不是了","就是了","就算了"],1,2],["他每天早上都去跑步，____",["好像身体很健康","好让身体更健康","只好身体健康"],1,6],["我们不仅要学好专业知识，____",["就要学会和别人交流","还要学会和别人交流","才要学会和别人交流"],1,3],["不用解释了，____",["你说我也不明白","你不说我也明白","你不说我就明白"],1,9],["他平时很少运动，____",["只是偶尔周末去打打球","从来每天打球","所以每天都去打球"],0,6]],"L1":[{"audio":"audio/1-3.mp3","n":1,"k":2,"q":"陈天中是听谁说可以申请奖学金的？","o":["房东","白家月","老师","同学"],"a":2,"why":"“刚才老师说，咱们可以申请奖学金”。","t":{"title":"申请奖学金","paras":["陈天中：你看，咱们的校园真大！有图书馆、体育馆、超市，还有好几个食堂。","白家月：是啊，我觉得学校就像一座小城市，什么都有，方便极了。","陈天中：刚才老师说，咱们可以申请奖学金，你了解过吗？","白家月：我听说过一点儿，好像成绩好、表现好的学生都有机会获得奖学金。","陈天中：那太好了，要是申请到奖学金，就能减轻不少经济压力。","白家月：没错，我们一起加油吧！"]}},{"audio":"audio/2-3.mp3","n":2,"k":2,"q":"白家月为什么不担心周末太吵？","o":["她睡觉很早","她周末不在家","她想多认识一些朋友","那里的房租很便宜"],"a":2,"why":"“没关系，我还想多认识一些朋友”。","t":{"title":"查看周围环境","paras":["李文：家月，你看，那边还有个小花园。","白家月：嗯，这个小区到处是花，还种了不少树，周围也很安静。","李文：是啊！这个小区的环境真不错，不过我听说，附近有十几家公司，很多刚毕业的学生都租住在这里。周末他们可能会玩到很晚，恐怕会影响你休息。","白家月：没关系，我还想多认识一些朋友，和他们一起玩呢。","李文：是呢，大家可以一起热闹热闹。","白家月：这里房租合适，环境很好，而且房东也热情，所以我决定租这个房子了，明天就入住新家。"]}},{"audio":"audio/3-1.mp3","n":3,"k":1,"q":"同学觉得北京的路怎么样？","o":["很难找","车太多","很好找","太窄了"],"a":2,"why":"“这边的路基本上都是正南正北……很好找”。","t":{"title":"问路","paras":["陈天中：请问，花园小区怎么走？","同学：你往前走，到十字路口不要过马路，直接右转就到小区门口了。正好我也去那边，一起走吧。","陈天中：好的。我刚来中国，不熟悉路。北京真是太大了。","同学：北京大是大，不过这边的路基本上都是正南正北、正东正西的，很好找。你也可以用手机地图，很容易就能找到目的地。","陈天中：嗯，不过很多中文地名我还不认识。","同学：没关系，你很快就会熟悉的。"]}},{"audio":"audio/4-1.mp3","n":4,"k":1,"q":"陈天中为什么买不了地铁票？","o":["地铁站已经关门了","他不知道去哪儿","地铁票卖完了","没带现金，手机也上不了网"],"a":3,"why":"“我没带现金，手机没有信号，上不了网”。","t":{"title":"在地铁站","paras":["陈天中：啊，我的手机停机了！怎么办啊？","路人：你好，你看上去很着急，需要帮忙吗？","陈天中：我忘了交电话费，手机停机了。我没带现金，手机没有信号，上不了网，买不了地铁票了。","路人：你要去哪儿？我帮你买张票。","陈天中：太感谢你了，我要去北京大学站。对了，能不能告诉我你的联系方式？我想把钱还给你。","路人：别客气，很高兴能帮到你。"]}},{"audio":"audio/5-1.mp3","n":5,"k":1,"q":"水煮鱼为什么看起来像“油煮鱼”？","o":["最上面有一层辣椒油","鱼是用油煮的","鱼放了很多盐","鱼的颜色很白"],"a":0,"why":"“最后再倒上辣椒油，其实只有最上面那一层是油”。","t":{"title":"水煮鱼","paras":["刘明：家月，你来中国至少两个月了，习惯吃中餐了吗？","白家月：习惯了，而且我很喜欢吃中国菜。","王一雪：你还没吃过水煮鱼吧？这是我专门为你做的。","白家月：看起来不像水煮鱼，更像“油煮鱼”。","王一雪：这道菜是先用水把鱼煮熟，最后再倒上辣椒油，其实只有最上面那一层是油。你尝尝，对你来说辣不辣？","白家月：辣是辣，但是非常好吃！","王一雪：那你多吃点儿，不要客气。"]}},{"audio":"audio/6-3.mp3","n":6,"k":2,"q":"李文让白家月做什么？","o":["先在大厅休息","去排队挂号","在表上写信息","回家等他"],"a":0,"why":"“你先在大厅休息，别着急”。","t":{"title":"在医院大厅","paras":["李文：护士，您好，我的这位外国朋友生病了，第一次来这里看病，需要怎么做？","护士：请在这张表上写上病人的姓名、性别、国籍、年龄、电话号码和家庭地址。","李文：我写好了，您看看，这样可以吗？","护士：没问题，您拿着病人的护照去挂号吧。","李文：家月，我去排队挂号，你先在大厅休息，别着急。","白家月：好的，真是太谢谢你了！","李文：你跟我有什么好客气的。"]}},{"audio":"audio/7-3.mp3","n":7,"k":2,"q":"杨同乐建议同事怎么做？","o":["早点儿出发","多带一些钱","找经理帮忙","提前准备好问题"],"a":3,"why":"“那你要提前准备好问题，便于和客户交流”。","t":{"title":"出差前的准备","paras":["同事：杨哥，经理让我下周去上海出差，做市场调查，你有这方面的经验吗？","杨同乐：你要去几天？主要调查什么内容？","同事：去四天，打算采访一些客户，了解他们对新产品的看法。","杨同乐：那你要提前准备好问题，便于和客户交流。","同事：好的，我已经准备了一些问题。","杨同乐：很好。既然出差时间不长，就要安排好时间，多获得有用的信息。"]}},{"audio":"audio/8-1.mp3","n":8,"k":1,"q":"下周谁要带他们去郊区？","o":["陈天中","安妮","王老师","李文"],"a":2,"why":"“下周王老师要带咱们去郊区游玩”。","t":{"title":"出去放松放松","paras":["安妮：家月，最近学习太紧张了，咱们明天出去放松放松吧。","白家月：呀，正好我也想出去呢。咱们去哪儿好呢？","安妮：不管去哪儿，能放松的地方都行。","白家月：郊区怎么样？","安妮：天中说，下周王老师要带咱们去郊区游玩呢。","白家月：是吗？那咱们明天去爬长城吧，不是说“不到长城非好汉”吗？","安妮：好主意！不过明天是个大晴天，外出记得戴帽子。"]}},{"audio":"audio/9-1.mp3","n":9,"k":1,"q":"刚认识李文时，白家月把他当成什么人？","o":["男朋友","邻居","老师","普通朋友"],"a":3,"why":"“我当时也只把你当普通朋友”。","t":{"title":"生日快乐","paras":["李文：家月，给你的，祝你生日快乐！","白家月：啊，好漂亮的花！还有巧克力！你怎么知道我喜欢这个巧克力？","李文：上次咱们去超市，看你拿起来看了看又放下了，我就记住了。","白家月：好感动！我不说你也懂我在想什么，你真是细心又浪漫。其实刚认识不久，你的幽默与耐心就很吸引我，不过我当时也只把你当普通朋友。如果你没有一直找我聊天儿，我们可能就错过了。","李文：我终于遇见了对的人，哪能错过呢？","白家月：遇见你，我也觉得很幸运。"]}},{"audio":"audio/10-3.mp3","n":10,"k":2,"q":"白家月为什么想去广州过年？","o":["想去看雪","去广州的车票便宜","那里有很多朋友","那里冬天暖和，还能看花"],"a":3,"why":"“那里冬天比较暖和……我喜欢看花”。","t":{"title":"寒假去哪儿","paras":["王一飞：寒假你们打算做什么呢？","陈天中：我们刚刚还说呢，家月春节时要去广州，我计划去哈尔滨。","王一飞：那时候广州暖和，但哈尔滨特别冷，气温一般都低于零下十摄氏度甚至零下二十摄氏度，这么低的温度你受不了吧？","陈天中：没问题，受得了，我有的是厚衣服。我去哈尔滨主要是想看雪，听说春节时那里会举办很多活动。","白家月：我想在广州过年，那里冬天比较暖和。而且我喜欢看花，听说广州的鲜花市场很有名，里面有各种植物。","王一飞：真不错！听你们这么一说，我也想外出旅游了。"]}}],"L2":[{"audio":"audio/2-7.mp3","n":2,"k":4,"qs":[{"q":"白家月是按照谁的建议上网找房子的？","o":["房东","李文","老师","陈天中"],"a":1,"why":"“根据李文的建议，她先在租房网站和App上查看有关信息”。"},{"q":"工作几年后，很多人为什么会买房？","o":["房子越来越便宜","觉得有房才有家，更有安全感","公司要求员工买房","租房太麻烦了"],"a":1,"why":"“有房才有家，有自己的房子会更有安全感”。"}],"t":{"title":"怎样租到合适的房子","paras":["在李文的帮助下，白家月租到了合适的房子。对白家月来说，这次租房并不容易。根据李文的建议，她先在租房网站和App上查看有关信息，查找合适的房子，接着又去看了看房子，同时了解房子周围的环境。她看了好几个房子，才找到一个位置、环境和价格都合适的，最后顺利租到了理想的房子。","租房的时候，李文告诉白家月，在中国，由于很多刚工作的年轻人工资还不太高，所以他们一开始也不买房，都选择租房。工作几年后，不少人就会买房，因为大家一直觉得，有房才有家，有自己的房子会更有安全感。"]}},{"audio":"audio/4-7.mp3","n":4,"k":4,"qs":[{"q":"有的地铁站提供什么免费服务？","o":["免费鲜花","免费充电","借雨伞、发雨衣","免费早餐"],"a":2,"why":"“提供免费借雨伞、发雨衣等服务”。"},{"q":"乘客下班时可以在地铁站里顺便做什么？","o":["买花送给家人","吃晚饭","取快递","看电影"],"a":0,"why":"“乘客下班时可以顺便买花送给家人”。"}],"t":{"title":"地铁站里的贴心服务","paras":["在中国，乘客可以在不少地铁站里直接扫码购买食物和饮料，有的地铁站还提供免费借雨伞、发雨衣等服务。","有些地铁站附近公司比较多，工作日站里还有早餐车，没来得及吃早饭的人在这里就能买到热包子和牛奶等，省了不少时间。有的地铁站里甚至还有鲜花店，乘客下班时可以顺便买花送给家人。","这些小小的服务，不仅方便了人们的出行，也让大家的心情变得更加愉快。"]}},{"audio":"audio/6-7.mp3","n":6,"k":4,"qs":[{"q":"医院的国际部有什么不足？","o":["看病的人太多","收费比较高","医生不会说英文","离市区太远"],"a":1,"why":"“但是国际部的收费比较高”。"},{"q":"医生为什么有时会给病人做检查？","o":["为了多收一些钱","为了给出合适的治疗方法","为了让病人放心","因为医院有规定"],"a":1,"why":"“有时还会做一些检查，好给出合适的治疗方法”。"}],"t":{"title":"怎么在中国看病","paras":["外国人第一次在中国看病，可能会担心语言不通，或者觉得看病的过程和自己的国家不同。其实，这些问题都有办法解决。","有的医院有国际部，那里的医生一般会说英文，交流比较方便，但是国际部的收费比较高。如果没有特别需要，可以选择普通部，用简单的中文和医生交流。","在中国看病要先挂号，然后再去找医生。医生会问病人的情况，有时还会做一些检查，好给出合适的治疗方法。只要按照医生说的一步一步来，一般都可以顺利得到治疗。"]}},{"audio":"audio/7-7.mp3","n":7,"k":4,"qs":[{"q":"根据这段话，适应新工作往往需要什么？","o":["比较长的时间","朋友的帮助","很高的工资","很多钱"],"a":0,"why":"“适应新工作往往需要比较长的时间”。"},{"q":"下面哪一项作者没有建议年轻人去学？","o":["怎样换一份好工作","课本中没有的专业知识","和同事有效交流","公司的管理方式"],"a":0,"why":"作者列举了专业知识、管理方式、和同事交流，没有说怎么换工作。"}],"t":{"title":"工作的选择与发展","paras":["有的年轻人经常换工作，总觉得下一份工作会更好。但是，适应新工作往往需要比较长的时间。如果总是换工作，不但很难积累经验，还可能会使自己的发展受到影响。","我认为，年轻人刚进入社会时，不能只关心工资的高低，更要重视学习。比如，学习课本中没有的专业知识，了解公司的管理方式，学会和同事有效交流，等等。只有把这些基础打好，提高工作能力，今后才会有更好的发展机会。"]}},{"audio":"audio/8-5.mp3","n":8,"k":3,"qs":[{"q":"由于工作紧张，很多年轻人怎么样？","o":["每天都去运动","经常加班、熬夜，休息不够","经常去郊区游玩","经常换工作"],"a":1,"why":"“他们经常加班、熬夜，休息不够”。"},{"q":"除了去郊区，杨同乐周末还会做什么？","o":["去商店买东西","在家安安静静地看书","去医院检查","去公司加班"],"a":1,"why":"“或者就在家里安安静静地看看书”。"}],"t":{"title":"学会放松","paras":["以前杨同乐总觉得自己年轻，就应该多学多干、积累经验。很多年轻人和他想法一样。但是，由于工作紧张，他们经常加班、熬夜，休息不够，结果工作效率下降，健康也受到了影响。","现在越来越多的人认识到，跟一直加班相比，休息好了再工作，效率更高。因此，很多人开始做出改变，提醒自己减轻压力、多多放松。比如，杨同乐周末时或者与朋友们去郊区游玩，在大自然美丽的景色中好好放松自己；或者就在家里安安静静地看看书。休息好了，再回去上班时，心情愉快，工作效率也更高。"]}}],"R1":[{"bank":["适应","随着","减轻","熟悉","偶尔","提供"],"ex":["（{}）天气变冷，来公园锻炼的人越来越少了。","随着"],"dialog":false,"qs":[["他刚搬到这个城市，对这里的路还不太（{}）。","熟悉"],["多运动可以（{}）压力，让心情变得更好。","减轻"],["我平时不喝咖啡，只是（{}）喝一杯。","偶尔"],["刚来中国的时候，我很不（{}）这里的天气。","适应"],["网上购物时，不要随便（{}）自己的个人信息。","提供"]]},{"bank":["来得及","有的是","厉害","至少","顺便","否则"],"ex":["A：电影七点开始，现在出发还（{}）吗？ B：没问题，打车十分钟就到。","来得及"],"dialog":true,"qs":[["A：你去超市吗？（{}）帮我买瓶牛奶吧。 B：好的，没问题。","顺便"],["A：这本小说你看了几遍了？ B：（{}）三遍了，越看越有意思。","至少"],["A：明天几点出发？ B：七点吧，早点儿走，（{}）路上会堵车。","否则"],["A：你咳得这么（{}），快去医院看看吧。 B：好，我下午就去。","厉害"],["A：糟糕，我忘带伞了。 B：别担心，办公室里（{}）雨伞。","有的是"]]}],"R2":[{"p":"现在很多人喜欢在网上买东西，不仅选择多、价格低，而且送货快。不过，由于太方便了，有的人动动手指就买了很多用不着的东西。所以网购之前，最好先想一想：这个东西我真的需要吗？","qs":[{"s":"★ 这段话主要是提醒我们网购时：","o":["保护个人信息","选择好的快递","别乱花钱","多比较价格"],"a":2,"why":"“买了很多用不着的东西……这个东西我真的需要吗？”"}]},{"p":"我家离公司只有两公里。以前我每天开车上班，可是路上经常堵车，停车也很麻烦。后来我改骑自行车，既不用担心堵车，又能锻炼身体。现在我已经骑了一年多了。","qs":[{"s":"★ 他为什么改骑自行车？","o":["公司要求员工骑车","开车常堵车，停车也麻烦","他还不会开车","自行车比较便宜"],"a":1,"why":"“路上经常堵车，停车也很麻烦”。"}]},{"p":"中国人请客吃饭时，主人常常会点很多菜，因为他们觉得菜少了客人可能吃不饱，也显得不够热情。不过，现在越来越多的人认为，点菜够吃就好，吃不完的可以打包带走，这样就不会浪费。","qs":[{"s":"★ 现在越来越多的人认为请客时应该：","o":["多点几个菜","去贵一点儿的饭馆","各付各的","点够吃的菜就好"],"a":3,"why":"“点菜够吃就好……这样就不会浪费”。"}]},{"p":"感冒是一种常见的病。得了感冒以后，不一定马上吃药或者打针，多喝水、多休息往往就会好起来。但是如果一直发烧、咳得很厉害，就应该赶快去医院检查。","qs":[{"s":"★ 根据这段话，什么时候应该去医院？","o":["有一点儿咳嗽时","一直发烧、咳得很厉害时","刚开始感冒时","不想喝水时"],"a":1,"why":"“如果一直发烧、咳得很厉害，就应该赶快去医院检查”。"}]},{"p":"找工作的时候，很多年轻人只关心工资高不高。其实，第一份工作最重要的是能不能学到东西。拿我来说，我的第一份工作工资不高，但是在那里我积累了很多经验，这对我后来的发展帮助很大。","qs":[{"s":"★ 作者认为第一份工作最重要的是：","o":["离家远不远","能不能学到东西","加不加班","工资高不高"],"a":1,"why":"“第一份工作最重要的是能不能学到东西”。"}]},{"p":"很多人觉得放松就是在家睡觉，其实不一定。跟一直待在家里相比，出去走走、运动运动，更能让人放松心情。周末可以去公园散散步，或者和朋友去郊区爬爬山。","qs":[{"s":"★ 作者认为怎样更能放松？","o":["在家好好睡觉","出去走走、运动运动","在家看电视","多吃好吃的"],"a":1,"why":"“跟一直待在家里相比，出去走走、运动运动，更能让人放松心情”。"}]},{"p":"我和妻子是大学同学。尽管我们的性格很不一样——她喜欢热闹，我喜欢安静——但是我们有很多共同的爱好，比如都喜欢旅游和摄影。结婚十年来，我们从来没有因为小事吵过架。","qs":[{"s":"★ 关于“我”和妻子，可以知道：","o":["有很多共同爱好","经常吵架","性格一样","刚结婚不久"],"a":0,"why":"“但是我们有很多共同的爱好”。"}]},{"p":"每年的世界环境日，我们学校都会举办环保活动。今年的活动主要是学习垃圾分类知识。老师告诉我们，保护环境要从小事做起，比如节约用水、人走灯关、吃饭不浪费。","qs":[{"s":"★ 今年学校环保活动的主要内容是：","o":["打扫教室","学习垃圾分类知识","在校园里种树","骑自行车上学"],"a":1,"why":"“今年的活动主要是学习垃圾分类知识”。"}]},{"p":"刚来中国留学时，安妮遇到了不少困难。由于听不懂老师说话，她上课时常常很着急。后来，她每天下课以后都去图书馆复习，还经常和中国同学聊天儿。通过这些交流，她的中文水平提高得很快。现在，她不仅能听懂老师的课，还申请到了学校的奖学金。","qs":[{"s":"★ 安妮刚来中国时，上课为什么着急？","o":["没有朋友","听不懂老师说话","找不到教室","没有课本"],"a":1,"why":"“由于听不懂老师说话，她上课时常常很着急”。"},{"s":"★ 现在安妮怎么样？","o":["当了中文老师","申请到了奖学金","换了专业","已经回国了"],"a":1,"why":"“还申请到了学校的奖学金”。"}]}],"R3":{"text":"在大城市里，很多刚工作的年轻人都选择租房。租房以前，最好先在网上查看有关信息，{1}。看房的时候，不但要看房间大不大、亮不亮，{2}，比如附近有没有地铁站、超市和医院。如果离公司太远，每天上下班要花很长时间，{3}。签合同以前，一定要和房东说清楚房租怎么交、家具坏了谁来修，{4}。总的来说，只要多看、多问、多比较，{5}。","opts":["就能租到合适的房子","还要了解周围的环境","否则以后可能会有麻烦","然后再去现场看看房子","恐怕会影响休息和工作"],"ans":["D","B","E","C","A"],"why":["“先……，然后再……”。","“不但……，还……”，后面举例说周围环境。","离公司太远 → 影响休息和工作。","说清楚，否则以后有麻烦。","“只要……，就……”。"]},"W1":[["img/l03_w2.jpg","扫码","现在买东西不用带现金，用手机扫码就可以付钱了。"],["img/l04_w2.jpg","乘客","下班的时候，地铁里的乘客特别多。"],["img/l05_w3.jpg","辣","这碗面看起来很辣，不过味道非常好。"],["img/l08_w4.jpg","景色","她坐在火车上，一边喝咖啡一边看窗外的景色。"],["img/l10_w5.jpg","垃圾","我们应该做好垃圾分类，一起保护环境。"]],"W2":{"prompt":"请写一篇不少于80字的短文，介绍一次让你难忘的经历（例如：第一次租房、第一次去医院、一次旅行）。","vn":"Viết đoạn văn ít nhất 80 chữ kể về một trải nghiệm khó quên (lần đầu thuê nhà, lần đầu đi khám bệnh, một chuyến du lịch…).","min":80,"tips":["Mở đầu: thời gian, địa điểm, chuyện gì (去年……的时候，我第一次……).","Diễn biến: dùng 先……然后……最后…… / 由于……所以…… / 于是…….","Cảm xúc, bài học: 虽然……但是…… / 通过这次经历，我……","Cố gắng dùng 2–3 điểm ngữ pháp của bài 1–10: 既……又……、不仅……还……、既然……就……、尽管……但是……"],"sample":"去年九月，我第一次来中国留学，也第一次自己租房子。由于不熟悉这里的情况，我先在网上查看了很多房子的信息，然后请中国朋友陪我去看房。看了好几个房子以后，我终于找到了一个既便宜又安静的房间，离学校也不远。搬家那天，邻居还热情地帮我提东西。通过这次经历，我不仅学会了怎么租房，还认识了新朋友。现在想起来，我还觉得很幸运。","svn":"Tháng 9 năm ngoái lần đầu tôi sang Trung Quốc du học và lần đầu tự thuê nhà. Vì chưa quen, tôi xem thông tin trên mạng trước, rồi nhờ bạn đi xem nhà cùng. Xem mấy căn, cuối cùng tìm được phòng vừa rẻ vừa yên tĩnh, gần trường. Hôm chuyển nhà hàng xóm còn giúp xách đồ. Qua lần này tôi không chỉ biết cách thuê nhà mà còn quen bạn mới."}};</script>
+<script>
+(function(){
+"use strict";
+var D=window.LESSON;
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function el(t,a,h){var e=document.createElement(t);if(a)for(var k in a){if(k==="class")e.className=a[k];else if(k==="style")e.style.cssText=a[k];else e.setAttribute(k,a[k]);}if(h!=null)e.innerHTML=h;return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function han(s){return (String(s).match(/[一-鿿]/g)||[]).length;}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+var CIRC="①②③④⑤⑥⑦⑧⑨⑩";
+/* theme */
+(function(){var t=D.META.theme,r=document.documentElement.style;for(var k in t)r.setProperty("--"+k,t[k]);})();
+/* ---------- TTS ---------- */
+var SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>';
+var zhVoice=null,curBtn=null;
+function pickVoice(){if(!("speechSynthesis" in window))return;var v=speechSynthesis.getVoices();zhVoice=v.find(function(x){return /zh[-_]CN/i.test(x.lang)})||v.find(function(x){return /^zh/i.test(x.lang)})||null;}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+function say(text,btn){
+  if(!("speechSynthesis" in window)){alert("Trình duyệt này không hỗ trợ đọc tiếng Trung.");return;}
+  speechSynthesis.cancel();if(curBtn)curBtn.classList.remove("playing");
+  var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,"").replace(/【[^】]*】/g,"").replace(/_+|＿+|\{\d?\}/g,""));u.lang="zh-CN";if(zhVoice)u.voice=zhVoice;u.rate=0.85;
+  if(btn){btn.classList.add("playing");curBtn=btn;u.onend=u.onerror=function(){btn.classList.remove("playing");};}
+  speechSynthesis.speak(u);
+}
+function spk(text,label){var b=el("button",{class:"spk",type:"button","aria-label":label||"Nghe"},SPK);b.addEventListener("click",function(e){e.stopPropagation();say(text,b);});return b;}
+function spkHTML(text){return '<button class="spk" type="button" aria-label="Nghe" data-say="'+esc(text)+'">'+SPK+'</button>';}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-say]");if(b){e.stopPropagation();say(b.getAttribute("data-say"),b);}},true);
+/* ---------- VN toggle ---------- */
+var topbar=el("div",{class:"topbar"});
+var vnBtn=el("button",{type:"button"},"Ẩn tiếng Việt");
+vnBtn.addEventListener("click",function(){var h=document.body.classList.toggle("hide-vn");vnBtn.classList.toggle("on",h);vnBtn.textContent=h?"Hiện tiếng Việt":"Ẩn tiếng Việt";$$(".vn.peek").forEach(function(x){x.classList.remove("peek");});});
+topbar.appendChild(vnBtn);document.body.appendChild(topbar);
+document.addEventListener("click",function(e){if(!document.body.classList.contains("hide-vn"))return;var v=e.target.closest&&e.target.closest(".vn");if(v){v.classList.toggle("peek");e.stopPropagation();}},true);
+/* ---------- generic MC ---------- */
+function Score(node){this.node=node;this.r=0;this.d=0;this.n=0;}
+Score.prototype.add=function(){this.n++;this.show();};
+Score.prototype.hit=function(ok){this.d++;if(ok)this.r++;this.show();if(this.onchange)this.onchange();};
+Score.prototype.reset=function(){this.r=0;this.d=0;this.show();if(this.onchange)this.onchange();};
+Score.prototype.show=function(){if(this.node)this.node.textContent=this.zh?("答对 "+this.r+" / "+this.n+(this.d===this.n&&this.n?" · 完成！":"")):("Đúng "+this.r+" / "+this.n+(this.d===this.n&&this.n?" · hoàn thành!":""));};
+function mc(stem,opts,ans,ex,score,cls){
+  var q=el("div",{class:"q"+(cls?" "+cls:"")});q.appendChild(el("div",{class:"stem"},stem));
+  var ops=el("div",{class:"ops"});
+  opts.forEach(function(o,i){var b=el("button",{class:"op",type:"button"},(opts.length>2||cls==="lab"?String.fromCharCode(65+i)+". ":"")+o);
+    b.addEventListener("click",function(){if(q.classList.contains("done"))return;q.classList.add("done");
+      $$(".op",q).forEach(function(x,j){if(j===ans)x.classList.add("ok");else if(j===i)x.classList.add("no");});
+      if(score)score.hit(i===ans);});ops.appendChild(b);});
+  q.appendChild(ops);if(ex)q.appendChild(el("div",{class:"ex"},"💡 "+ex));if(score)score.add();return q;}
+function scoreBar(parent,label,onReset,zh){var r=el("div",{class:"row",style:"margin:8px 0 14px"});var s=el("span",{class:"score"});r.appendChild(s);
+  if(onReset){var b=el("button",{class:"btn sm",type:"button"},zh?"重做":"Làm lại");b.addEventListener("click",onReset);r.appendChild(b);}parent.appendChild(r);var S=new Score(s);S.zh=!!zh;return S;}
+function reveal(label,answer,cls){var b=el("button",{class:"rv"+(cls?" "+cls:""),type:"button"},label);b.addEventListener("click",function(){if(b.classList.contains("shown")){b.innerHTML=label;b.classList.remove("shown");}else{b.innerHTML=answer;b.classList.add("shown");}});return b;}
+/* ---------- modal framework ---------- */
+var MODALS={};
+function modal(key,no,title,tabs){
+  var m=el("div",{class:"modal",id:"m-"+key,role:"dialog","aria-modal":"true"});
+  var p=el("div",{class:"panel"});var hd=el("div",{class:"mhead"});
+  hd.appendChild(el("div",{class:"eyebrow"},no+" · "+title));hd.appendChild(el("div",{class:"mtitle"},title));
+  var x=el("button",{class:"close",type:"button","aria-label":"Đóng"},"×");x.addEventListener("click",function(){closeModal(m);});hd.appendChild(x);
+  var tb=el("div",{class:"tabs"});hd.appendChild(tb);p.appendChild(hd);
+  var body=el("div",{class:"mbody"});p.appendChild(body);m.appendChild(p);document.body.appendChild(m);
+  m.addEventListener("click",function(e){if(e.target===m)closeModal(m);});
+  var secs=[];
+  tabs.forEach(function(t,i){var b=el("button",{class:"tab",type:"button"},t);b.addEventListener("click",function(){showTab(i);});tb.appendChild(b);var s=el("div",{class:"sec"});body.appendChild(s);secs.push(s);});
+  function showTab(i){$$(".tab",tb).forEach(function(b,j){b.classList.toggle("on",i===j);});secs.forEach(function(s,j){s.classList.toggle("on",i===j);});body.scrollTop=0;}
+  showTab(0);if(tabs.length<2)tb.style.display="none";
+  MODALS[key]={m:m,secs:secs,show:showTab};return MODALS[key];}
+function openModal(key){MODALS[key].m.classList.add("open");document.body.style.overflow="hidden";}
+function closeModal(m){m.classList.remove("open");hidePop();if(!$$(".modal.open").length)document.body.style.overflow="";}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){if($(".pop.open")){hidePop();return;}var o=$$(".modal.open");if(o.length)closeModal(o[o.length-1]);}});
+function hidePop(){}
+function orderer(label,str,sc){var parts=str.split("|");var target=parts.join("");var d=el("div",{class:"card ord"});d.appendChild(el("div",{class:"hint"},label));
+  var ans=el("div",{class:"ans"}),pool=el("div",{class:"pool"}),res=el("div",{class:"res"});d.appendChild(ans);d.appendChild(pool);
+  var mix=shuffle(parts.map(function(p,i){return{p:p,i:i};}));if(parts.length>1&&mix.every(function(m,j){return m.i===j;}))mix.reverse();
+  mix.forEach(function(m){var b=el("button",{class:"ck",type:"button"},esc(m.p));b.addEventListener("click",function(){if(d.dataset.done)return;(b.parentNode===pool?ans:pool).appendChild(b);});pool.appendChild(b);});
+  var r=el("div",{class:"row"});var ck=el("button",{class:"btn pri",type:"button"},"Kiểm tra");var sh=el("button",{class:"btn",type:"button"},"Xem đáp án");r.appendChild(ck);r.appendChild(sh);r.appendChild(spk(target));d.appendChild(r);d.appendChild(res);
+  if(sc)sc.add();
+  ck.addEventListener("click",function(){if(d.dataset.done)return;if(pool.children.length){res.textContent="Hãy dùng hết các cụm từ.";return;}var got=$$(".ck",ans).map(function(b){return b.textContent;}).join("");var ok=got===target;d.dataset.done="1";d.classList.add(ok?"ok":"no");res.innerHTML=ok?"✓ Chính xác!":"✗ Đáp án: <span class='zh'>"+esc(target)+"</span>";if(sc)sc.hit(ok);});
+  sh.addEventListener("click",function(){res.innerHTML="Đáp án: <span class='zh' style='font-size:22px'>"+esc(target)+"</span>";if(!d.dataset.done){d.dataset.done="1";d.classList.add("no");if(sc)sc.hit(false);}});
+  return d;}
+/* ================= ÔN TẬP 1 · HSK4 上 ================= */
+var M=D.META;
+document.title="复习（一）· HSK4 第1—10课 · HSK GARDEN";
+var CARDS=[["gram","📐","01","语法总结","40 điểm ngữ pháp · xếp theo chức năng",1],["bx","⚖️","02","易混词辨析","12 cặp từ hay nhầm"],["gp","✏️","03","语法练习","Chọn từ · sắp xếp câu · hoàn thành câu"],
+  ["listen","🎧","04","听力 · HSK 3.0","20 câu · ghi âm bài khóa",1],["read","📰","05","阅读 · HSK 3.0","25 câu · 3 phần"],["write","✍️","06","书写 · HSK 3.0","Nhìn tranh đặt câu · viết đoạn văn"]];
+var home=el("main",{class:"home"});var hb=el("div",{class:"home-box"});
+hb.innerHTML='<div class="home-top"><div class="kicker">HSK 4 · 上册 · 第1—10课</div><h1><span class="t1">复习（一）</span><span class="t2">语法 · 听力 · 阅读 · 书写</span></h1><div class="tagline">'+esc(M.tagline)+'</div><div class="vnline vn">'+esc(M.vn)+'</div></div>';
+var hg=el("div",{class:"home-grid g3h"});
+CARDS.forEach(function(c){var b=el("button",{class:"home-card"+(c[5]?" star":""),type:"button"},'<div class="ic">'+c[1]+'</div><div class="no">'+c[2]+'</div><div class="tt">'+c[3]+'</div><div class="st">'+esc(c[4])+'</div>');b.addEventListener("click",function(){openModal(c[0]);});hg.appendChild(b);});
+hb.appendChild(hg);
+var hw=el("button",{class:"home-hw",type:"button"},'<div class="ic">📋</div><div class="tx"><div class="no">07 · 自我检测</div><div class="tt">Tự đánh giá & kết quả</div><div class="st">Tích các điểm ngữ pháp đã nắm chắc · xem điểm Nghe / Đọc</div></div><div class="go">→</div>');hw.addEventListener("click",function(){refreshSelf();openModal("self");});hb.appendChild(hw);
+hb.appendChild(el("div",{class:"home-foot"},'<span>HSK GARDEN</span><span>复习（一）</span><span>第1—10课</span>'));
+home.appendChild(hb);document.body.insertBefore(home,topbar);
+function lessonTag(n){return '<span class="tag" style="background:var(--accent)">Bài '+n+'</span>';}
+function hiw(t,w){var ks=String(w).split(/……|×|／|\//).filter(function(x){return x&&x.length<5&&x!=="V"&&x!=="A"&&x!=="B";});var s=esc(t);ks.forEach(function(k){s=s.split(esc(k)).join('<b style="color:var(--main)">'+esc(k)+'</b>');});return s;}
+
+/* ================= 01 语法总结 ================= */
+(function(){var md=modal("gram","01","语法总结 · Tổng hợp ngữ pháp",D.GROUPS.map(function(g){return g[0];}).concat(["一览表 · Tra nhanh"]));var all=[];
+  D.GROUPS.forEach(function(G,gi){var s=md.secs[gi];s.appendChild(el("h3",{class:"h"},esc(G[0])+' <small style="font-size:18px;color:var(--muted)">'+esc(G[1])+'</small>'));
+    s.appendChild(el("p",{class:"lead"},"Mỗi điểm: cấu trúc → giải thích → câu trong bài khóa → ví dụ → lỗi hay sai. Bấm 🔊 để nghe."));
+    G[2].forEach(function(sub){s.appendChild(el("div",{class:"xhead",style:"font-size:20px"},esc(sub[0])+' · <span style="font-weight:600;font-size:16px">'+esc(sub[1])+'</span>'));
+      sub[2].forEach(function(g){all.push(g);var c=el("div",{class:"card",id:"g-"+all.length});
+        c.appendChild(el("h4",{class:"h",style:"margin-top:0"},'<span style="color:var(--muted);font-size:16px">'+all.length+'.</span> '+esc(g.title)+' '+lessonTag(g.n)));
+        var fr=el("div");g.forms.forEach(function(f){fr.appendChild(el("span",{class:"form"},esc(f)));});c.appendChild(fr);
+        c.appendChild(el("div",{style:"font-size:18px;margin:8px 0"},g.vn));
+        c.appendChild(el("div",{class:"dlab"},"Câu trong bài khóa"));c.appendChild(el("div",{class:"exl"},hiw(g.text,g.word)+spkHTML(g.text)));
+        c.appendChild(el("div",{class:"dlab"},"Ví dụ"));g.ex.slice(0,2).forEach(function(e,i){c.appendChild(el("div",{class:"exl"},'('+(i+1)+') '+hiw(e[0],g.word)+spkHTML(e[0])));c.appendChild(el("div",{class:"vn",style:"font-size:16px;margin-left:36px"},esc(e[1])));});
+        if(g.err&&g.err.length){c.appendChild(el("div",{class:"dlab"},"Lỗi hay sai"));g.err.slice(0,1).forEach(function(e){c.appendChild(el("div",{class:"err"},'<span class="b">'+esc(e[0])+'</span><span class="g">'+esc(e[1])+'</span><span class="why">'+e[2]+'</span>'));});}
+        s.appendChild(c);});});});
+  var s=md.secs[D.GROUPS.length];s.appendChild(el("h3",{class:"h"},"一览表 · 40 điểm ngữ pháp bài 1–10"));
+  var t='<table class="t"><thead><tr><th style="width:6%">#</th><th style="width:30%">语法点</th><th style="width:10%">Bài</th><th>Cấu trúc</th></tr></thead><tbody>';
+  all.forEach(function(g,i){t+='<tr data-go="'+(i+1)+'" style="cursor:pointer"><td>'+(i+1)+'</td><td class="zh"><b>'+esc(g.title)+'</b></td><td>'+g.n+'</td><td>'+esc(g.forms[0])+'</td></tr>';});
+  s.appendChild(el("div",null,t+'</tbody></table>'));
+  $$("[data-go]",s).forEach(function(r){r.addEventListener("click",function(){var i=+r.dataset.go;var gi=0,k=0;D.GROUPS.forEach(function(G,j){G[2].forEach(function(sub){sub[2].forEach(function(){k++;if(k===i)gi=j;});});});md.show(gi);var c=$("#g-"+i);if(c)c.scrollIntoView({block:"start"});});});
+  window.GRAM_ALL=all;})();
+
+/* ================= 02 易混词辨析 ================= */
+(function(){var md=modal("bx","02","易混词辨析 · Từ dễ nhầm",["12 cặp từ"]);var s=md.secs[0];
+  s.appendChild(el("p",{class:"lead"},"12 cặp từ hay dùng nhầm nhất trong bài 1–10: đọc bảng so sánh rồi làm bài chọn từ ngay bên dưới."));
+  var nav=el("div",{class:"seg",style:"margin-bottom:14px;flex-wrap:wrap"});s.appendChild(nav);
+  D.BX.forEach(function(b,bi){var c=el("div",{class:"card",id:"bx-"+bi});var a=el("button",{type:"button"},CIRC[bi%10]+" "+esc(b.pair));a.addEventListener("click",function(){c.scrollIntoView({block:"start"});});nav.appendChild(a);
+    c.appendChild(el("h4",{class:"h",style:"margin-top:0"},(bi+1)+". "+esc(b.pair)+" "+lessonTag(b.n)));
+    var t='<table class="t"><thead><tr>'+b.head.map(function(h,i){return '<th'+(i===0?' style="width:14%"':'')+'>'+h+'</th>';}).join("")+'</tr></thead><tbody>';
+    b.rows.forEach(function(r){if(r[2]===null)t+='<tr><td><b>'+r[0]+'</b></td><td colspan="2">'+r[1]+'</td></tr>';else t+='<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>';});
+    c.appendChild(el("div",null,t+'</tbody></table>'));c.appendChild(el("div",{class:"dlab"},"做一做 · 选词填空"));
+    var box=el("div");var sc;function render(){box.innerHTML="";sc=scoreBar(box,"",render,true);b.quiz.forEach(function(q){box.appendChild(mc('<span class="zh">'+q[0].replace("____",'<span class="blank">____</span>')+'</span>',b.opts,q[1],q[2],sc));});sc.show();}
+    render();c.appendChild(box);s.appendChild(c);});})();
+
+/* ================= 03 语法练习 ================= */
+(function(){var md=modal("gp","03","语法练习 · Luyện ngữ pháp",["一、选词填空","二、连词成句","三、完成句子"]);var S=md.secs;
+  (function(){var s=S[0];s.appendChild(el("h3",{class:"h"},"一、选择正确的词语"));s.appendChild(el("p",{class:"lead"},"Chọn từ đúng điền vào chỗ trống. Mỗi câu có ghi bài của điểm ngữ pháp."));var box=el("div");
+    function render(){box.innerHTML="";var sc=scoreBar(box,"",render);D.GP_SEL.forEach(function(q,i){box.appendChild(mc((i+1)+'. <span class="zh">'+esc(q[0]).replace("____",'<span class="blank">____</span>')+'</span> '+lessonTag(q[4]),q[1].map(function(o){return '<span class="zh">'+esc(o)+'</span>';}),q[2],q[3],sc));});sc.show();}render();s.appendChild(box);})();
+  (function(){var s=S[1];s.appendChild(el("h3",{class:"h"},"二、连词成句"));s.appendChild(el("p",{class:"lead"},"Bấm các cụm từ theo đúng thứ tự để thành câu hoàn chỉnh, rồi bấm Kiểm tra."));var box=el("div");
+    function render(){box.innerHTML="";var sc=scoreBar(box,"",render);D.GP_ORD.forEach(function(o,i){var d=orderer("第"+(i+1)+"题 · Bài "+o[1],o[0],sc);box.appendChild(d);});sc.show();}render();s.appendChild(box);})();
+  (function(){var s=S[2];s.appendChild(el("h3",{class:"h"},"三、选择合适的后半句"));s.appendChild(el("p",{class:"lead"},"Chọn vế sau phù hợp với cấu trúc của vế trước."));var box=el("div");
+    function render(){box.innerHTML="";var sc=scoreBar(box,"",render);D.GP_DONE.forEach(function(q,i){box.appendChild(mc((i+1)+'. <span class="zh">'+esc(q[0])+'</span> '+lessonTag(q[3]),q[1].map(function(o){return '<span class="zh">'+esc(o)+'</span>';}),q[2],"",sc,"vert"));});sc.show();}render();s.appendChild(box);})();
+})();
+
+/* ================= HSK 3.0 helpers (dùng chung 04–05) ================= */
+var ANS={},KEY={},PART={},DONE={},Lt="ABCDEFGH",PARTN={};
+function rng(arr){var a=arr[0],b=arr[arr.length-1];return a===b?String(a):a+"-"+b;}
+function nums(p){return Object.keys(PART).filter(function(n){return PART[n]===p;}).map(Number).sort(function(a,b){return a-b;});}
+function setAns(n,v,box,host){if(DONE[PART[n]])return;ANS[n]=v;if(box)$$(".xo",box).forEach(function(b){b.classList.toggle("on",b.dataset.v===v);});
+  var bk=$('.xblank[data-n="'+n+'"]',host);if(bk&&box&&box.dataset.fill){var o=JSON.parse(box.dataset.fill);bk.innerHTML='<b>'+n+'</b> '+esc(o[Lt.indexOf(v)]);bk.classList.add("filled");}}
+function optRow(n,opts,ans,why,part,host,fill){var box=el("div",{class:"xq"});box.dataset.q=n;box.appendChild(el("div",{class:"xn"},String(n)));var ops=el("div",{class:"xops"});if(fill)box.dataset.fill=JSON.stringify(opts);
+  opts.forEach(function(o,i){var b=el("button",{class:"xo",type:"button","data-v":Lt[i]},'<span class="xl">'+Lt[i]+'</span>'+esc(o));b.addEventListener("click",function(){setAns(n,Lt[i],box,host);});ops.appendChild(b);});
+  box.appendChild(ops);box.appendChild(el("div",{class:"xwhy"},"【解析】"+esc(why||"")));KEY[n]=Lt[ans];PART[n]=part;return box;}
+function gradeBar(part,parent,host,after){var r=el("div",{class:"row xbar"});var b=el("button",{class:"btn pri",type:"button"},"交卷 · 查看答案");var re=el("button",{class:"btn",type:"button"},"重做");var sc=el("span",{class:"score"});
+  b.addEventListener("click",function(){var ns=nums(part);var miss=ns.filter(function(n){return !ANS[n];}).length;if(miss&&!confirm("Còn "+miss+" câu chưa chọn. Vẫn nộp?"))return;DONE[part]=true;var ok=0;ns.forEach(function(n){var q=$('.xq[data-q="'+n+'"]',host);if(ANS[n]===KEY[n])ok++;if(q){q.classList.add("graded");$$(".xo",q).forEach(function(x){x.classList.toggle("ok",x.dataset.v===KEY[n]);x.classList.toggle("no",x.dataset.v===ANS[n]&&ANS[n]!==KEY[n]);});}
+      var bk=$('.xblank[data-n="'+n+'"]',host);if(bk){bk.classList.add(ANS[n]===KEY[n]?"ok":"no");}});sc.textContent="答对 "+ok+" / "+ns.length;parent.classList.add("graded");if(after)after(true);});
+  re.addEventListener("click",function(){DONE[part]=false;nums(part).forEach(function(n){delete ANS[n];var q=$('.xq[data-q="'+n+'"]',host);if(q){q.classList.remove("graded");$$(".xo",q).forEach(function(x){x.classList.remove("ok","no","on");});}
+      var bk=$('.xblank[data-n="'+n+'"]',host);if(bk){bk.classList.remove("ok","no","filled");bk.innerHTML="<b>"+n+"</b>";}});sc.textContent="";parent.classList.remove("graded");if(after)after(false);});
+  r.appendChild(b);r.appendChild(re);r.appendChild(sc);return r;}
+function head(s,t){s.appendChild(el("div",{class:"xhead"},t));}
+
+/* ================= 04 听力 ================= */
+(function(){var md=modal("listen","04","听力 · HSK 3.0",["第一部分（1–10）","第二部分（11–20）"]);var host=md.m;var cur=null;
+  function player(src,label){var w=el("div",{class:"row",style:"align-items:center;gap:10px"});var b=el("button",{class:"btn pri",type:"button"},"▶ 播放 · "+label);var cnt=el("span",{class:"score",style:"font-size:14px"},"Còn 2 lượt nghe");var left=2;
+    b.addEventListener("click",function(){if(cur&&cur.a&&!cur.a.paused){cur.a.pause();cur.b.textContent="▶ 播放 · "+cur.l;if(cur.b===b)return;}
+      if(left<=0&&!host.classList.contains("free")){cnt.textContent="Đã hết lượt nghe";return;}var a=new Audio(src);cur={a:a,b:b,l:label};a.play().catch(function(){});b.textContent="❚❚ 正在播放…";left--;cnt.textContent=left>0?"Còn "+left+" lượt nghe":"Đây là lượt nghe cuối";
+      a.onended=function(){b.textContent="▶ 播放 · "+label;};});
+    w.appendChild(b);w.appendChild(cnt);return w;}
+  function script(t){var d=el("details",{class:"xhint xscript",style:"margin:8px 0;display:none"});d.innerHTML='<summary>听力原文 · Lời bài nghe</summary><div class="zh" style="font-size:19px;line-height:1.9">'+t.paras.map(esc).join("<br>")+'</div>';return d;}
+  function showScripts(on){$$(".xscript",host).forEach(function(x){x.style.display=on?"":"none";});}
+  var intro='Nghe <b>ghi âm bài khóa</b> của giáo trình rồi chọn đáp án. Câu hỏi được in sẵn trên đề (thi thật đọc câu hỏi qua loa). Thi thật mỗi đoạn chỉ nghe <b>1 lần</b>; ở đây cho nghe tối đa <b>2 lần</b>. Nộp bài xong sẽ hiện lời bài nghe.';
+  (function(){var s=md.secs[0];s.appendChild(el("p",{class:"lead"},intro));var p=el("div");s.appendChild(p);
+    head(p,"第1-10题 听对话，选择正确答案。");
+    D.L1.forEach(function(q,i){var n=i+1;var c=el("div",{class:"card xunit"});c.appendChild(player(q.audio,"第"+n+"题"));
+      var r=optRow(n,q.o,q.a,q.why,"l1",host);r.insertBefore(el("div",{class:"xstem"},esc(q.q)),r.children[1]);c.appendChild(r);c.appendChild(script(q.t));
+      c.appendChild(el("div",{class:"hint",style:"margin-top:4px"},"Nguồn: Bài "+q.n+" · 课文 "+q.k));p.appendChild(c);});
+    p.appendChild(gradeBar("l1",p,host,showScripts));})();
+  (function(){var s=md.secs[1];s.appendChild(el("p",{class:"lead"},intro));var p=el("div");s.appendChild(p);
+    head(p,"第11-20题 听短文，选择正确答案。");var n=10;
+    D.L2.forEach(function(u){var c=el("div",{class:"card xunit"});var ns=u.qs.map(function(x,j){return n+1+j;});c.appendChild(el("div",{class:"xlabel"},rng(ns)));c.appendChild(player(u.audio,"第"+rng(ns)+"题"));
+      u.qs.forEach(function(q){n++;var r=optRow(n,q.o,q.a,q.why,"l2",host);r.insertBefore(el("div",{class:"xstem"},esc(q.q)),r.children[1]);c.appendChild(r);});
+      c.appendChild(script(u.t));c.appendChild(el("div",{class:"hint",style:"margin-top:4px"},"Nguồn: Bài "+u.n+" · 课文 "+u.k));p.appendChild(c);});
+    p.appendChild(gradeBar("l2",p,host,showScripts));})();
+  var ob=md.m.querySelector(".close");ob.addEventListener("click",function(){if(cur&&cur.a)cur.a.pause();});
+})();
+
+/* ================= 05 阅读 ================= */
+(function(){var md=modal("read","05","阅读 · HSK 3.0",["第一部分（21–30）","第二部分（31–40）","第三部分（41–45）"]);var host=md.m;
+  (function(){var s=md.secs[0];var p=el("div");s.appendChild(p);head(p,"第21-30题 选词填空。每个词只能用一次。");var n=20;
+    D.R1.forEach(function(u){var c=el("div",{class:"card xunit"});c.appendChild(el("div",{class:"xlabel"},rng([n+1,n+u.qs.length])));
+      c.appendChild(el("div",{class:"bank",style:"letter-spacing:.05em;font-size:22px"},u.bank.map(function(w,i){return '<span style="margin-right:22px"><b style="color:var(--main)">'+Lt[i]+'</b> '+esc(w)+'</span>';}).join("")));
+      var exi=u.bank.indexOf(u.ex[1]);c.appendChild(el("div",{class:"xpara",style:"color:var(--muted)"},'例如：'+esc(u.ex[0]).replace("{}",'<b style="color:var(--accent)">'+Lt[exi]+'</b>')));
+      u.qs.forEach(function(q){n++;var r=optRow(n,u.bank,u.bank.indexOf(q[1]),"Đáp án: "+q[1]+"。",'r1',host);r.insertBefore(el("div",{class:"xstem zh",style:"font-size:20px"},esc(q[0]).replace("{}",'<span class="xblank" data-n="'+n+'"><b>'+n+'</b></span>')),r.children[1]);r.dataset.fill=JSON.stringify(u.bank);
+        $$(".xo",r)[exi].disabled=true;$$(".xo",r)[exi].style.opacity=".35";c.appendChild(r);});p.appendChild(c);});
+    p.appendChild(gradeBar("r1",p,host));})();
+  (function(){var s=md.secs[1];var p=el("div");s.appendChild(p);head(p,"第31-40题 请选出正确答案。");var n=30;
+    D.R2.forEach(function(u){var c=el("div",{class:"card xunit"});var ns=u.qs.map(function(x,j){return n+1+j;});c.appendChild(el("div",{class:"xlabel"},rng(ns)));c.appendChild(el("p",{class:"xpara"},esc(u.p)));
+      u.qs.forEach(function(q){n++;var r=optRow(n,q.o,q.a,q.why,"r2",host);r.insertBefore(el("div",{class:"xstem"},esc(q.s)),r.children[1]);c.appendChild(r);});p.appendChild(c);});
+    p.appendChild(gradeBar("r2",p,host));})();
+  (function(){var s=md.secs[2];var p=el("div");s.appendChild(p);head(p,"第41-45题 选句填空。");var X=D.R3;var c=el("div",{class:"card xunit"});
+    c.appendChild(el("div",{class:"card",style:"background:var(--soft)"},X.opts.map(function(o,i){return '<div class="exl" style="font-size:20px"><b style="color:var(--main)">'+Lt[i]+'</b> '+esc(o)+'</div>';}).join("")));
+    c.appendChild(el("p",{class:"xpara",style:"line-height:2.2"},esc(X.text).replace(/\{(\d)\}/g,function(m,k){var n=40+(+k);return '<span class="xblank" data-n="'+n+'"><b>'+n+'</b></span>';})));
+    X.ans.forEach(function(a,i){var n=41+i;var r=optRow(n,X.opts.map(function(){return "";}),Lt.indexOf(a),X.why[i],"r3",host);r.dataset.fill=JSON.stringify(X.opts);r.classList.add("xshort");c.appendChild(r);});p.appendChild(c);p.appendChild(gradeBar("r3",p,host));})();
+})();
+
+/* ================= 06 书写 ================= */
+(function(){var md=modal("write","06","书写 · HSK 3.0",["第一部分（46–50）","第二部分（51）"]);
+  (function(){var s=md.secs[0];head(s,"第46-50题 看图，用词造句。");s.appendChild(el("p",{class:"lead"},"Nhìn tranh, dùng từ cho sẵn viết <b>một câu</b> hoàn chỉnh. Viết xong bấm xem câu tham khảo."));var g=el("div",{class:"grid g3"});
+    D.W1.forEach(function(it,i){var c=el("div",{class:"card",style:"margin:0;position:relative"});c.appendChild(el("div",{class:"xpn"},String(46+i)));c.appendChild(el("img",{src:it[0],alt:"",style:"width:100%;height:190px;object-fit:cover;border-radius:14px"}));
+      c.appendChild(el("div",{class:"exl",style:"text-align:center;font-size:24px"},esc(it[1])));var ta=el("textarea",{style:"min-height:64px;font-size:20px",placeholder:"用“"+it[1]+"”写一个句子……"});c.appendChild(ta);
+      var k="on1_w"+i;var v=store(k);if(v)ta.value=v;ta.addEventListener("input",function(){store(k,ta.value);});
+      var r=el("div",{class:"row"});r.appendChild(reveal("参考答案","<span class='zh'>"+esc(it[2])+"</span>"));r.appendChild(spk(it[2]));c.appendChild(r);g.appendChild(c);});s.appendChild(g);})();
+  (function(){var s=md.secs[1];var E=D.W2;head(s,"第51题 写短文。");
+    s.appendChild(el("div",{class:"card"},'<div class="exl" style="font-size:23px">'+esc(E.prompt)+'</div><div class="vn" style="font-size:16px">'+esc(E.vn)+'</div>'));
+    s.appendChild(el("div",{class:"note"},E.tips.map(function(t){return "• "+t;}).join("<br>")));
+    var ta=el("textarea",{placeholder:"请在这里写作文……"});s.appendChild(ta);var st=el("div",{class:"stat"});var cnt=el("span",{class:"score"},"0 字");st.appendChild(cnt);st.appendChild(el("span",null,"要求：不少于 "+E.min+" 字"));s.appendChild(st);
+    var key="on1_essay";var dr=store(key);if(dr)ta.value=dr;function up(){cnt.textContent=han(ta.value)+" 字";store(key,ta.value);}ta.addEventListener("input",up);up();
+    var sd=el("div",{class:"sample",style:"margin-top:16px;display:none"});sd.innerHTML='<div class="hd"><span class="who">范文</span><span class="meta">'+han(E.sample)+' 字</span>'+spkHTML(E.sample)+'</div><div class="txt">'+esc(E.sample)+'</div><div class="vn" style="margin-top:10px;font-size:16px">'+esc(E.svn)+'</div>';
+    var rb=el("button",{class:"btn",type:"button"},"查看范文");var sh=false;rb.addEventListener("click",function(){sh=!sh;sd.style.display=sh?"":"none";rb.textContent=sh?"收起范文":"查看范文";});var rr=el("div",{class:"row",style:"margin:14px 0"});rr.appendChild(rb);s.appendChild(rr);s.appendChild(sd);})();
+})();
+
+/* ================= 07 自我检测 ================= */
+var refreshSelf;
+(function(){var md=modal("self","07","自我检测 · Tự đánh giá",["Kết quả","Ngữ pháp đã nắm"]);
+  var r=md.secs[0];refreshSelf=function(){var rows=[["听力 第一部分","l1"],["听力 第二部分","l2"],["阅读 第一部分","r1"],["阅读 第二部分","r2"],["阅读 第三部分","r3"]];var t='<h3 class="h">Kết quả các phần HSK 3.0</h3><table class="t"><thead><tr><th>Phần</th><th>Trạng thái</th><th>Đúng</th></tr></thead><tbody>';var tr=0,tn=0;
+    rows.forEach(function(x){var ns=nums(x[1]);var ok=ns.filter(function(n){return ANS[n]===KEY[n];}).length;if(DONE[x[1]]){tr+=ok;tn+=ns.length;}t+='<tr><td>'+x[0]+'</td><td>'+(DONE[x[1]]?"Đã nộp":"Chưa làm")+'</td><td>'+(DONE[x[1]]?ok+" / "+ns.length:"—")+'</td></tr>';});
+    t+='</tbody></table><p class="lead" style="margin-top:14px">Tổng các phần đã nộp: <b>'+tr+' / '+tn+'</b>. Phần sai nhiều → mở lại <b>01 语法总结</b> và xem cột “Bài” để ôn lại bài tương ứng.</p>';r.innerHTML=t;};refreshSelf();
+  var s=md.secs[1];s.appendChild(el("h3",{class:"h"},"Em đã nắm chắc điểm ngữ pháp nào?"));s.appendChild(el("p",{class:"lead"},"Tích vào điểm em dùng được khi nói và viết. Lựa chọn được lưu trên máy này."));
+  var cnt=el("div",{class:"score",style:"margin-bottom:10px"});s.appendChild(cnt);var ul=el("div",{class:"grid g2"});s.appendChild(ul);
+  function upd(){var n=$$("input",ul).filter(function(x){return x.checked;}).length;cnt.textContent="Đã nắm "+n+" / "+GRAM_ALL.length;}
+  GRAM_ALL.forEach(function(g,i){var k="on1_g"+i;var lb=el("label",{class:"card",style:"margin:0;display:flex;gap:10px;align-items:center;cursor:pointer;padding:10px 14px"},'<input type="checkbox" style="width:20px;height:20px"><span class="zh" style="font-size:18px">'+esc(g.title)+'</span><span class="hint" style="margin-left:auto">Bài '+g.n+'</span>');
+    var cb=lb.querySelector("input");cb.checked=store(k)==="1";cb.addEventListener("change",function(){store(k,cb.checked?"1":"0");upd();});ul.appendChild(lb);});upd();
+})();
+
+})();
+
+</script>
+</body></html>
