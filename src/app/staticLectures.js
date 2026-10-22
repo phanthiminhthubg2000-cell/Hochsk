@@ -412,6 +412,7 @@ export const STATIC_LECTURES = [
  {"id": "static-hsk4-3-09","lectureName": "Bài 9 · 遇见你，刚刚好","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_09.html"},
  {"id": "static-hsk4-3-10","lectureName": "Bài 10 · 南方不懂北方的冷","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_10.html"},
  {"id": "static-hsk4-3-11","lectureName": "Bài 11 · 活到老学到老","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_11.html"},
+ {"id": "static-hsk4-3-12","lectureName": "Bài 12 · 幸福的家庭","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_12.html"},
  {
   "id": "static-ngu-am-1",
   "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
