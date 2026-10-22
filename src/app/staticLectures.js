@@ -418,6 +418,7 @@ export const STATIC_LECTURES = [
  {"id": "static-hsk4-3-15","lectureName": "Bài 15 · 我去应聘了","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_15.html"},
  {"id": "static-hsk4-3-16","lectureName": "Bài 16 · 计划赶不上变化","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_16.html"},
  {"id": "static-hsk4-3-17","lectureName": "Bài 17 · 运动让我更健康","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_17.html"},
+ {"id": "static-hsk4-3-18","lectureName": "Bài 18 · 科技改变生活","level": "HSK4.2 3.0","fileUrl": "/lectures/hsk4-3/LESSON_18.html"},
  {
   "id": "static-ngu-am-1",
   "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
