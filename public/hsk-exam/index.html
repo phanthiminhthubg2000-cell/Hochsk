@@ -274,6 +274,11 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
 .bl.fill{color:#1a6fd6}
 .refs.set{display:block;text-align:center}.refs.set img{max-width:min(100%,640px);border:1px solid #ddd}
 .passage.after{padding-top:10px}
+.script{font-size:15px;line-height:1.75}
+.script p{margin:0 0 4px}
+.script .sch{color:#d0661c;font-weight:700;font-size:16px;margin:14px 0 6px;border-bottom:1px solid #f0dcc6;padding-bottom:3px}
+.script .scq{display:flex;gap:8px;margin-top:8px}.script .scq b{flex:0 0 auto;min-width:2.2em;color:#fff;background:var(--g);border-radius:3px;text-align:center;font-size:13px;height:22px;line-height:22px;margin-top:3px;padding:0 4px}
+.script .scl{padding-left:calc(2.2em + 16px);color:#444}
 </style></head>
 <body>
 <div class="deco l">杰出英才<br>智成大路</div><div class="deco r">桃花潭水<br>春闻上谱</div>
@@ -376,7 +381,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
   <div class="res"><div class="panel"><span class="ptag" style="font-size:15px;padding:5px 18px">作答结果（客观题）</span>
     <div class="tip">仅判断客观题作答，主观题系统不自动阅卷。</div>
     <table class="rt" id="resTbl"></table>
-    <div style="display:flex;justify-content:center;gap:30px;margin-top:22px"><button class="btn sm" type="button" id="btnCand">考生信息</button><button class="btn sm g" type="button" id="btnConfirm">确认</button></div>
+    <div style="display:flex;justify-content:center;gap:30px;margin-top:22px"><button class="btn sm" type="button" id="btnCand">考生信息</button><button class="btn sm g hide" type="button" id="btnScript">听力文本</button><button class="btn sm g" type="button" id="btnConfirm">确认</button></div>
     <p class="sent" id="sentMsg"></p>
   </div></div>
   <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
@@ -957,6 +962,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
       h += `<tr><td>书写</td><td>100</td><td colspan="2" style="color:#8a6d3b">${a ? `客观题 ${a.correct} / ${a.total}` : ""}${a && o ? " · " : ""}${o ? `主观题 ${o} 题由老师批改` : ""}</td><td>${a ? '<a data-det="WA">查看详情</a> ' : ""}${o ? '<a data-det="W">查看作答</a>' : ""}</td></tr>`;
     }
     $("#resTbl").innerHTML = h;
+    $("#btnScript").classList.toggle("hide", !(S.P.script && secRange("L")));
   }
   function detail(k) {
     const r = S.result;
@@ -975,6 +981,18 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     setTimeout(() => { if (!S.sent) $("#sentMsg").innerHTML = "Bấm <b>📤 Nộp bài &amp; Thoát</b> ở thanh phía trên để gửi bài cho giáo viên."; }, 5000);
   }
   const AV = '<svg viewBox="0 0 120 150" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="150" fill="#e9eef5"/><circle cx="60" cy="58" r="27" fill="#c9d3e0"/><path d="M14 150c3-34 22-52 46-52s43 18 46 52z" fill="#c9d3e0"/></svg>';
+  function scriptView() {
+    const t = S.P.script || "";
+    const html = t.split(/\n/).map((l) => {
+      const x = esc(l.trim());
+      if (!x) return '<div style="height:8px"></div>';
+      if (/^第[一二三四五六]部分/.test(l.trim())) return `<p class="sch">${x}</p>`;
+      const m = x.match(/^(\d+(?:[—–-]\d+)?)[\.、．]\s*(.*)$/);
+      if (m) return `<p class="scq"><b>${m[1]}</b><span>${m[2]}</span></p>`;
+      return `<p class="scl">${x}</p>`;
+    }).join("");
+    modal("听力文本 · Bản chép lời", `<div class="script">${html}</div>`, [], { w: 720 });
+  }
   function candInfo() {
     modal("考生信息", `<div style="display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap"><span style="width:120px;height:150px;background:#eef2e8;display:block">${AV}</span><div><p style="margin:0 0 8px">姓名：${esc(S.cand.name)}</p><p style="margin:0 0 8px">性别：${esc(S.cand.gender)}</p><p style="margin:0 0 8px">国籍：${esc(S.cand.nat)}</p><p style="margin:0 0 8px">邮箱：${esc(S.cand.email || "—")}</p><p style="margin:0 0 8px">考试科目：${esc(S.P.subject)}</p><p style="margin:0">试卷：${esc(S.P.name)}</p></div></div>`, []);
   }
@@ -1044,6 +1062,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     $("#bSubmit").onclick = submitSec;
     $("#resTbl").addEventListener("click", (e) => { const d = e.target.closest("[data-det]"); d && detail(d.dataset.det); });
     $("#btnCand").onclick = candInfo;
+    $("#btnScript").onclick = scriptView;
     $("#btnConfirm").onclick = () => show("sEnd");
     $$(".av").forEach((a) => (a.innerHTML = AV));
     clock();
