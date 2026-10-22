@@ -1162,7 +1162,7 @@ export default function HomePage() {
                   {examTab === "hskk" && (
                     <>
                       <div className="rounded-[18px] bg-[#FFF8EA] border border-[#F6D99A] p-4 text-sm leading-relaxed text-[#5C3D00]">
-                        <b>Trước khi vào thi:</b> đeo tai nghe, ngồi nơi yên tĩnh và cho phép trình duyệt dùng micro. Làm xong, nghe lại rồi bấm <b>Nộp bài cho giáo viên</b> — thoát giữa chừng sẽ mất bản ghi âm.
+                        <b>Trước khi vào thi:</b> đeo tai nghe, ngồi nơi yên tĩnh và cho phép trình duyệt dùng micro. Giao diện như phòng thi thật: đề chạy liên tục, hết câu cuối <b>tự nộp bài cho giáo viên</b> — thoát giữa chừng sẽ mất bản ghi âm.
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
                         {[...new Set(hskkExams.map(e => Number(e.level)))].sort((a, b) => a - b).map(lv => {
@@ -1362,7 +1362,7 @@ export default function HomePage() {
               <p className="text-xs text-[#BFE3CB] truncate">Thí sinh: {user?.fullName || "Học viên"} · {activeHskkExam.label}</p>
             </div>
             <button
-              onClick={() => { if (window.confirm("Thoát phòng thi? Nếu chưa bấm Nộp bài, các bản ghi âm sẽ mất.")) setActiveHskkExam(null); }}
+              onClick={() => { if (window.confirm("Thoát phòng thi? Nếu bài chưa tự nộp xong, các bản ghi âm sẽ mất.")) setActiveHskkExam(null); }}
               className="h-10 w-10 rounded-xl bg-white/10 hover:bg-[#C2413B] grid place-items-center shrink-0" aria-label="Thoát phòng thi"
             >
               <Icon name="close" className="w-5 h-5" />
@@ -1370,7 +1370,7 @@ export default function HomePage() {
           </div>
           <div className="flex-1 bg-[#F4F7EF] relative overflow-hidden">
             <iframe
-              src={`${activeHskkExam.file}?embed=1&name=${encodeURIComponent(user?.fullName || "")}`}
+              src={`${activeHskkExam.file}?embed=1&name=${encodeURIComponent(user?.fullName || "")}&email=${encodeURIComponent(user?.primaryEmailAddress?.emailAddress || "")}`}
               title={activeHskkExam.title}
               className="w-full h-full border-0"
               allow="microphone; autoplay; fullscreen"
