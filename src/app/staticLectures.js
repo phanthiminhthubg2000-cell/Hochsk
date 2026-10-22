@@ -407,6 +407,7 @@ export const STATIC_LECTURES = [
  {"id": "static-hsk4-3-04","lectureName": "Bài 4 · 很高兴能帮到你","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_04.html"},
  {"id": "static-hsk4-3-05","lectureName": "Bài 5 · “不怕辣”和“怕不辣”","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_05.html"},
  {"id": "static-hsk4-3-06","lectureName": "Bài 6 · 我陪你去看病","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_06.html"},
+ {"id": "static-hsk4-3-07","lectureName": "Bài 7 · 在工作中学习","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_07.html"},
  {
   "id": "static-ngu-am-1",
   "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
