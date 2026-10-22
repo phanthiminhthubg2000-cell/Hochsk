@@ -404,6 +404,7 @@ export const STATIC_LECTURES = [
  },
  {"id": "static-hsk4-3-02","lectureName": "Bài 2 · 租到了合适的房子","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_02.html"},
  {"id": "static-hsk4-3-03","lectureName": "Bài 3 · 手机扫一下","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_03.html"},
+ {"id": "static-hsk4-3-04","lectureName": "Bài 4 · 很高兴能帮到你","level": "HSK4.1 3.0","fileUrl": "/lectures/hsk4-3/LESSON_04.html"},
  {
   "id": "static-ngu-am-1",
   "lectureName": "Bài 1 – Ngữ âm 1 · Pinyin",
