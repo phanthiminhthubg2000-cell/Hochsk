@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSK 4 · Bài 13 · 美好的日子</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--main:#a8433a;--deep:#6e2a24;--accent:#d9895b;--soft:#fbeee8;--cream:#fffaf6;--line:#ecd3c8;--ink:#3d2420;--muted:#86685f;--ok:#2f7d4f;--okbg:#e5f3ea;--no:#b23b32;--nobg:#fbe4e1;--gold:#c99b42}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Be Vietnam Pro","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--cream) 0%,var(--soft) 55%,#f7efe4 100%);min-height:100vh;font-size:20px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.zh,.serif{font-family:"Noto Serif SC","Songti SC","SimSun",serif}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+b,strong{font-weight:700}
+/* ---------- topbar ---------- */
+.topbar{position:fixed;bottom:16px;right:18px;z-index:400;display:flex;gap:8px}
+.topbar button{border:1px solid var(--line);background:rgba(255,255,255,.92);padding:8px 14px;border-radius:999px;font-size:15px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.topbar button.on{background:var(--main);color:#fff;border-color:var(--main)}
+/* ---------- home ---------- */
+.home{min-height:100vh;padding:clamp(18px,3vh,36px) clamp(24px,5vw,90px);display:flex;flex-direction:column;justify-content:center;align-items:center}
+.home-box{width:100%;max-width:1560px;border:1px solid var(--line);border-radius:30px;background:rgba(255,255,255,.55);padding:clamp(24px,4vh,48px) clamp(24px,3vw,56px) 22px;box-shadow:0 20px 60px rgba(110,42,36,.08)}
+.home-top{text-align:center;margin-bottom:clamp(18px,4vh,44px)}
+.kicker{font-size:15px;letter-spacing:.3em;font-weight:700;color:var(--main);margin-bottom:6px}
+.home h1{margin:0;font-family:"Noto Serif SC",serif;font-weight:900;font-size:clamp(48px,7.4vw,112px);line-height:1.12;color:var(--ink)}
+.home h1 .t2{color:var(--main);border-bottom:6px solid var(--accent);padding:0 6px;margin-left:10px}
+.tagline{font-family:"Noto Serif SC",serif;font-size:clamp(20px,2vw,30px);letter-spacing:.12em;color:var(--muted);margin-top:14px}
+.vnline{font-size:17px;color:var(--muted);margin-top:4px}
+.home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,1.4vw,22px)}
+.home-card{position:relative;overflow:hidden;text-align:left;border:1px solid var(--line);border-top:5px solid var(--deep);background:rgba(255,255,255,.88);border-radius:20px;padding:18px 20px 16px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.home-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(110,42,36,.14);border-color:var(--accent)}
+.home-card:after{content:"";position:absolute;right:-40px;top:-40px;width:120px;height:120px;border-radius:50%;background:var(--soft)}
+.home-card .ic{font-size:30px;position:relative;z-index:1}
+.home-card .no{font-size:13px;letter-spacing:.2em;font-weight:800;color:var(--main);margin-top:4px}
+.home-card .tt{font-family:"Noto Serif SC",serif;font-size:clamp(24px,2vw,32px);font-weight:900;color:var(--ink)}
+.home-card .st{font-size:15px;color:var(--muted);line-height:1.4}
+.home-card.star .tt:after{content:" ★";color:var(--gold);font-size:.7em}
+.home-foot{display:flex;justify-content:space-between;font-size:13px;letter-spacing:.25em;color:var(--muted);margin-top:18px}
+@media(max-width:900px){.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(61,36,32,.42);display:none;align-items:center;justify-content:center;padding:2vh 2vw}
+.modal.open{display:flex}
+.panel{width:min(1560px,97vw);height:94vh;background:#fffdfb;border-radius:26px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+.mhead{position:relative;padding:18px 90px 0 40px;background:linear-gradient(90deg,var(--soft),#fff8ef);border-bottom:1px solid var(--line)}
+.eyebrow{font-size:14px;letter-spacing:.2em;font-weight:800;color:var(--main)}
+.mtitle{font-family:"Noto Serif SC",serif;font-size:clamp(30px,3vw,44px);font-weight:900;color:var(--deep);line-height:1.2;margin:2px 0 10px}
+.close{position:absolute;right:26px;top:22px;width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:26px;color:var(--main);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-size:16px;font-weight:600;color:var(--muted)}
+.tab.on{background:var(--main);border-color:var(--main);color:#fff}
+.mbody{flex:1;overflow:auto;padding:28px clamp(20px,4vw,70px) 60px}
+.sec{display:none;max-width:1320px;margin:0 auto}
+.sec.on{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+h3.h{font-family:"Noto Serif SC",serif;font-size:30px;color:var(--deep);margin:0 0 14px}
+h4.h{font-size:22px;color:var(--main);margin:26px 0 10px}
+.lead{color:var(--muted);font-size:18px;margin:0 0 18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:16px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1000px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.note{background:#fff6e6;border-left:5px solid var(--gold);padding:12px 18px;border-radius:12px;margin:16px 0;font-size:18px}
+.vn{color:#5b4a44}
+body.hide-vn .vn{filter:blur(7px);user-select:none;cursor:pointer;transition:filter .2s}
+body.hide-vn .vn.peek{filter:none}
+.btn{border:1px solid var(--line);background:#fff;padding:7px 16px;border-radius:12px;font-weight:600;font-size:16px}
+.btn.pri{background:var(--main);border-color:var(--main);color:#fff}
+.btn.sm{padding:4px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spk{border:1px solid var(--line);background:#fff;border-radius:50%;width:36px;height:36px;display:inline-grid;place-items:center;color:var(--main);flex:0 0 auto;vertical-align:middle;padding:0;margin:0 4px}
+.spk svg{width:17px;height:17px}.spk.playing{background:var(--main);color:#fff}
+.score{display:inline-block;font-weight:800;color:var(--deep);background:var(--soft);border-radius:999px;padding:4px 14px;font-size:16px}
+/* reveal */
+.rv{border:1px dashed var(--accent);background:transparent;border-radius:10px;padding:2px 12px;color:var(--muted);font-size:17px;text-align:left}
+.rv.shown{border-style:solid;border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:600}
+/* MC */
+.q{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:14px}
+.q .stem{font-size:22px;font-weight:600;margin-bottom:8px}
+.q .ops{display:flex;flex-wrap:wrap;gap:8px}
+.op{border:1px solid var(--line);background:#fffaf7;border-radius:12px;padding:8px 18px;font-size:20px;text-align:left;font-family:"Noto Serif SC",serif}
+.op.ok{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+.op.no{border-color:var(--no);background:var(--nobg);color:var(--no)}
+.q .ex{display:none;margin-top:10px;font-size:17px;color:var(--muted)}
+.q.done .ex{display:block}
+.q.vert .ops{flex-direction:column}
+/* vocab grid */
+.vgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+@media(max-width:1200px){.vgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.vcard{position:relative;text-align:left;border:1px solid var(--line);border-radius:18px;background:#fffaf5;padding:14px 16px;min-height:118px;transition:.15s}
+.vcard:hover{border-color:var(--main);transform:translateY(-2px)}
+.vcard .n{font-size:12px;letter-spacing:.15em;font-weight:800;color:var(--main)}
+.vcard .hz{font-family:"Noto Serif SC",serif;font-size:32px;font-weight:900;color:var(--ink);line-height:1.3}
+.vcard .py{font-size:16px;color:var(--muted)}
+.vcard .st{position:absolute;right:12px;top:8px;color:var(--gold);font-size:20px}
+.vcard .mv{font-size:14px;margin-top:2px}
+.hide-py .py{visibility:hidden}
+/* tables */
+table.t{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:10px 0 18px}
+table.t th{background:var(--soft);color:var(--deep);padding:12px 14px;font-size:19px;text-align:left}
+table.t td{border-top:1px solid var(--line);padding:12px 14px;font-size:20px;vertical-align:top}
+table.t.c th,table.t.c td{text-align:center}
+/* detail */
+.dmodal{z-index:200}
+.dpanel{width:min(1080px,95vw);max-height:92vh;overflow:auto;background:#fffdfb;border-radius:24px;padding:30px 40px 34px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.dword{font-family:"Noto Serif SC",serif;font-size:66px;font-weight:900;color:var(--deep);line-height:1.15}
+.dpy{font-size:28px;color:var(--main);margin-right:10px}
+.dpos{display:inline-block;background:var(--soft);color:var(--deep);border-radius:8px;padding:2px 10px;font-size:17px;font-weight:700;vertical-align:middle}
+.dstar{color:var(--gold);font-weight:800;font-size:18px;margin-left:8px}
+.dlab{font-size:17px;letter-spacing:.12em;font-weight:800;color:var(--main);margin:20px 0 6px;text-transform:uppercase}
+.dgloss{font-family:"Noto Serif SC",serif;font-size:27px;line-height:1.6;color:var(--ink);background:var(--soft);border-radius:14px;padding:10px 16px}
+.dvn{font-size:26px;font-weight:700}
+.dsent{font-family:"Noto Serif SC",serif;font-size:25px;line-height:1.7}
+.dsent mark{background:none;color:var(--main);font-weight:900;border-bottom:3px solid var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;font-size:20px;font-family:"Noto Serif SC",serif}
+.dnav{display:flex;justify-content:space-between;margin-top:24px}
+/* text */
+.para{font-family:"Noto Serif SC",serif;font-size:30px;line-height:2.05;margin:0 0 20px;text-indent:2em}
+.vlink{color:var(--main);font-weight:700;border-bottom:2px solid var(--accent);cursor:pointer}
+.good{font-weight:900;color:var(--deep);background:linear-gradient(transparent 62%,rgba(217,137,91,.32) 62%);cursor:pointer;border-radius:3px}
+.good .vlink{color:inherit}
+.idea{background:var(--soft);border-radius:14px;padding:12px 18px;margin:0 0 20px;font-size:19px}
+.idea b.k{color:var(--main)}
+.legend{font-size:16px;color:var(--muted);margin-bottom:14px}
+.legend .vlink,.legend .good{cursor:default}
+/* popover */
+.pop{position:fixed;z-index:300;max-width:min(560px,92vw);background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 20px;box-shadow:0 18px 50px rgba(0,0,0,.2);display:none;font-size:18px}
+.pop.open{display:block}
+.pop .ph{font-family:"Noto Serif SC",serif;font-size:34px;font-weight:900;color:var(--deep)}
+.pop .pg{font-family:"Noto Serif SC",serif;font-size:21px;margin:6px 0}
+.pop .fr{font-family:"Noto Serif SC",serif;background:var(--soft);border-radius:10px;padding:6px 12px;font-size:20px;font-weight:700;color:var(--deep);margin:6px 0}
+.pop .x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:22px;color:var(--muted)}
+/* good list */
+.gcard{border-left:6px solid var(--accent)}
+.gcard .gz{font-family:"Noto Serif SC",serif;font-size:25px;font-weight:900;color:var(--deep)}
+.gcard .fr{font-family:"Noto Serif SC",serif;display:inline-block;background:var(--soft);border-radius:10px;padding:4px 12px;font-weight:700;color:var(--deep);margin:6px 0}
+.gcard .ap{font-family:"Noto Serif SC",serif;font-size:21px}
+/* grammar */
+.form{font-family:"Noto Serif SC",serif;display:inline-block;background:var(--deep);color:#fff;border-radius:12px;padding:6px 16px;margin:4px 6px 4px 0;font-size:21px}
+.exl{font-family:"Noto Serif SC",serif;font-size:23px;margin:6px 0}
+.err{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;font-family:"Noto Serif SC",serif;font-size:21px}
+.err .why{grid-column:1/-1;font-family:"Be Vietnam Pro",sans-serif;font-size:16px;color:var(--muted);margin-top:-4px}
+.err .b{color:var(--no)}.err .g{color:var(--ok);font-weight:700}
+.bk{font-family:"Noto Serif SC",serif;font-size:22px;line-height:1.8}
+.hint{font-size:16px;color:var(--muted)}
+/* practice */
+.pitem{font-family:"Noto Serif SC",serif;font-size:24px;line-height:2.1;padding:10px 16px;border:1px solid var(--line);border-radius:14px;margin:10px 0;background:#fff}
+select.sel{font:inherit;font-size:21px;border:2px solid var(--accent);border-radius:10px;padding:0 6px;background:#fffaf5;color:var(--deep);margin:0 4px}
+select.sel.ok{border-color:var(--ok);background:var(--okbg)}select.sel.no{border-color:var(--no);background:var(--nobg)}
+.bank{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:700;letter-spacing:.2em;background:var(--soft);border-radius:14px;padding:12px 18px;margin-bottom:12px}
+.pos{display:inline-flex;gap:6px;margin-left:8px}
+.pos button{width:42px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fffaf7;font-weight:700}
+.pos button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.pos button.no{background:var(--nobg);border-color:var(--no);color:var(--no)}
+.tag{display:inline-block;background:var(--deep);color:#fff;border-radius:8px;padding:0 10px;font-size:18px;margin-left:6px}
+.totalbar{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.bar{flex:1;height:12px;background:var(--soft);border-radius:999px;overflow:hidden;max-width:420px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:14px;font-family:"Noto Serif SC",serif;font-size:21px;line-height:1.9;background:#fff;color:var(--ink);resize:vertical}
+/* svg body */
+.bodywrap{display:grid;grid-template-columns:420px 1fr;gap:30px;align-items:start}
+@media(max-width:900px){.bodywrap{grid-template-columns:1fr}}
+.bodysvg{width:100%;max-width:420px;background:#fff;border:1px solid var(--line);border-radius:18px}
+.bl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bl .it{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px 12px;font-size:20px}
+.bl .num{width:30px;height:30px;border-radius:50%;background:var(--main);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:0 0 auto}
+/* games */
+.fc{perspective:1200px;width:min(640px,90%);height:340px;margin:10px auto}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+.fc.flip .in{transform:rotateY(180deg)}
+.fc .f,.fc .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;border:1px solid var(--line)}
+.fc .f{background:#fff}
+.fc .b{background:var(--deep);color:#fff;transform:rotateY(180deg);gap:8px}
+.fc .hz{font-family:"Noto Serif SC",serif;font-size:76px;font-weight:900}
+.fc .py{font-size:26px;color:var(--muted)}
+.fc .b .vn{color:#ffe1cf;font-size:30px;font-weight:700}
+.fc .b .g{font-family:"Noto Serif SC",serif;font-size:22px;color:#fff}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:0 auto}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 16px;font-size:22px;min-height:62px;text-align:left;transition:.15s}
+.mi.zhc{font-family:"Noto Serif SC",serif;font-size:28px;font-weight:800;text-align:center}
+.mi.sel{border-color:var(--main);background:var(--soft)}
+.mi.done{visibility:hidden}
+.mi.bad{animation:shake .3s;border-color:var(--no)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:30px;color:var(--deep)}
+.ord .ans{min-height:64px;border:2px dashed var(--accent);border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;background:#fffaf5}
+.ord .pool{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.ck{border:1px solid var(--line);background:#fff;border-radius:12px;padding:6px 14px;font-family:"Noto Serif SC",serif;font-size:24px;box-shadow:0 2px 0 var(--line)}
+.ord.ok .ans{border-color:var(--ok);background:var(--okbg)}.ord.no .ans{border-color:var(--no);background:var(--nobg)}
+.ord .res{font-size:17px;margin-top:4px}
+/* HSK */
+.passage{font-family:"Noto Serif SC",serif;font-size:26px;line-height:2.1;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 24px;text-indent:2em}
+.blank{display:inline-block;min-width:66px;text-align:center;border-bottom:3px solid var(--accent);font-weight:800;color:var(--main);text-indent:0;padding:0 6px}
+.blank.ok{color:var(--ok);border-color:var(--ok)}.blank.no{color:var(--no);border-color:var(--no)}
+.wwords{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.wwords span{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:800;border:2px solid var(--line);border-radius:12px;padding:4px 16px;background:#fff}
+.wwords span.hit{background:var(--ok);border-color:var(--ok);color:#fff}
+.chk{list-style:none;padding:0;margin:0}
+.chk li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--line);font-size:17px}
+.chk .bx{width:22px;height:22px;border-radius:6px;border:2px solid var(--muted);flex:0 0 auto;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800;margin-top:3px}
+.chk li.ok .bx{background:var(--ok);border-color:var(--ok)}.chk li.ok{color:var(--ok)}
+.sample{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 24px;margin-bottom:18px}
+.sample .hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.sample .who{font-family:"Noto Serif SC",serif;font-size:26px;font-weight:900;color:var(--deep)}
+.sample .meta{color:var(--muted);font-size:15px}
+.sample .ttl{text-align:center;font-family:"Noto Serif SC",serif;font-size:24px;font-weight:800;letter-spacing:.25em;margin:4px 0 8px}
+.sample .txt{font-family:"Noto Serif SC",serif;font-size:24px;line-height:2}
+.sample .tr{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:17px}
+.sample.showtr .tr{display:block}
+.mk{border-radius:4px;padding:1px 2px}
+.mark .p1{background:#efe4dc;box-shadow:inset 0 -3px 0 #a08a7d}
+.mark .p2{background:#f8e9d2;box-shadow:inset 0 -3px 0 var(--gold)}
+.mark .p3{background:#f9e1db;box-shadow:inset 0 -3px 0 var(--main)}
+.mark .p4{background:#e3efe6;box-shadow:inset 0 -3px 0 var(--ok)}
+.w5{color:var(--no);font-weight:800}
+.gd{font-weight:900;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:5px}
+.lg{display:flex;flex-wrap:wrap;gap:14px;font-size:15px;color:var(--muted);margin:6px 0 14px}
+.lg i{display:inline-block;width:13px;height:13px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.step{border-top:6px solid #a08a7d}
+.step .num{font-family:"Noto Serif SC",serif;font-size:40px;font-weight:900;line-height:1;color:#a08a7d}
+.step.s2{border-color:var(--gold)}.step.s2 .num{color:var(--gold)}
+.step.s3{border-color:var(--main)}.step.s3 .num{color:var(--main)}
+.step.s4{border-color:var(--ok)}.step.s4 .num{color:var(--ok)}
+.step h4{font-family:"Noto Serif SC",serif;font-size:24px;margin:8px 0 4px;color:var(--ink)}
+.step .zq{font-family:"Noto Serif SC",serif;font-size:17px;color:var(--muted);margin-top:6px}
+.formula{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+.formula span{background:#fff;border:1px solid var(--line);padding:6px 14px;border-radius:10px;font-weight:700;font-family:"Noto Serif SC",serif;font-size:19px}
+.formula span.k{background:var(--deep);color:#fff;border-color:var(--deep)}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--soft);border-radius:16px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:600;color:var(--muted);font-size:16px}
+.seg button.on{background:#fff;color:var(--deep);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.fl{perspective:900px;height:180px}
+.fl .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+.fl.flip .in{transform:rotateY(180deg)}
+.fl .f,.fl .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid var(--line)}
+.fl .f{background:#fff}.fl .b{background:var(--deep);color:#fff;transform:rotateY(180deg);gap:4px}
+.fl .hz{font-family:"Noto Serif SC",serif;font-size:34px;font-weight:900}
+.fl .py{color:var(--muted);font-size:15px}
+.fl .b .vn{color:#ffe1cf;font-weight:700}
+.fl .b .ex{font-family:"Noto Serif SC",serif;font-size:17px}
+.fl .tg{position:absolute;top:8px;left:10px;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--soft);color:var(--deep)}
+.fl .f .spk{position:absolute;top:8px;right:8px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;margin:6px 0;font-family:"Noto Serif SC",serif;font-size:18px}
+.opt.on{border-color:var(--ok);background:var(--okbg);box-shadow:inset 4px 0 0 var(--ok)}
+.out{background:var(--deep);color:#fff;border-radius:18px;padding:22px;font-family:"Noto Serif SC",serif;font-size:22px;line-height:1.9;min-height:110px}
+.out .phd{color:#e8c9bd;font-family:"Be Vietnam Pro",sans-serif;font-size:16px}
+.out.mark .mk{color:var(--ink)}
+.tl{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:10px 0 4px;font-size:13px;font-weight:700;color:#fff}
+.tl div{display:grid;place-items:center;white-space:nowrap;opacity:.35;transition:opacity .2s}
+.tl div.act{opacity:1}
+.fix{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:8px 0}
+.fix .bad{font-family:"Noto Serif SC",serif;font-size:21px;text-decoration:line-through;text-decoration-color:var(--no);text-decoration-thickness:2px}
+.fix .gd2{grid-column:1/-1;display:none;font-family:"Noto Serif SC",serif;font-size:21px;color:var(--ok)}
+.fix.open .gd2{display:block}
+.fix .why{color:var(--muted);font-family:"Be Vietnam Pro",sans-serif;font-size:15px}
+.tpl{background:var(--deep);color:#fff;border-radius:18px;padding:20px;font-family:"Noto Serif SC",serif;font-size:21px;line-height:2}
+.tpl .blk{color:#ffc9b0}
+.wl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.wl span{font-family:"Noto Serif SC",serif;padding:2px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:16px}
+.wl span.hit{background:var(--ok);border-color:var(--ok);color:#fff}
+.stat{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:16px;color:var(--muted)}
+.fig{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px 16px}
+.fig .nm{font-family:"Noto Serif SC",serif;font-size:28px;font-weight:900;color:var(--deep)}
+.fig .vnm{font-size:15px;color:var(--muted)}
+.fig .d{font-family:"Noto Serif SC",serif;font-size:17px;margin-top:4px}
+.fig .k{font-family:"Noto Serif SC",serif;font-size:17px;color:var(--main);font-weight:700}
+.trap{border-left:5px solid var(--no)}
+.foot{color:var(--muted);text-align:right;font-size:15px;margin-top:10px}
+
+/* HSK 3.0 exam */
+.xhead{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;color:#fff;background:var(--deep);border-radius:12px;padding:8px 18px;display:inline-block;margin-bottom:12px}
+.xunit{border-left:6px solid var(--main)}
+.xlabel{display:inline-block;font-weight:800;color:var(--main);border:2px solid var(--main);border-radius:8px;padding:0 10px;font-size:16px;margin-bottom:8px}
+.xpara{font-family:"Noto Serif SC",serif;font-size:24px;line-height:2.05;text-indent:2em;margin:0 0 10px}
+.xblank{display:inline-block;min-width:90px;text-indent:0;border-bottom:3px solid var(--accent);padding:0 6px;color:var(--main);text-align:center;font-weight:700}
+.xblank b{display:inline-block;background:var(--main);color:#fff;border-radius:6px;padding:0 6px;font-size:15px;margin-right:4px}
+.xblank.ok{border-color:var(--ok);color:var(--ok)}.xblank.no{border-color:var(--no);color:var(--no)}
+.xq{display:grid;grid-template-columns:44px 1fr;gap:6px 10px;align-items:start;padding:10px 0;border-top:1px dashed var(--line)}
+.xn{width:40px;height:40px;border-radius:10px;background:var(--soft);color:var(--deep);font-weight:900;display:grid;place-items:center;font-size:17px}
+.xstem{grid-column:2;font-family:"Noto Serif SC",serif;font-size:21px;font-weight:700}
+.xops{grid-column:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.xshort .xops{grid-template-columns:repeat(5,52px)}
+.xo{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:#fffaf7;border-radius:12px;padding:8px 14px;font-family:"Noto Serif SC",serif;font-size:20px}
+.xo .xl{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;font-family:"Be Vietnam Pro",sans-serif;font-size:14px;font-weight:800;color:var(--muted)}
+.xshort .xo{justify-content:center;padding:6px}
+.xo.on{border-color:var(--main);background:var(--soft)}.xo.on .xl{background:var(--main);border-color:var(--main);color:#fff}
+.xo.ok{border-color:var(--ok);background:var(--okbg)}.xo.ok .xl{background:var(--ok);border-color:var(--ok);color:#fff}
+.xo.no{border-color:var(--no);background:var(--nobg)}.xo.no .xl{background:var(--no);border-color:var(--no);color:#fff}
+.xwhy{grid-column:2;display:none;font-family:"Noto Serif SC",serif;font-size:17px;color:var(--muted);background:#fff8ec;border-radius:10px;padding:6px 12px}
+.graded .xwhy{display:block}.xshort .xwhy{display:none!important}
+.xwhyall{margin-top:10px}
+.xord{display:flex;gap:12px;align-items:flex-start;font-family:"Noto Serif SC",serif;font-size:21px;line-height:1.85;padding:8px 0;border-bottom:1px dashed var(--line)}
+.xl.big{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;margin-top:4px;font-family:"Be Vietnam Pro",sans-serif}
+.xordans{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:4px 20px;margin-top:10px}
+.xpanel{text-align:center;position:relative}
+.xpn{position:absolute;left:10px;top:8px;width:26px;height:26px;border-radius:50%;background:var(--main);color:#fff;font-weight:800;display:grid;place-items:center;font-size:14px}
+.xemo{font-size:54px;line-height:1.3}
+.xpanel .zh{font-size:19px}
+.xcard{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.ac{border:1px solid var(--line);border-radius:10px;background:#fff;text-align:center;padding:6px}
+.ac span{display:block;font-size:13px;color:var(--muted);font-weight:700}.ac b{font-size:20px;color:var(--deep)}
+.ac.ok{background:var(--okbg);border-color:var(--ok)}.ac.no{background:var(--nobg);border-color:var(--no)}
+.vcard .gz{position:absolute;right:10px;bottom:10px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;border-radius:6px;padding:1px 5px}
+.gzi{background:var(--accent);color:#fff;font-size:12px;border-radius:6px;padding:1px 5px}
+.gseg button{font-size:18px}
+
+.xpfig{border:1px solid var(--line);border-radius:18px;background:#fff;padding:10px;margin:8px 0 12px}
+.xpfig svg{width:100%;height:auto;display:block}
+.xpfig svg g{transition:opacity .35s}
+.xpfig svg .xpdim{opacity:.12}
+.xpfig svg .xpon .wflow{animation:xpflow 1s linear infinite}
+@keyframes xpflow{to{stroke-dashoffset:-18}}
+.xpfig svg .xpon .hi{stroke:#d9480f;stroke-width:2.2}
+.xpnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.xpcard .xpzh{font-size:22px;line-height:1.8}
+.xpcard .xpexp{font-size:19px;margin-top:8px}
+/* ===== v2 additions ===== */
+.home-grid.g3h{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:900px){.home-grid.g3h{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.home-hw{display:flex;align-items:center;gap:18px;width:100%;margin-top:clamp(12px,1.4vw,22px);text-align:left;border:2px dashed var(--accent);background:var(--soft);border-radius:20px;padding:16px 22px;transition:transform .18s,box-shadow .18s}
+.home-hw:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.1)}
+.home-hw .ic{font-size:34px}.home-hw .tx{flex:1}
+.home-hw .no{font-size:13px;letter-spacing:.2em;font-weight:800;color:var(--main)}
+.home-hw .tt{font-size:clamp(22px,1.8vw,28px);font-weight:800;color:var(--ink)}
+.home-hw .st{font-size:15px;color:var(--muted)}
+.home-hw .go{font-size:30px;color:var(--main);font-weight:800}
+.vlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(max-width:800px){.vlist{grid-template-columns:1fr}}
+.vrow{position:relative;display:flex;align-items:baseline;gap:12px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 14px;transition:.15s}
+.vrow:hover{border-color:var(--main)}
+.vrow .n{font-size:12px;font-weight:800;color:var(--main);min-width:20px}
+.vrow .hz{font-family:"Noto Serif SC",serif;font-size:24px;font-weight:900;color:var(--ink);min-width:3.2em}
+.vrow .py{font-size:15px;color:var(--muted);min-width:6em}
+.vrow .pos{font-size:13px;color:var(--main);font-weight:700;min-width:3em}
+.vrow .vn{font-size:15px;flex:1}
+.vrow .gz{background:var(--accent);color:#fff;font-size:12px;font-weight:800;border-radius:6px;padding:1px 5px}
+.hide-py .vrow .py,.hide-py .vcard .py{visibility:hidden}
+.tscore{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:10px 0 16px}
+.team{border:2px solid var(--line);border-radius:18px;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;background:#fff;transition:.2s}
+.team .nm{font-size:22px;font-weight:800}.team .pt{font-size:44px;font-weight:900;font-family:"Noto Serif SC",serif}
+.team.t0 .nm,.team.t0 .pt{color:#c0392b}.team.t1 .nm,.team.t1 .pt{color:#2c6fb7}
+.team.t0.on{border-color:#c0392b;background:#fdecea;box-shadow:0 0 0 4px rgba(192,57,43,.15)}
+.team.t1.on{border-color:#2c6fb7;background:#e8f1fb;box-shadow:0 0 0 4px rgba(44,111,183,.15)}
+.tstage{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px 26px;min-height:300px}
+.tno{font-size:14px;letter-spacing:.12em;font-weight:800;color:var(--main);text-transform:uppercase}
+.tq{font-size:clamp(26px,2.4vw,36px);line-height:1.7;margin:14px 0 18px}
+.tops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.top{font-size:28px;border:2px solid var(--line);background:var(--cream);border-radius:16px;padding:12px}
+.top:hover:not(:disabled){border-color:var(--main)}
+.top.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.top.no{background:var(--nobg);border-color:var(--no);color:var(--no)}
+.tans{min-height:64px;margin:14px 0}.tpool{margin-bottom:12px}.tans .ck,.tpool .ck{font-size:24px}
+.tmsg{text-align:center;font-size:22px;margin-top:16px}.tmsg.ok{color:var(--ok)}.tmsg.no{color:var(--no)}
+.tend{text-align:center;padding:40px 0;font-size:24px}.tend .big{font-size:48px;font-weight:900;color:var(--main);margin-bottom:10px}
+.xpics{max-width:980px;margin:0 auto}.xpics .xpanel.haspic{padding:10px}.xpic svg{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line,#e5e0d8)}.xhint{margin-top:8px;text-align:left}.xhint summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--main);list-style:none}.xhint summary::before{content:"💡 "}.xhint .zh{margin-top:6px;font-size:18px}
+.xpcover{margin:0 0 14px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}.xpcover img{display:block;width:100%;height:auto;max-height:300px;object-fit:cover}
+.xpchap{display:inline-block;background:var(--main);color:#fff;border-radius:999px;padding:1px 10px;margin-right:4px;font-family:'Noto Serif SC',serif}
+.xpimgrow{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}.xpimg{margin:0}.xpimg img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}.xpimg figcaption{font-size:14px;color:#7a6a5c;text-align:center;margin-top:6px}
+@media(max-width:800px){.xpimgrow{grid-template-columns:1fr}}
+.xpvid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:center;margin:0 0 14px}.xpvframe{position:relative;width:100%;aspect-ratio:9/16;max-height:620px;border-radius:14px;overflow:hidden;background:#111}.xpvframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+@media(max-width:800px){.xpvid{grid-template-columns:1fr}.xpvframe{max-width:360px;margin:0 auto}}
+.xpvid.wide{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.xpvframe.wide{aspect-ratio:16/9;max-height:none}.xpvframe video{position:absolute;inset:0;width:100%;height:100%;background:#000}
+.xpsegs{margin:0 0 14px}.xpseg{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;padding:12px 6px;border-top:1px dashed var(--line);border-radius:10px;transition:background .25s}.xpseg.on{background:var(--soft)}
+.xpt{font:inherit;font-weight:700;font-size:15px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 8px;cursor:pointer;color:var(--main);height:fit-content}
+.xpsh{font-weight:800;font-size:16px;color:var(--main);margin-bottom:4px}.xpsz{font-size:20px;line-height:1.8}.xpsv{font-size:17px;margin-top:4px;color:#5a4d42}.xpsw{font-size:15px;margin-top:6px;color:#7a6a5c}
+.xptgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}.xpterm{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:15px}.xpterm .py{color:var(--main);font-size:13px}
+@media(max-width:800px){.xpvid.wide{grid-template-columns:1fr}.xpseg{grid-template-columns:1fr}}
+
+</style></head><body>
+<script>window.LESSON={"ALIAS":{},"BIANXI":[{"pair":"仍然 — 还是","book":false,"head":["","仍然","还是"],"rows":[["共同点","都是副词，都表示情况没有变化。<br><span class='zh'>春节<b>仍然／还是<\/b>我最喜欢的节日。<\/span>",null],["不同点 1","多用于<b>书面<\/b>。","多用于<b>口语<\/b>。"],["不同点 2","只表示“没有变化”。","还表示<b>选择<\/b>（喝茶还是喝咖啡？）和<b>比较后的建议<\/b>（你还是别去了）。"]],"opts":["仍然","还是"],"quiz":[["你喝茶____喝咖啡？",1,"选择疑问 → 还是。"],["虽然遇到了很大困难，他____坚持下来了。",0,"书面，没变化 → 仍然（课本练习）。"],["外面太冷了，你____别出去了。",1,"建议 → 还是。"],["虽然已人到中年，春节____是我最喜欢的节日。",0,"课文：仍然。"]]},{"pair":"回忆 — 记忆","book":false,"head":["","回忆","记忆"],"rows":[["共同点","都和过去的事情有关。",null],["不同点 1","主要是<b>动词<\/b>：想起以前的事，常说“回忆起……”。","主要是<b>名词<\/b>：记住的事情或记住的能力：美好的记忆、记忆力。"],["不同点 2","<span class='zh'>每当<b>回忆<\/b>起童年……<\/span>","<span class='zh'>我最美好的<b>记忆<\/b>很多也发生在过年时。<\/span>"]],"opts":["回忆","记忆"],"quiz":[["每当____起童年，我就很开心。",0,"动词 → 回忆（课文）。"],["我最美好的____很多也发生在过年时。",1,"名词 → 记忆（课文）。"],["爷爷年纪大了，____力不太好。",1,"记忆力。"],["我还会经常____起小时候在家时的生活。",0,"课本练习：回忆。"]]},{"pair":"出现 — 发生","book":false,"head":["","出现","发生"],"rows":[["共同点","都是动词，都表示原来没有的产生了。<br><span class='zh'>工作中<b>出现／发生<\/b>了一些问题。<\/span>",null],["不同点 1","重在“<b>显露出来、让人看见<\/b>”，主语可以是人或东西：父母突然出现了。","重在“<b>事情产生<\/b>”，主语多是事情：发生了什么事？发生变化。"],["不同点 2","<span class='zh'>妈妈<b>出现<\/b>在车站出口。<\/span>","人不能“发生”。"]],"opts":["出现","发生"],"quiz":[["周力看到一桌子饭菜和突然____的父母。",0,"人显露出来 → 出现（课文）。"],["那里____了什么事？大家都在看。",1,"事情 → 发生。"],["我最美好的记忆很多也____在过年时。",1,"事情 → 发生（课文）。"],["妈妈终于____在车站出口。",0,"人 → 出现（课本练习）。"]]},{"pair":"演出 — 表演","book":false,"head":["","演出","表演"],"rows":[["共同点","都是动词，都表示把节目给观众看。<br><span class='zh'>晚上剧院有<b>演出／表演<\/b>。<\/span>",null],["不同点 1","多指<b>正式的、整场的<\/b>，常在剧院、舞台上：演出活动、看演出。","范围大，可以带宾语：表演节目、表演唱歌；还可以说<b>动作<\/b>：表演给我看。"],["不同点 2","一般<b>不带宾语<\/b>。","可以带宾语：<span class='zh'>孩子们<b>表演<\/b>了一个节目。<\/span>"]],"opts":["演出","表演"],"quiz":[["外面的街道、剧院有很多____活动。",0,"整场正式 → 演出（课文）。"],["孩子们给大家____了一个舞蹈。",1,"带宾语 → 表演。"],["今晚我们去剧院看____吧。",0,"看演出。"],["你能____一下你是怎么做的吗？",1,"动作 → 表演。"]]},{"pair":"意义 — 意思","book":false,"head":["","意义","意思"],"rows":[["共同点","都是名词，都可以表示内容。",null],["不同点 1","重在<b>作用、价值<\/b>，比较正式：有着特别的意义、很有意义的活动。","重在<b>词语、话的内容<\/b>：这个词是什么意思？还表示<b>有趣<\/b>：很有意思。"],["不同点 2","<span class='zh'>春节对中国人来说有着特别的<b>意义<\/b>。<\/span>","还表示心意：<span class='zh'>这是我的一点儿<b>意思<\/b>。<\/span>"]],"opts":["意义","意思"],"quiz":[["春节对中国人来说有着特别的____。",0,"价值、作用 → 意义（课文）。"],["“反向团圆”是什么____？",1,"话的内容 → 意思。"],["这部电影真有____，我想再看一遍。",1,"有趣 → 有意思。"],["参加这次环保活动很有____。",0,"价值 → 有意义。"]]},{"pair":"大约 — 左右","book":false,"head":["","大约","左右"],"rows":[["共同点","都表示大概、不确定的数量或时间。<br><span class='zh'><b>大约<\/b>七点 ＝ 七点<b>左右<\/b><\/span>",null],["不同点 1","是副词，用在数量词<b>前边<\/b>。","是名词，用在数量词<b>后边<\/b>。"],["不同点 2","还可以表示“可能”：<span class='zh'>他<b>大约<\/b>不来了。<\/span>","还表示“左边和右边”：<span class='zh'>前后<b>左右<\/b>。<\/span>"]],"opts":["大约","左右"],"quiz":[["早上五点____他们就坐上了高铁。",1,"数量词后 → 左右（课文）。"],["____七点就来到了儿子工作的城市。",0,"数量词前 → 大约（课文）。"],["这件衣服三百块钱____。",1,"后边 → 左右。"],["从这儿到机场____要一个小时。",0,"前边 → 大约。"]]}],"COLLOC":[["动词","宾语",[["吃","月饼／年夜饭"],["看","演出／春晚"],["回忆起","童年／小时候"],["准备","美食"],["开","玩笑"],["大声","喊"]]],["状语","中心语",[["千万","别忘了／别跑丢了"],["大约","七点"],["五点","左右"],["突然","出现"],["仍然","是／喜欢"]]],["定语","中心语",[["传统","节日／文化"],["美好的","记忆／日子"],["特别的","意义"],["铁路工作","人员"],["国家一级保护","动物"]]]],"META":{"fmt":2,"num":13,"title":"美好的日子","vn":"Những ngày tươi đẹp","tagline":"这个中秋节，地点变了，但爱没变","editor":"新HSK教程 4下 · HSK4 (3.0)","source":"新HSK教程 4下 · 第13课","theme":{"main":"#b8433c","deep":"#7e2a25","accent":"#e9b13a","soft":"#f8e7e5","cream":"#fdf8f7","line":"#eed1ce","ink":"#2a1513"},"cards":{"warm":"Nối từ với tranh · hỏi đáp về ngày lễ","vocab":"43 từ · 4 điểm ngữ pháp · 6 cặp từ dễ nhầm · cấu trúc viết văn","text":"4 bài khoá · nghe từng câu · câu hay","practice":"Bài tập sách (综合练习) · đề HSK 4 (3.0): nghe, đọc, viết","game":"抢答比赛 · 2 đội thi điền từ & xếp câu","apply":"任务活动 · giới thiệu ngày lễ yêu thích","hw":"Viết câu chuyện ngày lễ (≥140 chữ) · luyện nói “童年最美好的节日记忆”"}},"NOLINK":[],"V":[["熊","xióng","名","con gấu",1,"一种身体大、毛多的动物。","刘小明：爸爸、妈妈，快看，熊和老虎都在这儿呢！","快看，熊和老虎都在这儿呢！","Nhìn kìa, gấu và hổ đều ở đây!",["一只熊","大熊猫"],""],["老虎","lǎohǔ","名","con hổ",1,"一种很凶猛的大型动物。","刘小明：爸爸、妈妈，快看，熊和老虎都在这儿呢！","你去的那家动物园有老虎吗？","Vườn thú bạn đến có hổ không?",["一只老虎","东北虎"],""],["喊","hǎn","动","hét, gọi to",1,"大声叫。","王一雪：小明，注意安全，不要一直大喊！","我刚才喊了你几遍，你都没看我。","Vừa nãy tôi gọi bạn mấy lần, bạn chẳng nhìn tôi.",["大喊","喊人"],""],["级","jí","量","cấp, bậc",1,"用于等级。","刘明：你们看，那个叫东北虎，是国家一级保护动物。","那个叫东北虎，是国家一级保护动物。","Con đó là hổ Đông Bắc, động vật được bảo vệ cấp một quốc gia.",["一级","高级"],""],["树林","shùlín","名","rừng cây",1,"成片的树。","那边树林里还有很多动物呢。","那边树林里还有很多动物呢。","Trong rừng cây bên kia còn nhiều động vật lắm.",["树林里","一片树林"],""],["景区","jǐngqū","名","khu du lịch, khu thắng cảnh",1,"风景好、可以游玩的地方。","景区的车每到一个动物区都会停一会儿，让人们能近距离看看这些动物。","这景区真大、真美！","Khu du lịch này rộng quá, đẹp quá!",["旅游景区","景区门票"],""],["区","qū","名","khu, vùng",1,"一定的地区、范围。","景区的车每到一个动物区都会停一会儿，让人们能近距离看看这些动物。","景区的车每到一个动物区都会停一会儿。","Xe của khu du lịch mỗi lần đến một khu động vật đều dừng một lát.",["动物区","市区"],""],["美","měi","形","đẹp",1,"好看。","刘明：真不错，这景区真大、真美！","这景区真大、真美！","Khu du lịch này thật rộng, thật đẹp!",["很美","美景"],""],["节假日","jiéjiàrì","名","ngày lễ, ngày nghỉ",1,"节日和假日。","现在是节假日，人多。","现在是节假日，人多。","Bây giờ là ngày lễ, đông người.",["节假日期间"],""],["千万","qiānwàn","副","nhất định, nhớ là (dặn dò)",1,"一定，务必（多用于否定、提醒）。","小明，一会儿千万别跑丢了，我可不是开玩笑呢。","明天的活动你们一定要来，千万别忘了。","Hoạt động ngày mai các bạn nhất định phải đến, nhớ đừng quên.",["千万别……","千万要……"],"Thường dùng: 千万别／不要 + V."],["开玩笑","kāi wánxiào","","đùa",1,"用话或行动逗别人；用不认真的态度对待。","小明，一会儿千万别跑丢了，我可不是开玩笑呢。","小明，一会儿千万别跑丢了，我可不是开玩笑呢。","Tiểu Minh, lát nữa nhớ đừng chạy lạc, mẹ không đùa đâu.",["开玩笑","别开玩笑了"],""],["月饼","yuèbing","名","bánh trung thu",1,"中秋节吃的一种圆形点心。","王一飞：来，大家快吃月饼，这儿还有葡萄、西瓜。","来，大家快吃月饼。","Nào, mọi người ăn bánh trung thu đi.",["吃月饼","一块月饼"],""],["葡萄","pútao","名","nho",1,"一种水果，一串一串的。","王一飞：来，大家快吃月饼，这儿还有葡萄、西瓜。","这儿还有葡萄、西瓜。","Ở đây còn có nho, dưa hấu.",["一串葡萄","葡萄酒"],""],["香","xiāng","形","thơm",1,"气味好闻；（吃东西）味道好。","这茶闻着真香！","这是什么咖啡？闻起来真香。","Đây là cà phê gì vậy? Ngửi thơm thật.",["很香","真香"],""],["街道","jiēdào","名","đường phố",1,"城市里的路。","我记得那天，外面的街道、剧院有很多演出活动。","那天，外面的街道、剧院有很多演出活动。","Hôm đó ngoài đường phố, nhà hát có nhiều hoạt động biểu diễn.",["街道两边"],""],["剧院","jùyuàn","名","nhà hát",1,"演出戏剧、音乐等的地方。","我记得那天，外面的街道、剧院有很多演出活动。","咱们七点在剧院门口见吧。","Bảy giờ mình gặp ở cửa nhà hát nhé.",["去剧院","大剧院"],""],["演出","yǎnchū","动","biểu diễn",1,"把节目表演给观众看。","我记得那天，外面的街道、剧院有很多演出活动。","外面的街道、剧院有很多演出活动。","Ngoài đường, nhà hát có nhiều hoạt động biểu diễn.",["演出活动","看演出"],"辨析：演出—表演."],["赶","gǎn","动","trùng vào; đuổi kịp, vội",1,"遇到（某个时间）；加快。","杨同乐：中秋节和生日赶在了一块儿，真巧、真好！","中秋节和生日赶在了一块儿，真巧、真好！","Trung thu trùng với sinh nhật, thật trùng hợp, thật tuyệt!",["赶在一块儿","赶时间"],""],["巧","qiǎo","形","trùng hợp, khéo",1,"正好碰上某种机会。","杨同乐：中秋节和生日赶在了一块儿，真巧、真好！","没想到咱们在机场遇见了，真是太巧了。","Không ngờ mình gặp nhau ở sân bay, trùng hợp quá.",["真巧","太巧了"],""],["之中","zhīzhōng","名","trong số",1,"在……里边。","周力就是这些人之中的一位。","周力就是这些人之中的一位。","Chu Lực chính là một trong số những người đó.",["……之中"],""],["铁路","tiělù","名","đường sắt",1,"火车走的路。","他是一名铁路工作人员，今年中秋假期，要负责铁路安全检查。","他是一名铁路工作人员。","Anh ấy là nhân viên ngành đường sắt.",["铁路工作人员","铁路安全"],""],["人员","rényuán","名","nhân viên, nhân sự",1,"担任某种职务的人。","他是一名铁路工作人员，今年中秋假期，要负责铁路安全检查。","他是一名铁路工作人员。","Anh ấy là một nhân viên đường sắt.",["工作人员"],""],["反向","fǎnxiàng","形","ngược chiều",1,"方向相反的。","周力的父母知道儿子这次不能回家后，就决定来一次“反向团圆”。","周力的父母决定来一次“反向团圆”。","Bố mẹ Chu Lực quyết định có một cuộc “đoàn tụ ngược”.",["反向团圆"],""],["团圆","tuányuán","动","đoàn tụ",1,"（家人）分开后又在一起。","周力的父母知道儿子这次不能回家后，就决定来一次“反向团圆”。","中秋节是家人团圆的节日。","Trung thu là ngày lễ gia đình đoàn tụ.",["家人团圆"],""],["左右","zuǒyòu","名","khoảng, chừng (sau số)",1,"用在数量词后，表示比这个数稍多或稍少。","早上五点左右他们就坐上了高铁，大约七点就来到了儿子工作的城市。","我中午十二点左右到你们学校。","Khoảng 12 giờ trưa tôi đến trường các bạn.",["五点左右","一百块左右"],"见“注释”：大约、左右."],["大约","dàyuē","副","khoảng, ước chừng (trước số)",1,"表示估计的数量，不一定很准确。","早上五点左右他们就坐上了高铁，大约七点就来到了儿子工作的城市。","昨天飞机晚点，我晚上大约十点半才到家。","Hôm qua máy bay trễ, tối khoảng 10 rưỡi tôi mới về đến nhà.",["大约七点"],"大约 đứng trước số, 左右 đứng sau số."],["烤","kǎo","动","nướng",1,"把东西放在火的旁边使变熟或变干。","在儿子家，他们做了一桌儿子爱吃的饭菜，有烤肉、烤鱼、饺子等等，还有西红柿鸡蛋汤。","他们做了一桌儿子爱吃的饭菜，有烤肉、烤鱼、饺子等等。","Họ nấu một bàn món con thích: thịt nướng, cá nướng, sủi cảo…",["烤肉","烤鸭"],""],["西红柿","xīhóngshì","名","cà chua",1,"一种红色的蔬菜。","在儿子家，他们做了一桌儿子爱吃的饭菜，有烤肉、烤鱼、饺子等等，还有西红柿鸡蛋汤。","还有西红柿鸡蛋汤。","Còn có canh cà chua trứng.",["西红柿鸡蛋汤"],""],["出现","chūxiàn","动","xuất hiện",1,"显露出来；产生出来。","周力下班回家，看到一桌子饭菜和突然出现的父母，他感觉特别幸福。","妈妈终于出现在车站出口，孩子们开心极了。","Mẹ cuối cùng xuất hiện ở cửa ra nhà ga, bọn trẻ vui vô cùng.",["突然出现","出现问题"],"辨析：出现—发生."],["作为","zuòwéi","介／动","với tư cách là; coi là",1,"就人的某种身份或事物的某种性质来说。","作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。","作为好朋友，我们一直互相关心、互相帮助。","Là bạn tốt, chúng tôi luôn quan tâm, giúp đỡ nhau.",["作为……"],"见“注释”：介词“作为”."],["传统","chuántǒng","形／名","truyền thống",1,"世代相传的（文化、习惯等）。","作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。","春节是中国最重要的传统节日。","Tết là ngày lễ truyền thống quan trọng nhất của Trung Quốc.",["传统节日","传统文化"],""],["有着","yǒuzhe","动","có (văn viết)",1,"有（多用于书面，后面常带抽象名词）。","作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。","西安也是一座有着三千多年历史的城市。","Tây An cũng là một thành phố có lịch sử hơn ba nghìn năm.",["有着……的意义"],""],["意义","yìyì","名","ý nghĩa",1,"作用和价值；内容。","作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。","春节对中国人来说有着特别的意义。","Tết có ý nghĩa đặc biệt với người Trung Quốc.",["有意义","特别的意义"],"辨析：意义—意思."],["到来","dàolái","动","đến, tới",1,"来到。","春节到来时，人们不管在哪里，都想回家过年。","生日到来时，你想要什么礼物？","Khi sinh nhật đến, bạn muốn quà gì?",["春节到来"],""],["美食","měishí","名","món ngon",1,"好吃的东西。","春节前也最忙，既要收拾房子、打扫卫生，又要准备各种美食。","春节前既要打扫卫生，又要准备各种美食。","Trước Tết vừa phải dọn dẹp, vừa phải chuẩn bị đủ món ngon.",["各种美食","中国美食"],""],["年夜饭","niányèfàn","名","bữa cơm tất niên",1,"除夕晚上全家人一起吃的饭。","除夕这天晚上，一家人一边吃年夜饭，一边看春晚。","除夕这天晚上，一家人一边吃年夜饭，一边看春晚。","Tối giao thừa, cả nhà vừa ăn cơm tất niên vừa xem Xuân Vãn.",["吃年夜饭"],""],["回忆","huíyì","动","hồi tưởng, nhớ lại",1,"想起以前的事情。","每当回忆起童年，我最美好的记忆很多也发生在过年时。","我还会经常回忆起小时候在家时的生活。","Tôi vẫn hay nhớ lại cuộc sống ở nhà hồi nhỏ.",["回忆起","美好的回忆"],"辨析：回忆—记忆."],["童年","tóngnián","名","tuổi thơ",1,"小时候。","每当回忆起童年，我最美好的记忆很多也发生在过年时。","每当回忆起童年，我最美好的记忆很多也发生在过年时。","Mỗi khi nhớ về tuổi thơ, nhiều ký ức đẹp nhất của tôi đều là dịp Tết.",["童年生活","我的童年"],""],["记忆","jìyì","名","ký ức, trí nhớ",1,"记住的事情；记住事情的能力。","每当回忆起童年，我最美好的记忆很多也发生在过年时。","我最美好的记忆很多也发生在过年时。","Nhiều ký ức đẹp nhất của tôi xảy ra vào dịp Tết.",["美好的记忆","记忆力"],""],["已","yǐ","副","đã",1,"已经（多用于书面）。","虽然现在已人到中年……","他已在中国生活二十年了。","Ông ấy đã sống ở Trung Quốc hai mươi năm.",["已经","早已"],"已 = 已经 (văn viết)."],["中年","zhōngnián","名","trung niên",1,"四五十岁的年纪。","虽然现在已人到中年……","虽然现在已人到中年，但是春节仍然是我最喜欢的节日。","Tuy giờ đã đến tuổi trung niên, Tết vẫn là ngày lễ tôi thích nhất.",["中年人","人到中年"],""],["仍然","réngrán","副","vẫn, vẫn còn",1,"表示情况没有变化。","……但是春节仍然是我最喜欢的节日……","虽然遇到了很大困难，他仍然坚持下来了。","Dù gặp khó khăn lớn, anh ấy vẫn kiên trì.",["仍然喜欢","仍然是"],"辨析：仍然—还是."],["兄弟","xiōngdì","名","anh em",1,"哥哥和弟弟。","……过年时也更想父母、兄弟姐妹。","过年时也更想父母、兄弟姐妹。","Tết càng nhớ bố mẹ, anh chị em.",["兄弟姐妹","亲兄弟"],""]],"WARM":[{"tab":"看图选词","title":"给下面的词语选择对应的图片","type":"pics","lead":"Nhìn tranh, nói từ phù hợp rồi bấm ？ để xem đáp án.","opts":["A 兄弟 xiōngdì","B 老虎 lǎohǔ","C 树林 shùlín","D 葡萄 pútao","E 月饼 yuèbing","F 喊 hǎn"],"items":[["img/l13_w1.jpg","F 喊"],["img/l13_w2.jpg","A 兄弟"],["img/l13_w3.jpg","C 树林"],["img/l13_w4.jpg","D 葡萄"],["img/l13_w5.jpg","E 月饼"],["img/l13_w6.jpg","B 老虎"]],"qs_title":"两人一组，根据实际情况互相问答","qs":[["你的国家有哪些重要节日？这些节日到来时人们会吃什么美食？","Nước bạn có những ngày lễ quan trọng nào? Khi đó mọi người ăn món gì?","越南最重要的节日是春节，人们会包粽子、吃年夜饭；中秋节时，孩子们吃月饼、提灯笼。"],["你和兄弟姐妹或者好朋友节假日在一起时都会做些什么？","Ngày lễ bạn và anh chị em hoặc bạn thân thường làm gì cùng nhau?","节假日的时候，我和哥哥常常一起去看电影，或者去景区游玩，晚上回家和父母一起吃饭。"]]}],"WPAT":[{"w":"作为……，……对……来说有着特别的意义","use":"mở bài giới thiệu ngày lễ","frames":["作为 + thân phận／tính chất，A 对 B 来说有着特别的意义"],"ex":[["作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。","Là ngày lễ truyền thống quan trọng nhất trong năm, Tết có ý nghĩa đặc biệt với người Trung Quốc."],["作为越南最热闹的节日，春节对我来说有着特别的意义。","Là ngày lễ náo nhiệt nhất Việt Nam, Tết có ý nghĩa đặc biệt với tôi."]],"note":"Câu <b>mở bài<\/b> trang trọng, giới thiệu ngày lễ bạn chọn.","try":["Giới thiệu ngày lễ của bạn.","作为孩子们最喜欢的节日，中秋节对我来说有着特别的意义。"]},{"w":"既要……，又要……","use":"kể việc chuẩn bị ngày lễ","frames":["……前，人们既要 + V1，又要 + V2"],"ex":[["春节前也最忙，既要收拾房子、打扫卫生，又要准备各种美食。","Trước Tết bận nhất, vừa phải dọn nhà, vừa phải chuẩn bị đủ món ngon."]],"note":"Tả <b>không khí<\/b> trước ngày lễ.","try":["Kể việc chuẩn bị.","过年前，我们既要买新衣服，又要包粽子。"]},{"w":"一边……，一边……","use":"tả hoạt động trong ngày lễ","frames":["(主语) 一边 + V1，一边 + V2"],"ex":[["除夕这天晚上，一家人一边吃年夜饭，一边看春晚。","Tối giao thừa, cả nhà vừa ăn cơm tất niên vừa xem Xuân Vãn."],["中秋节晚上，我们一边吃月饼，一边看月亮。","Tối Trung thu, chúng tôi vừa ăn bánh vừa ngắm trăng."]],"note":"Câu <b>tả cảnh<\/b> sinh động.","try":["Tả một buổi tối ngày lễ.","我们一边聊天儿，一边吃妈妈做的美食。"]},{"w":"怎么也没想到……","use":"kể tình tiết bất ngờ của câu chuyện","frames":["我知道……，可怎么也没想到……"],"ex":[["我知道北京野生动物园很大，可怎么也没想到这么大！","Tôi biết vườn thú hoang dã Bắc Kinh rộng, nhưng không thể ngờ lại rộng thế!"],["那天我怎么也没想到，在外地工作的哥哥突然出现在家门口。","Hôm đó tôi không ngờ, anh trai làm việc xa nhà bỗng xuất hiện trước cửa."]],"note":"Đề yêu cầu <b>“说说过节时发生的故事”<\/b> — cần có <b>tình tiết<\/b>.","try":["Kể điều bất ngờ.","我怎么也没想到，爸爸会送我一只小狗作为生日礼物。"]},{"w":"每当……，……","use":"nói cảm xúc mỗi khi nhớ lại","frames":["每当 + tình huống，(主语) 就／都 + ……"],"ex":[["每当回忆起童年，我最美好的记忆很多也发生在过年时。","Mỗi khi nhớ về tuổi thơ, nhiều ký ức đẹp nhất của tôi là dịp Tết."],["每当想到那个中秋节，我心里就特别暖。","Mỗi khi nghĩ đến Trung thu năm đó, lòng tôi lại rất ấm."]],"note":"Câu <b>kết bài<\/b> giàu cảm xúc.","try":["Kết bài.","每当春节到来，我就会想起和家人在一起的日子。"]},{"w":"一 + 量词 + 比 + 一 + 量词 + Adj","use":"nói sự thay đổi qua các năm","frames":["……一年比一年／一天比一天 + tính từ"],"ex":[["在中国，每年中秋节都会举办很多活动，而且这几年一年比一年热闹。","Ở Trung Quốc, Trung thu năm nào cũng có nhiều hoạt động, mấy năm nay năm sau náo nhiệt hơn năm trước."]],"note":"Dùng để nói ngày lễ <b>ngày càng<\/b> thế nào.","try":["Nói sự thay đổi.","我们家的年夜饭一年比一年丰富。"]}],"GAME":{"fill":[["小明，注意安全，不要一直大{}！","喊",["喊","叫醒","说","唱"]],["那个叫东北虎，是国家一{}保护动物。","级",["级","个","只","种"]],["我知道北京野生动物园很大，可怎么{}没想到这么大！","也",["也","就","才","还"]],["小明，一会儿{}别跑丢了。","千万",["千万","万一","一定","必须"]],["好的。这茶闻着真{}！","香",["香","鲜","甜","暖"]],["在中国，每年中秋节都会举办很多活动，而且这几年一年比一年{}。","热闹",["热闹","很热闹","最热闹","热热闹闹"]],["中秋节和生日赶在了一块儿，真{}、真好！","巧",["巧","棒","强","美"]],["早上五点{}他们就坐上了高铁。","左右",["左右","大约","上下","前后"]],["{}一年里最重要的传统节日，春节对中国人来说有着特别的意义。","作为",["作为","因为","成为","认为"]],["每当{}起童年，我最美好的记忆很多也发生在过年时。","回忆",["回忆","记忆","记得","想法"]]],"order":[["景区的车|每到一个动物区|都会|停一会儿。"],["现在|是|节假日，|人多。"],["我还是|第一次|在中国|过中秋节呢。"],["他是|一名|铁路|工作人员。"],["这个中秋节，|地点变了，|但|爱没变。"],["零点一到，|大家|互相祝|新年快乐"]]},"GOOD":[{"zh":"我知道北京野生动物园很大，可怎么也没想到这么大","vn":"tôi biết vườn thú hoang dã Bắc Kinh rộng, nhưng không thể ngờ lại rộng đến thế","why":"<b>知道……，可怎么也没想到……<\/b> — diễn tả sự ngạc nhiên vượt mong đợi.","frame":"我知道……，可怎么也没想到……","apply":"我知道中国菜很好吃，可怎么也没想到这么好吃！","apply_vn":"Tôi biết món Trung Quốc ngon, nhưng không ngờ lại ngon đến thế!"},{"zh":"这里有几千只动物呢，能不大吗","vn":"ở đây có mấy nghìn con thú, sao mà không rộng được","why":"Câu hỏi tu từ <b>能不……吗？<\/b> = chắc chắn là … — khẳng định mạnh trong văn nói.","frame":"……，能不……吗？","apply":"他每天练习三个小时，汉语能不好吗？","apply_vn":"Ngày nào cậu ấy cũng luyện ba tiếng, tiếng Trung sao mà không giỏi?"},{"zh":"这几年一年比一年热闹","vn":"mấy năm nay năm sau náo nhiệt hơn năm trước","why":"<b>一年比一年 + Adj<\/b> — diễn tả thay đổi liên tục theo thời gian.","frame":"这几年……一年比一年……","apply":"这几年，我们城市的交通一年比一年方便。","apply_vn":"Mấy năm nay giao thông thành phố tôi năm sau tiện hơn năm trước."},{"zh":"这个中秋节，地点变了，但爱没变","vn":"Trung thu năm nay, địa điểm thay đổi, nhưng tình yêu không đổi","why":"Câu kết đối xứng <b>……变了，但……没变<\/b> — ngắn gọn, giàu cảm xúc.","frame":"……变了，但……没变","apply":"我们都长大了，样子变了，但友情没变。","apply_vn":"Chúng ta đều lớn rồi, dáng vẻ thay đổi, nhưng tình bạn không đổi."}],"GRAMMAR":[{"word":"怎么也没","title":"固定格式“怎么都／也 + 不／没……”","py":"zěnme dōu / yě + bù / méi …","pos":"固定格式","forms":["(主语) + 怎么都／也 + 不／没 + V"],"vn":"Cấu trúc cố định biểu thị <b>dù đã cố hết cách vẫn không đạt<\/b> kết quả nào đó; đôi khi dùng để diễn tả <b>ngạc nhiên, không ngờ<\/b>.","text":"我知道北京野生动物园很大，可怎么也没想到这么大！","ex":[["她在包里找了半天，怎么都没找到，真奇怪。","Cô ấy tìm trong túi mãi mà thế nào cũng không thấy, lạ thật."],["我们想看那只熊猫，在动物园等了两个多小时，可是它怎么都不出来。","Chúng tôi muốn xem gấu trúc, đợi hơn hai tiếng mà nó nhất định không ra."]],"err":[["我怎么也没找到了。","我怎么也没找到。","没……không đi với 了 cuối câu."]],"book_title":"完成对话（课本 · gợi ý đáp án）","book":[["A：我一直想买这种茶，去店里买了几次，________。<br>B：最近天热，买这种茶的人太多了。","","去店里买了几次，怎么都没买到。"],["A：我想了半天，________。<br>B：你们好长时间没见了，突然想不起来他叫什么也能理解。","","我想了半天，怎么也想不起来他叫什么名字。"],["A：这道题太难了，我做了好久，________。<br>B：是吗？我来试试，看能不能做出来。","","我做了好久，怎么都做不出来。"]],"drill":[["“他怎么也睡不着”的意思是：",["想了很多办法也睡不着","他很快就睡着了"],0,"Cố mấy cũng không được."],["选择：钥匙我找了一个晚上，____也没找到。",["怎么","什么"],0,"怎么也没……"]]},{"word":"一……比一……","title":"固定格式“一 + 量词 + 比 + 一 + 量词”","py":"yī + lượng từ + bǐ + yī + lượng từ","pos":"固定格式","forms":["一 + 量词 + 比 + 一 + 量词 + Adj"],"vn":"Cấu trúc so sánh: hai hay nhiều sự vật so với nhau, nhấn mạnh <b>cái sau hơn cái trước<\/b>. Thường đi với tính từ: 一年比一年热闹 (năm sau náo nhiệt hơn năm trước), 一个比一个漂亮 (cái nào cũng đẹp).","text":"在中国，每年中秋节都会举办很多活动，而且这几年一年比一年热闹。","ex":[["夏天快到了，天气也一天比一天热。","Mùa hè sắp đến, trời ngày càng nóng."],["这家店里的杯子一个比一个漂亮，我都不知道选哪个了。","Cốc ở cửa hàng này cái nào cũng đẹp, tôi không biết chọn cái nào."]],"err":[["天气一天比一天很热。","天气一天比一天热。","Không thêm 很 trước tính từ."]],"book_title":"完成对话（课本 · gợi ý đáp án）","book":[["A：这儿的衣服怎么样？<br>B：很不错，可以说，________漂亮。","","很不错，可以说，一件比一件漂亮。"],["A：你那里的天气怎么样？<br>B：现在进入冬天了，________。","","现在进入冬天了，一天比一天冷。"],["A：他们中文学得怎么样？<br>B：不错，感觉________。","","不错，感觉一个比一个说得流利。"]],"drill":[["“孩子一天比一天高”的意思是：",["孩子越来越高","孩子每天一样高"],0,"Ngày càng cao."],["选择：这些照片____张比____张好看。",["一……一","这……那"],0,"一张比一张."]]},{"word":"大约","title":"“大约”和“左右”","py":"dàyuē / zuǒyòu","pos":"概数","forms":["大约 + số lượng／thời gian","số lượng／thời gian + 左右"],"vn":"<b>大约<\/b> và <b>左右<\/b> biểu thị <b>khoảng, chừng<\/b> (không chắc chắn). Trong bài dùng với từ chỉ thời gian để nói thời gian ước chừng: <b>大约<\/b> đứng <b>trước<\/b>, <b>左右<\/b> đứng <b>sau<\/b>.","text":"早上五点左右他们就坐上了高铁，大约七点就来到了儿子工作的城市。","ex":[["我中午十二点左右到你们学校，和大家一起去食堂吃饭。","Khoảng 12 giờ trưa tôi đến trường các bạn, cùng mọi người đi ăn ở căng tin."],["昨天飞机晚点，我晚上大约十点半才到家。","Hôm qua máy bay trễ, khoảng 10 rưỡi tối tôi mới về đến nhà."]],"err":[["左右七点我到。","七点左右我到。／大约七点我到。","左右 đứng sau số."]],"book_title":"完成句子（课本 · gợi ý đáp án）","book":[["咱们________门口见吧，然后一起进去看演出。（剧院）","","咱们七点左右在剧院门口见吧，然后一起进去看演出。"],["这只老虎________。（出现）","","这只老虎大约每天下午三点出现一次。"],["我们明天晚上________。（千万）","","我们明天晚上八点左右出发，你千万别迟到。"]],"drill":[["选择：我____八点到。",["大约","左右"],0,"Trước số → 大约."],["选择：这本书五十块钱____。",["左右","大约"],0,"Sau số → 左右."]]},{"word":"作为","title":"介词“作为”","py":"zuòwéi","pos":"介词","forms":["作为 + thân phận／tính chất，……"],"vn":"Giới từ <b>作为<\/b> chỉ <b>thân phận<\/b> của người hoặc <b>tính chất<\/b> của sự vật — “với tư cách là, là”. Không thể đứng một mình làm thành phần câu, phải kết hợp với từ phía sau.","text":"作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。","ex":[["作为新产品，这个手机不仅样子好看，价格也不高。","Là sản phẩm mới, chiếc điện thoại này không chỉ đẹp mà giá cũng không cao."],["作为好朋友，我们一直互相关心、互相帮助。","Là bạn tốt, chúng tôi luôn quan tâm, giúp đỡ nhau."]],"err":[["我作为，应该帮助你。","作为你的朋友，我应该帮助你。","作为 phải có danh từ đi kèm."]],"book_title":"完成句子（课本 · gợi ý đáp án）","book":[["作为父母，________________。","","作为父母，应该多花时间陪孩子。"],["________，我必须请你尝尝北京烤鸭。","","作为北京人，我必须请你尝尝北京烤鸭。"],["________我支持你的决定。","","作为你最好的朋友，我支持你的决定。"]],"drill":[["“作为学生”的意思是：",["以学生的身份","成为学生"],0,"Với tư cách là."],["选择：____老师，他对学生很负责。",["作为","因为"],0,"Thân phận → 作为."]]}],"HSK":{"l":[{"n":1,"d":"男：动物园里人太多了！|女：是啊，现在是节假日。小明，千万别跑丢了。","q":"女的提醒小明什么？","o":["别大喊","别跑丢了","别吃东西","别害怕"],"a":1,"why":"千万别跑丢了。"},{"n":2,"d":"女：这么好看的衣服，你怎么不买？|男：太多了，一件比一件好看，我都不知道选哪件了。","q":"男的为什么没买？","o":["太贵了","不好看","不知道选哪件","没带钱"],"a":2,"why":"不知道选哪件了。"},{"n":3,"d":"男：你们几点到？|女：我们早上六点出发，大约九点到。","q":"女的大约几点到？","o":["六点","七点","八点","九点"],"a":3,"why":"大约九点到。"},{"n":4,"d":"女：钥匙找到了吗？|男：没有，我找了一个晚上，怎么也没找到。","q":"男的是什么意思？","o":["找到了","没找到","不想找","不知道在哪儿"],"a":1,"why":"怎么也没找到。"},{"n":5,"d":"男：今年中秋节你回家吗？|女：不回了，我爸妈要来我这儿，来个“反向团圆”。","q":"今年中秋节女的怎么过？","o":["回老家","父母来她这儿","和朋友过","一个人过"],"a":1,"why":"爸妈要来我这儿。"},{"n":6,"d":"女：你最喜欢什么节日？|男：当然是春节，可以和家人一起吃年夜饭。","q":"男的为什么喜欢春节？","o":["可以旅游","可以和家人一起吃年夜饭","可以吃月饼","可以看演出"],"a":1,"why":"可以和家人一起吃年夜饭。"}],"r1":[{"text":["{7}越南最重要的传统节日，春节对越南人来说有着特别的意义。春节前，人们既要打扫卫生，又要准备各种{8}。除夕晚上，一家人一边吃饭，一边聊天儿。虽然我现在{9}在国外工作，但是春节{10}是我最喜欢的节日。"],"qs":[{"n":7,"o":["作为","因为","成为","认为"],"a":0,"why":"作为……节日。"},{"n":8,"o":["美食","演出","记忆","铁路"],"a":0,"why":"准备各种美食。"},{"n":9,"o":["已","才","就","又"],"a":0,"why":"已在国外工作。"},{"n":10,"o":["仍然","已经","突然","大约"],"a":0,"why":"仍然是……"}]}],"r2":[{"start":11,"paras":["可怎么也没想到这么大","我知道北京野生动物园很大","这里有几千只动物呢"],"ans":["B","A","C"],"why":"知道（B）→ 可没想到（A）→ 原因（C）。"},{"start":14,"paras":["大约七点就来到了儿子工作的城市","他们就坐上了高铁","早上五点左右"],"ans":["C","B","A"],"why":"时间（C）→ 坐上高铁（B）→ 大约七点到（A）。"}],"r3":[{"text":["中秋节是中国的传统节日，在每年农历八月十五。这一天晚上的月亮又大又圆，人们认为它代表着家人团圆。","中秋节的时候，人们会吃月饼、看月亮。在外地工作的人，也会尽量回家和家人过节。如果实在回不了家，很多人会给家人打视频电话，一起“看”月亮。现在，越来越多的父母也会像周力的父母那样，来一次“反向团圆”。"],"qs":[{"n":17,"s":"中秋节的月亮代表着什么？","o":["丰收","家人团圆","新年快乐","工作顺利"],"a":1,"why":"代表着家人团圆。"},{"n":18,"s":"中秋节时，人们一般会做什么？","o":["吃年夜饭","吃月饼、看月亮","看春晚","去动物园"],"a":1,"why":"吃月饼、看月亮。"},{"n":19,"s":"不能回家的人可能会怎么做？","o":["不过节","给家人打视频电话","去剧院","去旅游"],"a":1,"why":"给家人打视频电话。"}]}],"w":{"start":20,"order":["这家店的衣服|一件比|一件|漂亮","他们|大约|七点|就到了","春节|仍然是|我最喜欢的|节日","作为|好朋友|我们|互相帮助"],"pics":[["img/l13_d1.jpg","剧院","这个剧院很大，今晚有音乐演出。"],["img/l13_d2.jpg","景区","节假日的时候，这个景区的游客特别多。"],["img/l13_d3.jpg","节假日","节假日里，一家人高高兴兴地去逛街。"]],"essay":{"prompt":"请以“我最喜欢的节日”为题，写一篇80字左右的短文。（可以用：传统、美食、作为、一……比一……、仍然）","vn":"Viết đoạn văn khoảng 80 chữ với đề “Ngày lễ tôi thích nhất”.","min":80,"tips":["Ngày lễ gì (作为……传统节日).","Mọi người làm gì (美食、一边……一边……).","Thay đổi qua các năm (一年比一年).","Kết: 仍然……"],"sample":"作为越南最重要的传统节日，春节是我最喜欢的节日。春节前，家家户户都会打扫卫生，准备各种美食。除夕晚上，我们一家人一边吃饭，一边聊天儿。这几年，春节一年比一年热闹。虽然我已长大，但春节仍然让我特别开心。","svn":"Tết là ngày lễ truyền thống quan trọng nhất Việt Nam; trước Tết dọn dẹp, chuẩn bị món ngon; giao thừa cả nhà vừa ăn vừa trò chuyện; năm sau náo nhiệt hơn năm trước; dù đã lớn, Tết vẫn khiến tôi rất vui."}}},"PRACTICE":{"ex1":[{"bank":["仍然","已","香","之中","有着","出现"],"items":[["西安也是一座{}三千多年历史的城市，欢迎您参观游玩。",["有着"]],["他{}在中国生活二十年了，生活习惯和我们没什么不同。",["已"]],["有妈妈细心照顾，孩子们每天都生活在幸福{}。",["之中"]],["妈妈终于{}在车站出口，孩子们开心极了。",["出现"]],["虽然遇到了很大困难，他{}坚持下来了。",["仍然"]],["这是什么咖啡？闻起来真{}。",["香"]]]},{"bank":["到来","老虎","喊","回忆","千万","巧"],"items":[["A：你去的那家动物园有{}吗？ B：有，还有熊、大熊猫等好多种动物呢。",["老虎"]],["A：虽然离开家已四十年，但我还会经常{}起小时候在家时的生活。 B：我也是，年龄越大越想家。",["回忆"]],["A：明天的活动你们一定要来，{}别忘了。 B：好的，放心吧，我们会来的。",["千万"]],["A：我刚才{}了你几遍，你都没看我。 B：对不起，我戴着耳机呢，没听见。",["喊"]],["A：没想到咱们在机场遇见了，真是太{}了。我去北京，你呢？ B：是啊，我也去北京出差。",["巧"]],["A：小雨，你的生日快到了。生日{}时，你想要什么礼物？ B：我想要一个大蛋糕。",["到来"]]]}],"ex2":{"title":"选择合适的内容完成短文（课本）","opts":["兄弟姐妹都离开了家","很难见面","小时候喜欢过节","一家人聚在一起"],"text":"冬冬从小到大都喜欢过节，特别是春节和元宵节。{1}，是因为可以吃到很多好吃的。长大后，{2}，去外地上大学、工作。平时大家很忙，{3}，但一到重要节日，在外地的兄弟姐妹就都回来了，和父母一起过节。{4}，特别热闹，也特别开心。","ans":["C","A","B","D"],"why":"(1) Hồi nhỏ thích ngày lễ là vì có đồ ngon (C). (2) Lớn lên anh chị em đều rời nhà (A). (3) Bình thường bận, khó gặp nhau (B). (4) Cả nhà tụ họp, rất náo nhiệt (D)."},"ex3":[["img/l13_d1.jpg","剧院","今天晚上剧院里有一场音乐演出。"],["img/l13_d2.jpg","景区","长城景区的风景真美！"],["img/l13_d3.jpg","节假日","节假日的时候，一家人一起出去游玩。"]],"ex4":[],"ext":{"title":"","words":[],"items":[]}},"TEXT":[{"title":"在野生动物园","sub":"课文 1 · 对话","scene":"六一儿童节，刘明、王一雪带刘小明到北京野生动物园看动物，他们先坐车进入猛兽区。","scene_vn":"Ngày Quốc tế Thiếu nhi 1/6, Lưu Minh và Vương Nhất Tuyết đưa Tiểu Minh đến vườn thú hoang dã Bắc Kinh; họ đi xe vào khu thú dữ trước.","paras":["刘小明：爸爸、妈妈，快看，熊和老虎都在这儿呢！","王一雪：小明，注意安全，不要一直大喊！","刘明：你们看，那个叫东北虎，是国家一级保护动物。那边树林里还有很多动物呢。","刘小明：咱们都能看到吧？","王一雪：对。景区的车每到一个动物区都会停一会儿，让人们能近距离看看这些动物。","刘明：真不错，这景区真大、真美！我知道北京野生动物园很大，可怎么也没想到这么大！","王一雪：这里有几千只动物呢，能不大吗？现在是节假日，人多。小明，一会儿千万别跑丢了，我可不是开玩笑呢。"],"idea":"Tiểu Minh thấy <b>gấu<\/b>, <b>hổ<\/b>; mẹ nhắc chú ý an toàn, đừng <b>hét<\/b> mãi. Hổ Đông Bắc là động vật bảo vệ <b>cấp<\/b> một; trong <b>rừng cây<\/b> còn nhiều con khác. Xe của <b>khu du lịch<\/b> đến mỗi <b>khu<\/b> động vật đều dừng lại để xem gần. Khu này rộng, <b>đẹp<\/b> — không ngờ lại rộng thế, có mấy nghìn con. <b>Ngày lễ<\/b> đông người, <b>nhớ là<\/b> đừng chạy lạc, mẹ không <b>đùa<\/b> đâu.","qs":[["王一雪提醒小明：",["别害怕","不要吃东西","看看熊和老虎","不要总是大喊"],3],["刘明觉得景区怎么样？",["游客很多","门票便宜","又大又美","饭馆很多"],2],["北京野生动物园有多少只动物？",["几百只","几千只","几万只","一千只"],1]]},{"title":"一起过中秋","sub":"课文 2 · 对话","scene":"在王一飞家，王一飞夫妇邀请白家月、安妮和陈天中过中秋节。","scene_vn":"Ở nhà Vương Nhất Phi, vợ chồng cô mời Bạch Gia Nguyệt, Annie và Trần Thiên Trung đón Trung thu.","paras":["王一飞：来，大家快吃月饼，这儿还有葡萄、西瓜。","杨同乐：这是今年的新茶，你们也尝尝。","陈天中：好的。这茶闻着真香！","白家月：我还是第一次在中国过中秋节呢。","安妮：我在加拿大时和中国朋友一起过过中秋节。我记得那天，外面的街道、剧院有很多演出活动。","王一飞：在中国，每年中秋节都会举办很多活动，而且这几年一年比一年热闹。对了，家月，今天是李文爷爷的生日，李文来不了了，你就多吃一块月饼吧。","白家月：谢谢，那我就不客气了。","杨同乐：中秋节和生日赶在了一块儿，真巧、真好！中秋节多陪陪家人也是应该的。"],"idea":"Mời mọi người ăn <b>bánh trung thu<\/b>, <b>nho<\/b>, dưa hấu, uống trà mới — <b>thơm<\/b> thật. Gia Nguyệt lần đầu đón Trung thu ở Trung Quốc; Annie từng đón ở Canada, <b>đường phố<\/b>, <b>nhà hát<\/b> có nhiều hoạt động <b>biểu diễn<\/b>. Ở Trung Quốc năm sau náo nhiệt hơn năm trước. Hôm nay sinh nhật ông Lý Văn nên anh không đến — Trung thu <b>trùng<\/b> sinh nhật, thật <b>khéo<\/b>.","qs":[["王一飞和杨同乐准备了什么？",["月饼、葡萄和苹果","葡萄、西瓜和苹果","月饼、苹果、西瓜和茶","月饼、葡萄、西瓜和茶"],3],["李文为什么没来？",["在学校学习","去买水果了","要给爷爷过生日","和同事一起过节"],2],["安妮以前在哪儿过过中秋节？",["中国","加拿大","美国","法国"],1]]},{"title":"中秋节的“反向团圆”","sub":"课文 3 · 短文","paras":["中秋节时中国人一般都会回家过节。但是有些人由于工作需要，不能回家，只能一个人留在工作的地方过节。周力就是这些人之中的一位。他是一名铁路工作人员，今年中秋假期，要负责铁路安全检查。","周力的父母知道儿子这次不能回家后，就决定来一次“反向团圆”。早上五点左右他们就坐上了高铁，大约七点就来到了儿子工作的城市。在儿子家，他们做了一桌儿子爱吃的饭菜，有烤肉、烤鱼、饺子等等，还有西红柿鸡蛋汤。周力下班回家，看到一桌子饭菜和突然出现的父母，他感觉特别幸福。","这个中秋节，地点变了，但爱没变。"],"idea":"Trung thu người Trung Quốc về nhà, nhưng có người vì công việc phải ở lại. Chu Lực là một <b>trong số<\/b> đó — <b>nhân viên<\/b> <b>đường sắt<\/b>, phụ trách kiểm tra an toàn. Bố mẹ quyết định “<b>đoàn tụ<\/b> <b>ngược<\/b>”: 5 giờ <b>khoảng<\/b> lên tàu cao tốc, <b>khoảng<\/b> 7 giờ đến nơi, nấu một bàn món con thích: thịt <b>nướng<\/b>, cá nướng, sủi cảo, canh <b>cà chua<\/b> trứng. Thấy bố mẹ bỗng <b>xuất hiện<\/b>, anh vô cùng hạnh phúc. Địa điểm đổi, tình yêu không đổi.","qs":[["周力不能回家过中秋节，是因为：",["不想回家","工作需要","没买到车票","想去外地过节"],1],["中秋节这天，周力的父母为儿子做了什么？",["买月饼","打扫卫生","买了一件上衣","做了一桌饭菜"],3],["周力的父母大约几点到了儿子工作的城市？",["五点","六点","七点","八点"],2]]},{"title":"节日的美好记忆","sub":"课文 4 · 短文","paras":["中国有很多节日，比如春节、元宵节、端午节、中秋节等。","作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。春节到来时，人们不管在哪里，都想回家过年。春节前也最忙，既要收拾房子、打扫卫生，又要准备各种美食。除夕这天晚上，一家人一边吃年夜饭，一边看春晚。零点一到，大家互相祝新年快乐，到处都是幸福的笑声。","每当回忆起童年，我最美好的记忆很多也发生在过年时。虽然现在已人到中年，离开了家，但是春节仍然是我最喜欢的节日，过年时也更想父母、兄弟姐妹。"],"idea":"<b>Là<\/b> ngày lễ <b>truyền thống<\/b> quan trọng nhất, Tết <b>có<\/b> <b>ý nghĩa<\/b> đặc biệt. Khi Tết <b>đến<\/b>, ai cũng muốn về nhà; trước Tết vừa dọn nhà vừa chuẩn bị <b>món ngon<\/b>. Giao thừa cả nhà ăn <b>cơm tất niên<\/b>, xem Xuân Vãn; 0 giờ chúc nhau năm mới. Mỗi khi <b>nhớ lại<\/b> <b>tuổi thơ<\/b>, nhiều <b>ký ức<\/b> đẹp nhất là dịp Tết. Dù <b>đã<\/b> <b>trung niên<\/b>, Tết <b>vẫn<\/b> là ngày lễ yêu thích, càng nhớ bố mẹ, <b>anh em<\/b>.","qs":[["下列哪个节日没有提到？",["春节","元宵节","端午节","六一儿童节"],3],["根据课文，春节到来时，人们会做什么？",["准备美食","外出看花","出去旅游","照顾孩子"],0],["除夕晚上，一家人会做什么？",["去剧院看演出","一边吃年夜饭，一边看春晚","去公园散步","吃月饼"],1]]}],"TEXT_EXTRA":{"bg":"","bg_vn":""},"APPLY":{"theme":"任务活动 · 小组讨论","topic":"三至四人一组，每人介绍一个你最喜欢的节日，说说为什么喜欢，过节时你都会做什么，等等。讨论后，每人再向大家介绍小组中另一位同学最喜欢的节日。","topic_vn":"Nhóm 3–4 người: mỗi người giới thiệu ngày lễ mình thích nhất — vì sao thích, ngày lễ thường làm gì… Sau đó mỗi người giới thiệu trước lớp ngày lễ yêu thích của một bạn khác trong nhóm.","qs":[["你最喜欢什么节日？为什么？","Bạn thích ngày lễ nào nhất? Vì sao?","我最喜欢春节。作为越南最重要的传统节日，春节对我们来说有着特别的意义。",["作为","传统","有着","意义"]],["过节时你们一般做什么？","Ngày lễ các bạn thường làm gì?","春节前我们既要打扫卫生，又要准备美食；除夕晚上，一家人一边吃年夜饭，一边聊天儿。",["美食","年夜饭"]],["你有什么难忘的节日回忆？","Bạn có kỷ niệm ngày lễ nào khó quên?","有一年春节，在外地工作的哥哥突然出现在家门口，我怎么也没想到！",["出现","怎么也没想到"]]],"vocab":[["春节","Chūnjié","Tết Nguyên đán"],["中秋节","Zhōngqiūjié","Tết Trung thu"],["粽子","zòngzi","bánh chưng / bánh ú"],["灯笼","dēnglong","đèn lồng"],["红包","hóngbāo","lì xì"],["拜年","bàinián","chúc Tết"],["放烟花","fàng yānhuā","bắn pháo hoa"],["月亮","yuèliang","mặt trăng"]],"build_title":"选一个角色，拼出你的发言","build_lead":"Chọn một vai, rồi chọn một câu cho mỗi bước. Bấm <b>Nghe<\/b> để nghe bài ghép, sau đó giới thiệu trong nhóm.","step_names":["① 什么节日","② 为什么喜欢","③ 做什么","④ 难忘的事"],"build":{"A · 春节":[["我最喜欢的节日是春节。","作为越南最重要的传统节日，春节对我来说有着特别的意义。"],["因为春节到来时，无论在哪儿工作，家人都会回家团圆。","因为春节时有很多美食，还能收到红包。"],["春节前，我们既要打扫卫生，又要准备各种美食。","除夕晚上，一家人一边吃年夜饭，一边聊天儿。"],["有一年，在外地工作的哥哥突然出现在家门口，我怎么也没想到！","每当回忆起童年，我最美好的记忆都和春节有关。"]],"B · 中秋节":[["我最喜欢的节日是中秋节。","在越南，中秋节是孩子们最喜欢的节日。"],["因为可以吃月饼、看月亮，还可以提着灯笼出去玩儿。","因为中秋节的街道上有很多演出活动，特别热闹。"],["晚上，我们一边吃月饼，一边看又大又圆的月亮。","小时候，我和兄弟姐妹提着灯笼在街上跑来跑去。"],["现在长大了，可是中秋节仍然是我最喜欢的节日。","这几年，中秋节的活动一年比一年丰富。"]],"C · 介绍同学":[["下面我介绍一下小林最喜欢的节日。","我们组的小王最喜欢的节日是端午节。"],["他喜欢这个节日，是因为可以和家人团圆。","她说，这个节日有着特别的意义。"],["过节时，他们家大约早上七点就开始准备美食。","过节时，她会和家人一起去景区游玩。"],["他说，那是他童年最美好的记忆。谢谢大家！","听了她的介绍，我也很想过一次这个节日。谢谢！"]]},"patterns":[["① 节日","作为……，……对……来说有着特别的意义","Là …, … có ý nghĩa đặc biệt với …"],["② 原因","因为……到来时，……","Vì khi … đến, …"],["③ 活动","既要……，又要……","Vừa phải …, vừa phải …"],["③ 活动","一边……，一边……","Vừa … vừa …"],["④ 回忆","怎么也没想到……","Không thể ngờ …"],["④ 回忆","每当回忆起……，……","Mỗi khi nhớ lại …, …"]],"legend":["① Ngày lễ","② Vì sao","③ Làm gì","④ Kỷ niệm"],"w5":["熊","老虎","喊","级","树林","景区","美","节假日","千万","开玩笑","月饼","葡萄","香","街道","剧院","演出","赶","巧","之中","铁路","人员","团圆","左右","大约","烤","西红柿","出现","作为","传统","有着","意义","到来","美食","年夜饭","回忆","童年","记忆","已","中年","仍然","兄弟"],"samples":[{"who":"春节","meta":"Giới thiệu ~1 phút","p":["作为越南最重要的传统节日，春节对我来说有着特别的意义。","因为春节到来时，无论在哪儿工作，家人都会回家团圆。","除夕晚上，一家人一边吃年夜饭，一边聊天儿。","有一年，在外地工作的哥哥突然出现在家门口，我怎么也没想到！"],"good":["在外地工作的哥哥突然出现在家门口，我怎么也没想到"],"vi":"Là ngày lễ truyền thống quan trọng nhất Việt Nam, Tết có ý nghĩa đặc biệt với tôi. Khi Tết đến, dù làm việc ở đâu, cả nhà đều về đoàn tụ. Giao thừa cả nhà vừa ăn cơm tất niên vừa trò chuyện. Có năm anh trai làm việc xa bỗng xuất hiện trước cửa, tôi không thể ngờ!"},{"who":"中秋节","meta":"Giới thiệu ~1 phút","p":["在越南，中秋节是孩子们最喜欢的节日。","因为可以吃月饼、看月亮，还可以提着灯笼出去玩儿。","小时候，我和兄弟姐妹提着灯笼在街上跑来跑去。","现在长大了，可是中秋节仍然是我最喜欢的节日。"],"good":["现在长大了，可是中秋节仍然是我最喜欢的节日"],"vi":"Ở Việt Nam, Trung thu là ngày lễ trẻ con thích nhất: ăn bánh, ngắm trăng, cầm đèn lồng đi chơi. Hồi nhỏ tôi và anh chị em cầm đèn chạy khắp phố. Giờ lớn rồi, Trung thu vẫn là ngày lễ tôi thích nhất."}]},"SPEAK":{"short":"童年最美好的节日记忆","topic":"美好的日子——说说你童年最美好的一个节日记忆。","topic_vn":"Dựa theo tên bài “美好的日子”: nói 1–2 phút về một ký ức ngày lễ đẹp nhất thời thơ ấu của bạn.","req":"📱 <b>Yêu cầu:<\/b> quay video hoặc ghi âm 1–2 phút gửi cô. Dùng ít nhất <b>2 cấu trúc<\/b> của bài (怎么也没想到 · 一……比一…… · 大约／左右 · 作为) và <b>6 từ mới<\/b>.","qs":[["是什么节日？那年你几岁？","Ngày lễ gì? Năm đó bạn mấy tuổi?","那是我八岁左右的一个中秋节。",["左右","中秋节"]],["那天发生了什么？","Hôm đó đã xảy ra chuyện gì?","爸爸带我们去看演出，街道上到处都是灯笼，热闹极了。",["演出","街道"]],["有什么让你没想到的事？","Có chuyện gì khiến bạn không ngờ?","我怎么也没想到，爸爸亲手给我做了一个兔子灯笼。",["怎么也没想到"]],["现在想起来，你有什么感受？","Giờ nghĩ lại, bạn cảm thấy thế nào?","每当回忆起那个晚上，我心里就特别暖。那是我童年最美好的记忆。",["回忆","童年","记忆"]]],"steps":[["什么节日","那是我……岁左右的一个……节"],["那天的事","那天……，……到处都是……"],["没想到的事","我怎么也没想到，……"],["感受","每当回忆起……，……；那是我童年最美好的记忆"]],"sample":["我童年最美好的记忆是八岁左右的一个中秋节。","那天晚上，爸爸妈妈带我和弟弟去老城区玩儿。街道上到处都是灯笼，还有很多演出活动，人一个比一个开心。","我们一边吃月饼，一边看月亮。这时候，爸爸突然从包里拿出了一个兔子灯笼。我怎么也没想到，那是他自己亲手做的！我高兴得喊了起来。","现在我已长大了，可每当回忆起那个晚上，我心里仍然特别暖。作为一个在外地工作的人，我更想念和家人在一起的美好日子。"],"sample_vn":"Ký ức đẹp nhất tuổi thơ tôi là một đêm Trung thu khi tôi khoảng tám tuổi. Tối hôm đó bố mẹ đưa tôi và em trai đi phố cổ chơi. Đường phố đâu cũng là đèn lồng, còn có nhiều hoạt động biểu diễn, ai nấy đều vui. Chúng tôi vừa ăn bánh vừa ngắm trăng. Lúc ấy bố bỗng lấy từ trong túi ra một chiếc đèn con thỏ. Tôi không thể ngờ đó là bố tự tay làm! Tôi vui đến reo lên. Giờ tôi đã lớn, nhưng mỗi khi nhớ lại đêm ấy, lòng vẫn rất ấm. Là người làm việc xa nhà, tôi càng nhớ những ngày tươi đẹp bên gia đình.","check":["Nói đủ 4 ý: ngày lễ → chuyện hôm đó → điều bất ngờ → cảm nhận","Dùng ít nhất 2 cấu trúc của bài","Dùng ít nhất 6 từ mới","Nói rõ, không đọc giấy, khoảng 1–2 phút"]},"W5":["熊","老虎","喊","级","树林","景区","美","节假日","千万","开玩笑","月饼","葡萄","香","街道","剧院","演出","赶","巧","之中","铁路","人员","团圆","左右","大约","烤","西红柿","出现","作为","传统","有着","意义","到来","美食","年夜饭","回忆","童年","记忆","已","中年","仍然","兄弟"],"WRITE":{"topic":"我最喜欢的节日和一个难忘的故事","topic_vn":"Ở nước bạn, bạn thích đón ngày lễ nào nhất? Viết một đoạn văn kể câu chuyện xảy ra vào dịp lễ đó, không ít hơn 140 chữ (đề 任务活动 · 写作 của sách).","steps":[["①","开头 · 节日","Giới thiệu ngày lễ.","作为……，……对我来说有着特别的意义"],["②","过节的习惯","Mọi người làm gì.","……前，既要……，又要……；一边……，一边……"],["③","故事","Kể câu chuyện (có tình tiết).","那年……，我怎么也没想到……；突然……出现……"],["④","感受","Cảm nhận / kết.","每当回忆起……，……；……仍然……"]],"pats":[["作为越南最重要的传统节日，春节对我来说有着特别的意义。","Mở bài."],["春节前，我们既要打扫卫生，又要准备各种美食。","Phong tục (既要……又要……)."],["除夕晚上，一家人一边吃年夜饭，一边聊天儿。","Phong tục (一边……一边……)."],["那年春节，我怎么也没想到，在国外留学的哥哥突然出现在家门口。","Câu chuyện (怎么也没想到, 出现)."],["每当回忆起那个春节，我心里就特别暖。","Cảm nhận (每当)."],["虽然现在我已离开家，但春节仍然是我最喜欢的节日。","Kết (已, 仍然)."]],"samples":[{"who":"范文 · Bài mẫu","title":"那个难忘的春节","p":["作为越南最重要的传统节日，春节对我来说有着特别的意义。","每年春节前，我们家既要打扫卫生，又要准备各种美食，妈妈还会包很多粽子。除夕晚上，一家人一边吃年夜饭，一边聊天儿，特别热闹。","让我最难忘的是三年前的春节。那年哥哥在国外留学，说工作太忙，回不了家。除夕晚上，我们正在吃年夜饭，突然有人敲门。我打开门一看，怎么也没想到，哥哥竟然出现在家门口！原来他是想给我们一个惊喜。妈妈高兴得哭了，那是我们家最团圆的一个春节。","每当回忆起那个晚上，我心里就特别暖。虽然现在我已离开家，但春节仍然是我最喜欢的节日。"],"good":["作为越南最重要的传统节日，春节对我来说有着特别的意义","既要打扫卫生，又要准备各种美食","一边吃年夜饭，一边聊天儿","怎么也没想到，哥哥竟然出现在家门口","每当回忆起那个晚上","春节仍然是我最喜欢的节日"],"vi":"Bố cục: giới thiệu ngày lễ (作为……有着特别的意义) → phong tục (既要……又要……, 一边……一边……) → câu chuyện bất ngờ (怎么也没想到, 出现) → cảm nhận (每当回忆起……, 已……仍然……)."}],"tpl":"【题目】\n作为【……】，【……】对我来说有着特别的意义。每年【……】前，我们家既要【……】，又要【……】。【……】晚上，一家人一边【……】，一边【……】。让我最难忘的是【……】。那年【……】。【……】，我怎么也没想到，【……】。每当回忆起【……】，我心里就【……】。虽然现在我已【……】，但【……】仍然是我最喜欢的节日。","chk":[["open","Có giới thiệu ngày lễ (节 · 作为 · 意义)","节|作为|意义"],["custom","Có phong tục (既要 · 一边 · 美食)","既要|一边|美食|年夜饭"],["story","Có câu chuyện (那年 · 没想到 · 突然 · 出现)","那年|没想到|突然|出现|有一年"],["end","Có cảm nhận (每当 · 回忆 · 仍然)","每当|回忆|仍然|难忘"]],"w5":["熊","老虎","喊","级","树林","景区","美","节假日","千万","开玩笑","月饼","葡萄","香","街道","剧院","演出","赶","巧","之中","铁路","人员","团圆","左右","大约","烤","西红柿","出现","作为","传统","有着","意义","到来","美食","年夜饭","回忆","童年","记忆","已","中年","仍然","兄弟"],"wmin":140,"wmax":260,"traps":"<b>Lưu ý:<\/b> 大约 + số / số + 左右 · 一年比一年 + Adj (không thêm 很) · 作为 phải có danh từ đi kèm · 回忆 (động từ) ≠ 记忆 (danh từ) · 出现 (người/vật hiện ra) ≠ 发生 (sự việc xảy ra) · 千万别 + V."}};</script>
+<script>
+(function(){
+"use strict";
+var D=window.LESSON;
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function el(t,a,h){var e=document.createElement(t);if(a)for(var k in a){if(k==="class")e.className=a[k];else if(k==="style")e.style.cssText=a[k];else e.setAttribute(k,a[k]);}if(h!=null)e.innerHTML=h;return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function han(s){return (String(s).match(/[一-鿿]/g)||[]).length;}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+var CIRC="①②③④⑤⑥⑦⑧⑨⑩";
+/* theme */
+(function(){var t=D.META.theme,r=document.documentElement.style;for(var k in t)r.setProperty("--"+k,t[k]);})();
+/* ---------- TTS ---------- */
+var SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>';
+var zhVoice=null,curBtn=null;
+function pickVoice(){if(!("speechSynthesis" in window))return;var v=speechSynthesis.getVoices();zhVoice=v.find(function(x){return /zh[-_]CN/i.test(x.lang)})||v.find(function(x){return /^zh/i.test(x.lang)})||null;}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+function say(text,btn){
+  if(!("speechSynthesis" in window)){alert("Trình duyệt này không hỗ trợ đọc tiếng Trung.");return;}
+  speechSynthesis.cancel();if(curBtn)curBtn.classList.remove("playing");
+  var u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g,"").replace(/【[^】]*】/g,"").replace(/_+|＿+|\{\d?\}/g,""));u.lang="zh-CN";if(zhVoice)u.voice=zhVoice;u.rate=0.85;
+  if(btn){btn.classList.add("playing");curBtn=btn;u.onend=u.onerror=function(){btn.classList.remove("playing");};}
+  speechSynthesis.speak(u);
+}
+function spk(text,label){var b=el("button",{class:"spk",type:"button","aria-label":label||"Nghe"},SPK);b.addEventListener("click",function(e){e.stopPropagation();say(text,b);});return b;}
+function spkHTML(text){return '<button class="spk" type="button" aria-label="Nghe" data-say="'+esc(text)+'">'+SPK+'</button>';}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-say]");if(b){e.stopPropagation();say(b.getAttribute("data-say"),b);}},true);
+/* ---------- VN toggle ---------- */
+var topbar=el("div",{class:"topbar"});
+var vnBtn=el("button",{type:"button"},"Ẩn tiếng Việt");
+vnBtn.addEventListener("click",function(){var h=document.body.classList.toggle("hide-vn");vnBtn.classList.toggle("on",h);vnBtn.textContent=h?"Hiện tiếng Việt":"Ẩn tiếng Việt";$$(".vn.peek").forEach(function(x){x.classList.remove("peek");});});
+topbar.appendChild(vnBtn);document.body.appendChild(topbar);
+document.addEventListener("click",function(e){if(!document.body.classList.contains("hide-vn"))return;var v=e.target.closest&&e.target.closest(".vn");if(v){v.classList.toggle("peek");e.stopPropagation();}},true);
+/* ---------- generic MC ---------- */
+function Score(node){this.node=node;this.r=0;this.d=0;this.n=0;}
+Score.prototype.add=function(){this.n++;this.show();};
+Score.prototype.hit=function(ok){this.d++;if(ok)this.r++;this.show();if(this.onchange)this.onchange();};
+Score.prototype.reset=function(){this.r=0;this.d=0;this.show();if(this.onchange)this.onchange();};
+Score.prototype.show=function(){if(this.node)this.node.textContent=this.zh?("答对 "+this.r+" / "+this.n+(this.d===this.n&&this.n?" · 完成！":"")):("Đúng "+this.r+" / "+this.n+(this.d===this.n&&this.n?" · hoàn thành!":""));};
+function mc(stem,opts,ans,ex,score,cls){
+  var q=el("div",{class:"q"+(cls?" "+cls:"")});q.appendChild(el("div",{class:"stem"},stem));
+  var ops=el("div",{class:"ops"});
+  opts.forEach(function(o,i){var b=el("button",{class:"op",type:"button"},(opts.length>2||cls==="lab"?String.fromCharCode(65+i)+". ":"")+o);
+    b.addEventListener("click",function(){if(q.classList.contains("done"))return;q.classList.add("done");
+      $$(".op",q).forEach(function(x,j){if(j===ans)x.classList.add("ok");else if(j===i)x.classList.add("no");});
+      if(score)score.hit(i===ans);});ops.appendChild(b);});
+  q.appendChild(ops);if(ex)q.appendChild(el("div",{class:"ex"},"💡 "+ex));if(score)score.add();return q;}
+function scoreBar(parent,label,onReset,zh){var r=el("div",{class:"row",style:"margin:8px 0 14px"});var s=el("span",{class:"score"});r.appendChild(s);
+  if(onReset){var b=el("button",{class:"btn sm",type:"button"},zh?"重做":"Làm lại");b.addEventListener("click",onReset);r.appendChild(b);}parent.appendChild(r);var S=new Score(s);S.zh=!!zh;return S;}
+function reveal(label,answer,cls){var b=el("button",{class:"rv"+(cls?" "+cls:""),type:"button"},label);b.addEventListener("click",function(){if(b.classList.contains("shown")){b.innerHTML=label;b.classList.remove("shown");}else{b.innerHTML=answer;b.classList.add("shown");}});return b;}
+/* ---------- modal framework ---------- */
+var MODALS={};
+function modal(key,no,title,tabs){
+  var m=el("div",{class:"modal",id:"m-"+key,role:"dialog","aria-modal":"true"});
+  var p=el("div",{class:"panel"});var hd=el("div",{class:"mhead"});
+  hd.appendChild(el("div",{class:"eyebrow"},no+" · "+title));hd.appendChild(el("div",{class:"mtitle"},title));
+  var x=el("button",{class:"close",type:"button","aria-label":"Đóng"},"×");x.addEventListener("click",function(){closeModal(m);});hd.appendChild(x);
+  var tb=el("div",{class:"tabs"});hd.appendChild(tb);p.appendChild(hd);
+  var body=el("div",{class:"mbody"});p.appendChild(body);m.appendChild(p);document.body.appendChild(m);
+  m.addEventListener("click",function(e){if(e.target===m)closeModal(m);});
+  var secs=[];
+  tabs.forEach(function(t,i){var b=el("button",{class:"tab",type:"button"},t);b.addEventListener("click",function(){showTab(i);});tb.appendChild(b);var s=el("div",{class:"sec"});body.appendChild(s);secs.push(s);});
+  function showTab(i){$$(".tab",tb).forEach(function(b,j){b.classList.toggle("on",i===j);});secs.forEach(function(s,j){s.classList.toggle("on",i===j);});body.scrollTop=0;}
+  showTab(0);if(tabs.length<2)tb.style.display="none";
+  MODALS[key]={m:m,secs:secs,show:showTab};return MODALS[key];}
+function openModal(key){MODALS[key].m.classList.add("open");document.body.style.overflow="hidden";}
+function closeModal(m){m.classList.remove("open");hidePop();if(!$$(".modal.open").length)document.body.style.overflow="";}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){if($(".pop.open")){hidePop();return;}var o=$$(".modal.open");if(o.length)closeModal(o[o.length-1]);}});
+/* ---------- HOME (v2 · 1 tiết) ---------- */
+var M=D.META;var VMD;
+document.title="LESSON "+("0"+M.num).slice(-2)+" · "+M.title+" · HSK GARDEN";
+var CARDS=[["warm","🌱","01","热身"],["vocab","📚","02","生词 · 注释",1],["text","📖","03","课文",1],["practice","📝","04","练习"],["game","🎮","05","游戏"],["apply","💬","06","运用 · 说"]];
+var GW=D.GRAMMAR.map(function(g){return g.word;});
+var home=el("main",{class:"home"});
+var hb=el("div",{class:"home-box"});
+hb.innerHTML='<div class="home-top"><div class="kicker">编辑：'+esc(M.editor)+'</div><h1><span class="t1">第'+M.num+'课</span><span class="t2">'+esc(M.title)+'</span></h1><div class="tagline">'+esc(M.tagline)+'</div><div class="vnline vn">'+esc(M.vn)+'</div></div>';
+var hg=el("div",{class:"home-grid g3h"});
+CARDS.forEach(function(c){var b=el("button",{class:"home-card"+(c[4]?" star":""),type:"button"},'<div class="ic">'+c[1]+'</div><div class="no">'+c[2]+'</div><div class="tt">'+c[3]+'</div><div class="st">'+esc(M.cards[c[0]]||"")+'</div>');b.addEventListener("click",function(){openModal(c[0]);});hg.appendChild(b);});
+hb.appendChild(hg);
+var hw=el("button",{class:"home-hw",type:"button"},'<div class="ic">🏠</div><div class="tx"><div class="no">07 · 课后</div><div class="tt">Bài về nhà</div><div class="st">'+esc(M.cards.hw||"")+'</div></div><div class="go">→</div>');hw.addEventListener("click",function(){openModal("hw");});hb.appendChild(hw);
+hb.appendChild(el("div",{class:"home-foot"},'<span>HSK GARDEN</span><span>LESSON '+("0"+M.num).slice(-2)+'</span><span>'+esc(M.title)+'</span>'));
+home.appendChild(hb);document.body.insertBefore(home,topbar);
+
+/* ---------- vocab index & linking ---------- */
+var V=D.V.map(function(v,i){return{i:i,hz:v[0],py:v[1],pos:v[2],vn:v[3],star:v[4],gloss:v[5],sent:v[6],ex:v[7],exvn:v[8],col:v[9],note:v[10]};});
+var NL=D.NOLINK||[];var VORDER=V.filter(function(v){return NL.indexOf(v.hz)<0;}).map(function(v){return{hz:v.hz,i:v.i};});var AL=D.ALIAS||{};Object.keys(AL).forEach(function(k){var t=V.find(function(v){return v.hz===AL[k];});if(t)VORDER.push({hz:k,i:t.i});});VORDER.sort(function(a,b){return b.hz.length-a.hz.length;});
+function linkVocab(text){var out="",i=0;while(i<text.length){var hit=null;for(var k=0;k<VORDER.length;k++){var w=VORDER[k].hz;if(text.substr(i,w.length)===w){hit=VORDER[k];break;}}
+  if(hit){out+='<span class="vlink" data-v="'+hit.i+'">'+esc(hit.hz)+'</span>';i+=hit.hz.length;}else{out+=esc(text[i]);i++;}}return out;}
+function linkText(text){var goods=(D.GOOD||[]).map(function(g,i){return{i:i,zh:g.zh};});var out="",i=0;
+  while(i<text.length){var g=null;for(var k=0;k<goods.length;k++){if(text.substr(i,goods[k].zh.length)===goods[k].zh){g=goods[k];break;}}
+    if(g){out+='<span class="good" data-g="'+g.i+'">'+linkVocab(g.zh)+'</span>';i+=g.zh.length;continue;}
+    var j=text.length;goods.forEach(function(gg){var p=text.indexOf(gg.zh,i);if(p>=0&&p<j)j=p;});
+    out+=linkVocab(text.slice(i,j));i=j;}return out;}
+/* ---------- popover ---------- */
+var pop=el("div",{class:"pop"});document.body.appendChild(pop);
+function hidePop(){pop.classList.remove("open");}
+function placePop(target){pop.classList.add("open");var r=target.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;var x=Math.min(Math.max(10,r.left),window.innerWidth-pw-10);var y=r.bottom+8;if(y+ph>window.innerHeight-10)y=Math.max(10,r.top-ph-8);pop.style.left=x+"px";pop.style.top=y+"px";}
+document.addEventListener("click",function(e){
+  var v=e.target.closest&&e.target.closest(".vlink[data-v]");var g=e.target.closest&&e.target.closest(".good[data-g]");
+  if(v&&!(document.body.classList.contains("hide-vn")&&e.target.closest(".vn"))){e.stopPropagation();var w=V[+v.dataset.v];
+    pop.innerHTML='<button class="x" type="button" aria-label="Đóng">×</button><div class="row"><span class="ph">'+w.hz+'</span>'+spkHTML(w.hz)+'<span class="dpy">'+w.py+'</span><span class="dpos">'+w.pos+'</span></div><div class="pg">'+esc(w.gloss)+'</div><div class="vn"><b>'+esc(w.vn)+'</b></div><div style="margin-top:10px"><button class="btn sm pri" type="button" data-open="'+w.i+'">Mở thẻ từ →</button></div>';
+    placePop(v);return;}
+  if(g){e.stopPropagation();var G=D.GOOD[+g.dataset.g];
+    pop.innerHTML='<button class="x" type="button" aria-label="Đóng">×</button><div class="eyebrow">好句 · Câu hay dùng khi viết</div><div class="pg" style="font-weight:800;color:var(--deep)">'+esc(G.zh)+spkHTML(G.zh)+'</div><div class="vn">'+esc(G.vn)+'</div><div class="dlab" style="margin-top:10px">Vì sao hay</div><div>'+G.why+'</div><div class="dlab">Khung câu</div><div class="fr">'+esc(G.frame)+'</div><div class="dlab">Áp dụng</div><div class="pg">'+esc(G.apply)+'</div><div class="vn" style="font-size:16px">'+esc(G.apply_vn)+'</div>';
+    placePop(g);return;}
+  if(e.target.closest&&e.target.closest(".pop .x")){hidePop();return;}
+  var o=e.target.closest&&e.target.closest("[data-open]");if(o){hidePop();openDetail(+o.dataset.open);return;}
+  if(!(e.target.closest&&e.target.closest(".pop")))hidePop();
+});
+/* ---------- vocab detail ---------- */
+var dm=el("div",{class:"modal dmodal"});var dp=el("div",{class:"dpanel"});dm.appendChild(dp);document.body.appendChild(dm);
+dm.addEventListener("click",function(e){if(e.target===dm)closeModal(dm);});
+var curD=0;
+function openDetail(i){curD=i;var w=V[i];
+  var sent=esc(w.sent);var sf=[w.hz];Object.keys(AL).forEach(function(k){if(AL[k]===w.hz)sf.unshift(k);});sf.some(function(x){if(sent.indexOf(x)>=0){sent=sent.split(x).join("<mark>"+x+"</mark>");return true;}});
+  var h='<button class="close" type="button" id="dClose" aria-label="Đóng">×</button>';
+  h+='<div class="row" style="align-items:baseline"><span class="dword">'+w.hz+'</span>'+spkHTML(w.hz)+'</div>';
+  h+='<div><span class="dpy">'+w.py+'</span><span class="dpos">'+w.pos+'</span>'+(w.star?'<span class="dstar">★ từ trọng điểm</span>':'')+'</div>';
+  h+='<div class="dlab">中文释义</div><div class="dgloss">'+esc(w.gloss)+'</div>';
+  h+='<div class="dlab">Nghĩa tiếng Việt</div><div class="dvn vn">'+esc(w.vn)+'</div>';
+  if(w.sent)h+='<div class="dlab">课文 · Câu trong bài</div><div class="dsent">'+sent+spkHTML(w.sent)+'</div>';
+  if(w.ex)h+='<div class="dlab">例句 · Ví dụ</div><div class="dsent">'+esc(w.ex)+spkHTML(w.ex)+'</div><div class="vn" style="font-size:19px">'+esc(w.exvn)+'</div>';
+  if(w.col&&w.col.length)h+='<div class="dlab">搭配</div><div class="chips">'+w.col.map(function(c){return '<span class="chip">'+esc(c)+'</span>';}).join("")+'</div>';
+  if(w.note)h+='<div class="dlab">辨析 · 提示</div><div class="note" style="margin:4px 0">'+w.note+'</div>';
+  var gi=GW.indexOf(w.hz);if(gi>=0)h+='<div class="dlab">注释 · 语法</div><div class="row"><button class="btn pri" type="button" id="dGram">Xem 注释 “'+esc(w.hz)+'”: cấu trúc · ví dụ · 练一练 →</button></div>';
+  h+='<div class="dnav"><button class="btn" type="button" id="dPrev">← '+(i>0?V[i-1].hz:"")+'</button><span class="hint">'+(i+1)+' / '+V.length+'</span><button class="btn" type="button" id="dNext">'+(i<V.length-1?V[i+1].hz:"")+' →</button></div>';
+  dp.innerHTML=h;dm.classList.add("open");dp.scrollTop=0;
+  $("#dClose",dp).addEventListener("click",function(){closeModal(dm);});
+  if($("#dGram",dp))$("#dGram",dp).addEventListener("click",function(){closeModal(dm);GSHOW(gi);});
+  $("#dPrev",dp).addEventListener("click",function(){if(curD>0)openDetail(curD-1);});
+  $("#dNext",dp).addEventListener("click",function(){if(curD<V.length-1)openDetail(curD+1);});}
+document.addEventListener("keydown",function(e){if(!dm.classList.contains("open"))return;if(e.key==="ArrowLeft"&&curD>0)openDetail(curD-1);if(e.key==="ArrowRight"&&curD<V.length-1)openDetail(curD+1);});
+
+/* ================= 01 热身 ================= */
+(function(){var W=D.WARM;var md=modal("warm","01","热身",W.map(function(w,i){return (i+1)+". "+w.tab;}));
+  W.forEach(function(w,wi){var s=md.secs[wi];s.appendChild(el("h3",{class:"h"},esc(w.title||w.tab)));
+    if(w.lead)s.appendChild(el("p",{class:"lead"},w.lead));
+    if(w.type==="think"){s.appendChild(el("div",{class:"card"},'<div class="exl" style="font-size:27px">'+esc(w.q)+spkHTML(w.q)+'</div><div class="vn">'+esc(w.vn)+'</div>'));
+      var g=el("div",{class:"grid g2"});w.opts.forEach(function(o){g.appendChild(el("div",{class:"card"},'<div class="exl"><b style="color:var(--main)">'+o[0]+'.</b> '+esc(o[1])+'</div><div class="vn" style="font-size:17px">'+esc(o[2])+'</div>'));});s.appendChild(g);
+      s.appendChild(el("div",{class:"note"},'💬 <b class="zh">讨论：'+esc(w.discuss)+'</b><br><span class="vn">'+esc(w.discuss_vn)+'</span>'));
+      var r=el("div",{class:"row"});r.appendChild(reveal("Xem đáp án gợi ý","<span class='zh'>"+esc(w.hint_zh)+"</span>"));s.appendChild(r);
+      if(w.hint)s.appendChild(el("div",{class:"card",style:"margin-top:14px"},'<div class="hint">'+w.hint+'</div>'));}
+    else if(w.type==="discuss"){s.appendChild(el("div",{class:"card"},'<div class="exl" style="font-size:26px">'+esc(w.q)+spkHTML(w.q)+'</div><div class="vn">'+esc(w.vn)+'</div>'));
+      var r2=el("div",{class:"row"});r2.appendChild(reveal("Xem câu trả lời gợi ý","<span class='zh' style='line-height:1.9'>"+esc(w.answer_zh)+"</span>"));s.appendChild(r2);
+      if(w.answer_vn)s.appendChild(el("div",{class:"card",style:"margin-top:14px"},'<div class="vn" style="font-size:17px">'+w.answer_vn+'</div>'));
+      if(w.table){var t='<table class="t c"><thead><tr>'+w.table[0].map(function(h){return '<th>'+h+'</th>';}).join("")+'</tr></thead><tbody>';w.table.slice(1).forEach(function(r){t+='<tr>'+r.map(function(c,ci){return '<td'+(ci?'':' class="zh"')+'>'+c+'</td>';}).join("")+'</tr>';});s.appendChild(el("div",null,t+'</tbody></table>'));}}
+    else if(w.type==="pics"){s.appendChild(el("div",{class:"bank",style:"letter-spacing:.03em;font-size:24px;line-height:1.9;word-spacing:.3em"},w.opts.join("　　")));var gp=el("div",{class:"grid g3"});var bp=[];w.items.forEach(function(it,i){var c=el("div",{class:"card",style:"margin:0;text-align:center"});c.appendChild(el("img",{src:it[0],alt:"",style:"width:100%;height:190px;object-fit:cover;border-radius:14px"}));var r=el("div",{class:"row",style:"justify-content:center;margin-top:10px"});r.appendChild(el("b",{style:"color:var(--main);font-size:22px"},(i+1)+"."));var rv=reveal("？","<span class='zh' style='font-size:24px'>"+esc(it[1])+"</span>");bp.push(rv);r.appendChild(rv);c.appendChild(r);gp.appendChild(c);});s.appendChild(gp);var rp=el("div",{class:"row",style:"margin-top:14px"});var ab=el("button",{class:"btn",type:"button"},"Hiện tất cả");ab.addEventListener("click",function(){bp.forEach(function(b){if(!b.classList.contains("shown"))b.click();});});rp.appendChild(ab);s.appendChild(rp);if(w.qs){s.appendChild(el("h4",{class:"h"},w.qs_title||"两人一组，互相问答"));w.qs.forEach(function(q,i){var c=el("div",{class:"card"});c.appendChild(el("div",{class:"exl",style:"font-size:24px"},(i+1)+". "+esc(q[0])+spkHTML(q[0])));c.appendChild(el("div",{class:"vn",style:"font-size:17px"},esc(q[1])));var r=el("div",{class:"row"});r.appendChild(reveal("Xem câu trả lời gợi ý","<span class='zh' style='line-height:1.8'>"+esc(q[2])+"</span>"));c.appendChild(r);s.appendChild(c);});}}
+    else if(w.type==="reveal"){var g2=el("div",{class:"grid g2"});var btns=[];
+      w.items.forEach(function(it,i){var c=el("div",{class:"card row",style:"margin:0;justify-content:space-between"});c.appendChild(el("span",{class:"zh",style:"font-size:22px"},'<b style="color:var(--main)">'+(i+1)+'.</b> '+(it[0].length<=2?'<span style="font-size:46px;vertical-align:middle">'+esc(it[0])+'</span>':esc(it[0]))));var rv=reveal("？","<span class='zh' style='font-size:22px'>"+esc(it[1])+"</span>"+(it[2]?" <span class='vn' style='font-size:15px'>"+esc(it[2])+"</span>":""));btns.push(rv);c.appendChild(rv);g2.appendChild(c);});
+      s.appendChild(g2);var ra=el("div",{class:"row",style:"margin-top:14px"});var all=el("button",{class:"btn",type:"button"},"Hiện tất cả");all.addEventListener("click",function(){btns.forEach(function(b){if(!b.classList.contains("shown"))b.click();});});ra.appendChild(all);s.appendChild(ra);
+      if(w.note)s.appendChild(el("div",{class:"note"},w.note));}
+    else if(w.type==="body"){var wrap=el("div",{class:"bodywrap"});
+      var svg='<svg class="bodysvg" viewBox="0 0 400 520" role="img" aria-label="Hình người"><g fill="#f6dccd" stroke="#a8433a" stroke-width="2.5">'+
+      '<ellipse cx="200" cy="62" rx="34" ry="40"/><rect x="188" y="100" width="24" height="20" rx="6"/>'+
+      '<path d="M140 128 Q200 112 260 128 L268 250 Q200 266 132 250 Z"/>'+
+      '<path d="M140 130 Q112 140 104 200 L96 290 Q104 296 112 290 L124 206 L142 160 Z"/><path d="M260 130 Q288 140 296 200 L304 290 Q296 296 288 290 L276 206 L258 160 Z"/>'+
+      '<path d="M136 250 Q200 270 264 250 L262 300 Q200 310 138 300 Z" fill="#c9d7ea"/>'+
+      '<path d="M140 300 L150 470 L182 470 L196 306 Z"/><path d="M260 300 L250 470 L218 470 L204 306 Z"/>'+
+      '<ellipse cx="164" cy="482" rx="26" ry="11"/><ellipse cx="236" cy="482" rx="26" ry="11"/>'+
+      '<circle cx="100" cy="300" r="10"/><circle cx="300" cy="300" r="10"/></g>'+
+      '<g stroke="#5b3a33" stroke-width="2" fill="none"><path d="M182 52 q8 -6 14 0"/><path d="M204 52 q8 -6 14 0"/><path d="M190 82 q10 8 20 0"/></g>';
+      w.items.forEach(function(b,i){svg+='<g class="bp" data-i="'+i+'" style="cursor:pointer"><line x1="'+b[3]+'" y1="'+b[4]+'" x2="'+b[5]+'" y2="'+b[6]+'" stroke="#6e2a24" stroke-width="1.5"/><circle cx="'+b[3]+'" cy="'+b[4]+'" r="3.5" fill="#6e2a24"/><circle cx="'+b[5]+'" cy="'+b[6]+'" r="15" fill="var(--main)" stroke="#fff" stroke-width="2"/><text x="'+b[5]+'" y="'+(b[6]+5)+'" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">'+(i+1)+'</text></g>';});
+      svg+='</svg>';var left=el("div",null,svg);wrap.appendChild(left);
+      var right=el("div");var bl=el("div",{class:"bl"});var bb=[];
+      w.items.forEach(function(b,i){var it=el("div",{class:"it"});it.appendChild(el("span",{class:"num"},String(i+1)));var rv=reveal("？","<span class='zh' style='font-size:22px'>"+b[0]+"</span> <small>"+b[1]+"</small> <span class='vn' style='font-size:15px'>"+esc(b[2])+"</span>");bb.push(rv);it.appendChild(rv);bl.appendChild(it);});
+      right.appendChild(bl);var rr=el("div",{class:"row",style:"margin-top:14px"});var al=el("button",{class:"btn",type:"button"},"Hiện tất cả");al.addEventListener("click",function(){bb.forEach(function(b){if(!b.classList.contains("shown"))b.click();});});rr.appendChild(al);right.appendChild(rr);
+      if(w.note)right.appendChild(el("div",{class:"note"},w.note));wrap.appendChild(right);s.appendChild(wrap);
+      $$(".bp",left).forEach(function(g){g.addEventListener("click",function(){bb[+g.dataset.i].click();});});}
+    else if(w.type==="words"){s.appendChild(el("div",{class:"card"},'<div class="exl">'+esc(w.task)+'</div><div class="vn">'+esc(w.task_vn)+'</div>'));
+      w.groups.forEach(function(gr){var c=el("div",{class:"card"});c.appendChild(el("h4",{class:"h",style:"margin-top:0"},esc(gr.title)));var rw=el("div",{class:"row"});
+        gr.items.forEach(function(v,i){if(i<(gr.given||0))rw.appendChild(el("span",{class:"chip"},v[0]+" <small class='vn'>"+esc(v[1])+"</small>"));else rw.appendChild(reveal("______","<span class='zh'>"+v[0]+"</span> <small class='vn'>"+esc(v[1])+"</small>"));});c.appendChild(rw);s.appendChild(c);});}
+  });
+})();
+function renderExplain(s,X){
+  s.innerHTML=(X.cover?'<div class="xpcover"><img src="'+X.cover+'" alt="'+esc(X.title)+'" loading="lazy"></div>':'')+'<h3 class="h">'+X.title+'</h3><p class="lead">'+X.lead+'</p>';
+  var fig=el("div",{class:"xpfig"},X.svg);s.appendChild(fig);if(X.video){var V=X.video;var vc=el("div",{class:"card xpvid"+(V.mp4?" wide":"")});var vh=V.mp4?'<div class="xpvframe wide"><video controls preload="metadata" playsinline poster="'+(V.poster||"")+'">'+(V.webm?'<source src="'+V.webm+'" type="video/webm">':'')+'<source src="'+V.mp4+'" type="video/mp4"></video></div>':'<div class="xpvframe"><iframe src="'+V.src+'" allow="autoplay; fullscreen; encrypted-media" allowfullscreen loading="lazy" title="'+esc(V.title)+'"></iframe></div>';vh+='<div class="xpvtx"><div class="dlab" style="margin-top:0">🎬 Video</div><div style="font-size:20px;font-weight:700">'+V.title+'</div><div class="vn" style="font-size:17px;margin-top:6px">'+(V.note||"")+'</div>'+(V.link?'<a class="btn" style="margin-top:12px;display:inline-block;text-decoration:none;color:inherit" href="'+V.link+'" target="_blank" rel="noopener">Xem bản gốc trên Douyin ↗</a>':'')+'</div>';vc.innerHTML=vh;s.appendChild(vc);    if(V.segs){var vid=$("video",vc);var sw=el("div",{class:"card xpsegs"});sw.innerHTML='<div class="dlab" style="margin-top:0">📝 Lời thuyết minh trong video · bấm từng đoạn để xem lại</div>'+(V.segs_lead?'<p class="lead" style="margin:4px 0 10px">'+V.segs_lead+'</p>':'');var cur=null;      V.segs.forEach(function(g,k){var r=el("div",{class:"xpseg"});r.innerHTML='<button class="xpt" type="button">▶ '+g.t+'</button><div class="xpsb"><div class="xpsh">'+g.h+'</div><div class="zh xpsz">'+linkVocab(g.zh)+'</div><div class="xpsv">'+g.vn+'</div>'+(g.w?'<div class="xpsw">'+g.w+'</div>':'')+'</div>';$(".xpsz",r).appendChild(spk(g.zh,"Nghe"));$(".xpt",r).addEventListener("click",function(){if(!vid)return;var p=g.t.split(":");vid.currentTime=(+p[0])*60+(+p[1]);vid.play();vc.scrollIntoView({behavior:"smooth",block:"start"});});r.dataset.s=(function(){var p=g.t.split(":");return (+p[0])*60+(+p[1]);})();sw.appendChild(r);});      if(vid)vid.addEventListener("timeupdate",function(){var t=vid.currentTime,rows=sw.querySelectorAll(".xpseg"),on=null;rows.forEach(function(r){if(+r.dataset.s<=t+0.3)on=r;});rows.forEach(function(r){r.classList.toggle("on",r===on);});});      if(V.terms){var tb='<div class="dlab">Từ ngữ địa chất trong video</div><div class="xptgrid">'+V.terms.map(function(t){return '<div class="xpterm"><span class="zh"><b>'+t[0]+'</b></span> <span class="py">'+t[1]+'</span><div>'+t[2]+'</div></div>';}).join("")+'</div>';sw.insertAdjacentHTML("beforeend",tb);}      s.appendChild(sw);}}
+  var nav=el("div",{class:"xpnav"});var cur=-1;var btns=[];
+  var all=el("button",{class:"btn",type:"button"},"Xem toàn bộ");nav.appendChild(all);
+  X.steps.forEach(function(st,i){var b=el("button",{class:"btn",type:"button"},"Bước "+(i+1));b.addEventListener("click",function(){go(i);});nav.appendChild(b);btns.push(b);});
+  var prev=el("button",{class:"btn",type:"button"},"←");var next=el("button",{class:"btn pri",type:"button"},"Bước tiếp →");nav.appendChild(prev);nav.appendChild(next);s.appendChild(nav);
+  var card=el("div",{class:"card xpcard"});s.appendChild(card);
+  function paint(){var svg=$("svg",fig);
+    var first={};X.steps.forEach(function(st,i){(st.ids||[]).forEach(function(id){if(!(id in first))first[id]=i;});});
+    Object.keys(first).forEach(function(id){var g=svg.querySelector("#"+id);if(!g)return;var curIds=cur>=0?(X.steps[cur].ids||[]):[];g.classList.toggle("xpdim",cur>=0&&first[id]>cur);g.classList.toggle("xpon",curIds[curIds.length-1]===id);});
+    btns.forEach(function(b,i){b.classList.toggle("pri",i===cur);});next.classList.toggle("pri",true);
+    if(cur<0){card.innerHTML='<div class="dlab" style="margin-top:0">Tóm tắt</div><div style="font-size:19px">'+X.summary+'</div>';next.textContent="Bắt đầu: Bước 1 →";return;}
+    var st=X.steps[cur];next.textContent=cur<X.steps.length-1?"Bước tiếp →":"Xem toàn bộ ↺";
+    var body='<div class="exl zh xpzh">'+linkVocab(st.zh)+'</div><div class="xpexp">'+st.vn+'</div>'+(st.key?'<div class="note" style="margin-top:10px">'+st.key+'</div>':'');card.innerHTML='<div class="dlab" style="margin-top:0">'+(st.chap?'<span class="xpchap">'+st.chap+'</span> ':'')+'Bước '+(cur+1)+' / '+X.steps.length+' · '+st.title+'</div>'+(st.img?'<div class="xpimgrow"><figure class="xpimg"><img src="'+st.img+'" alt="" loading="lazy">'+(st.cap?'<figcaption>'+st.cap+'</figcaption>':'')+'</figure><div class="xpbody">'+body+'</div></div>':body);
+    var sp=spk(st.zh,"Nghe câu");$(".xpzh",card).appendChild(sp);}
+  function go(i){cur=i;paint();}
+  all.addEventListener("click",function(){go(-1);});prev.addEventListener("click",function(){go(cur<=0?-1:cur-1);});
+  next.addEventListener("click",function(){go(cur>=X.steps.length-1?-1:cur+1);});
+  paint();
+  if(X.analogy)s.appendChild(el("div",{class:"note"},X.analogy));
+  s.appendChild(el("h4",{class:"h"},X.terms_title||"Từ khóa địa lý"));
+  var t='<table class="t"><thead><tr><th>词语</th><th>拼音</th><th>Tiếng Việt</th><th>Giải thích</th></tr></thead><tbody>';
+  X.terms.forEach(function(r){t+='<tr><td class="zh"><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td><td style="font-size:16px">'+r[3]+'</td></tr>';});
+  s.appendChild(el("div",null,t+'</tbody></table>'));
+  if(X.note)s.appendChild(el("div",{class:"note"},X.note));
+  s.appendChild(el("h4",{class:"h"},"Kiểm tra hiểu bài · tự chấm"));
+  var box=el("div");var sc;function render(){box.innerHTML="";sc=scoreBar(box,"",render);X.quiz.forEach(function(q,qi){box.appendChild(mc((qi+1)+'. <span class="zh">'+q[0]+'</span>',q[1].map(function(o){return '<span class="zh">'+o+'</span>';}),q[2],q[3],sc,"vert"));});sc.show();}
+  render();s.appendChild(box);
+}
+/* ================= 02 生词 (v2) ================= */
+(function(){var md=modal("vocab","02","生词 · 注释",["生词","注释 · 语法","搭配 · 辨析","写作句型"]);VMD=md;
+  var s=md.secs[0];var ST=V.filter(function(w){return w.star;}),RS=V.filter(function(w){return !w.star;});
+  var bar=el("div",{class:"row",style:"margin-bottom:10px"});
+  var pyb=el("button",{class:"btn",type:"button"},"Ẩn pinyin");bar.appendChild(pyb);
+  var mvb=el("button",{class:"btn",type:"button"},"Hiện nghĩa trên thẻ");bar.appendChild(mvb);s.appendChild(bar);
+  s.appendChild(el("h3",{class:"h"},"★ Từ trọng điểm · "+ST.length+" từ"));
+  s.appendChild(el("p",{class:"lead"},"Dạy kỹ trên lớp. Bấm thẻ để xem: 中文释义 → nghĩa tiếng Việt → câu trong bài → ví dụ → 搭配. Dấu <b class=\"gzi\">注</b> = từ có phần 注释 · 语法."));
+  var grid=el("div",{class:"vgrid"});
+  ST.forEach(function(w){var b=el("button",{class:"vcard",type:"button"},'<div class="n">'+("0"+(w.i+1)).slice(-2)+'</div><span class="st">★</span>'+(GW.indexOf(w.hz)>=0?'<span class="gz">注</span>':'')+'<div class="hz">'+w.hz+'</div><div class="py">'+w.py+'</div><div class="mv vn" style="display:none">'+esc(w.vn)+'</div>');b.addEventListener("click",function(){openDetail(w.i);});grid.appendChild(b);});
+  s.appendChild(grid);
+  s.appendChild(el("h3",{class:"h"},"Các từ còn lại · "+RS.length+" từ"));
+  s.appendChild(el("p",{class:"lead"},"Đọc qua một lượt cùng lớp, học sinh tự ôn ở nhà. Bấm vào từ để mở thẻ."));
+  var list=el("div",{class:"vlist"});
+  RS.forEach(function(w){var b=el("button",{class:"vrow",type:"button"},'<span class="n">'+("0"+(w.i+1)).slice(-2)+'</span><span class="hz">'+w.hz+'</span><span class="py">'+w.py+'</span><span class="pos">'+w.pos+'</span><span class="vn">'+esc(w.vn)+'</span>'+(GW.indexOf(w.hz)>=0?'<span class="gz">注</span>':''));b.addEventListener("click",function(){openDetail(w.i);});list.appendChild(b);});
+  s.appendChild(list);
+  pyb.addEventListener("click",function(){var h=s.classList.toggle("hide-py");pyb.textContent=h?"Hiện pinyin":"Ẩn pinyin";});
+  mvb.addEventListener("click",function(){var on=mvb.classList.toggle("pri");$$(".mv",grid).forEach(function(x){x.style.display=on?"":"none";});mvb.textContent=on?"Ẩn nghĩa trên thẻ":"Hiện nghĩa trên thẻ";});
+  /* 搭配 + 辨析 */
+  var s2=md.secs[2];s2.innerHTML='<h3 class="h">词语搭配</h3>';
+  D.COLLOC.forEach(function(c){var t='<table class="t c"><thead><tr><th style="width:42%">'+c[0]+'</th><th style="width:6%">＋</th><th>'+c[1]+'</th></tr></thead><tbody>';c[2].forEach(function(r){t+='<tr><td class="zh">'+r[0]+'</td><td>＋</td><td class="zh">'+r[1]+'</td></tr>';});s2.appendChild(el("div",null,t+'</tbody></table>'));});
+  s2.appendChild(el("h3",{class:"h"},"词语辨析"));
+  D.BIANXI.forEach(function(b,bi){var c=el("div",{class:"card"});c.appendChild(el("h4",{class:"h",style:"margin-top:0"},(D.BIANXI.length>1?CIRC[bi]+" ":"")+b.pair+(b.book?' <span class="tag">课本</span>':' <span class="tag" style="background:var(--accent)">补充</span>')));
+    var t='<table class="t"><thead><tr>'+b.head.map(function(h,i){return '<th'+(i===0?' style="width:14%"':'')+'>'+h+'</th>';}).join("")+'</tr></thead><tbody>';
+    b.rows.forEach(function(r){if(r[2]===null)t+='<tr><td><b>'+r[0]+'</b></td><td colspan="2">'+r[1]+'</td></tr>';else t+='<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>';});
+    c.appendChild(el("div",null,t+'</tbody></table>'));
+    c.appendChild(el("div",{class:"dlab"},"做一做 · 选词填空"));
+    var box=el("div");var sc;function render(){box.innerHTML="";sc=scoreBar(box,"",render,true);b.quiz.forEach(function(q){box.appendChild(mc('<span class="zh">'+q[0].replace("____",'<span class="blank">____</span>')+'</span>',b.opts,q[1],q[2],sc));});sc.show();}
+    render();c.appendChild(box);s2.appendChild(c);});
+  /* 写作句型 */
+  var s3=md.secs[3];s3.innerHTML='<h3 class="h">写作常用结构 · Cấu trúc dùng từ khi viết văn</h3><p class="lead">Mỗi từ / cấu trúc: khung câu → câu mẫu → thử viết câu của em (bấm xem gợi ý). Dùng lại trong bài viết 任务活动 ở nhà.</p>';
+  (D.WPAT||[]).forEach(function(p,i){var c=el("div",{class:"card"});c.appendChild(el("h4",{class:"h",style:"margin-top:0"},CIRC[i]+' <span class="zh">'+esc(p.w)+'</span> <small style="color:var(--muted);font-size:17px">'+esc(p.use)+'</small>'));
+    c.appendChild(el("div",null,p.frames.map(function(f){return '<span class="form">'+esc(f)+'</span>';}).join(" ")));
+    c.appendChild(el("div",{class:"dlab"},"Câu mẫu"));p.ex.forEach(function(e){c.appendChild(el("div",{class:"exl"},esc(e[0])+spkHTML(e[0])));c.appendChild(el("div",{class:"vn",style:"font-size:16px;margin-left:4px"},esc(e[1])));});
+    if(p.note)c.appendChild(el("div",{class:"note",style:"margin-top:8px"},p.note));
+    if(p.try){c.appendChild(el("div",{class:"dlab"},"Thử viết"));var r=el("div",{class:"row"});r.appendChild(el("span",{style:"font-size:18px"},esc(p.try[0])));r.appendChild(reveal("Gợi ý","<span class='zh'>"+esc(p.try[1])+"</span>"));c.appendChild(r);}
+    s3.appendChild(c);});
+})();
+
+/* ================= 03 课文 (v2) ================= */
+(function(){var XP=D.TEXT_EXPLAIN,XO=XP?1:0;var tabs=D.TEXT.map(function(p,i){return (i+1)+". "+p.title;});if(XP)tabs.push(XP.tab);tabs.push("好句积累");
+  var md=modal("text","03","课文",tabs);
+  D.TEXT.forEach(function(p,pi){var s=md.secs[pi];
+    s.appendChild(el("h3",{class:"h"},p.title+(p.sub?" · "+p.sub:"")));
+    s.appendChild(el("div",{class:"legend"},'<span class="vlink" style="cursor:default">từ mới</span> bấm xem nghĩa · <span class="good" style="cursor:default">câu hay</span> bấm xem khung câu'));
+    if(p.audio)s.appendChild(el("div",{class:"card",style:"display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 18px"},'<b>🎧 课文录音 · audio sách</b><audio controls preload="none" src="'+p.audio+'" style="flex:1;min-width:260px"></audio>'));
+    if(p.scene)s.appendChild(el("div",{class:"card",style:"padding:10px 18px"},'<span class="zh" style="font-size:20px">📍 '+esc(p.scene)+'</span>'+(p.scene_vn?'<div class="vn" style="font-size:16px">'+esc(p.scene_vn)+'</div>':'')));
+    s.appendChild(el("div",{class:"idea"},'<b class="k">Ý chính:</b> <span class="vn">'+p.idea+'</span>'));
+    p.paras.forEach(function(t){var d=el("p",{class:"para"},linkText(t));d.appendChild(spk(t,"Nghe đoạn"));s.appendChild(d);});
+    if(pi===D.TEXT.length-1)s.appendChild(el("div",{class:"foot"},esc(D.META.source)));
+    s.appendChild(el("h4",{class:"h"},"阅读理解 · Câu hỏi đọc hiểu"));
+    var box=el("div");var sc;function render(){box.innerHTML="";sc=scoreBar(box,"",render);p.qs.forEach(function(q,qi){box.appendChild(mc('<span class="zh">'+(qi+1)+'. '+q[0]+'</span>',q[1].map(function(o){return '<span class="zh">'+o+'</span>';}),q[2],"",sc));});sc.show();}
+    render();s.appendChild(box);});
+  if(XP)renderExplain(md.secs[D.TEXT.length],XP);var sg=md.secs[D.TEXT.length+XO];sg.innerHTML='<h3 class="h">好句积累 · Câu hay</h3><p class="lead">Các câu in đậm trong bài khóa. Chép <b>khung câu</b> vào vở; mục 06 运用 và bài viết ở nhà sẽ dùng lại.</p>';
+  D.GOOD.forEach(function(g,i){sg.appendChild(el("div",{class:"card gcard"},'<div class="gz">'+CIRC[i]+' '+esc(g.zh)+'。'+spkHTML(g.zh)+'</div><div class="vn">'+esc(g.vn)+'</div><div class="fr">'+esc(g.frame)+'</div><div style="font-size:17px">'+g.why+'</div><div class="dlab">Áp dụng</div><div class="ap">'+esc(g.apply)+spkHTML(g.apply)+'</div><div class="vn" style="font-size:16px">'+esc(g.apply_vn)+'</div>'));});
+})();
+
+/* ================= 02b 注释（在生词里） ================= */
+(function(){var host=VMD.secs[1];host.innerHTML='<h3 class="h">注释 · 语法</h3><p class="lead">Cấu trúc → giải thích → câu trong bài → ví dụ → 练一练 của sách → luyện nhanh.</p>';
+  var seg=el("div",{class:"seg gseg",style:"margin-bottom:14px"});host.appendChild(seg);var GS=[];
+  D.GRAMMAR.forEach(function(g,gi){var bt=el("button",{type:"button"},CIRC[gi]+" "+(g.title||g.word));seg.appendChild(bt);var s=el("div",{class:"gsec"});host.appendChild(s);GS.push(s);bt.addEventListener("click",function(){GSHOW(gi,true);});
+    s.appendChild(el("h3",{class:"h"},(g.title||g.word)+' <small style="font-size:20px;color:var(--muted)">'+g.py+' · '+g.pos+'</small>'));
+    var c=el("div",{class:"card"});c.appendChild(el("div",{class:"dlab",style:"margin-top:0"},"Cấu trúc"));var fr=el("div");g.forms.forEach(function(f){fr.appendChild(el("span",{class:"form"},esc(f)));});c.appendChild(fr);
+    c.appendChild(el("div",{class:"dlab"},"Giải thích"));c.appendChild(el("div",{style:"font-size:19px"},g.vn));
+    c.appendChild(el("div",{class:"dlab"},"Câu trong bài khóa"));c.appendChild(el("div",{class:"exl"},esc(g.text).split(g.word).join('<b style="color:var(--main)">'+g.word+'</b>')+spkHTML(g.text)));s.appendChild(c);
+    var c2=el("div",{class:"card"});c2.appendChild(el("div",{class:"dlab",style:"margin-top:0"},"例句 · Ví dụ"));
+    g.ex.forEach(function(e,i){c2.appendChild(el("div",{class:"exl"},'('+(i+1)+') '+esc(e[0]).split(g.word).join('<b style="color:var(--main)">'+g.word+'</b>')+spkHTML(e[0])));c2.appendChild(el("div",{class:"vn",style:"font-size:17px;margin-left:36px"},esc(e[1])));});s.appendChild(c2);
+    if(g.err&&g.err.length){var c3=el("div",{class:"card"});c3.appendChild(el("div",{class:"dlab",style:"margin-top:0"},"Lỗi hay sai"));
+      g.err.forEach(function(e){c3.appendChild(el("div",{class:"err"},'<span class="b">'+esc(e[0])+'</span><span class="g">'+esc(e[1])+'</span><span class="why">'+e[2]+'</span>'));});s.appendChild(c3);}
+    var c4=el("div",{class:"card"});c4.appendChild(el("div",{class:"dlab",style:"margin-top:0"},"练一练（课本）· bấm để xem đáp án gợi ý"));
+    if(g.book_title)c4.appendChild(el("div",{class:"hint"},g.book_title));
+    g.book.forEach(function(b,i){var d=el("div",{style:"margin:12px 0"});d.appendChild(el("div",{class:"bk"},'('+(i+1)+') '+b[0]));if(b[1])d.appendChild(el("div",{class:"hint"},b[1]));var r=el("div",{class:"row",style:"margin-top:4px"});r.appendChild(reveal("Xem đáp án gợi ý","<span class='zh'>"+esc(b[2])+"</span>"));d.appendChild(r);c4.appendChild(d);});s.appendChild(c4);
+    if(g.drill&&g.drill.length){s.appendChild(el("h4",{class:"h"},"Luyện nhanh · tự chấm"));
+      var box=el("div");var sc;var render=function(){box.innerHTML="";sc=scoreBar(box,"",render);g.drill.forEach(function(q,qi){box.appendChild(mc((qi+1)+'. <span class="zh">'+q[0]+'</span>',q[1].map(function(o){return '<span class="zh">'+o+'</span>';}),q[2],q[3],sc,q[1].length>2&&q[1][0].length>6?"vert":""));});sc.show();};
+      render();s.appendChild(box);}});
+  window.GSHOW=function(i,inside){$$("button",seg).forEach(function(b,j){b.classList.toggle("on",i===j);});GS.forEach(function(x,j){x.style.display=i===j?"":"none";});if(!inside){openModal("vocab");VMD.show(1);}else{VMD.show(1);} };
+  GSHOW(0,true);VMD.show(0);
+})();
+
+/* ---------- shared: select-fill item ---------- */
+function selItem(tpl,answers,opts,sc){var d=el("div",{class:"pitem"});var parts2=tpl.split("{}");
+  parts2.forEach(function(seg,i){d.appendChild(document.createTextNode(seg));if(i<parts2.length-1){var s=el("select",{class:"sel","aria-label":"Chọn từ"});s.appendChild(el("option",{value:""},"＿＿＿"));opts.forEach(function(o){s.appendChild(el("option",{value:o},o));});d.appendChild(s);sc.add();
+    (function(s,ans){s.addEventListener("change",function(){if(s.dataset.done)return;if(!s.value)return;s.dataset.done="1";s.disabled=true;var ok=s.value===ans;s.classList.add(ok?"ok":"no");if(!ok){var a=el("span",{class:"tag",style:"background:var(--ok)"},ans);s.after(a);}sc.hit(ok);});})(s,answers[i]);}});
+  return d;}
+
+/* ================= 04 练习 (HSK4: bài tập sách + đề HSK4 3.0) ================= */
+(function(){var P=D.PRACTICE,H=D.HSK;var md=modal("practice","04","练习",["练习 1 · 选词填空","练习 2 · 完成短文","练习 3 · 看图造句","HSK 4 · 听力","HSK 4 · 阅读","HSK 4 · 书写"]);var S=md.secs;
+  var parts=[];function total(){var r=0,n=0;parts.forEach(function(p){if(p){r+=p.r;n+=p.n;}});$$(".ptotal",md.m).forEach(function(t){t.textContent="Bài tập sách: đúng "+r+" / "+n;});$$(".ptbar",md.m).forEach(function(b){b.style.width=(n?r/n*100:0)+"%";});}
+  function tbar(s){s.appendChild(el("div",{class:"totalbar"},'<span class="score ptotal"></span><div class="bar"><i class="ptbar"></i></div>'));}
+  /* 练习 1: các nhóm 选词填空 của sách */
+  (function(){var s=S[0];tbar(s);var box=el("div");function render(){box.innerHTML="";box.appendChild(el("h3",{class:"h"},"综合练习 · 选词填空"));var sc=scoreBar(box,"",render);sc.onchange=total;parts[0]=sc;var k=0;
+    P.ex1.forEach(function(set,si){box.appendChild(el("div",{class:"bank"},set.bank.join("　")));set.items.forEach(function(it){k++;box.appendChild(selItem("（"+k+"）"+it[0],it[1],set.bank,sc));});});sc.show();total();}render();s.appendChild(box);})();
+  /* 练习 2: hoàn thành đoạn văn */
+  (function(){var s=S[1];tbar(s);var box=el("div");function render(){box.innerHTML="";var X=P.ex2;box.appendChild(el("h3",{class:"h"},X.title||"选择合适的内容完成短文"));var sc=scoreBar(box,"",render);sc.onchange=total;parts[1]=sc;
+    box.appendChild(el("div",{class:"card"},X.opts.map(function(o,i){return '<div class="exl" style="font-size:21px"><b style="color:var(--main)">'+"ABCDEF"[i]+'</b> '+esc(o)+'</div>';}).join("")));
+    var labels=X.opts.map(function(o,i){return "ABCDEF"[i];});var tx=el("div",{class:"card"});var t=esc(X.text).replace(/\{(\d+)\}/g,function(m,n){return '<span data-b="'+n+'"></span>';});tx.innerHTML='<p class="xpara" style="font-size:22px;line-height:2.1">'+t+'</p>';box.appendChild(tx);
+    $$("[data-b]",tx).forEach(function(sp){var n=+sp.dataset.b;var sl=el("select",{class:"sel","aria-label":"Chọn"});sl.appendChild(el("option",{value:""},"（"+n+"）"));labels.forEach(function(l){sl.appendChild(el("option",{value:l},l));});sp.appendChild(sl);sc.add();
+      sl.addEventListener("change",function(){if(sl.dataset.done||!sl.value)return;sl.dataset.done="1";sl.disabled=true;var ok=sl.value===X.ans[n-1];sl.classList.add(ok?"ok":"no");if(!ok)sl.after(el("span",{class:"tag",style:"background:var(--ok)"},X.ans[n-1]));sc.hit(ok);});});
+    if(X.why)box.appendChild(el("div",{class:"note"},X.why));sc.show();total();}render();s.appendChild(box);})();
+  /* 练习 3: nhìn tranh đặt câu */
+  (function(){var s=S[2];s.appendChild(el("h3",{class:"h"},"看图，用词语造句"));s.appendChild(el("p",{class:"lead"},"Nhìn tranh, dùng từ cho sẵn đặt một câu hoàn chỉnh (nói miệng hoặc viết vào ô). Sau đó bấm xem câu mẫu."));var g=el("div",{class:"grid g3"});
+    P.ex3.forEach(function(it,i){var c=el("div",{class:"card",style:"margin:0"});c.appendChild(el("img",{src:it[0],alt:"",style:"width:100%;height:200px;object-fit:cover;border-radius:14px"}));c.appendChild(el("div",{class:"exl",style:"font-size:24px;text-align:center"},"（"+(i+1)+"）"+esc(it[1])));
+      var ta=el("textarea",{placeholder:"用“"+it[1]+"”造句……",style:"min-height:70px;font-size:20px"});c.appendChild(ta);var r=el("div",{class:"row"});r.appendChild(reveal("Xem câu mẫu","<span class='zh'>"+esc(it[2])+"</span>"));r.appendChild(spk(it[2]));c.appendChild(r);g.appendChild(c);});s.appendChild(g);})();
+  total();
+  /* ---------- HSK helpers ---------- */
+  var ANS={},KEY={},PART={},DONE={},Lt="ABCDEFGH";
+  function rng(arr){var a=arr[0],b=arr[arr.length-1];return a===b?String(a):a+"-"+b;}
+  function nums(p){return Object.keys(PART).filter(function(n){return PART[n]===p;}).map(Number).sort(function(a,b){return a-b;});}
+  function totalRefresh(){var all=Object.keys(KEY),r=all.filter(function(n){return DONE[PART[n]]&&ANS[n]===KEY[n];}).length,d=all.filter(function(n){return DONE[PART[n]];}).length;$$(".hskTotal",md.m).forEach(function(t){t.textContent="客观题：已交卷 "+d+" / "+all.length+" 题 · 答对 "+r+" 题";});}
+  function setAns(n,v,box){if(DONE[PART[n]])return;ANS[n]=v;if(box)$$(".xo",box).forEach(function(b){b.classList.toggle("on",b.dataset.v===v);});
+    var bk=$('.xblank[data-n="'+n+'"]',md.m);if(bk&&box&&box.dataset.fill){var o=JSON.parse(box.dataset.fill);bk.innerHTML='<b>'+n+'</b> '+esc(o[Lt.indexOf(v)]);bk.classList.add("filled");}totalRefresh();}
+  function optRow(n,opts,ans,why,part,fill){var box=el("div",{class:"xq"});box.appendChild(el("div",{class:"xn"},String(n)));var ops=el("div",{class:"xops"});if(fill)box.dataset.fill=JSON.stringify(opts);
+    opts.forEach(function(o,i){var b=el("button",{class:"xo",type:"button","data-v":Lt[i]},'<span class="xl">'+Lt[i]+'</span>'+esc(o));b.addEventListener("click",function(){setAns(n,Lt[i],box);});ops.appendChild(b);});
+    box.appendChild(ops);box.appendChild(el("div",{class:"xwhy"},"【解析】"+esc(why||"")));KEY[n]=Lt[ans];PART[n]=part;return box;}
+  function gradeBar(part,parent){var r=el("div",{class:"row xbar"});var b=el("button",{class:"btn pri",type:"button"},"交卷 · 查看答案");var re=el("button",{class:"btn",type:"button"},"重做");var sc=el("span",{class:"score"});
+    b.addEventListener("click",function(){DONE[part]=true;var ns=nums(part),ok=0;ns.forEach(function(n){var q=$('.xq[data-q="'+n+'"]',md.m);if(ANS[n]===KEY[n])ok++;if(q){q.classList.add("graded");$$(".xo",q).forEach(function(x){x.classList.toggle("ok",x.dataset.v===KEY[n]);x.classList.toggle("no",x.dataset.v===ANS[n]&&ANS[n]!==KEY[n]);});}
+        var bk=$('.xblank[data-n="'+n+'"]',md.m);if(bk){bk.classList.add(ANS[n]===KEY[n]?"ok":"no");}});sc.textContent="答对 "+ok+" / "+ns.length;parent.classList.add("graded");totalRefresh();});
+    re.addEventListener("click",function(){DONE[part]=false;nums(part).forEach(function(n){delete ANS[n];var q=$('.xq[data-q="'+n+'"]',md.m);if(q){q.classList.remove("graded");$$(".xo",q).forEach(function(x){x.classList.remove("ok","no","on");});}
+        var bk=$('.xblank[data-n="'+n+'"]',md.m);if(bk){bk.classList.remove("ok","no","filled");bk.innerHTML="<b>"+n+"</b>";}});sc.textContent="";parent.classList.remove("graded");totalRefresh();});
+    r.appendChild(b);r.appendChild(re);r.appendChild(sc);return r;}
+  function head(s,t){s.appendChild(el("div",{class:"xhead"},t));}
+  function intro(s){s.appendChild(el("p",{class:"lead"},"Đề luyện theo dạng <b>HSK 4 (3.0)</b>, câu hỏi soạn từ từ vựng và ngữ pháp của bài. Làm xong từng phần bấm 交卷 để xem đáp án và 解析."));var tt=el("div",{class:"row"});tt.appendChild(el("span",{class:"score hskTotal"}));s.appendChild(tt);}
+  /* 听力 */
+  (function(){var s=S[3];intro(s);var p=el("div");s.appendChild(p);var ns=H.l.map(function(q){return q.n;});
+    head(p,"听力 · 第"+rng(ns)+"题 听对话，选择正确答案。");p.appendChild(el("p",{class:"lead"},"Bấm <b>▶ 播放</b> để nghe đoạn hội thoại (giọng đọc máy, có thể nghe lại). Giáo viên có thể tự đọc cho lớp nghe."));
+    H.l.forEach(function(q){var c=el("div",{class:"card xunit"});var txt=q.d.replace(/\|/g,"。").replace(/。。/g,"。")+"。问："+q.q;var pb=el("button",{class:"btn pri",type:"button"},"▶ 播放 · 第"+q.n+"题");pb.addEventListener("click",function(){say(txt.replace(/[男女]：/g,""),pb);});c.appendChild(pb);
+      var sc=el("details",{class:"xhint",style:"margin:8px 0"});sc.innerHTML='<summary>Xem lời thoại</summary><div class="zh" style="font-size:20px;line-height:1.9">'+esc(q.d).split("|").join("<br>")+'<br><b>问：'+esc(q.q)+'</b></div>';c.appendChild(sc);
+      var r=optRow(q.n,q.o,q.a,q.why,"l");r.dataset.q=q.n;c.appendChild(r);p.appendChild(c);});p.appendChild(gradeBar("l",p));totalRefresh();})();
+  /* 阅读 */
+  (function(){var s=S[4];intro(s);
+    var p1=el("div");s.appendChild(p1);var all=[];H.r1.forEach(function(u){u.qs.forEach(function(q){all.push(q.n);});});
+    head(p1,"阅读 第一部分 · 第"+rng(all)+"题 选词填空。");
+    H.r1.forEach(function(u){var c=el("div",{class:"card xunit"});c.appendChild(el("div",{class:"xlabel"},rng(u.qs.map(function(q){return q.n;}))));
+      u.text.forEach(function(t){c.appendChild(el("p",{class:"xpara"},esc(t).replace(/\{(\d+)\}/g,function(m,n){return '<span class="xblank" data-n="'+n+'"><b>'+n+'</b></span>';})));});
+      u.qs.forEach(function(q){var r=optRow(q.n,q.o,q.a,q.why,"r1",true);r.dataset.q=q.n;c.appendChild(r);});p1.appendChild(c);});
+    p1.appendChild(gradeBar("r1",p1));
+    var p2=el("div");s.appendChild(p2);all=[];H.r2.forEach(function(u){u.ans.forEach(function(a,i){all.push(u.start+i);});});
+    head(p2,"阅读 第二部分 · 第"+rng(all)+"题 排列顺序。");p2.appendChild(el("p",{class:"lead"},"Các câu A, B, C… bị xáo trộn. Với mỗi vị trí (theo thứ tự đúng), chọn câu đứng ở vị trí đó."));
+    H.r2.forEach(function(u){var c=el("div",{class:"card xunit"});var ns=u.ans.map(function(a,i){return u.start+i;});c.appendChild(el("div",{class:"xlabel"},rng(ns)));
+      u.paras.forEach(function(t,i){c.appendChild(el("div",{class:"xord"},'<span class="xl big">'+Lt[i]+'</span><span>'+esc(t)+'</span>'));});
+      var g=el("div",{class:"xordans"});ns.forEach(function(n,i){var r=optRow(n,u.paras.map(function(){return "";}),Lt.indexOf(u.ans[i]),"",'r2');r.dataset.q=n;r.classList.add("xshort");g.appendChild(r);});c.appendChild(g);
+      c.appendChild(el("div",{class:"xwhy xwhyall"},"【解析】正确顺序："+u.ans.join(" → ")+"。"+esc(u.why||"")));p2.appendChild(c);});
+    p2.appendChild(gradeBar("r2",p2));
+    var p3=el("div");s.appendChild(p3);all=[];H.r3.forEach(function(u){u.qs.forEach(function(q){all.push(q.n);});});
+    head(p3,"阅读 第三部分 · 第"+rng(all)+"题 阅读短文，选择正确答案。");
+    H.r3.forEach(function(u){var c=el("div",{class:"card xunit"});c.appendChild(el("div",{class:"xlabel"},rng(u.qs.map(function(q){return q.n;}))));
+      u.text.forEach(function(t){c.appendChild(el("p",{class:"xpara"},t));});
+      u.qs.forEach(function(q){var r=optRow(q.n,q.o,q.a,q.why,"r3");r.dataset.q=q.n;r.insertBefore(el("div",{class:"xstem"},esc(q.s)),r.children[1]);c.appendChild(r);});p3.appendChild(c);});
+    p3.appendChild(gradeBar("r3",p3));totalRefresh();})();
+  /* 书写 */
+  (function(){var s=S[5];s.appendChild(el("p",{class:"lead"},"Phần viết theo dạng <b>HSK 4 (3.0)</b>: sắp xếp thành câu → nhìn tranh dùng từ viết câu → viết đoạn văn ngắn."));
+    var W=H.w;head(s,"书写 第一部分 · 第"+rng(W.order.map(function(x,i){return W.start+i;}))+"题 完成句子。");var box=el("div");var render=function(){box.innerHTML="";var sc=scoreBar(box,"",render);W.order.forEach(function(o,i){box.appendChild(orderer("第"+(W.start+i)+"题",o,sc));});sc.show();};render();s.appendChild(box);
+    var n2=W.start+W.order.length;head(s,"书写 第二部分 · 第"+rng(W.pics.map(function(x,i){return n2+i;}))+"题 看图，用词语写句子。");var g=el("div",{class:"grid g3"});
+    W.pics.forEach(function(it,i){var c=el("div",{class:"card",style:"margin:0;position:relative"});c.appendChild(el("div",{class:"xpn"},String(n2+i)));c.appendChild(it[0].indexOf("<svg")===0?el("div",{class:"xpic"},it[0]):el("img",{src:it[0],alt:"",style:"width:100%;height:190px;object-fit:cover;border-radius:14px"}));c.appendChild(el("div",{class:"exl",style:"text-align:center;font-size:24px"},esc(it[1])));
+      var ta=el("textarea",{style:"min-height:64px;font-size:20px",placeholder:"写一个句子……"});c.appendChild(ta);var r=el("div",{class:"row"});r.appendChild(reveal("参考答案","<span class='zh'>"+esc(it[2])+"</span>"));c.appendChild(r);g.appendChild(c);});s.appendChild(g);
+    var n3=n2+W.pics.length,E=W.essay;head(s,"书写 第三部分 · 第"+n3+"题 写短文。");
+    s.appendChild(el("div",{class:"card"},'<div class="exl" style="font-size:23px">'+esc(E.prompt)+'</div>'+(E.vn?'<div class="vn" style="font-size:16px">'+esc(E.vn)+'</div>':'')));
+    if(E.tips)s.appendChild(el("div",{class:"note"},E.tips.map(function(t){return "• "+t;}).join("<br>")));
+    var ta=el("textarea",{placeholder:"请在这里写作文……"});s.appendChild(ta);var st=el("div",{class:"stat"});var cnt=el("span",{class:"score"},"0 字");st.appendChild(cnt);st.appendChild(el("span",null,"要求：不少于 "+E.min+" 字"));s.appendChild(st);
+    var key="hsk4_w_"+D.META.num;var dr=store(key);if(dr)ta.value=dr;function up(){cnt.textContent=han(ta.value)+" 字";store(key,ta.value);}ta.addEventListener("input",up);up();
+    var sd=el("div",{class:"sample",style:"margin-top:16px;display:none"});sd.innerHTML='<div class="hd"><span class="who">范文</span><span class="meta">'+han(E.sample)+' 字</span>'+spkHTML(E.sample)+'</div><div class="txt">'+esc(E.sample).replace(/\n/g,"<br>")+'</div>'+(E.svn?'<div class="vn" style="margin-top:10px;font-size:16px">'+esc(E.svn)+'</div>':'');
+    var rb=el("button",{class:"btn",type:"button"},"查看范文");var sh=false;rb.addEventListener("click",function(){sh=!sh;sd.style.display=sh?"":"none";rb.textContent=sh?"收起范文":"查看范文";});var rr=el("div",{class:"row",style:"margin:14px 0"});rr.appendChild(rb);s.appendChild(rr);s.appendChild(sd);})();
+})();
+
+/* ================= 05 游戏 · 抢答比赛 ================= */
+(function(){var G=D.GAME;var md=modal("game","05","游戏 · 抢答比赛",["抢答比赛"]);var s=md.secs[0];
+  var TN=["红队","蓝队"];
+  s.appendChild(el("p",{class:"lead"},"Chia lớp thành <b>2 đội</b>, hai đội thay phiên nhau. Trả lời đúng được <b>+1</b>. Trả lời sai thì <b>đội kia được giành quyền</b> trả lời câu đó. Câu hỏi lấy từ bài khóa: điền từ và sắp xếp câu."));
+  var sb=el("div",{class:"tscore"});var T=[0,1].map(function(i){var d=el("div",{class:"team t"+i},'<div class="nm">'+TN[i]+'</div><div class="pt">0</div>');sb.appendChild(d);return d;});s.appendChild(sb);
+  var stage=el("div",{class:"tstage"});s.appendChild(stage);
+  var ctl=el("div",{class:"row",style:"justify-content:center;margin-top:14px"});var nx=el("button",{class:"btn pri",type:"button"},"Câu tiếp →");var ng=el("button",{class:"btn",type:"button"},"Ván mới");ctl.appendChild(nx);ctl.appendChild(ng);s.appendChild(ctl);
+  var Q,k,pts,steal,done;
+  function team(){return (k%2)^(steal?1:0);}
+  function paintScore(){T.forEach(function(d,i){$(".pt",d).textContent=pts[i];d.classList.toggle("on",!done&&k<Q.length&&team()===i);});}
+  function newGame(){var f=shuffle(G.fill).slice(0,8),o=shuffle(G.order).slice(0,4);Q=[];var fi=0,oi=0;for(var i=0;i<f.length+o.length;i++){if((i%3===2&&oi<o.length)||fi>=f.length)Q.push({t:"o",d:o[oi++]});else Q.push({t:"f",d:f[fi++]});}
+    k=0;pts=[0,0];draw();}
+  function msg(t,cls){var m=$(".tmsg",stage);m.className="tmsg "+(cls||"");m.innerHTML=t;}
+  function result(ok){var tm=team();if(ok){pts[tm]++;done=true;msg("✓ Chính xác! <b>"+TN[tm]+" +1</b>","ok");}
+    else if(!steal){steal=true;msg("✗ Sai rồi! <b>"+TN[team()]+"</b> giành quyền trả lời.","no");}
+    else{done=true;msg("✗ Cả hai đội đều sai. Đáp án: <span class='zh'>"+esc(Q[k].t==="f"?Q[k].d[1]:Q[k].d[0].split("|").join(""))+"</span>","no");}
+    paintScore();nx.disabled=!done;return done;}
+  function draw(){steal=false;done=false;nx.disabled=true;stage.innerHTML="";
+    if(k>=Q.length){var w=pts[0]===pts[1]?"Hòa! 🤝":(pts[0]>pts[1]?TN[0]:TN[1])+" thắng! 🏆";stage.appendChild(el("div",{class:"tend"},'<div class="big">'+w+'</div><div>'+TN[0]+' '+pts[0]+' : '+pts[1]+' '+TN[1]+'</div>'));done=true;paintScore();nx.disabled=true;return;}
+    var q=Q[k];stage.appendChild(el("div",{class:"tno"},"Câu "+(k+1)+" / "+Q.length+" · "+(q.t==="f"?"Điền từ":"Sắp xếp câu")));
+    if(q.t==="f"){var opts=shuffle(q.d[2]);stage.appendChild(el("div",{class:"tq zh"},esc(q.d[0]).replace("{}",'<span class="blank">____</span>')));var g=el("div",{class:"tops"});
+      opts.forEach(function(o){var b=el("button",{class:"top zh",type:"button"},esc(o));b.addEventListener("click",function(){if(done||b.disabled)return;var ok=o===q.d[1];b.classList.add(ok?"ok":"no");b.disabled=true;if(result(ok)||ok)$$(".top",g).forEach(function(x){if(x.textContent===q.d[1])x.classList.add("ok");});});g.appendChild(b);});stage.appendChild(g);}
+    else{var parts=q.d[0].split("|"),target=parts.join("");var ans=el("div",{class:"ans tans"}),pool=el("div",{class:"pool tpool"});
+      function fill(){ans.innerHTML="";pool.innerHTML="";var mix=shuffle(parts);if(mix.join("")===target)mix.reverse();mix.forEach(function(p){var b=el("button",{class:"ck zh",type:"button"},esc(p));b.addEventListener("click",function(){if(done)return;(b.parentNode===pool?ans:pool).appendChild(b);});pool.appendChild(b);});}
+      fill();stage.appendChild(ans);stage.appendChild(pool);var r=el("div",{class:"row",style:"justify-content:center"});var ck=el("button",{class:"btn pri",type:"button"},"Kiểm tra");r.appendChild(ck);stage.appendChild(r);
+      ck.addEventListener("click",function(){if(done)return;if(pool.children.length){msg("Hãy dùng hết các cụm từ.","");return;}var ok=$$(".ck",ans).map(function(b){return b.textContent;}).join("")===target;if(!result(ok)&&!ok)fill();if(done)ans.innerHTML='<span class="zh" style="font-size:26px">'+esc(target)+'</span>';});}
+    stage.appendChild(el("div",{class:"tmsg"},"Lượt của <b>"+TN[team()]+"</b>"));paintScore();}
+  nx.addEventListener("click",function(){if(!done)return;k++;draw();});ng.addEventListener("click",newGame);newGame();
+})();
+function orderer(label,str,sc){var parts=str.split("|");var target=parts.join("");var d=el("div",{class:"card ord"});d.appendChild(el("div",{class:"hint"},label));
+  var ans=el("div",{class:"ans"}),pool=el("div",{class:"pool"}),res=el("div",{class:"res"});d.appendChild(ans);d.appendChild(pool);
+  var mix=shuffle(parts.map(function(p,i){return{p:p,i:i};}));if(parts.length>1&&mix.every(function(m,j){return m.i===j;}))mix.reverse();
+  mix.forEach(function(m){var b=el("button",{class:"ck",type:"button"},esc(m.p));b.addEventListener("click",function(){if(d.dataset.done)return;(b.parentNode===pool?ans:pool).appendChild(b);});pool.appendChild(b);});
+  var r=el("div",{class:"row"});var ck=el("button",{class:"btn pri",type:"button"},"Kiểm tra");var sh=el("button",{class:"btn",type:"button"},"Xem đáp án");r.appendChild(ck);r.appendChild(sh);r.appendChild(spk(target));d.appendChild(r);d.appendChild(res);
+  if(sc)sc.add();
+  ck.addEventListener("click",function(){if(d.dataset.done)return;if(pool.children.length){res.textContent="Hãy dùng hết các cụm từ.";return;}var got=$$(".ck",ans).map(function(b){return b.textContent;}).join("");var ok=got===target;d.dataset.done="1";d.classList.add(ok?"ok":"no");res.innerHTML=ok?"✓ Chính xác!":"✗ Đáp án: <span class='zh'>"+esc(target)+"</span>";if(sc)sc.hit(ok);});
+  sh.addEventListener("click",function(){res.innerHTML="Đáp án: <span class='zh' style='font-size:22px'>"+esc(target)+"</span>";if(!d.dataset.done){d.dataset.done="1";d.classList.add("no");if(sc)sc.hit(false);}});
+  return d;}
+
+/* ================= 06 运用 · 说 ================= */
+(function(){var A=D.APPLY;var md=modal("apply","06","运用 · 说",["话题讨论","拼一拼 · 说一说","范文 · 说"]);var S=md.secs;
+  var LC=["#a08a7d","var(--gold)","var(--main)","var(--ok)"];
+  function hl(x,goods){var t=esc(x);(goods||[]).forEach(function(g){t=t.split(esc(g)).join("\u0003"+esc(g)+"\u0004");});(A.w5||[]).forEach(function(w){t=t.split(w).join("\u0001"+w+"\u0002");});return t.replace(/\u0001/g,'<span class="w5">').replace(/\u0002/g,'</span>').replace(/\u0003/g,'<span class="gd">').replace(/\u0004/g,'</span>');}
+  /* 1 话题讨论 */
+  (function(){var s=S[0];s.innerHTML='<div class="eyebrow">话题讨论 · '+esc(A.theme)+'</div><h3 class="h">'+esc(A.topic)+spkHTML(A.topic)+'</h3><p class="lead vn">'+esc(A.topic_vn)+'</p>';
+    A.qs.forEach(function(q,i){var c=el("div",{class:"card"});c.appendChild(el("div",{class:"exl",style:"font-size:24px"},(i+1)+". "+esc(q[0])+spkHTML(q[0])));c.appendChild(el("div",{class:"vn",style:"font-size:17px"},esc(q[1])));
+      if(q[3]&&q[3].length)c.appendChild(el("div",{class:"chips",style:"margin:8px 0"},q[3].map(function(w){return '<span class="chip">'+esc(w)+'</span>';}).join("")));
+      var r=el("div",{class:"row"});r.appendChild(reveal("Xem câu trả lời gợi ý","<span class='zh' style='line-height:1.8'>"+esc(q[2])+"</span>"));r.appendChild(spk(q[2]));c.appendChild(r);s.appendChild(c);});
+    if(A.vocab&&A.vocab.length){s.appendChild(el("h4",{class:"h"},"Từ vựng cho chủ đề"));var g=el("div",{class:"chips"});A.vocab.forEach(function(v){g.appendChild(el("span",{class:"chip"},v[0]+' <small style="color:var(--muted)">'+v[1]+'</small> <small class="vn">'+esc(v[2])+'</small>'));});s.appendChild(g);}})();
+  /* 2 拼一拼 */
+  (function(){var s=S[1];s.innerHTML='<h3 class="h">'+A.build_title+'</h3><p class="lead">'+A.build_lead+'</p>';
+    var chips=el("div",{class:"seg",style:"margin-bottom:14px"});s.appendChild(chips);var bd=el("div",{class:"grid g2"});s.appendChild(bd);
+    s.appendChild(el("h4",{class:"h"},"Bài nói của bạn"));var out=el("div",{class:"out mark"});s.appendChild(out);var st=el("div",{class:"stat"});var cnt=el("span");st.appendChild(cnt);var sb=el("button",{class:"btn",type:"button"},"Nghe");st.appendChild(sb);s.appendChild(st);
+    var NAMES=A.step_names;var cur=Object.keys(A.build)[0],sel={};
+    Object.keys(A.build).forEach(function(n){var b=el("button",{type:"button"},n);b.addEventListener("click",function(){cur=n;sel={};render();});chips.appendChild(b);});
+    function render(){$$("button",chips).forEach(function(b){b.classList.toggle("on",b.textContent===cur);});bd.innerHTML="";var f=A.build[cur];
+      f.forEach(function(opts,k){var c=el("div",{class:"card step"+(k?" s"+(k+1):"")});c.appendChild(el("h4",{style:"margin:0 0 6px"},NAMES[k]));opts.forEach(function(o,j){var b=el("button",{class:"opt"+(sel[k]===j?" on":""),type:"button"},esc(o));b.addEventListener("click",function(){sel[k]=j;render();});c.appendChild(b);});bd.appendChild(c);});
+      var parts=[0,1,2,3].filter(function(k){return sel[k]!=null;}).map(function(k){return '<span class="mk p'+(k+1)+'">'+esc(f[k][sel[k]])+'</span>';});
+      out.innerHTML=parts.length?parts.join(""):'<span class="phd">Chọn câu ở các bước phía trên…</span>';var n=Object.keys(sel).length;cnt.textContent=(parts.length?han(out.textContent):0)+" chữ"+(n<4?" · còn thiếu "+(4-n)+" bước":" · đủ 4 bước");}
+    sb.addEventListener("click",function(){if($(".phd",out))return;say(out.textContent,sb);});render();
+    if(A.patterns){s.appendChild(el("h4",{class:"h"},"Câu khung dùng khi nói"));var tb=el("table",{class:"t"});tb.innerHTML='<thead><tr><th style="width:16%">步骤</th><th>句型</th><th style="width:32%">Nghĩa</th></tr></thead>';var bd2=el("tbody");
+      A.patterns.forEach(function(p){var tr=el("tr");tr.appendChild(el("td",null,"<b>"+p[0]+"</b>"));var td=el("td",{class:"zh"},esc(p[1]));td.insertBefore(spk(p[1]),td.firstChild);tr.appendChild(td);var tv=el("td");tv.appendChild(reveal("Nghĩa",esc(p[2]),"vnr"));tr.appendChild(tv);bd2.appendChild(tr);});tb.appendChild(bd2);s.appendChild(tb);}})();
+  /* 3 范文 */
+  (function(){var s=S[2];s.innerHTML='<h3 class="h">Bài nói mẫu</h3><div class="lg">'+A.legend.map(function(x,i){return '<span><i style="background:'+LC[i]+'"></i>'+x+'</span>';}).join("")+'<span><b class="w5">Đỏ</b> = từ của bài</span><span><b class="gd">Gạch chân</b> = khung 好句</span></div>';
+    var bar=el("div",{class:"row",style:"margin-bottom:14px"});var mb=el("button",{class:"btn",type:"button"},"Tô màu 4 bước");bar.appendChild(mb);s.appendChild(bar);var list=el("div");s.appendChild(list);
+    A.samples.forEach(function(sm){var d=el("div",{class:"sample"});var full=sm.p.join("");
+      var hd=el("div",{class:"hd"},'<span class="who">'+esc(sm.who)+'</span><span class="meta">'+esc(sm.meta)+'</span><span class="meta">'+han(full)+' chữ Hán</span>');hd.appendChild(spk(full,"Nghe cả bài"));var tg=el("button",{class:"btn",type:"button",style:"margin-left:auto"},"Dịch");tg.addEventListener("click",function(){d.classList.toggle("showtr");});hd.appendChild(tg);d.appendChild(hd);
+      d.appendChild(el("div",{class:"txt"},sm.p.map(function(x,i){return '<span class="mk p'+(i+1)+'">'+hl(x,sm.good)+'</span>';}).join("")));
+      d.appendChild(el("div",{class:"tr vn"},esc(sm.vi)));list.appendChild(d);});
+    var marked=false;mb.addEventListener("click",function(){marked=!marked;mb.textContent=marked?"Bỏ tô màu":"Tô màu 4 bước";$$(".sample",list).forEach(function(x){x.classList.toggle("mark",marked);});});})();
+})();
+
+/* ================= 07 Bài về nhà (HSK4: 写作 · 口语) ================= */
+(function(){var W=D.WRITE,K=D.SPEAK;
+  var md=modal("hw","07","Bài về nhà · 课后练习",["1 写作 · 任务活动","2 口语 · "+K.short]);var S=md.secs;
+  function wbox(s,min,max,key,rules){var ta=el("textarea",{placeholder:"请在这里写作文……","aria-label":"Bài viết"});s.appendChild(ta);
+    var st=el("div",{class:"stat"});var cnt=el("span",{class:"score"},"0 字");var bar=el("div",{class:"bar"},"<i></i>");st.appendChild(cnt);st.appendChild(bar);st.appendChild(el("span",null,"要求：不少于 "+min+" 字"));s.appendChild(st);
+    var dr=store(key);if(dr)ta.value=dr;
+    function upd(){var t=ta.value,c=han(t);cnt.textContent=c+" 字";var i=$("i",bar);i.style.width=Math.min(100,c/(max||min)*100)+"%";i.style.background=max&&c>max?"var(--no)":c>=min?"var(--ok)":"var(--gold)";store(key,t);if(rules)rules(t,c);}
+    ta.addEventListener("input",upd);upd();return {ta:ta,upd:upd};}
+  /* 1 写作 */
+  (function(){var s=S[0];s.innerHTML='<div class="eyebrow">任务活动 · 写作（课本）</div><h3 class="h">'+esc(W.topic)+spkHTML(W.topic)+'</h3><p class="lead vn">'+esc(W.topic_vn)+'</p>';
+    s.appendChild(el("h4",{class:"h"},"Dàn ý"));var g=el("div",{class:"grid g4"});
+    W.steps.forEach(function(st,i){g.appendChild(el("div",{class:"card step"+(i?" s"+(i%4+1):"")},'<div class="num">'+st[0]+'</div><h4>'+esc(st[1])+'</h4><div style="font-size:17px">'+st[2]+'</div><div class="zq">'+esc(st[3])+'</div>'));});s.appendChild(g);
+    if(W.pats){s.appendChild(el("h4",{class:"h"},"Câu khung nên dùng"));var tb=el("table",{class:"t"});tb.innerHTML='<thead><tr><th>句型</th><th style="width:38%">Nghĩa / cách dùng</th></tr></thead>';var bd=el("tbody");W.pats.forEach(function(p){var tr=el("tr");var td=el("td",{class:"zh"},esc(p[0]));td.insertBefore(spk(p[0]),td.firstChild);tr.appendChild(td);tr.appendChild(el("td",null,p[1]));bd.appendChild(tr);});tb.appendChild(bd);s.appendChild(tb);}
+    s.appendChild(el("h4",{class:"h"},"Bài mẫu"));
+    W.samples.forEach(function(sm){var d=el("div",{class:"sample"});var full=sm.p.join("");var t=sm.p.map(function(x){var y=esc(x);(sm.good||[]).forEach(function(q){y=y.split(esc(q)).join('<span class="gd">'+esc(q)+'</span>');});return y;}).join("<br>");
+      var hd=el("div",{class:"hd"},'<span class="who">'+esc(sm.who)+'</span><span class="meta">'+han(full)+' chữ Hán</span>');hd.appendChild(spk(full,"Nghe cả bài"));var tg=el("button",{class:"btn",type:"button",style:"margin-left:auto"},"Nhận xét");tg.addEventListener("click",function(){d.classList.toggle("showtr");});hd.appendChild(tg);d.appendChild(hd);
+      if(sm.title)d.appendChild(el("div",{class:"ttl"},esc(sm.title)));d.appendChild(el("div",{class:"txt"},t));d.appendChild(el("div",{class:"tr vn"},esc(sm.vi)));s.appendChild(d);});
+    s.appendChild(el("h4",{class:"h"},"Viết bài của bạn"));var g2=el("div",{class:"grid g2"});var Lc=el("div");
+    var tpl=el("div",{class:"tpl"},esc(W.tpl).replace(/【([^】]*)】/g,'<span class="blk">【$1】</span>'));Lc.appendChild(tpl);var r=el("div",{class:"row",style:"margin-top:10px"});var ub=el("button",{class:"btn",type:"button"},"Chép khung vào ô viết");r.appendChild(ub);Lc.appendChild(r);if(W.traps)Lc.appendChild(el("div",{class:"note"},W.traps));g2.appendChild(Lc);
+    var C=el("div",{class:"card"});C.appendChild(el("b",null,"Tự kiểm tra (cập nhật khi gõ)"));var ul=el("ul",{class:"chk"});var rules=W.chk.concat([["w5","Dùng ít nhất 5 từ của bài",null],["len","Không ít hơn "+W.wmin+" chữ Hán",null],["punc","Có dấu câu tiếng Trung （，。）",null]]);
+    rules.forEach(function(c){ul.appendChild(el("li",{"data-k":c[0]},'<span class="bx">✓</span><span>'+c[1]+'</span>'));});C.appendChild(ul);C.appendChild(el("div",{class:"hint",style:"margin-top:8px"},"Từ của bài đã dùng:"));var wl=el("div",{class:"wl"});W.w5.forEach(function(w){wl.appendChild(el("span",{"data-w":w},w));});C.appendChild(wl);g2.appendChild(C);s.appendChild(g2);
+    var B=wbox(s,W.wmin,W.wmax,"hsk4_write_"+D.META.num,function(t,n){var w=0;$$("span",wl).forEach(function(x){var h=t.indexOf(x.dataset.w)>=0;x.classList.toggle("hit",h);if(h)w++;});
+      rules.forEach(function(c){var ok;if(c[0]==="w5")ok=w>=5;else if(c[0]==="len")ok=n>=W.wmin;else if(c[0]==="punc")ok=/，/.test(t)&&/。/.test(t);else ok=new RegExp(c[2]).test(t);$('li[data-k="'+c[0]+'"]',ul).classList.toggle("ok",ok);});});
+    B.ta.id="applyTa";ub.addEventListener("click",function(){B.ta.value=tpl.textContent;B.upd();B.ta.focus();});})();
+  /* 2 口语 */
+  (function(){var s=S[1];s.innerHTML='<div class="eyebrow">口语 · Luyện nói ở nhà</div><h3 class="h">'+esc(K.topic)+spkHTML(K.topic)+'</h3><p class="lead vn">'+esc(K.topic_vn)+'</p>';
+    s.appendChild(el("div",{class:"note"},K.req));
+    s.appendChild(el("h4",{class:"h"},"Gợi ý trả lời từng ý"));K.qs.forEach(function(q,i){var c=el("div",{class:"card"});c.appendChild(el("div",{class:"exl",style:"font-size:23px"},(i+1)+". "+esc(q[0])+spkHTML(q[0])));c.appendChild(el("div",{class:"vn",style:"font-size:17px"},esc(q[1])));
+      if(q[3])c.appendChild(el("div",{class:"chips",style:"margin:8px 0"},q[3].map(function(w){return '<span class="chip">'+esc(w)+'</span>';}).join("")));var r=el("div",{class:"row"});r.appendChild(reveal("Câu gợi ý","<span class='zh' style='line-height:1.8'>"+esc(q[2])+"</span>"));r.appendChild(spk(q[2]));c.appendChild(r);s.appendChild(c);});
+    s.appendChild(el("h4",{class:"h"},"Dàn ý bài nói (1–2 phút)"));var g=el("div",{class:"grid g4"});K.steps.forEach(function(st,i){g.appendChild(el("div",{class:"card step"+(i?" s"+(i%4+1):"")},'<div class="num">'+(i+1)+'</div><h4>'+esc(st[0])+'</h4><div class="zq">'+esc(st[1])+'</div>'));});s.appendChild(g);
+    s.appendChild(el("h4",{class:"h"},"Bài nói mẫu"));var d=el("div",{class:"sample"});var full=K.sample.join("");var hd=el("div",{class:"hd"},'<span class="who">范例</span><span class="meta">'+han(full)+' chữ Hán · ~'+Math.round(han(full)/180*60)+' giây</span>');hd.appendChild(spk(full,"Nghe cả bài"));var tg=el("button",{class:"btn",type:"button",style:"margin-left:auto"},"Dịch");tg.addEventListener("click",function(){d.classList.toggle("showtr");});hd.appendChild(tg);d.appendChild(hd);
+    d.appendChild(el("div",{class:"txt"},K.sample.map(esc).join("<br>")));d.appendChild(el("div",{class:"tr vn"},esc(K.sample_vn)));s.appendChild(d);
+    var ck=el("div",{class:"card"});ck.innerHTML='<b>Tự đánh giá trước khi gửi bài</b><ul class="chk">'+K.check.map(function(c){return '<li class="ok" style="opacity:.85"><span class="bx">□</span><span>'+c+'</span></li>';}).join("")+'</ul>';s.appendChild(ck);})();
+})();
+
+})();
+</script>
+</body></html>
