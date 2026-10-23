@@ -318,7 +318,7 @@ const GAMES = [
     key: "nghieng-dau",
     title: "Quiz Nghiêng Đầu",
     zh: "汉字大挑战",
-    desc: "Nghiêng đầu trái / phải để chọn đáp án. Mỗi lượt là toàn bộ từ vựng của bài đã chọn (HSK 1 · 2 · 3 · 5).",
+    desc: "Nghiêng đầu trái / phải để chọn đáp án. Mỗi lượt là toàn bộ từ vựng của bài đã chọn (HSK 1 · 2 · 3 · 4 · 5).",
     tags: ["Camera", "Cả bài / lượt", "Cả lớp"],
     href: "/game-nghieng-dau.html",
     bg: "from-[#2A1650] to-[#4B2A8A]",
