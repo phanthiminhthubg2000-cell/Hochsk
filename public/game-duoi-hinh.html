@@ -48,6 +48,15 @@ body{font-family:var(--ui);color:var(--ink);background:radial-gradient(900px 520
 /* ---------- card (2 ô như video) ---------- */
 .card2{background:var(--card);border-radius:26px;padding:12px;box-shadow:0 18px 40px -18px rgba(60,30,120,.35);display:flex;flex-direction:column;gap:12px}
 #card .card2{max-width:min(100%,calc((100dvh - 190px) * .92));margin:0 auto}
+#card .card2.photo{max-width:min(100%,calc((100dvh - 250px) * .8))}
+.card2.photo{padding:10px}
+.pimg{display:grid;place-items:center;background:#FFFCF0;border-radius:18px;overflow:hidden}
+.pimg img{display:block;width:100%;height:auto;max-height:calc(100dvh - 250px);object-fit:contain}
+#demo .pimg img{max-height:62vh}
+.ansrow{padding:8px 0 6px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.ansrow .lb{font-size:15px;font-family:var(--ui);font-weight:800;color:#fff;background:var(--accent);border-radius:999px;padding:3px 12px;letter-spacing:.05em}
+.ansrow .py{display:inline;margin:0}
+
 .panel{position:relative;border:3px solid var(--wave);border-radius:22px;background:#FFFCF0;overflow:hidden}
 .panel::before{content:"";position:absolute;inset:4px;border:2px dashed rgba(127,182,232,.45);border-radius:17px;pointer-events:none}
 .scene{position:relative;width:100%;aspect-ratio:5/2.6}
@@ -160,7 +169,7 @@ body{font-family:var(--ui);color:var(--ink);background:radial-gradient(900px 520
         </div></div>
         <div class="opt"><h4>Số câu</h4><div class="chips" id="optN"><button class="chip" data-v="10" type="button">10 câu</button><button class="chip" data-v="20" type="button">20 câu</button><button class="chip on" data-v="99" type="button">Tất cả</button></div></div>
         <div class="startrow"><button class="btn main" id="startBtn" type="button">▶ Bắt đầu</button><span class="credit">Phím tắt: <b>Space</b> lật đáp án · <b>H</b> gợi ý · <b>→</b> câu tiếp</span></div>
-        <p class="credit">Câu đố theo trào lưu 谐音梗看图猜词 trên mạng · Hình minh hoạ: Twemoji (CC-BY 4.0).</p>
+        <p class="credit">Câu đố và hình theo trào lưu 谐音梗看图猜词 trên mạng (bản quyền hình thuộc tác giả gốc).</p>
       </div>
       <div class="demo" id="demo"></div>
     </div>
@@ -231,7 +240,7 @@ const P=[
  {t:"w",top:["冰","bīng",[["1f9ca",50,52,26]]],bot:[["1f9ca",50,46,22,{f:GREEN,a:"fly"}],["1fabd",30,42,14,{fx:1,a:"fly"}],["1fabd",70,42,14,{a:"fly"}],["2601",50,82,22,{o:.9}],["svg:motion",20,74,14]],a:"菲律宾",py:"Fēilǜbīn",vn:"Philippines",pun:"Cục đá <b>màu xanh lá (绿)</b> đang <b>bay (飞)</b> → <b>飞绿冰</b> fēi lǜ bīng ≈ <b>菲律宾</b> Fēilǜbīn."},
  {t:"w",top:["鱼","yú",[["1f41f",50,52,28]]],bot:[["1f41f",26,52,20],["1f41f",50,40,20],["1f41f",74,58,20]],a:"雨伞",py:"yǔsǎn",vn:"cái ô, cái dù",pun:"<b>Ba (三)</b> con <b>cá (鱼)</b> → <b>鱼三</b> yú sān ≈ <b>雨伞</b> yǔsǎn."},
  {t:"w",top:["狮子","shīzi",[["1f981",50,52,28]]],bot:[["1f981",50,54,28,{f:GREEN}],["2744",22,26,9],["2744",80,24,8],["2744",16,70,7],["2744",84,72,8]],a:"律师",py:"lǜshī",vn:"luật sư",pun:"Con <b>sư tử (狮)</b> <b>màu xanh lá (绿)</b> → <b>绿狮</b> lǜ shī ≈ <b>律师</b> lǜshī."},
- {t:"w",top:["豆包","dòubāo",[["1f95f",50,54,30]]],bot:[["1f6b6",46,54,28,{fx:1}],["1f95f",62,44,16,{r:20}]],a:"背包",py:"bēibāo",vn:"ba lô",pun:"<b>Cõng (背)</b> cái <b>bánh bao (豆包)</b> trên lưng → <b>背包</b> bēibāo."},
+ {t:"w",top:["豆包","dòubāo",[["1f95f",50,54,30]]],bot:[["1f95f",50,54,30]],a:"豆角",py:"dòujiǎo",vn:"đậu đũa, đậu que",pun:"Cái đầu của <b>豆包</b> (nhân vật app 豆包) mọc ra <b>bàn chân (脚 jiǎo)</b> → <b>豆脚</b> dòu jiǎo ≈ <b>豆角</b> dòujiǎo."},
  {t:"w",top:["π","pài",[["tx:π",50,50,24]]],bot:[["tx:π",50,50,24,{r:180}]],a:"反派",py:"fǎnpài",vn:"vai phản diện",pun:"Chữ <b>π</b> (đọc pài) bị <b>lật ngược (反)</b> → <b>反π</b> fǎn pài ≈ <b>反派</b> fǎnpài."},
  {t:"w",top:["马","mǎ",[["1f434",50,52,26]]],bot:[["1f434",50,52,20]].concat(Array.from({length:12},(_,i)=>{const a=i/12*Math.PI*2;return ["tx:2",50+Math.cos(a)*26,52+Math.sin(a)*40,7,{c:"#6D3FD1"}];})),a:"二维码",py:"èrwéimǎ",vn:"mã QR",pun:"Con <b>ngựa (马)</b> bị số <b>2 (二)</b> <b>vây quanh (围)</b> → <b>二围马</b> èr wéi mǎ ≈ <b>二维码</b> èrwéimǎ."},
  {t:"w",top:["米","mǐ",[["1f35a",50,52,28]]],bot:[["1f35a",32,50,22],["1f945",64,50,20,{r:-15}],["1f4a7",80,72,8],["1f4a7",70,80,7]],a:"米老鼠",py:"Mǐlǎoshǔ",vn:"chuột Mickey",pun:"<b>Gạo (米)</b> cầm vợt <b>vớt (捞)</b> <b>nước (水)</b> → <b>米捞水</b> mǐ lāo shuǐ ≈ <b>米老鼠</b> Mǐlǎoshǔ."},
@@ -254,14 +263,17 @@ const P=[
  {t:"i",top:["柑","gān",[["1f34a",50,52,26]]],bot:[["1f34a",32,62,20],["1f647",64,52,24,{fx:1}],["svg:wind",86,34,16,{fx:1}]],a:"甘拜下风",py:"gān bài xià fēng",vn:"cam bái hạ phong — chịu thua tâm phục",pun:"Cúi <b>lạy (拜)</b> quả <b>cam (柑)</b> trước <b>gió (风)</b> → <b>柑拜下风</b> ≈ <b>甘拜下风</b>."},
  {t:"i",top:["巧克力","qiǎokèlì",[["1f36b",50,52,28,{r:-10}]]],bot:[["1f36b",36,52,26,{r:-10}],["1f445",58,58,14],["1f300",78,54,14,{a:"spin"}]],a:"巧舌如簧",py:"qiǎo shé rú huáng",vn:"ăn nói khéo léo, lưỡi lò xo",pun:"Thanh <b>巧(克力)</b> thè <b>lưỡi (舌)</b> như <b>lò xo (簧)</b> → <b>巧舌如簧</b>."},
 ];
-P.forEach((p,i)=>p.id=i);
+{let w=0,k=0;P.forEach((p,i)=>{p.id=i;p.img=IMG+"cards/"+(p.t==="w"?"w"+String(++w).padStart(2,"0"):"i"+String(++k).padStart(2,"0"))+".jpg";});}
 /* ---------- vẽ cảnh ---------- */
 function scene(spr){return '<div class="scene">'+spr.map(s=>{const [k,x,y,w,o]=s,op=o||{};let tr="";if(op.r)tr+=` rotate(${op.r}deg)`;if(op.fx)tr+=" scaleX(-1)";
   let st=`left:${x}%;top:${y}%;width:${w}%;`;if(op.o)st+=`opacity:${op.o};`;if(op.z)st+=`z-index:${op.z};`;
   let inner;if(k.startsWith("svg:"))inner=SVG[k.slice(4)];else if(k.startsWith("tx:"))inner=`<span class="tx" style="font-size:${w*0.9}cqw;${op.c?"color:"+op.c:""}">${esc(k.slice(3))}</span>`;else inner=`<img src="${IMG}${k}.svg" alt="" draggable="false">`;
   const inn=`<div style="${tr?"transform:"+tr+";":""}${op.f?"filter:"+op.f+";":""}width:100%">${inner}</div>`;
   return `<div class="sp2${op.a?" a-"+op.a:""}" style="${st}">${inn}</div>`;}).join("")+"</div>";}
-function card(p,shown){const n=[...p.a].length;const slots=[...p.a].map(ch=>`<span class="slot${shown?" fill":""}">${shown?esc(ch):""}</span>`).join("");
+function card(p,shown){if(p.img){const sl=[...p.a].map(ch=>`<span class="slot${shown?" fill":""}">${shown?esc(ch):""}</span>`).join("");
+  return `<div class="card2 photo"><div class="pimg"><img src="${p.img}" alt="这是${esc(p.top[0])}"></div><div class="cap ansrow"><span class="lb">答案</span><span class="slots">${sl}</span><span class="py">${p.t==="i"?"（成语 · thành ngữ）":"（"+[...p.a].length+" chữ）"}</span></div></div>`;}
+  return card0(p,shown);}
+function card0(p,shown){const n=[...p.a].length;const slots=[...p.a].map(ch=>`<span class="slot${shown?" fill":""}">${shown?esc(ch):""}</span>`).join("");
   return `<div class="card2"><div class="panel">${scene(p.top[2])}<div class="cap">这是${esc(p.top[0])}<span class="py">${esc(p.top[1])}</span></div></div>
   <div class="panel">${scene(p.bot)}<div class="cap">这是<span class="slots">${slots}</span>${p.t==="i"?'<span class="py">（成语 · thành ngữ）</span>':'<span class="py">（'+n+' chữ）</span>'}</div></div></div>`;}
 /* scene dùng container query đơn vị cqw cho chữ */
