@@ -225,8 +225,16 @@ const GAME_STYLE = {
   "nhanh": { badge: "📱 Nhiều máy" },
 };
 
+const GAME_COVERS = ["nghieng-dau", "trieu-phu", "san-bo-thu", "doan-thanh-ngu", "duoi-hinh", "bom", "keo-co", "dua", "nhanh"];
+
 function GameCover({ g }) {
   const st = GAME_STYLE[g.key] || {};
+  if (GAME_COVERS.includes(g.key)) return (
+    <div className="relative aspect-video overflow-hidden bg-[#E7F5EC]">
+      <img src={`/games/covers/${g.key}.webp`} alt={g.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+      {st.badge && <span className="absolute top-3 left-3 z-10 text-[11px] font-extrabold tracking-wide text-white bg-black/35 backdrop-blur px-2.5 py-1 rounded-full">{st.badge}</span>}
+    </div>
+  );
   return (
     <div className={`h-44 bg-gradient-to-br ${g.bg} relative overflow-hidden`}>
       {/* hoạ tiết chữ Hán mờ */}
