@@ -497,6 +497,9 @@ u{text-decoration:none;box-shadow:inset 0 -.32em 0 color-mix(in srgb,var(--c) 28
 .wpr .ask{font-size:24px;line-height:1.45}
 .wpr .ask .vn{font-size:16px}
 .wql{margin:8px 0 0 22px;font:500 19px/1.5 var(--zh)}
+.gan{min-height:0}
+.fill.kz5{overflow:auto;gap:8px}
+.fill.kz5 .fq{font-size:21px}
 </style>
 </head>
 <body>
@@ -1121,7 +1124,7 @@ function quizBind(el){
 // Mở rộng
 (function(){var G=L.kz;if(!G)return;var opts=G.words.map(function(w){return w[0];});
   add(8,'--lx',head(8,'Mở rộng · '+G.kind,G.title)+'<div class="body"><div class="gan"><div class="ganc"><div class="big zh'+(G.big.length>2?' sm':'')+'">'+G.big+'</div><p class="note">'+G.note+'</p><div class="gwords">'+G.words.map(function(w){return '<div>'+w[0]+'<small>'+w[1]+' · '+w[2]+'</small></div>';}).join('')+'</div></div>'+
-  '<div class="fill">'+G.items.map(function(it){return '<div class="fq" data-a="'+opts.indexOf(it[1])+'" data-why=""><span class="zh">'+it[0].replace('____','<span class="blank">　</span>')+'</span><div class="opts">'+opts.map(function(o,j){return '<button data-j="'+j+'">'+o+'</button>';}).join('')+'</div><div class="why"></div></div>';}).join('')+'</div></div></div>','',quizBind);
+  '<div class="fill'+(G.items.length>3?' lx kz5':'')+'">'+G.items.map(function(it){return '<div class="fq" data-a="'+opts.indexOf(it[1])+'" data-why=""><span class="zh">'+it[0].replace('____','<span class="blank">　</span>')+'</span><div class="opts">'+opts.map(function(o,j){return '<button data-j="'+j+'">'+o+'</button>';}).join('')+'</div><div class="why"></div></div>';}).join('')+'</div></div></div>','',quizBind);
 })();
 // Đề HSK4
 (function(){var X=L.exam;
