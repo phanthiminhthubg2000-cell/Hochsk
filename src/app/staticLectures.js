@@ -1,6 +1,12 @@
 // Bài giảng tĩnh (tệp HTML trong /public/lectures), hiển thị cùng bài giảng trên Firestore.
 export const STATIC_LECTURES = [
  {
+  "id": "static-hsk4-v2-01",
+  "lectureName": "Bài 1 · 简单的爱情",
+  "level": "HSK4.1 2.0",
+  "fileUrl": "/lectures/hsk4-v2/LESSON_01.html"
+ },
+ {
   "id": "static-hsk5-1-01",
   "lectureName": "Bài 1 · 爱的细节",
   "level": "HSK5.1 2.0",
