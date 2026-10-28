@@ -494,6 +494,9 @@ u{text-decoration:none;box-shadow:inset 0 -.32em 0 color-mix(in srgb,var(--c) 28
 .cur{gap:8px}.cterms div{padding:4px 12px}.cask{font-size:20px}
 .cimg.tall{float:right;flex-direction:column;align-items:center;margin:0 0 8px 18px}
 .cimg.tall img{width:auto;height:250px;object-fit:contain}
+.wpr .ask{font-size:24px;line-height:1.45}
+.wpr .ask .vn{font-size:16px}
+.wql{margin:8px 0 0 22px;font:500 19px/1.5 var(--zh)}
 </style>
 </head>
 <body>
@@ -946,7 +949,7 @@ add(0,'--l1',head(0,'Mục tiêu bài học','这一课我们学什么？')+'<di
 // 3. Khởi động
 if(L.prev)addReview(L.prev.words,L.prev.errs,'Bài '+L.prev.num+' · '+L.prev.zh,0,'--l1','Kiểm tra bài cũ');
 if(L.warm.pic){var Wm=L.warm;
-  add(0,'--l1',head(0,'Khởi động',Wm.title,Wm.sub)+'<div class="body"><div class="wpic"><img src="'+Wm.pic+'" alt=""><div class="wpr"><div class="wws">'+Wm.items.map(function(it,i){return '<button class="ww" data-say="'+it[0]+'"><i>'+(i+1)+'</i><span class="zh">'+it[0]+'</span><em>'+it[1]+'</em><b>'+it[2]+'</b></button>';}).join('')+'</div><button class="tbtn" data-wans>Hiện đáp án</button>'+(Wm.q?'<div class="ask zh"><button class="say" data-say="'+esc(Wm.q)+'">'+SPK+'</button><div>'+Wm.q+'<span class="vn">'+Wm.qvn+'</span></div></div>':'')+'</div></div></div>','',function(el){el.querySelector('[data-wans]').onclick=function(){el.classList.toggle('wshow');};});
+  add(0,'--l1',head(0,'Khởi động',Wm.title,Wm.sub)+'<div class="body"><div class="wpic"><img src="'+Wm.pic+'" alt=""><div class="wpr"><div class="wws">'+Wm.items.map(function(it,i){return '<button class="ww" data-say="'+it[0]+'"><i>'+(i+1)+'</i><span class="zh">'+it[0]+'</span><em>'+it[1]+'</em><b>'+it[2]+'</b></button>';}).join('')+'</div><button class="tbtn" data-wans>Hiện đáp án</button>'+(Wm.q?'<div class="ask zh"><button class="say" data-say="'+esc(Wm.q)+'">'+SPK+'</button><div>'+Wm.q+'<span class="vn">'+Wm.qvn+'</span>'+(Wm.qlist?'<ol class="wql">'+Wm.qlist.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'')+'</div></div>':'')+'</div></div></div>','',function(el){el.querySelector('[data-wans]').onclick=function(){el.classList.toggle('wshow');};});
 }else
 add(0,'--l1',head(0,'Khởi động','这些电影你看过吗？','Bấm vào từng phim để xem tên tiếng Trung')+'<div class="body"><div class="films">'+L.warm.films.map(function(f){return '<button class="film" data-say="'+f[0]+'"><span class="vnt">'+f[2]+'</span><span class="yr">'+f[3]+'</span><span class="ans">'+f[0]+'<span class="py">'+f[1]+'</span></span></button>';}).join('')+
   '</div><div class="ask zh"><button class="say" data-say="'+L.warm.q+'">'+SPK+'</button><div>'+L.warm.q+'<span class="vn">'+L.warm.qvn+'</span></div></div></div>');
