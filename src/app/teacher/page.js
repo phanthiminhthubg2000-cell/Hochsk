@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { db } from "../../firebase";
-import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, query, where, updateDoc, addDoc, serverTimestamp, deleteDoc, writeBatch } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { usePhoneticsResultSaver } from "../../phoneticsResultSaver";
 
@@ -772,6 +772,33 @@ export default function TeacherDashboard() {
     } catch (err) {
       alert("Lỗi khi xóa bài test: " + err.message);
     }
+  };
+
+  const [isImportingBank, setIsImportingBank] = useState(false);
+  const handleImportLectureBank = async () => {
+    if (!window.confirm("Nhập toàn bộ bài kiểm tra tạo từ bài giảng (từ vựng + lỗi câu) vào kho?\nBài đã nhập trước đó sẽ được cập nhật, bài cô tự tạo giữ nguyên.")) return;
+    setIsImportingBank(true);
+    try {
+      const res = await fetch("/data/review_bank.json?v=" + Date.now());
+      if (!res.ok) throw new Error("Không tải được dữ liệu nguồn (" + res.status + ")");
+      const data = await res.json();
+      const list = data.tests || [];
+      for (let i = 0; i < list.length; i += 400) {
+        const batch = writeBatch(db);
+        list.slice(i, i + 400).forEach(t => {
+          batch.set(doc(db, "tests_bank", t.key), {
+            testName: t.testName, level: t.level, kind: t.kind || "vocab",
+            questions: t.questions, items: t.items || [], lectureId: t.lectureId || "",
+            source: "lecture_auto", bankVersion: data.version || 1, updatedAt: serverTimestamp()
+          }, { merge: true });
+        });
+        await batch.commit();
+      }
+      alert("✅ Đã nhập " + list.length + " bài kiểm tra vào kho.");
+      fetchTestsBank();
+    } catch (err) {
+      alert("Lỗi khi nhập kho: " + err.message);
+    } finally { setIsImportingBank(false); }
   };
 
   const getTestedNamesForClass = (cls) => {
@@ -2145,12 +2172,22 @@ export default function TeacherDashboard() {
                     <h3 className="text-xl font-black text-[#142033]">2. Kho Bài Kiểm Tra (Theo Cấp Độ)</h3>
                     <p className="text-xs font-medium text-[#64748B] mt-1">Các bài kiểm tra từ vựng được gom nhóm theo từng cấp độ học.</p>
                   </div>
-                  <button 
-                    onClick={() => setIsAddTestModalOpen(true)}
-                    className="px-5 py-2.5 bg-[#142033] text-white rounded-xl font-black text-xs shadow-md hover:bg-black transition"
-                  >
-                    + Thêm bài
-                  </button>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={handleImportLectureBank}
+                      disabled={isImportingBank}
+                      className="px-5 py-2.5 bg-[#10B981] text-white rounded-xl font-black text-xs shadow-md hover:bg-[#059669] transition disabled:opacity-60"
+                      title="Tạo bài kiểm tra từ dữ liệu các bài giảng trên web"
+                    >
+                      {isImportingBank ? "Đang nhập..." : "⬇ Nhập từ bài giảng"}
+                    </button>
+                    <button 
+                      onClick={() => setIsAddTestModalOpen(true)}
+                      className="px-5 py-2.5 bg-[#142033] text-white rounded-xl font-black text-xs shadow-md hover:bg-black transition"
+                    >
+                      + Thêm bài
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
