@@ -79,6 +79,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk4-v2/LESSON_13.html"
  },
  {
+  "id": "static-hsk4-v2-14",
+  "lectureName": "Bài 14 · 保护地球母亲",
+  "level": "HSK4.2 2.0",
+  "fileUrl": "/lectures/hsk4-v2/LESSON_14.html"
+ },
+ {
   "id": "static-hsk5-1-01",
   "lectureName": "Bài 1 · 爱的细节",
   "level": "HSK5.1 2.0",
