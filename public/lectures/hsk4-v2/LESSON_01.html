@@ -478,6 +478,20 @@ u{text-decoration:none;box-shadow:inset 0 -.32em 0 color-mix(in srgb,var(--c) 28
 .er .ea i{font-style:normal;display:block;margin-top:2px}
 .er.open .ea{display:block}
 .okc{color:var(--ok)}.noc{color:var(--bad)}
+
+.wpic{display:grid;grid-template-columns:1.3fr 1fr;gap:36px;flex:1;min-height:0}
+.wpic>img{width:100%;max-height:100%;object-fit:contain;border-radius:14px;align-self:start}
+.wpr{display:flex;flex-direction:column;gap:14px}
+.wws{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ww{display:grid;grid-template-columns:30px 1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:10px;text-align:left;border:2px solid var(--rule);border-radius:12px;padding:8px 12px;background:#fff}
+.ww i{grid-row:1/3;font:800 18px var(--ui);color:var(--c);font-style:normal}
+.ww .zh{font:700 28px var(--zh)}.ww em{grid-column:2;font:500 15px var(--ui);color:var(--ink2);font-style:normal}
+.ww b{grid-row:1/3;grid-column:3;font:900 30px var(--ui);color:var(--c);visibility:hidden}
+.wshow .ww b{visibility:visible}
+.ganc .big.sm{font-size:120px}
+.exgrid{overflow:auto;align-content:start;padding-right:6px}
+.eq .scr{font-size:18px}
+.cur{gap:8px}.cterms div{padding:4px 12px}.cask{font-size:20px}
 </style>
 </head>
 <body>
@@ -780,7 +794,8 @@ u{text-decoration:none;box-shadow:inset 0 -.32em 0 color-mix(in srgb,var(--c) 28
     vn: "Ở Việt Nam, ngày 7/7 âm lịch cũng gắn với chuyện Ngưu Lang – Chức Nữ. Mưa rơi những ngày này được gọi là “mưa ngâu”, tương truyền là nước mắt hai người khi gặp lại rồi chia tay.",
     ask: ["你听说过牛郎和织女的故事吗？请简单说一说。", "越南人怎么过七夕？跟中国一样吗？"]
   },
-  gan: {
+  kz: {
+    kind: "同字词", big: "感", title: "“感”字组词 · Những từ có chữ giống nhau",
     note: "感 (gǎn, cảm): liên quan đến <b>cảm giác, cảm xúc</b> của con người.",
     words: [["感到", "gǎndào", "cảm thấy"], ["感动", "gǎndòng", "cảm động"], ["感冒", "gǎnmào", "bị cảm"], ["感兴趣", "gǎn xìngqù", "thấy hứng thú"]],
     items: [
@@ -898,12 +913,14 @@ u{text-decoration:none;box-shadow:inset 0 -.32em 0 color-mix(in srgb,var(--c) 28
       { n: 50, img: "data:image/jpeg;base64,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", w: "俩", sample: "他们俩周末经常一起去买东西。" }
     ]
   },
-  yy: {
-    pair: ["你有男/女朋友吗？（如果没有，请做第5、6题）", "你们俩是怎么认识的？", "你们在一起多长时间了？", "你为什么喜欢他/她？", "你理想中的男/女朋友是什么样的？", "如果你喜欢一个人，你打算怎么做？"],
-    group: "向小组成员说说你知道的一个爱情故事。可以是自己的，也可以是电影或小说中的。（请最少用四个下面的结构）",
-    groupvn: "Kể với các thành viên trong nhóm về một câu chuyện tình mà bạn biết: của chính bạn hoặc trong phim/tiểu thuyết. Dùng ít nhất bốn cấu trúc dưới đây.",
-    st: ["对他/她印象很深", "而且性格也不错", "从来没有这么快乐过", "共同的兴趣和爱好", "接受他/她的缺点", "羡慕浪漫的爱情", "在性格上互相吸引", "最大的幸福"]
-  },
+  yy: [
+    { kind: "table", vn: "Hoạt động theo cặp", zh: "双人活动", task: "Hai người ghép cặp, hỏi nhau về chuyện yêu đương và ghi câu trả lời vào cột 答", cols: ["", "问", "答"],
+      rows: [["你有男/女朋友吗？（如果没有，请做第5、6题）", ""], ["你们俩是怎么认识的？", ""], ["你们在一起多长时间了？", ""], ["你为什么喜欢他/她？", ""], ["你理想中的男/女朋友是什么样的？", ""], ["如果你喜欢一个人，你打算怎么做？", ""]] },
+    { kind: "list", vn: "Hoạt động nhóm", zh: "小组活动", letters: true,
+      task: "向小组成员说说你知道的一个爱情故事。可以是自己的，也可以是电影或小说中的。（请最少用四个下面的结构）",
+      taskvn: "Kể với các thành viên trong nhóm về một câu chuyện tình mà bạn biết: của chính bạn hoặc trong phim/tiểu thuyết. Dùng ít nhất bốn cấu trúc dưới đây.",
+      items: ["对他/她印象很深", "而且性格也不错", "从来没有这么快乐过", "共同的兴趣和爱好", "接受他/她的缺点", "羡慕浪漫的爱情", "在性格上互相吸引", "最大的幸福"] }
+  ],
   hw: [
     { s: "Buổi 1", zh: "第一次课", range: "课文一 ～ 课文三", col: "--l1",
       tasks: [
@@ -939,7 +956,7 @@ if('speechSynthesis' in window){loadV();speechSynthesis.onvoiceschanged=loadV;}
 function say(t,who,done){
   if(!('speechSynthesis' in window)){done&&done();return;}
   var u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,''));u.lang='zh-CN';u.rate=.82;
-  var male=/男|李进|李老师/.test(who||''); var m=voices.filter(function(v){return /male|男|Yunxi|Yunjian|Kangkang/i.test(v.name)&&!/female/i.test(v.name);});
+  var male=/男/.test(who||''); var m=voices.filter(function(v){return /male|男|Yunxi|Yunjian|Kangkang/i.test(v.name)&&!/female/i.test(v.name);});
   if(male&&m.length)u.voice=m[0];else if(voices.length)u.voice=voices[0];
   if(male&&!m.length)u.pitch=.75;
   u.onend=function(){done&&done();};speechSynthesis.speak(u);
@@ -958,23 +975,24 @@ function kick(st,label){var s=ST[st];return '<div class="kick"><span class="pill
 function head(st,label,h,sub){return kick(st,label)+'<h2>'+h+(sub?'<small>'+sub+'</small>':'')+'</h2>';}
 
 // 1. Bìa
-add(-1,'--l1','<div class="cv"><div class="cv-l"><div class="cv-tag">HSK标准教程 4 · HSK Garden</div><div class="cv-n">'+String(L.num).padStart(2,'0')+'</div><div class="cv-t zh">'+L.zh+'</div><div class="cv-py">'+L.py+'</div><div class="cv-vn">'+L.vn+'</div><div class="cv-facts"><span><b>5</b>bài khoá</span><span><b>30</b>từ mới</span><span><b>5</b>điểm ngữ pháp</span><span><b>'+L.exam.code+'</b>đề thật</span></div></div>'+
+add(-1,'--l1','<div class="cv"><div class="cv-l"><div class="cv-tag">HSK标准教程 4 · HSK Garden</div><div class="cv-n">'+String(L.num).padStart(2,'0')+'</div><div class="cv-t zh">'+L.zh+'</div><div class="cv-py">'+L.py+'</div><div class="cv-vn">'+L.vn+'</div><div class="cv-facts"><span><b>'+L.texts.length+'</b>bài khoá</span><span><b>'+L.texts.reduce(function(a,t){return a+t.words.filter(function(w){return !w.gram;}).length;},0)+'</b>từ mới</span><span><b>'+L.texts.reduce(function(a,t){return a+t.words.filter(function(w){return w.grammar;}).length;},0)+'</b>điểm ngữ pháp</span><span><b>'+L.exam.code+'</b>đề thật</span></div></div>'+
   '<div class="cv-r"><h3>Lộ trình bài học</h3><ol class="route">'+ST.map(function(s,i){var t=i>=1&&i<=5?L.texts[i-1]:null;return '<li data-go="'+i+'" style="--s:var('+s[2]+')"><i></i><b>'+s[0]+'</b><span>'+(t?esc(t.scenevn):s[1])+'</span></li>';}).join('')+'</ol></div></div>','cover');
 // 2. Mục tiêu
 add(0,'--l1',head(0,'Mục tiêu bài học','这一课我们学什么？')+'<div class="body"><div class="goals">'+L.goals.map(function(g){return '<div><b>'+g[0]+'</b><span>'+g[1]+'</span></div>';}).join('')+'</div></div>');
 // 3. Khởi động
+if(L.prev)addReview(L.prev.words,L.prev.errs,'Bài '+L.prev.num+' · '+L.prev.zh,0,'--l1','Kiểm tra bài cũ');
+if(L.warm.pic){var Wm=L.warm;
+  add(0,'--l1',head(0,'Khởi động',Wm.title,Wm.sub)+'<div class="body"><div class="wpic"><img src="'+Wm.pic+'" alt=""><div class="wpr"><div class="wws">'+Wm.items.map(function(it,i){return '<button class="ww" data-say="'+it[0]+'"><i>'+(i+1)+'</i><span class="zh">'+it[0]+'</span><em>'+it[1]+'</em><b>'+it[2]+'</b></button>';}).join('')+'</div><button class="tbtn" data-wans>Hiện đáp án</button>'+(Wm.q?'<div class="ask zh"><button class="say" data-say="'+esc(Wm.q)+'">'+SPK+'</button><div>'+Wm.q+'<span class="vn">'+Wm.qvn+'</span></div></div>':'')+'</div></div></div>','',function(el){el.querySelector('[data-wans]').onclick=function(){el.classList.toggle('wshow');};});
+}else
 add(0,'--l1',head(0,'Khởi động','这些电影你看过吗？','Bấm vào từng phim để xem tên tiếng Trung')+'<div class="body"><div class="films">'+L.warm.films.map(function(f){return '<button class="film" data-say="'+f[0]+'"><span class="vnt">'+f[2]+'</span><span class="yr">'+f[3]+'</span><span class="ans">'+f[0]+'<span class="py">'+f[1]+'</span></span></button>';}).join('')+
   '</div><div class="ask zh"><button class="say" data-say="'+L.warm.q+'">'+SPK+'</button><div>'+L.warm.q+'<span class="vn">'+L.warm.qvn+'</span></div></div></div>');
 
 // ---------- Kiểm tra bài cũ ----------
-function addReview(upto,st,col,label){
+function addReview(pool,errs,rangeTxt,st,col,label){
   var head0=head;head=function(a,b,c,d){return head0(a,b,c,d).replace('>'+ST[a][0]+'<','>复习<');};
-  var pool=[];L.texts.forEach(function(t){if(t.n<=upto)t.words.forEach(function(w){if(!w.gram)pool.push(w);});});
-  var errs=[];L.texts.forEach(function(t){if(t.n>upto)return;t.words.forEach(function(w){(w.check||[]).concat(w.grammar&&w.grammar.check||[]).forEach(function(c){errs.push(c);});});});
   var KEY='hsk4_roster',roster=[];try{roster=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
   function saveR(){try{localStorage.setItem(KEY,JSON.stringify(roster));}catch(e){}}
   function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}return a;}
-  var rangeTxt='课文一～'+'一二三四五'[upto-1];
   // Trang 1: từ vựng
   add(st,col,head(st,label+' · Từ vựng'.replace('',''),'复习 · 词语听写',rangeTxt+' · '+pool.length+' từ · gọi từng bạn, giáo viên chấm đúng/sai')+'<div class="body"><div class="rv">'+
     '<div class="rvl"><div class="lbl">Danh sách lớp</div><div class="chips"></div><div class="addrow"><input class="nm" placeholder="Nhập tên học sinh rồi Enter"><button class="tbtn sm" data-add>Thêm</button></div><details><summary>Dán cả danh sách</summary><textarea class="bulk" placeholder="Mỗi dòng một tên"></textarea><button class="tbtn sm" data-bulk>Nhập</button></details>'+
@@ -1022,7 +1040,7 @@ L.texts.forEach(function(t){
   var st=t.n, col='--l'+t.n, full=!!t.lines;
   var wz=full?t.words.map(function(w){return w.z;}):t.words;
   if(t.n===4)add(4,'--l4','<div class="div2"><div class="d2n zh">第二次课</div><div class="d2t">Buổi 2</div><p>Bài khoá 4 · Bài khoá 5 · Văn hoá · Luyện tập · Vận dụng</p><div class="d2r"><b>Khởi động buổi 2:</b> Gọi 2–3 bạn nộp video tóm tắt bài khoá 1–3 nói lại trước lớp.</div></div>','sess');
-  if(t.n===4)addReview(3,4,'--l4','Kiểm tra bài cũ');
+  if(t.n===4){var P1=[],E1=[];L.texts.forEach(function(x){if(x.n<=3)x.words.forEach(function(w){if(!w.gram)P1.push(w);(w.check||[]).concat(w.grammar&&w.grammar.check||[]).forEach(function(c){E1.push(c);});});});addReview(P1,E1,'课文一～三',4,'--l4','Kiểm tra bài cũ');}
   // mở đầu
   add(st,col,head(st,t.kind==='对话'?'Hội thoại':'Đoạn văn',t.scene,t.scenevn)+'<div class="body"><div class="tintro"><div>'+
     (full?'<div class="lbl">Đọc bài và trả lời</div><ol class="gq">'+t.qs.map(function(q){return '<li><div class="zh">'+q[0]+'<span class="vn">'+q[1]+'</span></div></li>';}).join('')+'</ol>':'<div class="lbl">Nội dung sẽ làm sau khi chốt khuôn</div><p class="use">Các trang của bài khoá này đi theo đúng thứ tự như Bài khoá 1: từ mới (kèm ngữ pháp, cấu trúc viết, phân biệt) → đọc bài → đúng/sai.</p>')+
@@ -1059,11 +1077,11 @@ L.texts.forEach(function(t){
     t.lines.map(function(l,i){return '<div class="ln" data-i="'+i+'"><div class="who zh '+l[1]+'">'+l[0]+'</div><div class="tx zh">'+mark(l[2])+'</div><button class="say" data-line="'+i+'">'+SPK+'</button></div>';}).join('')+'</div></div>','',function(el){
     var lines=el.querySelectorAll('.ln');
     function hl(i){lines.forEach(function(x){x.classList.toggle('on',+x.dataset.i===i);});}
-    function playFrom(i){if(i>=t.lines.length){hl(-1);return;}hl(i);lines[i].scrollIntoView({block:'nearest'});say(t.lines[i][2],t.lines[i][0],function(){if(el._playing)playFrom(i+1);});}
+    function playFrom(i){if(i>=t.lines.length){hl(-1);return;}hl(i);lines[i].scrollIntoView({block:'nearest'});say(t.lines[i][2],t.lines[i][1]==='m'?'男':'女',function(){if(el._playing)playFrom(i+1);});}
     el.querySelector('[data-play]').onclick=function(){stop();el._playing=true;playFrom(0);};
     var mb=el.querySelector('[data-mp3]');if(mb){var au=el.querySelector('audio');mb.onclick=function(){if(!au.paused){stop();return;}stop();au.currentTime=0;au.play();mb.classList.add('solid');mb.textContent='■ Dừng MP3';};au.onended=function(){mb.classList.remove('solid');mb.textContent='▶ Nghe bản gốc (MP3)';};}
     el.querySelector('[data-stop]').onclick=function(){el._playing=false;stop();hl(-1);};
-    el.querySelector('.read').addEventListener('click',function(e){var ln=e.target.closest('.ln');if(!ln)return;el._playing=false;stop();var i=+ln.dataset.i;hl(i);say(t.lines[i][2],t.lines[i][0]);});
+    el.querySelector('.read').addEventListener('click',function(e){var ln=e.target.closest('.ln');if(!ln)return;el._playing=false;stop();var i=+ln.dataset.i;hl(i);say(t.lines[i][2],t.lines[i][1]==='m'?'男':'女');});
   });
   // đúng sai
   add(st,col,head(st,'Kiểm tra hiểu bài','判断对错')+'<div class="body"><div class="tfl">'+t.tf.map(function(f,i){return '<div class="tf" data-a="'+(f[1]?1:0)+'"><span class="k">'+(i+1)+'</span><span>'+f[0]+'</span><button data-v="1">√</button><button data-v="0">×</button></div>';}).join('')+'</div></div>','',function(el){
@@ -1125,7 +1143,7 @@ function quizBind(el){
   // Viết
   add(7,'--lx',head(7,'Sách bài tập · 书写 第一部分','完成句子 · 第44–48题','Bấm các từ theo đúng thứ tự để tạo thành câu')+'<div class="body"><div class="wl one">'+W.write.map(function(q,i){return '<div class="eq wq" data-i="'+i+'"><div class="no">第 '+q.n+' 题</div><div class="tiles">'+q.parts.map(function(p,j){return '<button data-j="'+j+'">'+p+'</button>';}).join('')+'</div><div class="built"></div><div class="row"><button class="tbtn sm" data-reset>Làm lại</button><span class="why"></span></div></div>';}).join('')+'</div></div>','',function(el){
     el.querySelectorAll('.wq').forEach(function(box){var q=W.write[+box.dataset.i],seq=[],built=box.querySelector('.built'),why=box.querySelector('.why');
-      function upd(){built.textContent=seq.map(function(j){return q.parts[j];}).join('');if(seq.length===q.parts.length){var s=built.textContent+'。';var ok=q.ans.indexOf(s)>=0;why.textContent=ok?'Đúng!':'Đáp án: '+q.ans[0];why.style.color=ok?'var(--ok)':'var(--bad)';}}
+      function upd(){built.textContent=seq.map(function(j){return q.parts[j];}).join('');if(seq.length===q.parts.length){var s=built.textContent;var ok=q.ans.some(function(a){return a.replace(/[。？！，]/g,'')===s;});s=q.ans[0];why.textContent=ok?'Đúng!':'Đáp án: '+q.ans[0];why.style.color=ok?'var(--ok)':'var(--bad)';}}
       box.querySelector('.tiles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b||b.classList.contains('used'))return;b.classList.add('used');seq.push(+b.dataset.j);upd();});
       box.querySelector('[data-reset]').onclick=function(){seq=[];box.querySelectorAll('.tiles button').forEach(function(x){x.classList.remove('used');});built.textContent='';why.textContent='';};});
   });
@@ -1134,9 +1152,9 @@ function quizBind(el){
   });
 })();
 
-// Mở rộng 感
-(function(){var G=L.gan,opts=G.words.map(function(w){return w[0];});
-  add(8,'--lx',head(8,'Mở rộng','“感”字组词')+'<div class="body"><div class="gan"><div class="ganc"><div class="big">感</div><p class="note">'+G.note+'</p><div class="gwords">'+G.words.map(function(w){return '<div>'+w[0]+'<small>'+w[1]+' · '+w[2]+'</small></div>';}).join('')+'</div></div>'+
+// Mở rộng
+(function(){var G=L.kz;if(!G)return;var opts=G.words.map(function(w){return w[0];});
+  add(8,'--lx',head(8,'Mở rộng · '+G.kind,G.title)+'<div class="body"><div class="gan"><div class="ganc"><div class="big zh'+(G.big.length>2?' sm':'')+'">'+G.big+'</div><p class="note">'+G.note+'</p><div class="gwords">'+G.words.map(function(w){return '<div>'+w[0]+'<small>'+w[1]+' · '+w[2]+'</small></div>';}).join('')+'</div></div>'+
   '<div class="fill">'+G.items.map(function(it){return '<div class="fq" data-a="'+opts.indexOf(it[1])+'" data-why=""><span class="zh">'+it[0].replace('____','<span class="blank">　</span>')+'</span><div class="opts">'+opts.map(function(o,j){return '<button data-j="'+j+'">'+o+'</button>';}).join('')+'</div><div class="why"></div></div>';}).join('')+'</div></div></div>','',quizBind);
 })();
 // Đề HSK4
@@ -1155,19 +1173,19 @@ function quizBind(el){
     X.write.map(function(q,i){return '<div class="eq wq" data-i="'+i+'"><div class="no">第 '+q.n+' 题 · sắp xếp thành câu<em>'+q.link+'</em></div><div class="tiles">'+q.parts.map(function(p,j){return '<button data-j="'+j+'">'+p+'</button>';}).join('')+'</div><div class="built"></div><div class="row"><button class="tbtn" data-reset>Làm lại</button><span class="why"></span></div></div>';}).join('')+'</div></div>','',function(el){
     el.querySelectorAll('.rq').forEach(function(box){var q=X.read[+box.dataset.i];box.querySelector('.ops').addEventListener('click',function(e){var b=e.target.closest('button');if(!b||box.dataset.done)return;box.dataset.done=1;box.querySelectorAll('.ops button').forEach(function(x){if(+x.dataset.j===q.a)x.classList.add('ok');else if(x===b)x.classList.add('no');});});});
     el.querySelectorAll('.wq').forEach(function(box){var q=X.write[+box.dataset.i],seq=[],built=box.querySelector('.built'),why=box.querySelector('.why');
-      function upd(){built.textContent=seq.map(function(j){return q.parts[j];}).join('');if(seq.length===q.parts.length){var s=built.textContent+'。';var ok=q.ans.indexOf(s)>=0;why.textContent=ok?'Đúng: '+s:'Chưa đúng. Đáp án: '+q.ans[0];why.style.color=ok?'var(--ok)':'var(--bad)';}}
+      function upd(){built.textContent=seq.map(function(j){return q.parts[j];}).join('');if(seq.length===q.parts.length){var s=built.textContent;var ok=q.ans.some(function(a){return a.replace(/[。？！，]/g,'')===s;});s=q.ans[0];why.textContent=ok?'Đúng: '+s:'Chưa đúng. Đáp án: '+q.ans[0];why.style.color=ok?'var(--ok)':'var(--bad)';}}
       box.querySelector('.tiles').addEventListener('click',function(e){var b=e.target.closest('button');if(!b||b.classList.contains('used'))return;b.classList.add('used');seq.push(+b.dataset.j);upd();});
       box.querySelector('[data-reset]').onclick=function(){seq=[];box.querySelectorAll('.tiles button').forEach(function(x){x.classList.remove('used');});built.textContent='';why.textContent='';};
     });
   });
 })();
 // Vận dụng
-(function(){var Y=L.yy;
-  add(10,'--lx',head(10,'Vận dụng 1 · Hoạt động theo cặp','双人活动','Hỏi nhau về chuyện yêu đương, ghi câu trả lời của bạn vào cột 答')+'<div class="body"><table class="yyt"><tr><th></th><th>问</th><th>答</th></tr>'+Y.pair.map(function(q,i){return '<tr><td>'+(i+1)+'</td><td class="zh">'+q+'<button class="say" data-say="'+esc(q.replace(/（.*?）/,''))+'">'+SPK+'</button></td><td></td></tr>';}).join('')+'</table></div>');
-  add(10,'--lx',head(10,'Vận dụng 2 · Hoạt động nhóm','小组活动')+'<div class="body"><div class="sp"><div><div class="spq sm zh">'+Y.group+'<span class="vn">'+Y.groupvn+'</span></div><div class="timer"><button class="tbtn solid" data-t>▶ Bấm giờ 2 phút</button><span data-c>2:00</span></div></div><ol class="steps st8">'+Y.st.map(function(s,i){return '<li><i>'+'abcdefgh'[i]+'</i><div><span class="zh">'+s+'</span></div></li>';}).join('')+'</ol></div></div>','',function(el){
+(function(){(L.yy||[]).forEach(function(Y,yi){
+  if(Y.kind==='table')add(10,'--lx',head(10,'Vận dụng '+(yi+1)+' · '+Y.vn,Y.zh,Y.task)+'<div class="body"><table class="yyt"><tr>'+Y.cols.map(function(c){return '<th class="zh">'+c+'</th>';}).join('')+'</tr>'+Y.rows.map(function(r,i){return '<tr><td>'+(i+1)+'</td>'+r.map(function(c,j){return '<td class="zh">'+c+(j===0&&c?'<button class="say" data-say="'+esc(c.replace(/（.*?）/,''))+'">'+SPK+'</button>':'')+'</td>';}).join('')+'</tr>';}).join('')+'</table></div>');
+  else add(10,'--lx',head(10,'Vận dụng '+(yi+1)+' · '+Y.vn,Y.zh)+'<div class="body"><div class="sp"><div><div class="spq sm zh">'+Y.task+'<span class="vn">'+Y.taskvn+'</span></div><div class="timer"><button class="tbtn solid" data-t>▶ Bấm giờ 2 phút</button><span data-c>2:00</span></div></div><ol class="steps st8">'+Y.items.map(function(s,i){return '<li><i>'+(Y.letters?'abcdefghij'[i]:(i+1))+'</i><div><span class="zh">'+s+'</span></div></li>';}).join('')+'</ol></div></div>','',function(el){
     var tm=null;el.querySelector('[data-t]').onclick=function(){clearInterval(tm);var n=120,c=el.querySelector('[data-c]');tm=setInterval(function(){n--;c.textContent=Math.floor(Math.max(n,0)/60)+':'+String(Math.max(n,0)%60).padStart(2,'0');if(n<=0){clearInterval(tm);c.textContent='Hết giờ';}},1000);};
   });
-})();
+});})();
 
 // Bài tập về nhà
 add(11,'--lx',head(11,'Bài tập về nhà','作业','Bài 1 học trong 2 buổi · nộp trước buổi học tiếp theo')+'<div class="body"><div class="hw">'+L.hw.map(function(b){return '<section style="--c:var('+b.col+')"><header><b>'+b.s+'</b><span class="zh">'+b.zh+'</span><em class="zh">'+b.range+'</em></header>'+
