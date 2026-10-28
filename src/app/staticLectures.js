@@ -55,6 +55,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk4-v2/LESSON_09.html"
  },
  {
+  "id": "static-hsk4-v2-10",
+  "lectureName": "Bài 10 · 幸福的标准",
+  "level": "HSK4.1 2.0",
+  "fileUrl": "/lectures/hsk4-v2/LESSON_10.html"
+ },
+ {
   "id": "static-hsk5-1-01",
   "lectureName": "Bài 1 · 爱的细节",
   "level": "HSK5.1 2.0",
