@@ -25,6 +25,12 @@ export const STATIC_LECTURES = [
   "fileUrl": "/lectures/hsk4-v2/LESSON_04.html"
  },
  {
+  "id": "static-hsk4-v2-05",
+  "lectureName": "Bài 5 · 只买对的，不买贵的",
+  "level": "HSK4.1 2.0",
+  "fileUrl": "/lectures/hsk4-v2/LESSON_05.html"
+ },
+ {
   "id": "static-hsk5-1-01",
   "lectureName": "Bài 1 · 爱的细节",
   "level": "HSK5.1 2.0",
