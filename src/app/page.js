@@ -448,6 +448,10 @@ export default function HomePage() {
   const [lecturesBankList, setLecturesBankList] = useState([]);
   const [selectedLectureLevel, setSelectedLectureLevel] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
+  // Thanh tiêu đề bài học: cho phép thu gọn để bài giảng chiếm toàn màn hình (nhớ lựa chọn trên máy)
+  const [lessonBarHidden, setLessonBarHidden] = useState(false);
+  useEffect(() => { try { setLessonBarHidden(localStorage.getItem("hg_lesson_bar_hidden") === "1"); } catch (e) {} }, []);
+  const toggleLessonBar = (v) => { setLessonBarHidden(v); try { localStorage.setItem("hg_lesson_bar_hidden", v ? "1" : "0"); } catch (e) {} };
   const [lastLecture, setLastLecture] = useState(null); // {id, level, name}
   const [lessonsDone, setLessonsDone] = useState([]);   // [lectureId]
   const [bloomFx, setBloomFx] = useState(false);
@@ -1238,7 +1242,7 @@ export default function HomePage() {
       {/* ---------- MÀN HÌNH BÀI HỌC ---------- */}
       {selectedLecture && (
         <div className="fixed inset-0 z-50 flex flex-col bg-white">
-          <div className="h-14 md:h-16 px-3 md:px-6 bg-[#1E5C38] text-white flex items-center gap-3 shrink-0">
+          {!lessonBarHidden && <div className="h-14 md:h-16 px-3 md:px-6 bg-[#1E5C38] text-white flex items-center gap-3 shrink-0">
             <button onClick={() => setSelectedLecture(null)} className="h-10 px-3 rounded-xl hover:bg-white/10 inline-flex items-center gap-1 text-sm font-semibold shrink-0" aria-label="Quay lại">
               <Icon name="back" className="w-5 h-5" /><span className="hidden sm:inline">Quay lại</span>
             </button>
@@ -1253,8 +1257,24 @@ export default function HomePage() {
                 <Icon name="check" className="w-4 h-4" strokeWidth={3} /><span className="hidden sm:inline">Đã học xong</span><span className="sm:hidden">Xong</span>
               </button>
             )}
-          </div>
+            <button onClick={() => toggleLessonBar(true)} title="Ẩn thanh này để bài giảng rộng hơn" aria-label="Ẩn thanh tiêu đề"
+              className="h-10 w-10 rounded-xl hover:bg-white/10 inline-flex items-center justify-center shrink-0">
+              <Icon name="chevron" className="w-5 h-5 -rotate-90" />
+            </button>
+          </div>}
           <div className="flex-1 bg-[#F4F7EF] relative overflow-hidden">
+            {lessonBarHidden && (
+              <div className="absolute top-2 left-2 z-10 flex gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                <button onClick={() => setSelectedLecture(null)} aria-label="Quay lại" title="Quay lại"
+                  className="h-9 w-9 rounded-full bg-[#1E5C38] text-white shadow-lg inline-flex items-center justify-center">
+                  <Icon name="back" className="w-4 h-4" />
+                </button>
+                <button onClick={() => toggleLessonBar(false)} aria-label="Hiện thanh tiêu đề" title="Hiện thanh tiêu đề"
+                  className="h-9 w-9 rounded-full bg-[#1E5C38] text-white shadow-lg inline-flex items-center justify-center">
+                  <Icon name="chevron" className="w-4 h-4 rotate-90" />
+                </button>
+              </div>
+            )}
             <iframe
               {...htmlFrameProps(selectedLecture)}
               title={selectedLecture.lectureName}
