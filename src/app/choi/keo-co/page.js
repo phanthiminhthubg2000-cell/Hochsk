@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { db } from "../../../firebase";
 import { doc, updateDoc, setDoc } from "firebase/firestore";
-import { ROOMS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, EndButtons } from "../shared";
+import { ROOMS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, EndButtons, useAnswerFeed, LiveFeed, MissedWords } from "../shared";
 
 const TEAMS = {
   red: { name: "Đội Đỏ", zh: "红队", c: "#D64545", soft: "#FDE8E8", ring: "#F2B8B8" },
@@ -28,6 +28,7 @@ export default function TugHost() {
   const [rope, setRope] = useState(0); // -1 (đỏ thắng) … +1 (xanh thắng)
   const [winner, setWinner] = useState(null);
   const G = useRef({ endAt: 0, W: 10, ended: false, lastR: 0, lastB: 0 });
+  const F = useAnswerFeed(R.players, phase === "play");
 
   // tự xếp đội cho bạn mới vào: vào đội ít người hơn
   function autoTeam(list, c) {
@@ -66,7 +67,8 @@ export default function TugHost() {
   async function start() {
     const g = G.current;
     if (!R.players.length) { setErr("Chưa có học sinh nào vào phòng."); return; }
-    await R.resetPlayers({ correct: 0, wrong: 0, score: 0 });
+    await R.resetPlayers({ correct: 0, wrong: 0, score: 0, last: null });
+    F.start();
     g.W = Math.round(6 + R.players.length * 0.8);
     g.endAt = Date.now() + dur * 1000; g.ended = false;
     setRope(0); setWinner(null); setPhase("play");
@@ -154,7 +156,8 @@ export default function TugHost() {
       )}
 
       {(phase === "play" || phase === "end") && (
-        <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-6 flex flex-col gap-6">
+        <main className="max-w-[1500px] mx-auto px-4 md:px-8 py-6 grid gap-6 xl:grid-cols-[1fr_320px] items-start">
+        <div className="flex flex-col gap-6 min-w-0">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm font-bold text-[#5B7262]">{R.room?.cfg?.level} · {R.room?.cfg?.lessons}</span>
             <span className="ml-auto" />
@@ -197,9 +200,12 @@ export default function TugHost() {
                 <button onClick={start} className="h-12 px-6 rounded-xl bg-[#E8590C] text-white font-extrabold">🔁 Đấu lại (giữ đội)</button>
                 <button onClick={async () => { setPhase("lobby"); await updateDoc(doc(db, ROOMS, R.code), { status: "lobby", winner: null }); }} className="h-12 px-6 rounded-xl border border-[#C9D6BE] bg-white font-bold">Chia lại đội</button>
               </div>
+              <MissedWords missed={F.missed} />
               <EndButtons />
             </div>
           )}
+        </div>
+          <LiveFeed feed={F.feed} color={(f) => (TEAMS[f.team] ? TEAMS[f.team].c : "#13261C")} />
         </main>
       )}
 

@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { db } from "../../../firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import { ROOMS, RACERS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, Podium, EndButtons } from "../shared";
+import { ROOMS, RACERS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, Podium, EndButtons, useAnswerFeed, LiveFeed, MissedWords } from "../shared";
 
 const TARGETS = [[10, "10 bước", "≈ 3 phút"], [15, "15 bước", "≈ 5 phút"], [20, "20 bước", "≈ 7 phút"], [30, "30 bước", "dài"]];
 const ENDS = [[3, "Khi có 3 bạn về đích"], [99, "Khi tất cả về đích"]];
@@ -25,6 +25,7 @@ export default function RaceHost() {
   const [showQr, setShowQr] = useState(false);
   const G = useRef({ finish: [], ended: false, prev: {} });
   const [finish, setFinish] = useState([]);
+  const F = useAnswerFeed(R.players, phase === "play");
 
   async function createRoom() {
     setErr("");
@@ -37,7 +38,8 @@ export default function RaceHost() {
 
   async function start() {
     if (!R.players.length) { setErr("Chưa có học sinh nào vào phòng."); return; }
-    await R.resetPlayers({ pos: 0, correct: 0, wrong: 0, score: 0, doneAt: null });
+    await R.resetPlayers({ pos: 0, correct: 0, wrong: 0, score: 0, doneAt: null, last: null });
+    F.start();
     G.current = { finish: [], ended: false, prev: {} };
     setFinish([]); setPhase("play");
     await updateDoc(doc(db, ROOMS, R.code), { status: "play", target, finish: [], startAt: Date.now() });
@@ -122,7 +124,7 @@ export default function RaceHost() {
       )}
 
       {(phase === "play" || phase === "end") && (
-        <main className="max-w-[1500px] mx-auto px-4 md:px-8 py-6 grid gap-6 xl:grid-cols-[1fr_300px]">
+        <main className="max-w-[1700px] mx-auto px-4 md:px-8 py-6 grid gap-6 xl:grid-cols-[1fr_280px_300px]">
           <section className="flex flex-col gap-4">
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm font-extrabold bg-white border border-[#DDE6D3] rounded-full px-4 py-2">Đích: {target} bước</span>
@@ -163,11 +165,13 @@ export default function RaceHost() {
               ))}
             </ol>
           </aside>
+          <LiveFeed feed={F.feed} />
           {phase === "end" && (
-            <div className="xl:col-span-2 text-center">
+            <div className="xl:col-span-3 text-center">
               <h2 className="text-4xl font-extrabold">🏆 Kết quả cuộc đua</h2>
               <Podium list={ranked} valueOf={(p) => `${Math.min(p.pos || 0, target)}/${target}`} unit="bước" />
               <div className="flex gap-3 justify-center mt-6"><button onClick={start} className="h-12 px-6 rounded-xl bg-[#E8590C] text-white font-extrabold">🔁 Đua lại</button></div>
+              <MissedWords missed={F.missed} />
               <EndButtons />
             </div>
           )}

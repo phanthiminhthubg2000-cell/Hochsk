@@ -165,13 +165,15 @@ function SoloPlay({ room, me, pid, code, shell, team }) {
     const ok = i === q.ans;
     setFb({ ok, word: q.word, at: Date.now(), pick: i, ans: q.ans });
     const ref = doc(db, ROOMS, code, "players", pid);
+    // câu vừa trả lời — để màn hình giáo viên hiện trực tiếp
+    const last = { w: [q.word[0] || "", q.word[1] || "", q.word[2] || ""], ask: q.ask || "", big: q.big || "", ok, at: Date.now() };
     if (ok) {
       try { navigator.vibrate && navigator.vibrate(40); } catch (e) {}
-      updateDoc(ref, race ? { pos: increment(1), correct: increment(1), score: increment(10) } : { correct: increment(1), score: increment(10) }).catch(() => {});
+      updateDoc(ref, race ? { pos: increment(1), correct: increment(1), score: increment(10), last } : { correct: increment(1), score: increment(10), last }).catch(() => {});
       fresh();
     } else {
       try { navigator.vibrate && navigator.vibrate([80, 40, 80]); } catch (e) {}
-      const upd = { wrong: increment(1) };
+      const upd = { wrong: increment(1), last };
       if (race && room.cfg?.back !== false && (me.pos || 0) > 0) upd.pos = increment(-1);
       updateDoc(ref, upd).catch(() => {});
       const u = Date.now() + LOCK_MS; setLockUntil(u); setNow(Date.now());

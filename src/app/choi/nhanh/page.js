@@ -27,6 +27,7 @@ export default function QuizHost() {
   const [left, setLeft] = useState(0);
   const [nAns, setNAns] = useState(0);
   const [reveal, setReveal] = useState(null);
+  const [pq, setPq] = useState(null); // câu hỏi hiện tại — hiển thị ngay, không chờ Firestore
   const G = useRef({ pool: [], used: new Set(), q: null, idx: 0, t0: 0, ans: {}, done: new Set(), streak: {}, revealed: false });
 
   async function createRoom() {
@@ -66,8 +67,11 @@ export default function QuizHost() {
     if (g.used.size > g.pool.length - 4) g.used = new Set();
     const q = makeQuestion(g.pool, deck.mode, g.used);
     g.used.add(q.word[0]); g.q = q; g.idx += 1; g.ans = {}; g.revealed = false; g.t0 = Date.now();
-    setNAns(0); setReveal(null); setPhase("q");
-    await updateDoc(doc(db, ROOMS, G.current.code), { status: "q", idx: g.idx, q: publicQuestion(q), dur: secs * 1000, reveal: null });
+    const pub = publicQuestion(q);
+    setPq(pub); setNAns(0); setReveal(null); setPhase("q");
+    try {
+      await updateDoc(doc(db, ROOMS, G.current.code), { status: "q", idx: g.idx, q: pub, dur: secs * 1000, reveal: null });
+    } catch (e) { setErr("Không gửi được câu hỏi tới điện thoại học sinh (" + (e.code || e.message) + "). Bấm “Câu tiếp →” để thử lại."); }
     tone.tone(660, 0, 0.12, "triangle"); tone.tone(880, 0.1, 0.18, "triangle");
   }
 
@@ -180,7 +184,7 @@ export default function QuizHost() {
             )}
             <div className="rounded-[26px] bg-white border border-[#DDE6D3] p-6 relative">
               {phase === "q" && <div className="absolute top-5 right-6 text-5xl font-extrabold tabular-nums text-[#C0392B]">{Math.ceil(left / 1000)}</div>}
-              <BigQuestion q={room?.q} reveal={phase === "reveal" ? reveal : null} counts={phase === "reveal" ? reveal?.counts : null} />
+              <BigQuestion q={pq || room?.q}reveal={phase === "reveal" ? reveal : null} counts={phase === "reveal" ? reveal?.counts : null} />
               {phase === "reveal" && reveal && (
                 <div className="mt-5 flex flex-wrap gap-3 items-center" style={{ animation: "pop .3s" }}>
                   <span className="px-4 py-2 rounded-xl bg-[#E7F5EC] text-[#1E5C38] font-extrabold">✅ {reveal.nOk}/{R.players.length} bạn đúng</span>

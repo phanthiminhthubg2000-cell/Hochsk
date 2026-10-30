@@ -238,6 +238,80 @@ export function Podium({ list, valueOf, unit = "điểm" }) {
   );
 }
 
+// ---------- Kéo co / Đua: theo dõi câu học sinh vừa trả lời ----------
+// Mỗi học sinh có câu riêng trên điện thoại; máy HS ghi players/{pid}.last = { w, ask, big, ok, at }.
+export function useAnswerFeed(players, active) {
+  const S = useRef({ seen: {}, feed: [], miss: {}, tot: {} });
+  const [, bump] = useState(0);
+  const reset = () => { S.current = { seen: {}, feed: [], miss: {}, tot: {} }; bump((x) => x + 1); };
+  useEffect(() => {
+    const s = S.current;
+    let changed = false;
+    players.forEach((p) => {
+      const l = p.last;
+      if (!l || !l.at || s.seen[p.id] === l.at) return;
+      s.seen[p.id] = l.at;
+      if (!active) return;
+      changed = true;
+      s.feed = [{ id: p.id + l.at, name: p.name, team: p.team, ...l }, ...s.feed].slice(0, 14);
+      const k = l.w[0];
+      s.tot[k] = (s.tot[k] || 0) + 1;
+      if (!l.ok) s.miss[k] = { w: l.w, n: ((s.miss[k] && s.miss[k].n) || 0) + 1 };
+    });
+    if (changed) bump((x) => x + 1);
+  }, [players, active]);
+  // gọi sau khi đã xoá players.last (resetPlayers) — bỏ lịch sử trận trước
+  const start = () => reset();
+  const missed = Object.values(S.current.miss).map((m) => ({ ...m, tot: S.current.tot[m.w[0]] || m.n })).sort((a, b) => b.n - a.n);
+  return { feed: S.current.feed, missed, start };
+}
+
+export function LiveFeed({ feed, color }) {
+  const latest = feed[0];
+  return (
+    <aside className="rounded-[22px] bg-white border border-[#DDE6D3] p-4 self-start">
+      <div className="font-extrabold text-lg mb-3">📋 Câu đang trả lời</div>
+      {!latest && <div className="text-[#5B7262] text-sm">Chưa có câu trả lời nào…</div>}
+      {latest && (
+        <div key={latest.id} className="rounded-2xl bg-[#F6F9F2] border border-[#DDE6D3] p-4 mb-3" style={{ animation: "pop .25s" }}>
+          <div className="text-sm font-bold text-[#5B7262]">{latest.name} · {latest.ask}</div>
+          <div className="zh text-5xl font-extrabold my-1">{latest.w[0]}</div>
+          <div className="font-bold">{latest.w[1]}{latest.w[2] ? ` · ${latest.w[2]}` : ""}</div>
+          <div className={`mt-2 inline-block px-3 py-1 rounded-lg text-sm font-extrabold ${latest.ok ? "bg-[#E7F5EC] text-[#1E5C38]" : "bg-[#FDE8E8] text-[#8A1C1C]"}`}>{latest.ok ? "✅ Đúng" : "❌ Sai"}</div>
+        </div>
+      )}
+      <ol className="flex flex-col gap-1 max-h-[46vh] overflow-auto">
+        {feed.slice(1).map((f) => (
+          <li key={f.id} className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-[#F6F9F2] text-sm">
+            <span>{f.ok ? "✅" : "❌"}</span>
+            <span className="zh font-extrabold text-lg">{f.w[0]}</span>
+            <span className="text-[#5B7262] truncate flex-1">{f.w[2] || f.w[1]}</span>
+            <span className="font-bold truncate max-w-[90px]" style={color ? { color: color(f) } : {}}>{f.name}</span>
+          </li>
+        ))}
+      </ol>
+    </aside>
+  );
+}
+
+export function MissedWords({ missed }) {
+  if (!missed.length) return <div className="mt-6 text-[#5B7262] font-semibold">🎉 Không có từ nào bị trả lời sai!</div>;
+  return (
+    <div className="mt-8 rounded-[22px] bg-white border border-[#DDE6D3] p-5 text-left max-w-[900px] mx-auto">
+      <div className="font-extrabold text-xl mb-3">📌 Từ cả lớp hay sai — nên ôn lại</div>
+      <div className="grid sm:grid-cols-2 gap-2">
+        {missed.slice(0, 12).map((m) => (
+          <div key={m.w[0]} className="flex items-center gap-3 px-3 py-2 rounded-xl bg-[#FDF3F3]">
+            <span className="zh text-2xl font-extrabold">{m.w[0]}</span>
+            <span className="flex-1 text-sm"><b>{m.w[1]}</b>{m.w[2] ? ` · ${m.w[2]}` : ""}</span>
+            <span className="text-sm font-extrabold text-[#C0392B] tabular-nums">sai {m.n}/{m.tot}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function EndButtons() {
   return (
     <div className="flex gap-3 justify-center mt-8 flex-wrap">
