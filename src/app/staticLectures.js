@@ -601,5 +601,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 4 · 完美的胜利",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_04.html"
+ },
+ {
+  "id": "static-hsk6-1-05",
+  "lectureName": "Bài 5 · 学一门外语需要理由吗？",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_05.html"
  }
 ];
