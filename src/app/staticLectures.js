@@ -613,5 +613,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 6 · 当好职场插班生",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_06.html"
+ },
+ {
+  "id": "static-hsk6-1-07",
+  "lectureName": "Bài 7 · 我的人生我做主。",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_07.html"
  }
 ];
