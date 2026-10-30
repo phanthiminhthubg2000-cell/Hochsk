@@ -33,7 +33,7 @@ const HSK3_LEVELS = [
 // Giáo trình (kho bài giảng) — chỉ hiện những giáo trình đã có bài
 const LEVEL_OPTIONS = [
   "Msutong HSK1", "Msutong HSK2", "Msutong HSK3.1", "Msutong HSK3.2",
-  "HSK4.1 2.0", "HSK4.2 2.0", "HSK5.1 2.0", "HSK5.2 2.0",
+  "HSK4.1 2.0", "HSK4.2 2.0", "HSK5.1 2.0", "HSK5.2 2.0", "HSK6.1 2.0", "HSK6.2 2.0",
   "HSK1 3.0", "HSK2 3.0", "HSK3 3.0", "HSK4.1 3.0", "HSK4.2 3.0", "HSK5.1 3.0", "HSK5.2 3.0"
 ];
 

@@ -73,6 +73,8 @@ const LEVEL_OPTIONS = [
   "HSK4.2 2.0",
   "HSK5.1 2.0",
   "HSK5.2 2.0",
+  "HSK6.1 2.0",
+  "HSK6.2 2.0",
   "HSK1 3.0",
   "HSK2 3.0",
   "HSK3 3.0",
