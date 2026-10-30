@@ -9,8 +9,10 @@
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { db } from "../../firebase";
-import { doc, setDoc, getDoc, onSnapshot, collection, deleteDoc, serverTimestamp, writeBatch } from "firebase/firestore";
-import { ROOMS, MODES, buildPool, modeAllowed, newCode, loadVocab } from "../bom/game";
+import { doc, setDoc, getDoc, getDocs, onSnapshot, collection, deleteDoc, serverTimestamp, writeBatch, query, where, limit, Timestamp } from "firebase/firestore";
+import { ROOMS, MODES, buildPool, modeAllowed, newCode, loadVocab, upTo } from "../bom/game";
+import { loadClasses, saveGameResult, missedToTest } from "./results";
+import QBig from "../bom/QBig";
 
 export { ROOMS, MODES };
 export const RACERS = ["🐎", "🐇", "🐢", "🐕", "🐈", "🐖", "🐄", "🐓", "🦊", "🐼", "🐨", "🐯", "🦁", "🐸", "🐧", "🦆", "🐘", "🦒", "🐿️", "🦔"];
@@ -44,33 +46,67 @@ export function useTone() {
     } catch (e) {}
   };
   const fanfare = () => { [523, 659, 784, 1046].forEach((f, i) => tone(f, i * 0.12, 0.25, "triangle", 0.22)); };
-  return { sound, setSound, tone, fanfare };
+  const boom = () => {
+    if (!on.current) return;
+    try {
+      const ac = AC.current || new (window.AudioContext || window.webkitAudioContext)(); AC.current = ac;
+      const len = ac.sampleRate * 1.2, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+      const src = ac.createBufferSource(), g = ac.createGain(), f = ac.createBiquadFilter();
+      f.type = "lowpass"; f.frequency.value = 900; src.buffer = buf; src.connect(f); f.connect(g); g.connect(ac.destination); g.gain.value = 0.9; src.start();
+    } catch (e) {}
+  };
+  return { sound, setSound, tone, fanfare, boom };
 }
 
-// ---------- kho từ + chọn đề ----------
+// ---------- kho từ + chọn đề + chọn lớp ----------
+const LS = { get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
 export function useDeck() {
   const [vocab, setVocab] = useState(null);
   const [err, setErr] = useState("");
-  const [lv, setLv] = useState(0);
+  const [lv, setLvRaw] = useState(0);
   const [les, setLes] = useState([0]);
   const [mode, setMode] = useState("mix");
-  useEffect(() => { loadVocab().then(setVocab).catch(() => setErr("Không tải được kho từ vựng.")); }, []);
+  const [classes, setClasses] = useState(null); // null = đang tải · [] = không có / lỗi
+  const [clsId, setClsIdRaw] = useState("");
+  useEffect(() => {
+    loadVocab().then((v) => {
+      setVocab(v);
+      const saved = v.findIndex((x) => x.id === LS.get("hg_game_lv"));
+      if (saved >= 0) setLvRaw(saved);
+    }).catch(() => setErr("Không tải được kho từ vựng."));
+    loadClasses().then((c) => { setClasses(c); const s = LS.get("hg_game_cls"); if (s && c.some((x) => x.id === s)) setClsIdRaw(s); }).catch(() => setClasses([]));
+  }, []);
+  const setLv = (i) => { setLvRaw(i); if (vocab && vocab[i]) LS.set("hg_game_lv", vocab[i].id); };
+  const setClsId = (id) => { setClsIdRaw(id); LS.set("hg_game_cls", id); };
   const level = vocab ? vocab[lv] : null;
   const pool = level ? buildPool(level, les) : [];
+  const cls = (classes || []).find((c) => c.id === clsId) || null;
   const cfg = () => ({
     lv, les, modeKey: mode,
-    level: level.name,
-    lessons: les.length === level.lessons.length ? `Tất cả ${les.length} bài` : `Bài ${les.map((i) => level.lessons[i].n).join(", ")}`,
+    level: level.name, levelId: level.id,
+    lessonNums: les.map((i) => level.lessons[i].n),
+    lessons: les.length === level.lessons.length ? `Tất cả ${les.length} bài` : les.length > 3 && les.every((x, i) => x === i) ? `Bài ${level.lessons[0].n}–${level.lessons[les.length - 1].n}` : `Bài ${les.map((i) => level.lessons[i].n).join(", ")}`,
     mode: MODES.find((m) => m[0] === mode)[1],
+    ...(cls ? { classId: cls.id, className: cls.className, classLevel: cls.level, roster: cls.students } : {}),
   });
-  return { vocab, err, setErr, lv, setLv, les, setLes, mode, setMode, level, pool, cfg };
+  return { vocab, err, setErr, lv, setLv, les, setLes, mode, setMode, level, pool, cfg, classes, clsId, setClsId, cls };
 }
 
 export function DeckPicker({ deck }) {
-  const { vocab, lv, setLv, les, setLes, mode, setMode, level, pool } = deck;
+  const { vocab, lv, setLv, les, setLes, mode, setMode, level, pool, classes, clsId, setClsId, cls } = deck;
   if (!vocab) return <div className="text-[#5B7262]">Đang tải kho từ vựng…</div>;
   return (
     <>
+      <div>
+        <Label>Lớp <span className="normal-case tracking-normal text-[#5B7262] font-semibold">· để lưu kết quả vào hồ sơ học sinh</span></Label>
+        <select aria-label="Lớp" value={clsId} onChange={(e) => setClsId(e.target.value)} className="w-full h-11 px-3 rounded-xl border border-[#C9D6BE] bg-white font-bold">
+          <option value="">— Không gắn lớp (học sinh tự nhập tên) —</option>
+          {(classes || []).map((c) => <option key={c.id} value={c.id}>{c.className}{c.level ? ` · ${c.level}` : ""} · {c.students.length} HS</option>)}
+        </select>
+        {classes === null && <div className="text-xs text-[#5B7262] mt-1">Đang tải danh sách lớp…</div>}
+        {cls && <div className="text-xs text-[#1E5C38] mt-1 font-semibold">Học sinh sẽ chọn tên mình trong danh sách lớp · kết quả lưu vào lớp {cls.className}</div>}
+      </div>
       <div>
         <Label>Cấp độ</Label>
         <div className="flex flex-wrap gap-2">
@@ -82,6 +118,14 @@ export function DeckPicker({ deck }) {
       </div>
       <div>
         <Label>Chọn bài <span className="normal-case tracking-normal text-[#1E7A45]">· {pool.length} từ</span></Label>
+        <div className="flex items-center gap-2 mb-2 text-sm font-bold text-[#3F5546]">
+          <span>⚡ Ôn từ bài 1 đến</span>
+          <select aria-label="Ôn đến bài" value={les.length && les.every((x, i) => x === i) ? les.length : ""} onChange={(e) => e.target.value && setLes(upTo(+e.target.value))}
+            className="h-9 px-2 rounded-lg border border-[#C9D6BE] bg-white font-bold">
+            <option value="">— chọn —</option>
+            {level.lessons.map((l, i) => <option key={i} value={i + 1}>Bài {l.n} · {l.t}</option>)}
+          </select>
+        </div>
         <div className="flex flex-wrap gap-1.5 max-h-48 overflow-auto">
           <button onClick={() => setLes(les.length === level.lessons.length ? [0] : level.lessons.map((_, i) => i))}
             className={`px-3 py-1.5 rounded-lg text-sm font-bold border ${les.length === level.lessons.length ? "bg-[#FFF4DE] border-[#F2C46B]" : "bg-white border-[#DDE6D3]"}`}>✔ Tất cả</button>
@@ -120,6 +164,27 @@ export function Choice({ items, value, onChange, accent = "#2E9D5B" }) {
   );
 }
 
+// ---------- dọn phòng cũ ----------
+// Mỗi lần giáo viên tạo phòng: xoá tối đa 15 phòng tạo cách đây hơn 12 giờ (kèm players/answers).
+// Chạy ngầm, lỗi thì bỏ qua — không ảnh hưởng trò chơi.
+export async function cleanupOldRooms(keep = "") {
+  try {
+    const cutoff = Timestamp.fromMillis(Date.now() - 12 * 3600 * 1000);
+    const snap = await getDocs(query(collection(db, ROOMS), where("createdAt", "<", cutoff), limit(15)));
+    for (const r of snap.docs) {
+      if (r.id === keep) continue;
+      for (const sub of ["players", "answers"]) {
+        const ss = await getDocs(collection(db, ROOMS, r.id, sub));
+        for (let i = 0; i < ss.docs.length; i += 400) {
+          const b = writeBatch(db); ss.docs.slice(i, i + 400).forEach((d) => b.delete(d.ref)); await b.commit();
+        }
+      }
+      await deleteDoc(r.ref);
+    }
+    return snap.size;
+  } catch (e) { return 0; }
+}
+
 // ---------- phòng chơi (máy giáo viên) ----------
 export function useHostRoom() {
   const [code, setCode] = useState("");
@@ -144,6 +209,7 @@ export function useHostRoom() {
       onPlayers && onPlayers(list, c);
     }));
     unsub.current.push(onSnapshot(doc(db, ROOMS, c), (s) => setRoom(s.data() || null)));
+    setTimeout(() => cleanupOldRooms(c), 4000);
     return c;
   }
   const listen = (fn) => unsub.current.push(fn);
@@ -312,6 +378,37 @@ export function MissedWords({ missed }) {
   );
 }
 
+// ---------- cuối trận: tự lưu kết quả + tạo bài ôn từ sai ----------
+export function ResultSaver({ game, cfg, players, metric, missed = [] }) {
+  const [st, setSt] = useState("saving"); // saving | saved | fail
+  const [mk, setMk] = useState({ s: "idle", msg: "" });
+  const once = useRef(false);
+  useEffect(() => {
+    if (once.current) return; once.current = true;
+    saveGameResult({ game, cfg: cfg || {}, players: players || [], metric, missed }).then((id) => setSt(id ? "saved" : "fail"));
+  }, []); // eslint-disable-line
+  async function makeTest() {
+    setMk({ s: "busy", msg: "" });
+    try { const r = await missedToTest({ game, cfg: cfg || {}, missed }); setMk({ s: "done", msg: `Đã tạo “${r.testName}” trong kho Kiểm tra bài cũ.` }); }
+    catch (e) { setMk({ s: "err", msg: "Không tạo được bài: " + (e.message || e) }); }
+  }
+  const linked = (players || []).filter((p) => p.sid).length;
+  return (
+    <div className="mt-6 flex flex-col items-center gap-2 text-sm">
+      <div className={`px-4 py-2 rounded-xl font-bold ${st === "saved" ? "bg-[#E7F5EC] text-[#1E5C38]" : st === "fail" ? "bg-[#FDE8E8] text-[#8A1C1C]" : "bg-[#F6F9F2] text-[#5B7262]"}`}>
+        {st === "saving" ? "Đang lưu kết quả…" : st === "fail" ? "⚠️ Không lưu được kết quả (kiểm tra quyền Firestore “game_results”)."
+          : cfg && cfg.classId ? `✔ Đã lưu kết quả vào lớp ${cfg.className} · ${linked}/${(players || []).length} bạn khớp hồ sơ` : "✔ Đã lưu kết quả trận (chưa gắn lớp)"}
+      </div>
+      {missed.length > 0 && (mk.s === "done" ? <div className="px-4 py-2 rounded-xl bg-[#FFF4DE] text-[#8A5A00] font-bold">{mk.msg}</div> : (
+        <button onClick={makeTest} disabled={mk.s === "busy"} className="h-11 px-5 rounded-xl border-2 border-[#F2C46B] bg-[#FFF4DE] font-extrabold disabled:opacity-50">
+          {mk.s === "busy" ? "Đang tạo…" : `📝 Tạo bài Kiểm tra bài cũ từ ${Math.min(30, missed.length)} từ hay sai`}
+        </button>
+      ))}
+      {mk.s === "err" && <div className="text-[#8A1C1C] font-semibold">{mk.msg}</div>}
+    </div>
+  );
+}
+
 export function EndButtons() {
   return (
     <div className="flex gap-3 justify-center mt-8 flex-wrap">
@@ -327,7 +424,7 @@ export function BigQuestion({ q, reveal, counts }) {
   return (
     <>
       <div className="text-lg font-bold text-[#5B7262]">{q.ask}</div>
-      <div className={`font-extrabold leading-tight my-2 ${q.kind === "hz" ? "zh text-6xl md:text-7xl" : q.kind === "def" ? "zh text-2xl md:text-3xl" : "text-4xl md:text-5xl text-[#1E7A45]"}`}>{q.big}</div>
+      <QBig q={q} host auto className="my-2" />
       <div className="grid grid-cols-2 gap-3 mt-4">
         {q.opts.map((o, i) => {
           const isAns = reveal && reveal.ans === i;

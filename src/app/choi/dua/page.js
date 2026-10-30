@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { db } from "../../../firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import { ROOMS, RACERS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, Podium, EndButtons, useAnswerFeed, LiveFeed, MissedWords } from "../shared";
+import { ROOMS, RACERS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, Podium, EndButtons, useAnswerFeed, LiveFeed, MissedWords, ResultSaver } from "../shared";
 
 const TARGETS = [[10, "10 bước", "≈ 3 phút"], [15, "15 bước", "≈ 5 phút"], [20, "20 bước", "≈ 7 phút"], [30, "30 bước", "dài"]];
 const ENDS = [[3, "Khi có 3 bạn về đích"], [99, "Khi tất cả về đích"]];
@@ -172,6 +172,7 @@ export default function RaceHost() {
               <Podium list={ranked} valueOf={(p) => `${Math.min(p.pos || 0, target)}/${target}`} unit="bước" />
               <div className="flex gap-3 justify-center mt-6"><button onClick={start} className="h-12 px-6 rounded-xl bg-[#E8590C] text-white font-extrabold">🔁 Đua lại</button></div>
               <MissedWords missed={F.missed} />
+              <ResultSaver game="race" cfg={R.room?.cfg} players={ranked} metric={(p) => { const r = finish.indexOf(p.id); return r >= 0 ? 1000 - r : Math.min(p.pos || 0, target); }} missed={F.missed} />
               <EndButtons />
             </div>
           )}

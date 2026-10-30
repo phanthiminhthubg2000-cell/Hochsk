@@ -138,6 +138,8 @@ body{font-family:var(--ui);color:var(--ink);background:radial-gradient(900px 520
 @media(max-width:900px){.hero{grid-template-columns:1fr}.demo{order:-1;width:min(360px,100%)}.play{grid-template-columns:1fr}}
 @media(max-width:520px){.choices{grid-template-columns:1fr 1fr}.cap{font-size:20px}.brand small{display:none}.btn{padding:0 16px;font-size:15px}}
 </style>
+<script>/* HSK Garden — báo kết quả cho trang bọc /tro-choi (lưu XP + kết quả) */
+window.HG_report=function(r){try{if(window.parent&&window.parent!==window)window.parent.postMessage(Object.assign({type:"hg-game-result"},r),location.origin)}catch(e){}};</script>
 </head>
 <body>
 <div class="wrap">
@@ -329,6 +331,7 @@ function end(){clearInterval(G.timer);$$(".screen").forEach(s=>s.classList.remov
   if(G.mode==="solo"){$("#eTrophy").textContent=ok/Math.max(1,n)>=.8?"🏆":ok/Math.max(1,n)>=.5?"🥈":"🌱";$("#eTitle").textContent=`Bạn đoán đúng ${ok} / ${n} câu`;$("#eStats").innerHTML=`<div class="stat"><b>${G.score}</b>điểm</div><div class="stat"><b>${ok}</b>câu đúng</div><div class="stat"><b>${n-ok}</b>câu sai</div>`;}
   else{const m=Math.max(...G.teams.map(t=>t.s));const w=G.teams.filter(t=>t.s===m);$("#eTrophy").textContent="🏆";$("#eTitle").textContent=m?(w.length>1?"Hoà: "+w.map(t=>t.n).join(" & "):w[0].n+" chiến thắng!"):"Kết thúc lượt chơi";
     $("#eStats").innerHTML=G.teams.slice().sort((a,b)=>b.s-a.s).map(t=>`<div class="stat" style="border-color:${t.c}"><b style="color:${t.c}">${t.s}</b>${t.n}</div>`).join("");}
+  HG_report(G.mode==="solo"?{game:'duoi-hinh',solo:true,score:G.score,correct:ok,total:n,wrong:G.log.filter(x=>!x.ok).map(x=>[x.p.a,x.p.py,x.p.vn])}:{game:'duoi-hinh',solo:false,teams:G.teams.map(t=>t.s),total:n});
   $("#eList").innerHTML=G.log.map(x=>`<div class="li ${x.ok?"ok":"no"}"><div><div class="zh">${esc(x.p.a)}</div><div class="m">${esc(x.p.py)} · ${esc(x.p.vn)}</div><div class="m">这是${esc(x.p.top[0])} → ${x.p.pun.replace(/<[^>]+>/g,"").split("→").slice(-2,-1)[0]||""}</div></div></div>`).join("")||'<p style="text-align:center;color:var(--muted)">Chưa chơi câu nào.</p>';}
 $("#startBtn").onclick=start;$("#hintBtn").onclick=hint;$("#revealBtn").onclick=reveal;$("#noneBtn").onclick=none;$("#nextBtn").onclick=next;
 $("#quitBtn").onclick=()=>{if(confirm("Kết thúc lượt chơi và xem kết quả?"))end();};$("#againBtn").onclick=start;$("#homeBtn").onclick=()=>{$$(".screen").forEach(s=>s.classList.remove("on"));$("#sStart").classList.add("on");};

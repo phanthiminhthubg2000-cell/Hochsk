@@ -121,6 +121,8 @@ body{font-family:var(--ui);color:var(--ink);background:radial-gradient(900px 500
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+<script>/* HSK Garden — báo kết quả cho trang bọc /tro-choi (lưu XP + kết quả) */
+window.HG_report=function(r){try{if(window.parent&&window.parent!==window)window.parent.postMessage(Object.assign({type:"hg-game-result"},r),location.origin)}catch(e){}};</script>
 </head>
 <body>
 <div class="wrap">
@@ -142,6 +144,7 @@ body{font-family:var(--ui);color:var(--ink);background:radial-gradient(900px 500
           <button class="mode" data-m="bank"><i>📚</i><b>Kho chủ đề</b><span>Đoán qua nghĩa tiếng Việt, lấy từ <b id="bankN"></b> thành ngữ trong kho từ vựng chủ đề.</span></button>
         </div>
         <div class="opt"><div class="lab">Số câu</div><div class="seg" id="optN"><button data-v="10" class="on">10</button><button data-v="15">15</button><button data-v="20">20</button></div></div>
+        <label class="opt" id="curBox" style="display:none;gap:8px;align-items:center;font-weight:600;cursor:pointer"><input type="checkbox" id="optCur" style="width:20px;height:20px"> 📚 Chỉ thành ngữ có trong giáo trình HSK Garden (<span id="curN">0</span> thành ngữ)</label>
         <div class="opt" id="optTeamsBox" hidden><div class="lab">Số đội</div><div class="seg" id="optTeams"><button data-v="2" class="on">2 đội</button><button data-v="3">3 đội</button><button data-v="4">4 đội</button></div></div>
         <div class="cta"><button class="btn main" id="startBtn">Bắt đầu</button><span class="best" id="best"></span></div>
       </div>
@@ -278,8 +281,13 @@ function showBest(){ const b=store.get(bestKey()); $('best').textContent=MODE!==
 showBest();
 function show(id){ ['sStart','sPlay','sEnd'].forEach(s=>$(s).classList.toggle('on',s===id)); $('hud').hidden=id!=='sPlay'; scrollTo(0,0); }
 const HINTS=3;
+// Thành ngữ có trong giáo trình (đọc từ kho từ vựng chung)
+const CUR=new Map();
+fetch('/games/vocab.json',{cache:'force-cache'}).then(r=>r.json()).then(V=>{V.forEach(L=>L.lessons.forEach(l=>l.w.forEach(w=>{if(/^[\u4e00-\u9fff]{4}$/.test(w[0])&&!CUR.has(w[0]))CUR.set(w[0],L.name+' · Bài '+l.n)})));
+  const n=ITEMS.concat(BITEMS).filter(x=>CUR.has(x.w)).length;$('curN').textContent=new Set(ITEMS.concat(BITEMS).filter(x=>CUR.has(x.w)).map(x=>x.w)).size;if(n)$('curBox').style.display='flex';}).catch(()=>{});
 function start(){
-  const SRC=MODE==='bank'?BITEMS:ITEMS; qs=shuffle(SRC).slice(0,Math.min(N,SRC.length)); qi=0; score=0; right=0; log=[]; teamPts=Array(TEAMS).fill(0);
+  let SRC=MODE==='bank'?BITEMS:ITEMS;
+  if($('optCur')&&$('optCur').checked){const f=SRC.filter(x=>CUR.has(x.w));if(f.length>=4)SRC=f;else{alert('Chế độ này có ít hơn 4 thành ngữ trong giáo trình — dùng toàn bộ kho.');}} qs=shuffle(SRC).slice(0,Math.min(N,SRC.length)); qi=0; score=0; right=0; log=[]; teamPts=Array(TEAMS).fill(0);
   $('hTot').textContent=qs.length; $('hScoreWrap').hidden=MODE==='class'; $('hScore').textContent=0;
   show('sPlay'); q();
 }
@@ -355,6 +363,7 @@ function end(){
   }
   $('eList').innerHTML=log.map(([w,ok])=>`<span class="${ok?'':'x'}">${w}</span>`).join('');
   show('sEnd');
+  HG_report(MODE!=='class'?{game:'doan-thanh-ngu',solo:true,score,correct:right,total:qs.length,level:MODE==='bank'?'Kho nghĩa':'Biểu tượng',wrong:log.filter(x=>!x[1]).map(x=>[x[0],'',''])}:{game:'doan-thanh-ngu',solo:false,teams:teamPts,total:qs.length});
 }
 $('startBtn').onclick=start; $('againBtn').onclick=start; $('homeBtn').onclick=()=>{ show('sStart'); showBest(); };
 document.addEventListener('keydown',e=>{ if(!$('sPlay').classList.contains('on')) return;

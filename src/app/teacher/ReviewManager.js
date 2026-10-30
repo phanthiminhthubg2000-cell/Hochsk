@@ -70,6 +70,7 @@ export default function ReviewManager({ db, levels }) {
   const [classes, setClasses] = useState([]);
   const [tests, setTests] = useState([]);
   const [newResults, setNewResults] = useState([]);
+  const [gameResults, setGameResults] = useState([]); // kết quả trò chơi lớp (game_results có classId)
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState("");
   const [collapsed, setCollapsed] = useState({});
@@ -101,6 +102,11 @@ export default function ReviewManager({ db, levels }) {
       const rl = []; r.forEach((d) => rl.push({ id: d.id, ...d.data() }));
       setNewResults(rl);
     } catch (e) { setNewResults([]); }
+    try {
+      const g = await getDocs(collection(db, "game_results"));
+      const gl = []; g.forEach((d) => { const x = d.data(); if (x.classId) gl.push({ id: d.id, ...x }); });
+      setGameResults(gl.sort((a, b) => (b.ts || 0) - (a.ts || 0)));
+    } catch (e) { setGameResults([]); }
     setLoading(false);
   }, [db]);
   useEffect(() => { loadAll(); }, [loadAll]);
@@ -704,6 +710,7 @@ export default function ReviewManager({ db, levels }) {
       {/* HỒ SƠ HỌC SINH */}
       {profileFor && (
         <StudentProfile cls={profileFor.cls} st={profileFor.st} results={resultsOf(profileFor.cls.id, profileFor.st.id)}
+          games={gameResults.filter((g) => g.classId === profileFor.cls.id && (g.players || []).some((p) => p.sid === profileFor.st.id))}
           onPenalty={setPenalty} onClose={() => setProfileFor(null)}
           onTest={() => { const p = profileFor; setProfileFor(null); openSetup(p.cls, p.st); }} />
       )}
@@ -803,7 +810,7 @@ function ClassReport({ cls, testName, results, onPenalty, onClose }) {
   );
 }
 
-function StudentProfile({ cls, st, results, onPenalty, onClose, onTest }) {
+function StudentProfile({ cls, st, results, games = [], onPenalty, onClose, onTest }) {
   const [open, setOpen] = useState(null);
   const freq = {};
   results.forEach((r) => (r.logs || []).forEach((l) => { if (!l.ok) { freq[l.z] = freq[l.z] || { l, n: 0 }; freq[l.z].n++; } }));
@@ -823,6 +830,24 @@ function StudentProfile({ cls, st, results, onPenalty, onClose, onTest }) {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+          {games.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+              <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-2">🎮 Trò chơi trên lớp · {games.length} trận</p>
+              <div className="flex flex-col gap-1.5">
+                {games.slice(0, 12).map((g) => {
+                  const me = g.players.find((p) => p.sid === st.id);
+                  return (
+                    <div key={g.id} className="flex items-center gap-3 text-xs bg-white border border-amber-100 rounded-xl px-3 py-2">
+                      <span className="font-black text-[#142033] w-28 shrink-0">{g.gameName}</span>
+                      <span className="text-slate-500 flex-1 truncate">{g.date} · {g.level} · {g.lessons}</span>
+                      <span className="font-bold text-slate-600">✅ {me.correct} · ❌ {me.wrong}</span>
+                      <span className="font-black text-amber-700 w-16 text-right">hạng {me.rank}/{g.players.length}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           {top.length > 0 && (
             <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4">
               <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest mb-2">Từ/câu hay sai</p>

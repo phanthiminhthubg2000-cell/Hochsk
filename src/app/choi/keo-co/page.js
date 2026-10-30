@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { db } from "../../../firebase";
 import { doc, updateDoc, setDoc } from "firebase/firestore";
-import { ROOMS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, EndButtons, useAnswerFeed, LiveFeed, MissedWords } from "../shared";
+import { ROOMS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, EndButtons, useAnswerFeed, LiveFeed, MissedWords, ResultSaver } from "../shared";
 
 const TEAMS = {
   red: { name: "Đội Đỏ", zh: "红队", c: "#D64545", soft: "#FDE8E8", ring: "#F2B8B8" },
@@ -201,6 +201,7 @@ export default function TugHost() {
                 <button onClick={async () => { setPhase("lobby"); await updateDoc(doc(db, ROOMS, R.code), { status: "lobby", winner: null }); }} className="h-12 px-6 rounded-xl border border-[#C9D6BE] bg-white font-bold">Chia lại đội</button>
               </div>
               <MissedWords missed={F.missed} />
+              <ResultSaver game="tug" cfg={{ ...(R.room?.cfg || {}), winner }} players={R.players} metric={(p) => p.correct || 0} missed={F.missed} />
               <EndButtons />
             </div>
           )}

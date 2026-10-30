@@ -127,6 +127,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+<script>/* HSK Garden — báo kết quả cho trang bọc /tro-choi (lưu XP + kết quả) */
+window.HG_report=function(r){try{if(window.parent&&window.parent!==window)window.parent.postMessage(Object.assign({type:"hg-game-result"},r),location.origin)}catch(e){}};</script>
 </head>
 <body>
 <div class="wrap">
@@ -279,6 +281,7 @@ function end(){
   $('eTitle').textContent=(rec?'Kỷ lục mới! ':'')+(r>=.9?'Thợ săn bộ thủ thực thụ!':r>=.7?'Mắt tinh lắm!':r>=.4?'Khá rồi, chơi thêm lượt nữa nhé':'Chơi lại để nhớ bộ thủ hơn nhé');
   $('eLearnt').textContent=found.join('');
   show('sEnd');
+  HG_report({game:'san-bo-thu',solo:true,score,correct:found.length,total,level:'HSK 1–'+LV});
 }
 $('startBtn').onclick=start; $('againBtn').onclick=start; $('homeBtn').onclick=()=>{ show('sStart'); showBest(); };
 document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&$('sheet').classList.contains('on')&&$('sPlay').classList.contains('on')) $('nextBtn').click(); });

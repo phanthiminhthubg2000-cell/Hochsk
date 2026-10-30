@@ -15,10 +15,13 @@ export const MODES = [
   ["def2hz", "释义 → 汉字"],
   ["py2hz", "Pinyin → 汉字"],
   ["hz2py", "汉字 → Pinyin"],
+  ["fill", "📝 Điền từ vào câu"],
+  ["listen", "🔊 Nghe → 汉字"],
 ];
 
-const KEYOF = { hz2vi: 2, vi2hz: 0, hz2def: 3, def2hz: 0, py2hz: 0, hz2py: 1 };
-const NEED = (m) => (/vi/.test(m) ? 2 : /def/.test(m) ? 3 : 0);
+const KEYOF = { hz2vi: 2, vi2hz: 0, hz2def: 3, def2hz: 0, py2hz: 0, hz2py: 1, fill: 0, listen: 0 };
+// trường cần có: 2 nghĩa Việt · 3 释义 · 4 câu ví dụ có chứa từ
+const NEED = (m) => (m === "fill" ? 4 : /vi/.test(m) ? 2 : /def/.test(m) ? 3 : 0);
 
 export const shuffle = (a) => {
   a = a.slice();
@@ -57,6 +60,7 @@ function modesForWord(w) {
   const m = ["py2hz", "hz2py"];
   if (w[2]) m.push("hz2vi", "vi2hz", "vi2hz");
   if (w[3]) m.push("hz2def", "def2hz", "def2hz");
+  if (w[4] && w[4].includes(w[0])) m.push("fill", "fill");
   return m;
 }
 
@@ -66,7 +70,8 @@ export function makeQuestion(pool, mode, avoid = new Set()) {
   if (cand.length < 1) cand = pool;
   let w = pickOne(cand);
   let m = mode;
-  if (m === "mix" || (NEED(m) && !w[NEED(m)])) m = pickOne(modesForWord(w));
+  if (m === "fill") { const c2 = cand.filter((x) => x[4] && x[4].includes(x[0])); if (c2.length) w = pickOne(c2); }
+  if (m === "mix" || (NEED(m) && !w[NEED(m)]) || (m === "fill" && !(w[4] || "").includes(w[0]))) m = pickOne(modesForWord(w));
   const key = KEYOF[m];
   const need = NEED(m);
   const others = shuffle(
@@ -99,11 +104,30 @@ export function publicQuestion(q) {
     case "hz2def": ask = "这个词是什么意思？"; big = w[0]; kind = "hz"; break;
     case "def2hz": ask = "哪个词的意思是："; big = w[3]; kind = "def"; break;
     case "py2hz": ask = "Chữ nào đọc là"; big = w[1]; kind = "py"; break;
+    case "fill": ask = "Chọn từ điền vào chỗ trống"; big = w[4].split(w[0]).join("＿＿"); kind = "def"; break;
+    case "listen": ask = "Nghe và chọn chữ đúng"; big = "🔊"; kind = "audio"; break;
     default: ask = "Từ này đọc là gì?"; big = w[0]; kind = "hz";
   }
   const optKind = q.key === 0 ? "hz" : q.key === 1 ? "py" : q.key === 3 ? "def" : "vi";
-  return { id: q.id, ask, big, kind, opts: q.opts, optKind };
+  const pub = { id: q.id, ask, big, kind, opts: q.opts, optKind };
+  if (q.mode === "listen") pub.say = w[0];
+  return pub;
 }
+
+// đọc tiếng Trung bằng giọng máy (Web Speech) — dùng cho câu "Nghe"
+export function speak(text) {
+  try {
+    const ss = window.speechSynthesis; if (!ss || !text) return;
+    ss.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = "zh-CN"; u.rate = 0.85;
+    const v = ss.getVoices().find((x) => /^zh(-|_)?CN/i.test(x.lang)) || ss.getVoices().find((x) => /^zh/i.test(x.lang));
+    if (v) u.voice = v;
+    ss.speak(u);
+  } catch (e) {}
+}
+
+// chọn nhanh "ôn từ bài 1 đến bài n"
+export const upTo = (n) => Array.from({ length: n }, (_, i) => i);
 
 export const newCode = () => String(100000 + Math.floor(Math.random() * 900000));
 export const newPid = () => Math.random().toString(36).slice(2, 12);

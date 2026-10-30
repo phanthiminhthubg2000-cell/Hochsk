@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { db } from "../../../firebase";
 import { doc, updateDoc, onSnapshot, collection, deleteDoc, increment } from "firebase/firestore";
 import { makeQuestion, publicQuestion } from "../../bom/game";
-import { ROOMS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, Podium, EndButtons, BigQuestion } from "../shared";
+import { ROOMS, useDeck, useTone, useHostRoom, HostShell, SetupScreen, LobbyQR, QrModal, Label, Choice, Podium, EndButtons, BigQuestion, MissedWords, ResultSaver } from "../shared";
 
 const NQ = [[10, "10 câu"], [15, "15 câu"], [20, "20 câu"], [30, "30 câu"]];
 const SECS = [[10, "10 giây"], [15, "15 giây"], [20, "20 giây"], [30, "30 giây"]];
@@ -28,7 +28,7 @@ export default function QuizHost() {
   const [nAns, setNAns] = useState(0);
   const [reveal, setReveal] = useState(null);
   const [pq, setPq] = useState(null); // câu hỏi hiện tại — hiển thị ngay, không chờ Firestore
-  const G = useRef({ pool: [], used: new Set(), q: null, idx: 0, t0: 0, ans: {}, done: new Set(), streak: {}, revealed: false });
+  const G = useRef({ pool: [], used: new Set(), q: null, idx: 0, t0: 0, ans: {}, done: new Set(), streak: {}, revealed: false, miss: {} });
 
   async function createRoom() {
     setErr("");
@@ -48,7 +48,10 @@ export default function QuizHost() {
     if (g.done.has(id)) return; g.done.add(id);
     deleteDoc(doc(db, ROOMS, c, "answers", id)).catch(() => {});
     if (!g.q || g.revealed || a.qid !== g.q.id || g.ans[a.pid]) return;
-    g.ans[a.pid] = { choice: a.choice, ms: Date.now() - g.t0 };
+    // ưu tiên thời gian đo trên điện thoại; giới hạn trong [0, thời gian câu]
+    const dur = secs * 1000, own = Date.now() - g.t0;
+    const ms = typeof a.ms === "number" && isFinite(a.ms) ? Math.max(0, Math.min(dur, a.ms, own)) : Math.min(dur, own);
+    g.ans[a.pid] = { choice: a.choice, ms };
     setNAns(Object.keys(g.ans).length);
     tone.tone(880, 0, 0.04, "triangle", 0.05);
     if (Object.keys(g.ans).length >= R.playersRef.current.length) setTimeout(doReveal, 400);
@@ -57,7 +60,7 @@ export default function QuizHost() {
   async function start() {
     if (!R.players.length) { setErr("Chưa có học sinh nào vào phòng."); return; }
     await R.resetPlayers({ score: 0, correct: 0, wrong: 0, streak: 0, last: null });
-    const g = G.current; g.idx = 0; g.used = new Set(); g.streak = {};
+    const g = G.current; g.idx = 0; g.used = new Set(); g.streak = {}; g.miss = {};
     nextQ();
   }
 
@@ -90,6 +93,9 @@ export default function QuizHost() {
       const pts = ok ? Math.round(1000 - 500 * Math.min(1, a.ms / dur)) + (st >= 3 ? 100 : 0) : 0;
       results.push({ p, ok, pts, a, st });
     });
+    // thống kê từ hay sai (chỉ tính bạn đã trả lời)
+    const nAnsd = results.filter((r) => r.a).length, nBad = results.filter((r) => r.a && !r.ok).length;
+    if (nBad) g.miss[q.word[0]] = { w: [q.word[0], q.word[1], q.word[2] || ""], n: nBad, tot: nAnsd };
     const fastest = results.filter((r) => r.ok).sort((x, y) => x.a.ms - y.a.ms)[0];
     const rv = { ans: q.ans, counts, word: q.word, fastest: fastest ? { name: fastest.p.name, s: (fastest.a.ms / 1000).toFixed(1) } : null, nOk: results.filter((r) => r.ok).length };
     setReveal(rv); setPhase("reveal");
@@ -108,7 +114,8 @@ export default function QuizHost() {
       const l = Math.max(0, secs * 1000 - (Date.now() - G.current.t0));
       setLeft(l);
       if (l <= 3000 && l > 0 && Math.floor(l / 1000) !== Math.floor((l + 100) / 1000)) tone.tone(1200, 0, 0.05, "square", 0.05);
-      if (l <= 0) { clearInterval(iv); doReveal(); }
+      // hết giờ: chờ thêm 1,2 giây cho câu trả lời đang trên đường truyền
+      if (l <= 0) { clearInterval(iv); setTimeout(doReveal, 1200); }
     }, 100);
     return () => clearInterval(iv);
   }, [phase]); // eslint-disable-line
@@ -226,6 +233,8 @@ export default function QuizHost() {
               </li>
             ))}
           </ol>
+          <MissedWords missed={Object.values(g.miss).sort((a, b) => b.n / b.tot - a.n / a.tot)} />
+          <ResultSaver game="quiz" cfg={room?.cfg} players={R.players} metric={(p) => p.score || 0} missed={Object.values(g.miss)} />
           <EndButtons />
         </main>
       )}
