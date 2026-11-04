@@ -631,5 +631,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 9 · 不用手机的日子",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_09.html"
+ },
+ {
+  "id": "static-hsk6-1-10",
+  "lectureName": "Bài 10 · 全球化视野中的中国饮食",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_10.html"
  }
 ];
