@@ -715,5 +715,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 23 · 大数据时代",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_23.html"
+ },
+ {
+  "id": "static-hsk6-2-24",
+  "lectureName": "Bài 24 · 体育明星们的离奇遭遇",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_24.html"
  }
 ];
