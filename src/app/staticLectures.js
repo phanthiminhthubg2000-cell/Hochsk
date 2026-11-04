@@ -775,5 +775,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 33 · 怀念慢生活",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_33.html"
+ },
+ {
+  "id": "static-hsk6-2-34",
+  "lectureName": "Bài 34 · 为文物而生的人",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_34.html"
  }
 ];
