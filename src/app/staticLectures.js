@@ -679,5 +679,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 17 · 小动物眼中的慢世界",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_17.html"
+ },
+ {
+  "id": "static-hsk6-1-18",
+  "lectureName": "Bài 18 · 神奇的丝瓜",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_18.html"
  }
 ];
