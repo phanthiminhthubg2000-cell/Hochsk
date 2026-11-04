@@ -667,5 +667,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 15 · 山脉上的雕刻",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_15.html"
+ },
+ {
+  "id": "static-hsk6-1-16",
+  "lectureName": "Bài 16 · 徐健和他的野生动物摄影师们",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_16.html"
  }
 ];
