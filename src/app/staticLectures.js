@@ -805,5 +805,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 38 · 慧眼捕捉商机",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_38.html"
+ },
+ {
+  "id": "static-hsk6-2-39",
+  "lectureName": "Bài 39 · 互联网时代的生活",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_39.html"
  }
 ];
