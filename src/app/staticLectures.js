@@ -787,5 +787,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 35 · 走近木版年画",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_35.html"
+ },
+ {
+  "id": "static-hsk6-2-36",
+  "lectureName": "Bài 36 · 中国古代书院",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_36.html"
  }
 ];
