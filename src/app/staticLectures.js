@@ -649,5 +649,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 12 · 我们都爱白噪音。",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_12.html"
+ },
+ {
+  "id": "static-hsk6-1-13",
+  "lectureName": "Bài 13 · 从旅游指南看世事变迁",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_13.html"
  }
 ];
