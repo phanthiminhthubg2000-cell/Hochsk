@@ -643,5 +643,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 11 · 我不在时，猫在干什么？",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_11.html"
+ },
+ {
+  "id": "static-hsk6-1-12",
+  "lectureName": "Bài 12 · 我们都爱白噪音。",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_12.html"
  }
 ];
