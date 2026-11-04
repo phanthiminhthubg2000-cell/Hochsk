@@ -763,5 +763,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 31 · 运动的学问",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_31.html"
+ },
+ {
+  "id": "static-hsk6-2-32",
+  "lectureName": "Bài 32 · 有时，不妨悲伤",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_32.html"
  }
 ];
