@@ -703,5 +703,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 21 · 未来商店",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_21.html"
+ },
+ {
+  "id": "static-hsk6-2-22",
+  "lectureName": "Bài 22 · 2050年的汽车什么样？",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_22.html"
  }
 ];
