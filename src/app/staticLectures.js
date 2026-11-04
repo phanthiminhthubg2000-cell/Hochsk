@@ -793,5 +793,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 36 · 中国古代书院",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_36.html"
+ },
+ {
+  "id": "static-hsk6-2-37",
+  "lectureName": "Bài 37 · 警察的故事",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_37.html"
  }
 ];
