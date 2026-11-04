@@ -673,5 +673,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 16 · 徐健和他的野生动物摄影师们",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_16.html"
+ },
+ {
+  "id": "static-hsk6-1-17",
+  "lectureName": "Bài 17 · 小动物眼中的慢世界",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_17.html"
  }
 ];
