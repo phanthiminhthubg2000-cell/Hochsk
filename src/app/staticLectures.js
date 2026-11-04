@@ -661,5 +661,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 14 · 背着电饭锅拍北极",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_14.html"
+ },
+ {
+  "id": "static-hsk6-1-15",
+  "lectureName": "Bài 15 · 山脉上的雕刻",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_15.html"
  }
 ];
