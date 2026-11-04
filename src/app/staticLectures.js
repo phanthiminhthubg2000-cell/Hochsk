@@ -655,5 +655,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 13 · 从旅游指南看世事变迁",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_13.html"
+ },
+ {
+  "id": "static-hsk6-1-14",
+  "lectureName": "Bài 14 · 背着电饭锅拍北极",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_14.html"
  }
 ];
