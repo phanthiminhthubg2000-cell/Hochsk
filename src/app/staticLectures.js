@@ -811,5 +811,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 39 · 互联网时代的生活",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_39.html"
+ },
+ {
+  "id": "static-hsk6-2-40",
+  "lectureName": "Bài 40 · 人类超能力会改变世界纪录吗？",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_40.html"
  }
 ];
