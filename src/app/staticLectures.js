@@ -781,5 +781,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 34 · 为文物而生的人",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_34.html"
+ },
+ {
+  "id": "static-hsk6-2-35",
+  "lectureName": "Bài 35 · 走近木版年画",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_35.html"
  }
 ];
