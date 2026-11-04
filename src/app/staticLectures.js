@@ -691,5 +691,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 19 · 无阳光的深海世界",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_19.html"
+ },
+ {
+  "id": "static-hsk6-1-20",
+  "lectureName": "Bài 20 · 金鸡窝",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_20.html"
  }
 ];
