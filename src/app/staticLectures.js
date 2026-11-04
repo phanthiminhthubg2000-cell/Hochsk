@@ -637,5 +637,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 10 · 全球化视野中的中国饮食",
   "level": "HSK6.1 2.0",
   "fileUrl": "/lectures/hsk6-1/LESSON_10.html"
+ },
+ {
+  "id": "static-hsk6-1-11",
+  "lectureName": "Bài 11 · 我不在时，猫在干什么？",
+  "level": "HSK6.1 2.0",
+  "fileUrl": "/lectures/hsk6-1/LESSON_11.html"
  }
 ];
