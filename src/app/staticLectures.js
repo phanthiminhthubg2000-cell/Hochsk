@@ -709,5 +709,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 22 · 2050年的汽车什么样？",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_22.html"
+ },
+ {
+  "id": "static-hsk6-2-23",
+  "lectureName": "Bài 23 · 大数据时代",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_23.html"
  }
 ];
