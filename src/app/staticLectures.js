@@ -739,5 +739,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 27 · 完璧归赵",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_27.html"
+ },
+ {
+  "id": "static-hsk6-2-28",
+  "lectureName": "Bài 28 · 高山流水遇知音",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_28.html"
  }
 ];
