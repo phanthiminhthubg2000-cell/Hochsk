@@ -721,5 +721,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 24 · 体育明星们的离奇遭遇",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_24.html"
+ },
+ {
+  "id": "static-hsk6-2-25",
+  "lectureName": "Bài 25 · 草船借箭",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_25.html"
  }
 ];
