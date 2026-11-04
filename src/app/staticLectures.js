@@ -727,5 +727,11 @@ export const STATIC_LECTURES = [
   "lectureName": "Bài 25 · 草船借箭",
   "level": "HSK6.2 2.0",
   "fileUrl": "/lectures/hsk6-2/LESSON_25.html"
+ },
+ {
+  "id": "static-hsk6-2-26",
+  "lectureName": "Bài 26 · 奇异的灯光",
+  "level": "HSK6.2 2.0",
+  "fileUrl": "/lectures/hsk6-2/LESSON_26.html"
  }
 ];
