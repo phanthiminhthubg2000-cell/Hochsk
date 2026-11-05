@@ -5,6 +5,7 @@ import myCustomData from "../cards.json";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit } from "firebase/firestore";
+import { speakZh } from "../amThanh";
 import GardenNav from "../GardenNav";
 
 // --- HÀM HỖ TRỢ ---
@@ -152,9 +153,7 @@ export default function FlashcardPage() {
   const learningCount = activeLevelData.words.length - masteredCount;
 
   // --- TTS ---
-  const speak = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text); utterance.lang = "zh-CN"; window.speechSynthesis.speak(utterance);
-  };
+  const speak = (text) => { speakZh(text); }; // file thu sẵn nếu có, không thì giọng trình duyệt
 
   // ============================================================
   // 1. THỬ THÁCH AI (+10 XP, +2 NƯỚC)

@@ -74,14 +74,9 @@ export function makeQ(card, pool, mode = "nghia") {
   return { mode, ask: zh, sub: "Từ này nghĩa là gì?", opts, right: opts.indexOf(short(vn)), zh, py, vn };
 }
 
-export function speakZh(text) {
-  try {
-    const s = window.speechSynthesis; if (!s) return false; s.cancel();
-    const u = new SpeechSynthesisUtterance(text); u.lang = "zh-CN"; u.rate = 0.85;
-    const v = s.getVoices().find((x) => /zh[-_]CN/i.test(x.lang)) || s.getVoices().find((x) => /^zh/i.test(x.lang)); if (v) u.voice = v;
-    s.speak(u); return true;
-  } catch (_) { return false; }
-}
+// Giọng đọc: file thu sẵn nếu có, không thì giọng trình duyệt (./amThanh)
+export { speakZh } from "./amThanh";
+
 
 // Đan dược thành phẩm của một lò (users.danDuoc)
 export function danOfBatch(correct, total, reviewed) {

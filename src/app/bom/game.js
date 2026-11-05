@@ -1,4 +1,5 @@
 // ============================================================
+import { speakZh } from "../amThanh";
 // BOM NỔ CHẬM 传炸弹 — logic dùng chung (máy giáo viên & máy học sinh)
 // Phòng chơi lưu ở Firestore: game_rooms/{code}
 //   ├─ players/{pid}   : tên, điểm, số lần nổ
@@ -115,16 +116,8 @@ export function publicQuestion(q) {
 }
 
 // đọc tiếng Trung bằng giọng máy (Web Speech) — dùng cho câu "Nghe"
-export function speak(text) {
-  try {
-    const ss = window.speechSynthesis; if (!ss || !text) return;
-    ss.cancel();
-    const u = new SpeechSynthesisUtterance(text); u.lang = "zh-CN"; u.rate = 0.85;
-    const v = ss.getVoices().find((x) => /^zh(-|_)?CN/i.test(x.lang)) || ss.getVoices().find((x) => /^zh/i.test(x.lang));
-    if (v) u.voice = v;
-    ss.speak(u);
-  } catch (e) {}
-}
+// Giọng đọc: file thu sẵn nếu có, không thì giọng trình duyệt
+export function speak(text) { speakZh(text); }
 
 // chọn nhanh "ôn từ bài 1 đến bài n"
 export const upTo = (n) => Array.from({ length: n }, (_, i) => i);

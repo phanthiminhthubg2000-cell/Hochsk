@@ -16,6 +16,7 @@ import GardenNav from "../GardenNav";
 import { ELEMENTS, elementOf, judgeLinhCan, LinhCanStone, NguHanhChart, Seal, VText } from "../tuTien";
 import { REALMS8 } from "../tuVi";
 import PLACEMENT from "./placement.json";
+import { speakZh, preloadAudio, stopSpeak } from "../amThanh";
 
 const RETEST_DAYS = 30;
 const LABELS = ["甲", "乙", "丙", "丁"];
@@ -56,19 +57,6 @@ const VIEW = QUESTIONS.map((q, i) => {
   return { ...q, opts: order.map((x) => q.o[x]), right: order.indexOf(0) };
 });
 
-function speakZh(text) {
-  try {
-    const synth = window.speechSynthesis;
-    if (!synth) return false;
-    synth.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "zh-CN"; u.rate = 0.85;
-    const v = synth.getVoices().find((x) => /zh[-_]CN/i.test(x.lang)) || synth.getVoices().find((x) => /^zh/i.test(x.lang));
-    if (v) u.voice = v;
-    synth.speak(u);
-    return true;
-  } catch (_) { return false; }
-}
 
 const fmtDate = (ms) => new Date(ms).toLocaleDateString("vi-VN");
 
@@ -112,7 +100,7 @@ export default function LinhCanPage() {
   const [plPicked, setPlPicked] = useState(null);
   const [scoresDraft, setScoresDraft] = useState(null);
 
-  useEffect(() => { setCanSpeak(typeof window !== "undefined" && !!window.speechSynthesis); try { window.speechSynthesis?.getVoices(); } catch (_) {} }, []);
+  useEffect(() => { preloadAudio(); try { window.speechSynthesis?.getVoices(); } catch (_) {} }, []);
 
   // Kết quả cũ: Firestore (đã đăng nhập) hoặc máy này
   useEffect(() => {
@@ -132,14 +120,15 @@ export default function LinhCanPage() {
 
   const play = () => {
     if (!q?.say || plays >= 2) return;
-    if (speakZh(q.say)) setPlays((n) => n + 1); else { setCanSpeak(false); setShowText(true); }
+    setPlays((n) => n + 1);
+    speakZh(q.say).then((ok) => { if (!ok) { setPlays((n) => Math.max(0, n - 1)); setCanSpeak(false); setShowText(true); } });
   };
 
   const submit = () => {
     if (picked == null) return;
     const next = [...answers, picked];
     setAnswers(next); setPicked(null); setPlays(0); setShowText(false);
-    try { window.speechSynthesis?.cancel(); } catch (_) {}
+    stopSpeak();
     if (idx + 1 < VIEW.length) { setIdx(idx + 1); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
     // Chấm điểm
     const sum = {}; const max = {};
