@@ -79,14 +79,14 @@ export function Seal({ chars = "山海书院", className = "w-11 h-11", rotate =
   );
 }
 
-export function BrandMark({ compact = false }) {
+export function BrandMark({ compact = false, dark = false }) {
   return (
     <span className="flex items-center gap-2.5 shrink-0">
       <Seal className="w-10 h-10 text-[19px]" />
       {!compact && (
         <span className="hidden sm:flex flex-col leading-none">
-          <span className="font-brush text-[22px] text-[#1C1A17]">{BRAND.zh}</span>
-          <span className="font-serif-vn text-[12px] font-bold tracking-[0.04em] text-[#4A4238] mt-0.5">{BRAND.vn}</span>
+          <span className={`font-brush text-[22px] ${dark ? "text-[#F6EBD2]" : "text-[#1C1A17]"}`}>{BRAND.zh}</span>
+          <span className={`font-serif-vn text-[12px] font-bold tracking-[0.04em] mt-0.5 ${dark ? "text-[#C9A24E]" : "text-[#4A4238]"}`}>{BRAND.vn}</span>
         </span>
       )}
     </span>

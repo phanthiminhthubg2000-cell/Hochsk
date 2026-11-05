@@ -13,16 +13,16 @@ import { elementOf } from "./tuTien";
 export const BUILDINGS = [
   { key: "chuong-mon", vn: "Chưởng Môn Điện", zh: "掌门殿", box: [35, 5.6, 67, 30.6], lab: [51, 4.5], href: "/tong-mon", hint: "Tông môn · lớp học" },
   { key: "tang-kinh", vn: "Tàng Kinh Các", zh: "藏经阁", box: [7.3, 41, 26.6, 55], lab: [17, 38.5], tab: "learn", hint: "Bài giảng" },
-  { key: "luyen-dan", vn: "Luyện Đan Phòng", zh: "炼丹房", box: [83, 25.8, 100, 37.2], lab: [85.5, 23.6], href: "/luyen-dan", hint: "Ôn từ vựng" },
-  { key: "do-kiep", vn: "Độ Kiếp Đài", zh: "渡劫台", box: [80.6, 12.2, 90.2, 19.4], lab: [85, 10.2], tab: "exam", hint: "Thi đột phá" },
+  { key: "luyen-dan", vn: "Luyện Đan Phòng", zh: "炼丹房", box: [83, 25.8, 100, 37.2], lab: [99, 23.6], an: "r", href: "/luyen-dan", hint: "Ôn từ vựng" },
+  { key: "do-kiep", vn: "Độ Kiếp Đài", zh: "渡劫台", box: [80.6, 12.2, 90.2, 19.4], lab: [98, 15.5], an: "r", tab: "exam", hint: "Thi đột phá" },
   { key: "tran-phap", vn: "Trận Pháp Đài", zh: "阵法台", box: [30, 37.5, 66, 46.7], lab: [48, 35.4], href: "/arrange", hint: "Ngữ pháp · sắp câu" },
   { key: "dau-phap", vn: "Đấu Pháp Đài", zh: "斗法台", box: [70.9, 45.8, 82.8, 55.8], lab: [77, 57.4], href: "/luan-vo", hint: "Luận võ" },
   { key: "trac-linh", vn: "Trắc Linh Đài", zh: "测灵台", box: [38.4, 59.4, 62.5, 69.2], lab: [50.4, 71], href: "/linh-can", hint: "Linh căn · cảnh giới" },
-  { key: "linh-thu", vn: "Đệ Tử Cư Sở", zh: "弟子居", box: [78.4, 62.2, 99.9, 74.2], lab: [86, 75.6], href: "/de-tu", hint: "Hồ sơ · linh thú" },
-  { key: "tam-ma", vn: "Tâm Ma Động", zh: "心魔洞", box: [0.7, 77.8, 18.9, 98.6], lab: [14, 75.6], href: "/tam-ma", hint: "Câu hay sai" },
+  { key: "linh-thu", vn: "Đệ Tử Cư Sở", zh: "弟子居", box: [78.4, 62.2, 99.9, 74.2], lab: [99, 76], an: "r", href: "/de-tu", hint: "Hồ sơ · linh thú" },
+  { key: "tam-ma", vn: "Tâm Ma Động", zh: "心魔洞", box: [0.7, 77.8, 18.9, 98.6], lab: [1, 76], an: "l", href: "/tam-ma", hint: "Câu hay sai" },
 ];
 
-const PLATE = "absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none inline-flex items-center gap-1.5 whitespace-nowrap rounded-[5px] border border-[#C9A24E] bg-[linear-gradient(#2E2922,#211D18)] text-[#F6EBD2] shadow-[0_0_0_2px_#211D18,0_3px_8px_rgba(0,0,0,.4)] font-serif-vn font-bold";
+const PLATE = "absolute pointer-events-none inline-flex items-center gap-1.5 whitespace-nowrap rounded-[5px] border border-[#C9A24E] bg-[linear-gradient(#2E2922,#211D18)] text-[#F6EBD2] shadow-[0_0_0_2px_#211D18,0_3px_8px_rgba(0,0,0,.4)] font-serif-vn font-bold";
 
 /**
  * @param tags  { [key]: { text, tone: "red"|"gold"|"ink"|"violet" } } nhãn trạng thái dưới biển tên
@@ -30,18 +30,24 @@ const PLATE = "absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none in
  * @param glow  key công trình được sư phụ chỉ (vòng sáng)
  * @param onTab (tab) → chuyển khu trên trang chủ
  */
+const anchorStyle = (b, dy = 0) => {
+  const [x, y] = b.lab; const top = dy ? `calc(${y}% + ${dy})` : `${y}%`;
+  if (b.an === "r") return { right: `${100 - x}%`, top, transform: dy ? "none" : "translateY(-50%)" };
+  if (b.an === "l") return { left: `${x}%`, top, transform: dy ? "none" : "translateY(-50%)" };
+  return { left: `${x}%`, top, transform: dy ? "translateX(-50%)" : "translate(-50%,-50%)" };
+};
 export function TongMonMap({ tags = {}, lock = {}, glow, onTab, className = "" }) {
   const tone = { red: "bg-[#9E2F22] text-white", gold: "bg-[#FBF8F1] text-[#5C3D00] border border-[#9A6B12]", ink: "bg-[#1C1A17] text-[#F3EEE2]", violet: "bg-[#3A2350] text-[#F1E6FF]" };
   return (
-    <div className={`relative w-full aspect-[500/496] overflow-hidden rounded-[18px] bg-[#1E2A33] [container-type:inline-size] ${className}`}>
+    <div className={`relative w-full aspect-[500/496] overflow-hidden rounded-[6px] bg-[#1E2A33] border border-[#C9A24E] shadow-[0_0_0_3px_#1C1A17] [container-type:inline-size] ${className}`}>
       <style>{`@keyframes tmRing{0%{transform:translate(-50%,-50%) scale(.6);opacity:.9}100%{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
 @keyframes tmFlash{0%,100%{opacity:0}4%{opacity:.9}6%{opacity:.1}8%{opacity:.8}12%{opacity:0}}
 @keyframes tmGlow{0%,100%{opacity:.4}50%{opacity:.9}}
 @keyframes tmDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(8%)}}
-.tm-plate{font-size:clamp(9px,2.6cqw,15px);height:clamp(20px,5.2cqw,30px);padding:0 clamp(6px,2cqw,14px)}
+.tm-plate{font-size:clamp(9px,2.05cqw,13px);height:clamp(18px,4.2cqw,26px);padding:0 clamp(5px,1.6cqw,11px)}
 .tm-plate b{font-family:"Noto Serif SC",serif;color:#E6C36E;font-weight:700}
-.tm-tag{font-size:clamp(9px,2.1cqw,12px)}
-@container (max-width:420px){.tm-plate b{display:none}}
+.tm-tag{font-size:clamp(8.5px,1.8cqw,11.5px)}
+@container (max-width:520px){.tm-plate b{display:none}}
 @media (prefers-reduced-motion:reduce){.tm-anim{animation:none!important}}`}</style>
       <img src="/tt/tong-mon.jpg" alt="Tông môn Sơn Hải Thư Viện: điện chính trên đỉnh núi, các đình đài trên vách đá, thác nước, cầu đá và hồ sen" className="absolute inset-0 w-full h-full object-cover" />
       <div aria-hidden="true" className="tm-anim absolute pointer-events-none mix-blend-screen" style={{ left: "75%", top: "4%", width: "22%", height: "20%", background: "radial-gradient(closest-side, rgba(255,238,170,.85), transparent)", animation: "tmFlash 5s linear infinite" }} />
@@ -58,13 +64,13 @@ export function TongMonMap({ tags = {}, lock = {}, glow, onTab, className = "" }
       })}
       {glow && (() => { const b = BUILDINGS.find((x) => x.key === glow); if (!b) return null; const [l, t, r, d] = b.box; return <span aria-hidden="true" className="tm-anim absolute w-[9%] aspect-square rounded-full border-[3px] border-[#E6B656] pointer-events-none" style={{ left: `${(l + r) / 2}%`, top: `${(t + d) / 2}%`, animation: "tmRing 1.8s ease-out infinite" }} />; })()}
       {BUILDINGS.map((b) => (
-        <span key={`p${b.key}`} className={`${PLATE} tm-plate ${lock[b.key] ? "opacity-80 grayscale-[.5]" : ""}`} style={{ left: `${b.lab[0]}%`, top: `${b.lab[1]}%` }} aria-hidden="true">
+        <span key={`p${b.key}`} className={`${PLATE} tm-plate ${lock[b.key] ? "opacity-80 grayscale-[.5]" : ""}`} style={anchorStyle(b)} aria-hidden="true">
           {b.vn} <b>{b.zh}</b>
         </span>
       ))}
       {BUILDINGS.map((b) => {
         const tg = lock[b.key] ? { text: `🔒 ${lock[b.key]}`, tone: "ink" } : tags[b.key]; if (!tg) return null;
-        return <span key={`t${b.key}`} aria-hidden="true" className={`tm-tag absolute -translate-x-1/2 pointer-events-none whitespace-nowrap font-extrabold px-2 py-0.5 rounded-full shadow ${tone[tg.tone || "gold"]}`} style={{ left: `${Math.min(88, Math.max(12, b.lab[0]))}%`, top: `calc(${b.lab[1]}% + clamp(11px,2.9cqw,17px))` }}>{tg.text}</span>;
+        return <span key={`t${b.key}`} aria-hidden="true" className={`tm-tag absolute pointer-events-none whitespace-nowrap font-extrabold px-2 py-0.5 rounded-[3px] shadow ${tone[tg.tone || "gold"]}`} style={anchorStyle(b, "clamp(10px,2.4cqw,15px)")}>{tg.text}</span>;
       })}
     </div>
   );
@@ -85,10 +91,10 @@ export const regionOfRealm = (idx) => REGIONS.find((r) => r.realms.includes(idx)
 export function WorldMap({ realmIdx = 0, onPick, picked, className = "" }) {
   const here = regionOfRealm(realmIdx);
   return (
-    <div className={`relative w-full aspect-[517/496] overflow-hidden rounded-[18px] bg-[#E9DAB8] [container-type:inline-size] ${className}`}>
+    <div className={`relative w-full aspect-[517/496] overflow-hidden rounded-[6px] bg-[#E9DAB8] border border-[#8C6A3A] shadow-[0_0_0_3px_#F3E8CF,0_0_0_4px_#8C6A3A] [container-type:inline-size] ${className}`}>
       <style>{`@keyframes wmPing{0%{transform:translate(-50%,-50%) scale(.5);opacity:.9}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
 @keyframes wmDash{to{stroke-dashoffset:-34}}
-.wm-card{font-size:clamp(9px,2.3cqw,14px)}
+.wm-card{font-size:clamp(8.5px,1.95cqw,13px)}
 .wm-card .cn{font-family:"Noto Serif SC",serif;letter-spacing:.15em}
 @container (max-width:420px){.wm-card .cn,.wm-card .hk{display:none}}
 @media (prefers-reduced-motion:reduce){.wm-anim{animation:none!important}}`}</style>
@@ -123,8 +129,8 @@ export function WorldMap({ realmIdx = 0, onPick, picked, className = "" }) {
         );
       })}
       {(() => { const [l, t, rr, d] = here.box; return <>
-        <span aria-hidden="true" className="wm-anim absolute w-[6%] aspect-square rounded-full bg-[#9E2F22] pointer-events-none" style={{ left: `${(l + rr) / 2}%`, top: `${(t + d) / 2}%`, animation: "wmPing 1.8s ease-out infinite" }} />
-        <span aria-hidden="true" className="absolute w-[3.4%] aspect-square rounded-full bg-[#9E2F22] border-[3px] border-[#FBF8F1] shadow -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{ left: `${(l + rr) / 2}%`, top: `${(t + d) / 2}%` }} />
+        <span aria-hidden="true" className="wm-anim absolute w-[4%] aspect-square rounded-full bg-[#9E2F22] pointer-events-none" style={{ left: `${(l + rr) / 2}%`, top: `${(t + d) / 2}%`, animation: "wmPing 1.8s ease-out infinite" }} />
+        <span aria-hidden="true" className="absolute w-[2.6%] aspect-square rounded-full bg-[#9E2F22] border-2 border-[#FBF8F1] shadow -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{ left: `${(l + rr) / 2}%`, top: `${(t + d) / 2}%` }} />
       </>; })()}
     </div>
   );
