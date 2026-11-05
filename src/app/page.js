@@ -15,6 +15,7 @@ import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { useHskkResultSaver } from "../hskkResultSaver";
 import { BRAND, BrandMark, KimThiem, MountainScene, Seal, VText, Gourd, dayKey, dayNum, realmOf, judgeLinhCan, elementOf, ELEMENTS } from "./tuTien";
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp, increment } from "firebase/firestore";
+import { ThienBang } from "./giangHo";
 import { attachTuTien, masteryOf, reviewOf, isTieuThanh, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
@@ -1304,7 +1305,16 @@ export default function HomePage() {
               <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">江湖</span>Giang hồ</h1>
               <div className="flex items-center gap-3 p-4 rounded-[18px] bg-[#F3E3D2] border border-[#E2C3AC]">
                 <Frog className="w-14 h-12 shrink-0" />
-                <p className="flex-1 text-[15px] leading-snug text-[#3A2A1E]"><b>Vừa chơi vừa học:</b> chọn một trò, chọn bài đã học rồi thử thách cả lớp nhé!</p>
+                <p className="flex-1 text-[15px] leading-snug text-[#3A2A1E]"><b>Vừa chơi vừa học:</b> luận võ với đồng song, leo Thiên Bảng, hoặc chọn một trò để thử thách cả lớp!</p>
+              </div>
+              <div className="grid gap-4 md:gap-5 lg:grid-cols-[1.2fr_1fr] items-start">
+                <Link href="/luan-vo" className="group relative overflow-hidden rounded-[14px] bg-[#121318] text-[#EDE8DC] p-6 flex flex-col gap-3 min-h-[220px] hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,.5)] transition-shadow">
+                  <svg viewBox="0 0 120 120" className="absolute -right-4 -bottom-4 w-40 h-40 opacity-20" aria-hidden="true"><path d="M20 100 L95 25 M95 25 l-14 2 M95 25 l-2 14 M100 100 L25 25 M25 25 l14 2 M25 25 l2 14" stroke="#E6B656" strokeWidth="6" strokeLinecap="round" fill="none" /></svg>
+                  <div className="flex items-baseline gap-3"><span className="font-brush text-[44px] leading-none text-[#E6B656]" aria-hidden="true">论武</span><h2 className="font-serif-vn text-[24px] font-extrabold">Luận võ</h2></div>
+                  <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[440px]">Đấu từ vựng một chọi một với đồng song theo thời gian thực: 10 câu, mỗi câu 10 giây. Thắng <b className="text-[#E6B656]">+50 linh khí</b>, hòa +25, thua +10.</p>
+                  <span className="mt-auto self-start h-11 px-5 inline-flex items-center rounded-[4px] bg-[#E6B656] text-[#121318] font-serif-vn font-extrabold">Lên lôi đài</span>
+                </Link>
+                <ThienBang n={5} me={userId} compact />
               </div>
               <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {GAMES.map(g => (
