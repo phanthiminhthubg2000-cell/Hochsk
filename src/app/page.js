@@ -19,6 +19,9 @@ import { ThienBang } from "./giangHo";
 import { attachTuTien, masteryOf, reviewOf, isTieuThanh, normKeys, stepByKey, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
 import { tuViState, realmQuest, nextStreak, REALMS8, LESSON_DONE_MIN_CORRECT, TIEU_THANH_TV } from "./tuVi";
 import { DotPha, useDotPha } from "./dotPha";
+import { TongMonMap, suPhuTip } from "./tongMon";
+import { loadLD, ldStats } from "./luyenDan";
+import { weekBump } from "./useTuVi";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 
@@ -436,8 +439,21 @@ export default function HomePage() {
   // Độ kiếp: doKiep = { hsk4: {passed, pct, at} }, cooldown = ms (tẩu hỏa nhập ma: tĩnh dưỡng 24 giờ)
   const [doKiep, setDoKiep] = useState({});
   const [tuVi, setTuVi] = useState(null); // users.tuVi = { realm, base, src, at, placed }
+  const [daoHieu, setDaoHieu] = useState(null); // users.daoHieu = { vn, zh }
+  const [kiepLog, setKiepLog] = useState([]);   // lịch sử độ kiếp: [{ n, pct, pass, at, parts:[{k,c,t}] }]
+  const kiepLogRef = useRef([]);
+  const [ldStat, setLdStat] = useState(null);   // Luyện Đan Phòng: { due, tamMa, learned, … }
+  const [uLoaded, setULoaded] = useState(false);
+  const weekRef = useRef({ base: null, week: null });
   const tvRef = useRef({ xp: 0, tuVi: null, doKiep: {} }); // bản mới nhất cho các trình nghe sự kiện
   useEffect(() => { tvRef.current = { xp: leaves, tuVi, doKiep }; }, [leaves, tuVi, doKiep]);
+  // Tu vi tuần: phần xp tăng trên trang chủ (trang con do thanh điều hướng ghi)
+  useEffect(() => {
+    const w = weekRef.current; if (!uLoaded || w.base == null || !userId) return;
+    const n = leaves - w.base; if (n <= 0) return;
+    const upd = weekBump({ week: w.week }, n); w.base = leaves; w.week = { k: upd.week.k, xp: 0 };
+    setDoc(doc(db, "users", userId), upd, { merge: true }).catch(() => {});
+  }, [leaves, uLoaded, userId]);
   const [doKiepCooldown, setDoKiepCooldown] = useState(0);
   const [doKiepResult, setDoKiepResult] = useState(null); // {pass, pct, n, mismatch, examLevel}
   const doKiepPendingRef = useRef(null); // cấp HSK đang độ kiếp
@@ -471,10 +487,15 @@ export default function HomePage() {
       doKiepPendingRef.current = null;
       const lv = Number((String(d.level || "").match(/(\d)\s*$/) || [])[1] || 0);
       const parts = [d.listening, d.reading, d.writing?.auto].filter(x => x && x.total);
+      // Phân tích từng đạo lôi để lưu lịch sử + chẩn đoán
+      const named = [["Nghe", "kim", d.listening], ["Đọc", "thuy", d.reading], ["Viết", "tho", d.writing?.auto]].filter(([, , x]) => x && x.total).map(([k, el, x]) => ({ k, el, c: x.correct || 0, t: x.total || 0 }));
       const cor = parts.reduce((a, x) => a + (x.correct || 0), 0), tot = parts.reduce((a, x) => a + (x.total || 0), 0);
       const pct = tot ? Math.round((cor / tot) * 100) : 0;
       if (lv !== n) { setDoKiepResult({ mismatch: true, n, examLevel: lv, pct }); return; }
       const pass = pct >= 60;
+      const entry = { n, pct, pass, at: Date.now(), parts: named };
+      const log = [...kiepLogRef.current, entry].slice(-12); kiepLogRef.current = log; setKiepLog(log);
+      if (userId) setDoc(doc(db, "users", userId), { kiepLog: log }, { merge: true }).catch(() => {});
       if (pass) {
         const rec = { passed: true, pct, at: Date.now() };
         // Đột phá: lên cảnh giới kế, tu vi trong cảnh giới mới tính từ 0 (base = tổng tu vi sau thưởng)
@@ -487,7 +508,7 @@ export default function HomePage() {
         setDoKiepCooldown(until);
         if (userId) setDoc(doc(db, "users", userId), { doKiepCooldown: until }, { merge: true }).catch(() => {});
       }
-      setDoKiepResult({ pass, pct, n });
+      setDoKiepResult({ pass, pct, n, parts: named });
     };
     const onMsg = async (e) => {
       const d = e.data;
@@ -680,6 +701,13 @@ export default function HomePage() {
         tuRef.current = { streak: uData.streak ?? 0, last: uData.lastActiveDay || "", pills: pl, boostUntil: uData.boostUntil || 0 };
         if (uData.doKiep && typeof uData.doKiep === "object") setDoKiep(uData.doKiep);
         if (uData.tuVi && Number.isFinite(uData.tuVi.realm)) setTuVi(uData.tuVi);
+        if (uData.daoHieu?.vn) setDaoHieu(uData.daoHieu);
+        if (Array.isArray(uData.kiepLog)) { setKiepLog(uData.kiepLog); kiepLogRef.current = uData.kiepLog; }
+        weekRef.current = { base: uData.xp ?? 0, week: uData.week || null };
+        loadLD(userId).then((ld) => setLdStat(ldStats(ld))).catch(() => {});
+        setULoaded(true);
+        // Thư sinh mới: mở Vạn Chữ Thiên Thư một lần
+        try { if (!uData.daoHieu && !uData.tuVi && !localStorage.getItem("sh_intro_seen")) { window.location.href = "/thien-thu"; return; } } catch (_) {}
         setDoKiepCooldown(uData.doKiepCooldown || 0);
         if (uData.lastLecture?.id) setLastLecture(uData.lastLecture);
         if (uData.lectureLevel) setSelectedLectureLevel(l => l || uData.lectureLevel);
@@ -863,7 +891,7 @@ export default function HomePage() {
 
   const hour = new Date().getHours();
   const greet = hour < 11 ? "Chào buổi sáng" : hour < 14 ? "Chào buổi trưa" : hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
-  const firstName = user?.firstName || (user?.fullName || "").split(" ").pop() || "bạn";
+  const firstName = daoHieu?.vn || user?.firstName || (user?.fullName || "").split(" ").pop() || "bạn";
   const inFullscreen = selectedLecture || activeHskExamView || activeHskkExam;
 
   // ============================================================
@@ -924,6 +952,28 @@ export default function HomePage() {
   const kiepReady = realm.peak && quest.done;
   const kiepCool = doKiepCooldown > nowMs;
   const kiepAvail = kiepN >= 1 && kiepN <= 5;
+  // Bản đồ tông môn: nhãn trạng thái + khu chưa mở + lời sư phụ
+  const lcJudge = linhCan?.scores ? judgeLinhCan(linhCan.scores) : null;
+  const tip = suPhuTip({ realm: isSignedIn ? realm : null, quest, linhCan: lcJudge, nextLesson, reviewLesson, tamMaCount: ldStat?.tamMa, dueWords: ldStat?.due });
+  const mapTags = {
+    ...(nextLesson ? { "tang-kinh": { text: `▶ ${String(nextLesson.lectureName || "").split(/[–—:·]/)[0].trim().slice(0, 18)}`, tone: "red" } } : {}),
+    ...(ldStat?.due ? { "luyen-dan": { text: `${ldStat.due} từ đến hạn`, tone: "gold" } } : {}),
+    ...(ldStat?.tamMa ? { "tam-ma": { text: `心魔 ${ldStat.tamMa}`, tone: "violet" } } : {}),
+    ...(realm.provisional ? { "trac-linh": { text: "định cảnh giới", tone: "red" } } : {}),
+    ...(realm.peak && quest.done && kiepAvail ? { "do-kiep": { text: "sẵn sàng độ kiếp", tone: "red" } } : {}),
+  };
+  const mapLock = isSignedIn && !(realm.peak && quest.done) && realm.idx > 0 ? { "do-kiep": "cần Đỉnh phong" } : {};
+  const SuPhuCard = () => (
+    <section className="rounded-[18px] bg-[#FBF8F1] border border-[#D8CBAE] p-4 flex gap-3 items-start" aria-label="Sư phụ chỉ điểm">
+      <span className="w-12 h-12 shrink-0 rounded-full bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[24px] border-2 border-[#D9A23A]" aria-hidden="true">师</span>
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <div className="font-serif-vn text-[13px] font-extrabold text-[#7A2218]">Sư phụ Vân Tẩu · chỉ điểm hôm nay</div>
+        <p className="text-[14px] leading-relaxed">“{tip.text}”</p>
+        {tip.href ? <Link href={tip.href} className="self-start text-sm font-bold text-[#9E2F22] underline underline-offset-2">Đi ngay →</Link>
+          : tip.tab ? <button onClick={() => goTab(tip.tab)} className="self-start text-sm font-bold text-[#9E2F22] underline underline-offset-2">Đi ngay →</button> : null}
+      </div>
+    </section>
+  );
   // Phàm Nhân Đỉnh phong → nhập môn (không cần đề thi)
   const nhapMon = () => {
     const nextTv = { realm: 1, base: leaves, src: "nhap-mon", at: Date.now(), placed: true };
@@ -1177,9 +1227,20 @@ export default function HomePage() {
                   <Icon name="chevron" className="w-5 h-5 text-[#7A5410]" />
                 </button>
               )}
-              <div className="grid gap-5 md:gap-6 lg:grid-cols-[1.6fr_1fr]">
-                <ContinueCard />
-                <PondCard />
+              <div className="grid gap-5 md:gap-6 lg:grid-cols-[1.2fr_1fr] items-start">
+                <div className="flex flex-col gap-3">
+                  <TongMonMap tags={mapTags} lock={mapLock} glow={tip.glow} onTab={goTab} />
+                  <nav aria-label="Lối tắt tông môn" className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                    {[["/the-gioi", "舆图", "Thế giới"], ["/luyen-dan", "炼丹", "Luyện đan"], ["/tam-ma", "心魔", "Tâm ma"], ["/ma-vuong", "魔王", "Ma Vương"], ["/bi-canh", "秘境", "Bí cảnh"], ["/tong-mon", "宗门", "Tông môn"]].map(([h, z, v]) => (
+                      <Link key={h} href={h} className="h-14 rounded-[10px] bg-[#FBF8F1] border border-[#D8CBAE] hover:border-[#9E2F22] flex flex-col items-center justify-center leading-tight"><span className="font-brush text-[20px] text-[#9E2F22]" aria-hidden="true">{z}</span><span className="text-xs font-bold">{v}</span></Link>
+                    ))}
+                  </nav>
+                </div>
+                <div className="flex flex-col gap-5">
+                  <PondCard />
+                  <SuPhuCard />
+                  <ContinueCard />
+                </div>
               </div>
               <div className="grid gap-5 md:gap-6 md:grid-cols-2">
                 <LinhCanCard />
@@ -1338,7 +1399,7 @@ export default function HomePage() {
                   <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[440px]">Đấu từ vựng một chọi một với đồng song theo thời gian thực: 10 câu, mỗi câu 10 giây. Thắng <b className="text-[#E6B656]">+50 tu vi</b>, hòa +25, thua +10.</p>
                   <span className="mt-auto self-start h-11 px-5 inline-flex items-center rounded-[4px] bg-[#E6B656] text-[#121318] font-serif-vn font-extrabold">Lên lôi đài</span>
                 </Link>
-                <ThienBang n={5} me={userId} compact />
+                <ThienBang n={5} me={userId} compact tabs />
               </div>
               <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {GAMES.map(g => (
@@ -1400,6 +1461,21 @@ export default function HomePage() {
                     className="relative h-12 px-6 rounded-[4px] bg-[#E6B656] disabled:bg-[#3A3D48] disabled:text-[#8A8D98] text-[#121318] font-serif-vn font-extrabold shrink-0 shadow-[0_0_0_3px_#121318,0_0_0_4px_#E6B656] disabled:shadow-none">Nghênh tiếp lôi kiếp</button>
                 )}
               </section>
+              {kiepLog.length > 0 && (
+                <section className={`${card} p-5 flex flex-col gap-2`} aria-label="Lịch sử độ kiếp">
+                  <h2 className="font-serif-vn text-[17px] font-extrabold">Lịch sử độ kiếp</h2>
+                  <ol className="flex flex-col">
+                    {[...kiepLog].reverse().map((k, i) => (
+                      <li key={k.at} className={`flex items-center gap-3 py-2 ${i ? "border-t border-[#ECE3D0]" : ""}`}>
+                        <span className={`font-brush text-[20px] ${k.pass ? "text-[#2F6E5A]" : "text-[#9E2F22]"}`} aria-hidden="true">{k.pass ? "渡" : "魔"}</span>
+                        <span className="flex-1 text-sm"><b>HSK {k.n}</b> · {new Date(k.at).toLocaleDateString("vi-VN")} · {k.pass ? "thành công" : "tẩu hỏa"}</span>
+                        <span className="text-xs text-[#6B6253] hidden sm:inline">{(k.parts || []).map((x) => `${x.k} ${x.t ? Math.round((x.c / x.t) * 100) : 0}%`).join(" · ")}</span>
+                        <b className="text-sm tabular-nums">{k.pct}%</b>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
               <div role="tablist" aria-label="Loại đề" className="grid grid-cols-3 gap-1 p-1 rounded-[14px] bg-[#E4DAC4] md:max-w-md">
                 {[["hsk3", "HSK 3.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
                   <button key={k} role="tab" aria-selected={examTab === k} onClick={() => setExamTab(k)}
@@ -1560,6 +1636,21 @@ export default function HomePage() {
                 : doKiepResult.pass ? `Đạt ${doKiepResult.pct}% câu tự chấm. +200 tu vi — đột phá lên ${REALMS8[Math.min(7, (doKiepResult.n || 0) + 1)].vn} tầng 1.`
                 : `Đạt ${doKiepResult.pct}% (cần 60%). Hãy tĩnh dưỡng 24 giờ, ôn lại công pháp rồi độ kiếp lần nữa. Tu vi không bị mất.`}
             </p>
+            {doKiepResult.parts?.length > 0 && (() => {
+              const ps = doKiepResult.parts.map((x) => ({ ...x, p: x.t ? Math.round((x.c / x.t) * 100) : 0 })); const weak = [...ps].sort((a, b) => a.p - b.p)[0];
+              const go = { kim: ["/dictation", "Thiên Âm Cốc (nghe chép)"], thuy: ["/translate", "Văn Tự Tháp (đọc · dịch)"], tho: ["/arrange", "Thiên Cơ Trận (sắp câu)"] }[weak.el];
+              return (
+                <div className="w-full flex flex-col gap-2 text-left">
+                  {ps.map((x) => (
+                    <div key={x.k} className="flex flex-col gap-1">
+                      <div className="flex justify-between text-sm"><span>{elementOf(x.el).zh} {x.k}</span><b>{x.c}/{x.t} · {x.p}%</b></div>
+                      <div className={`h-2 rounded-[2px] overflow-hidden ${doKiepResult.pass ? "bg-[#3A3D48]" : "bg-[#DCD1BA]"}`}><div className="h-full" style={{ width: `${x.p}%`, background: x === weak ? "#C9472F" : "#2F6E5A" }} /></div>
+                    </div>
+                  ))}
+                  <p className="text-sm">Chẩn đoán: đạo lôi <b>{weak.k}</b> yếu nhất ({weak.p}%).{go ? <> Luyện thêm ở <Link href={go[0]} className="underline font-bold">{go[1]}</Link>.</> : ""}</p>
+                </div>
+              );
+            })()}
             <button onClick={() => setDoKiepResult(null)} className={`h-11 px-6 rounded-[4px] font-bold ${doKiepResult.pass ? "bg-[#E6B656] text-[#121318]" : "bg-[#1C1A17] text-[#F3EEE2]"}`}>Đóng</button>
           </div>
         </div>

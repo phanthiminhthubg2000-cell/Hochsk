@@ -111,4 +111,5 @@ export function nextStreak(st, today, dayNum) {
 export const PAGE_ELEMENT = {
   "/vocab": "moc", "/topic": "moc", "/luan-vo": "moc", "/dictation": "kim", "/translate": "thuy", "/test": "thuy",
   "/arrange": "tho", "/roleplay": "hoa", "/hskk": "hoa",
+  "/luyen-dan": "moc", "/tam-ma": "moc", "/ma-vuong": "moc",
 };

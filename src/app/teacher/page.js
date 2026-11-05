@@ -1076,6 +1076,7 @@ export default function TeacherDashboard() {
             <div className="border-t border-[#E2E8F0] pt-4">
               <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-widest text-amber-500">{!isSidebarCollapsed ? "Quản trị viên" : "•"}</p>
               
+              <Link href="/truong-lao" className="w-full mb-2 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold bg-[#1C1A17] text-[#F3EEE2] hover:bg-[#2A2622]"><span style={{ fontFamily: "STKaiti, KaiTi, serif" }}>长老</span> Trưởng lão · tu tiên</Link>
               <button onClick={() => setActiveTab("students")} className={`w-full mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'students' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
                 <span className="text-lg">📊</span>{!isSidebarCollapsed && <span>Tiến độ Học viên</span>}
               </button>

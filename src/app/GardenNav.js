@@ -14,6 +14,7 @@ import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { BrandMark, KimThiem, dayKey, dayNum, elementOf } from "./tuTien";
 import { tuViState, nextStreak, PAGE_ELEMENT } from "./tuVi";
 import { DotPha, useDotPha } from "./dotPha";
+import { weekBump } from "./useTuVi";
 
 export const GARDEN_TABS = [
   { key: "home", label: "Động phủ", zh: "府", icon: "qi" },
@@ -68,15 +69,14 @@ export default function GardenNav({ active = "practice", title, right }) {
         if (!s.exists()) return;
         const d = s.data();
         setU(d); setStreak(d.streak ?? 0); setLeaves(d.xp ?? 0);
-        const xp = d.xp || 0;
-        if (lastXp.current != null && xp > lastXp.current) {
-          const n = xp - lastXp.current; const k = Date.now();
+        const xp = d.xp || 0; const prevXp = lastXp.current; lastXp.current = xp; // ghi trước khi setDoc để không lặp lại khi thông báo đến ngay
+        if (prevXp != null && xp > prevXp) {
+          const n = xp - prevXp; const k = Date.now();
           setToast({ n, k }); setTimeout(() => setToast((t) => (t && t.k === k ? null : t)), 2400);
           // Nhận tu vi = có tu luyện hôm nay → giữ chuỗi ngày (trang chủ cũng làm việc này)
           const ns = nextStreak({ streak: d.streak || 0, last: d.lastActiveDay || "", pills: d.pills }, dayKey(), dayNum);
-          if (ns) setDoc(ref, { streak: ns.streak, lastActiveDay: ns.last, pills: ns.pills }, { merge: true }).catch(() => {});
+          setDoc(ref, { ...(ns ? { streak: ns.streak, lastActiveDay: ns.last, pills: ns.pills } : {}), ...weekBump(d, n) }, { merge: true }).catch(() => {});
         }
-        lastXp.current = xp;
       }, () => {});
     } catch (_) {}
     return () => { try { off(); } catch (_) {} };
@@ -110,9 +110,9 @@ export default function GardenNav({ active = "practice", title, right }) {
             <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap border border-[#1C1A17]/70 text-sm font-bold text-[#1C1A17]" title="Tu luyện liên tục (chuỗi ngày)">
               <GIcon name="flame" className="w-4 h-4 text-[#9E2F22]" />{streak}<span className="hidden xl:inline font-semibold"> ngày</span>
             </span>
-            {tv && (
-              <Link href={tv.provisional ? "/linh-can" : "/"} className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#1C1A17] text-[#F3EEE2] text-sm font-bold" title={tv.provisional ? "Chưa định cảnh giới — lên Trắc Linh Đài" : `Tu vi ${tv.tv}/${tv.need} trong cảnh giới`}>
-                <span className="font-brush text-[18px] leading-none text-[#E6B656]" aria-hidden="true">{tv.zh}</span>{tv.vn}<span className="hidden lg:inline font-semibold text-[#E6B656]">{tv.provisional ? " · chưa định" : ` · ${tv.stage}`}</span>
+            {tv && !["teacher", "admin"].includes(u?.role) && (
+              <Link href={tv.provisional ? "/linh-can" : "/"} className="hidden sm:inline-flex items-center gap-1.5 h-9 px-2.5 rounded-lg whitespace-nowrap bg-[#1C1A17] text-[#F3EEE2] text-sm font-bold" title={tv.provisional ? "Chưa định cảnh giới — lên Trắc Linh Đài" : `Tu vi ${tv.tv}/${tv.need} trong cảnh giới`}>
+                <span className="font-brush text-[18px] leading-none text-[#E6B656]" aria-hidden="true">{tv.zh}</span><span className="hidden 2xl:inline">{tv.vn}</span><span className="font-semibold text-[#E6B656]">{tv.provisional ? "chưa định" : tv.stage}</span>
               </Link>
             )}
             <span className="relative inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#F0E3BF] border border-[#D9B970] text-sm font-bold text-[#5C3D00]" title="Tu vi">

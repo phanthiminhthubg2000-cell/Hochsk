@@ -12,7 +12,7 @@ import { useAuth, useUser, SignInButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, getDocs, onSnapshot, collection, query, where, limit, runTransaction, increment } from "firebase/firestore";
 import GardenNav from "../GardenNav";
-import { ThienBang } from "../giangHo";
+import { DauPhapPodium } from "../giangHo";
 import { buildPool, makeQuestion, publicQuestion, loadVocab, speak, newCode } from "../bom/game";
 
 const ROOMS = "game_rooms";
@@ -289,7 +289,7 @@ export default function LuanVoPage() {
             </section>
           )}
         </div>
-        <ThienBang n={10} me={userId} />
+        <DauPhapPodium me={userId} onFind={!code && vocab ? quickMatch : undefined} />
         <p className="lg:col-span-2 text-xs text-[#6B6253]"><Link href="/?tab=play" className="underline">← Về Giang hồ</Link></p>
       </main>
     </div>
