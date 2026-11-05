@@ -16,7 +16,8 @@ import argparse, base64, json, os, shutil, subprocess, sys, time, wave
 MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")          # mã model TTS (vd. lấy từ Get code); để trống sẽ báo lỗi
 VOICE = os.environ.get("TTS_VOICE", "Sulafat")    # giọng có sẵn; series video HSK đã dùng Sulafat
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
-NGHI_GIUA = 0.6                                   # giây nghỉ giữa hai lần gọi (tránh vượt hạn mức)
+NGHI_GIUA = 0.6
+KIEM = os.environ.get("TTS_KIEM", "1") != "0"     # tự nghe lại từng file (tốn thêm một lượt gọi mỗi file); đặt TTS_KIEM=0 để tắt                                   # giây nghỉ giữa hai lần gọi (tránh vượt hạn mức)
 # Cách ghép Style + Text thành một lời nhắc. Nếu "Get code" của AI Studio ghép khác, sửa dòng này cho giống.
 PROMPT = "### DIRECTOR'S NOTES\n{style}\n\n#### TRANSCRIPT\n{text}"  # đã thử với gemini-3.8-flash-tts: chỉ đọc phần TRANSCRIPT
 # ==============================================================================
@@ -27,11 +28,10 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT = os.environ.get("TTS_OUT") or (os.path.join(ROOT, "public", "audio", "tts") if os.path.isdir(os.path.join(ROOT, "public", "audio")) else os.path.join(HERE, "tts"))
 
 # ---- Style theo skill (mục 3A, 5). Từ đơn: Chế độ A mức 1. Câu nghe: Chế độ B, câu dễ mức 2, câu khó mức 3. ----
-STYLE_TU = ("Speaking slowly and deliberately, like a teacher modeling pronunciation for absolute beginners; every syllable given its full length. "
-            "Bright, warm, clear, wide pitch range with full pitch movement. Tones slightly exaggerated: first tone high and level, second tone clear rise, "
-            "third tone a fall-rise dip (only the fall before another syllable), fourth tone sharp fall from high. Crisp initials with clear aspirated versus "
-            "unaspirated contrast, complete every final -n and -ng. Dictionary pinyin: {py}; apply standard tone sandhi and neutral tones as a native teacher would. "
-            "Say the word once, nothing before or after it. Hold the vowel of each stressed syllable a little longer than usual; let every tone contour finish before moving to the next syllable.")
+STYLE_TU = ("Speaking slowly and clearly, like a native Beijing Mandarin teacher saying a vocabulary word for students; unhurried, every syllable fully formed. "
+            "Natural native Putonghua, crisp articulation, full pitch movement, all four tones clearly audible, nothing exaggerated or sung. "
+            "Dictionary pinyin: {py}; apply standard tone sandhi and neutral tones as a native speaker would. Say the word once, nothing before or after it. "
+            "Let every tone contour finish before moving to the next syllable.")
 LOI = "Natural spoken Mandarin, crisp articulation, full pitch movement, all four tones clearly audible."
 STYLE_CAU = {
     "cau-1": "Speaking slowly and clearly, unhurried teaching pace, every syllable fully formed, never rushing through a phrase. " + LOI +
@@ -46,8 +46,27 @@ STYLE_CAU = {
 
 def style_of(job):
     if job["kind"] == "tu":
-        return STYLE_TU.format(py=job.get("py") or "as in the standard dictionary")
-    return STYLE_CAU[job["kind"]]
+        return STYLE_TU.format(py=job.get("py") or "as in the standard dictionary") + VERB
+    return STYLE_CAU[job["kind"]] + VERB
+
+# ---- Tự kiểm: cho Gemini nghe lại file vừa tạo, phải ra đúng chữ Hán, không có chữ Latin ----
+KIEM_MODEL = os.environ.get("TTS_CHECK_MODEL", "gemini-3-flash-preview")
+import re, difflib
+def han(t): return "".join(re.findall(r"[\u4e00-\u9fff]", t or ""))
+def kiem(client, types, pcm, text):
+    import io
+    b = io.BytesIO(); w = wave.open(b, "wb"); w.setnchannels(1); w.setsampwidth(2); w.setframerate(24000); w.writeframes(pcm); w.close()
+    for _ in range(3):
+        try:
+            r = client.models.generate_content(model=KIEM_MODEL, contents=[types.Part.from_bytes(data=b.getvalue(), mime_type="audio/wav"), "Transcribe exactly as spoken, original language and script, nothing else."])
+            got = (r.text or "").strip(); break
+        except Exception as e:
+            time.sleep(8); got = None
+    if got is None: return True, "(không kiểm được)"
+    if re.search(r"[A-Za-z]{2,}", got) and not re.search(r"[A-Za-z]", text): return False, got
+    a, g = han(text), han(got)
+    if len(a) <= 2: return (len(g) == len(a)), got          # từ ngắn: đồng âm vẫn chấp nhận, chỉ cần đúng số chữ, không phải tiếng Anh
+    return difflib.SequenceMatcher(None, a, g).ratio() >= 0.85, got
 
 def die(msg):
     print("LỖI:", msg); sys.exit(1)
@@ -84,15 +103,20 @@ def main():
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         prompt = PROMPT.format(style=style_of(j), text=j["text"])
         pcm = None
-        for lan in range(5):
+        for lan in range(6):
             try:
                 r = client.models.generate_content(model=MODEL, contents=prompt, config=types.GenerateContentConfig(
                     response_modalities=["AUDIO"],
                     speech_config=types.SpeechConfig(voice_config=types.VoiceConfig(prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=VOICE)))))
                 part = r.candidates[0].content.parts[0].inline_data
                 pcm = part.data if isinstance(part.data, (bytes, bytearray)) else base64.b64decode(part.data)
-                break
+                ok, got = kiem(client, types, pcm, j["text"]) if KIEM else (True, "")
+                if ok: break
+                print(f"  [{j['text']}] đọc sai thành: {got[:60]} — tạo lại"); pcm = None; continue
             except Exception as e:
+                if "RESOURCE_EXHAUSTED" in str(e) and "per day" in str(e).lower() or "free_tier_requests" in str(e):
+                    json.dump(manifest, open(man_path, "w", encoding="utf-8"), ensure_ascii=False)
+                    die("hết hạn mức gọi trong ngày của khóa API (gói miễn phí). Đã lưu phần đã làm; chạy lại sau hoặc bật thanh toán.")
                 cho = 10 * (lan + 1)
                 print(f"  [{j['text']}] lỗi: {str(e)[:120]} — thử lại sau {cho}s"); time.sleep(cho); pcm = None
         if not pcm:
