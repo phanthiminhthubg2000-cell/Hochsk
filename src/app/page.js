@@ -14,7 +14,8 @@ import { HSK3_BRIDGE, HSK3_STUDENT_MODE } from "./hsk3Bridge";
 import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { useHskkResultSaver } from "../hskkResultSaver";
 import { BRAND, BrandMark, KimThiem, MountainScene, Seal, VText, realmOf, judgeLinhCan, elementOf, ELEMENTS } from "./tuTien";
-import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp, increment } from "firebase/firestore";
+import { attachTuTien, masteryOf, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 
@@ -419,6 +420,14 @@ export default function HomePage() {
   const toggleLessonBar = (v) => { setLessonBarHidden(v); try { localStorage.setItem("hg_lesson_bar_hidden", v ? "1" : "0"); } catch (e) {} };
   const [lastLecture, setLastLecture] = useState(null); // {id, level, name}
   const [lessonsDone, setLessonsDone] = useState([]);   // [lectureId]
+  // Linh khí theo từng bài: { [lectureId]: { s: [key phần đã đọc], t: tổng số phần, c: số câu đúng đã tính } }
+  const [lessonQi, setLessonQi] = useState({});
+  const lessonQiRef = useRef({});
+  useEffect(() => { lessonQiRef.current = lessonQi; }, [lessonQi]);
+  useEffect(() => { try { const x = JSON.parse(localStorage.getItem("sh_lesson_qi") || "null"); if (x && typeof x === "object") setLessonQi(q => (Object.keys(q).length ? q : x)); } catch (_) {} }, []);
+  const [qiToast, setQiToast] = useState(null); // {n, zh, vn, k}
+  const lessonFrameRef = useRef(null);
+  const detachRef = useRef(null);
   const [bloomFx, setBloomFx] = useState(false);
   const [learnQuery, setLearnQuery] = useState("");
   const [localDictionary, setLocalDictionary] = useState([]);
@@ -621,6 +630,7 @@ export default function HomePage() {
         setTodayVocabLearned(tv); setTodayListeningLearned(tl); setTodayGrammarLearned(tg);
         if (Array.isArray(uData.lessonsDone)) setLessonsDone(uData.lessonsDone);
         if (uData.linhCan?.scores) setLinhCan(uData.linhCan);
+        if (uData.lessonQi && typeof uData.lessonQi === "object") setLessonQi(uData.lessonQi);
         if (uData.lastLecture?.id) setLastLecture(uData.lastLecture);
         if (uData.lectureLevel) setSelectedLectureLevel(l => l || uData.lectureLevel);
 
@@ -696,6 +706,44 @@ export default function HomePage() {
       catch (err) { console.error("Lỗi lưu tiến độ:", err); }
     }
   };
+
+  // ---------- Lớp tu tiên trong bài giảng: linh khí theo từng bước ----------
+  const saveLessonQi = (id, rec, gain) => {
+    const next = { ...lessonQiRef.current, [id]: rec };
+    lessonQiRef.current = next;
+    setLessonQi(next);
+    try { localStorage.setItem("sh_lesson_qi", JSON.stringify(next)); } catch (_) {}
+    if (gain > 0) setLeaves(l => l + gain);
+    if (userId) setDoc(doc(db, "users", userId), { lessonQi: { [id]: rec }, ...(gain > 0 ? { xp: increment(gain) } : {}) }, { merge: true }).catch(err => console.warn("Lỗi lưu linh khí:", err?.message));
+  };
+  const showQi = (n, zh, vn) => {
+    const k = Date.now();
+    setQiToast({ n, zh, vn, k });
+    setTimeout(() => setQiToast(t => (t && t.k === k ? null : t)), 2200);
+  };
+  const onLessonLoad = () => {
+    try { detachRef.current && detachRef.current(); } catch (_) {}
+    detachRef.current = null;
+    const lec = selectedLecture; const frame = lessonFrameRef.current;
+    if (!lec || !frame) return;
+    const id = lec.id;
+    const cur = () => lessonQiRef.current[id] || { s: [], t: 0, c: 0 };
+    detachRef.current = attachTuTien(frame, {
+      seen: cur().s,
+      onInit: ({ total }) => { const r = cur(); if (r.t !== total) saveLessonQi(id, { ...r, t: total }, 0); },
+      onStep: ({ key, zh, vn, qi }) => {
+        const r = cur(); if (r.s.includes(key)) return;
+        saveLessonQi(id, { ...r, s: [...r.s, key] }, qi);
+        showQi(qi, zh, vn);
+      },
+      onCorrect: () => {
+        const r = cur(); if ((r.c || 0) >= CORRECT_CAP) return;
+        saveLessonQi(id, { ...r, c: (r.c || 0) + 1 }, CORRECT_QI);
+        showQi(CORRECT_QI, "演武", "Diễn võ · câu đúng");
+      },
+    });
+  };
+  useEffect(() => { if (!selectedLecture) { try { detachRef.current && detachRef.current(); } catch (_) {} detachRef.current = null; } }, [selectedLecture]);
 
   const handleAskFrog = async () => {
     if (!learnQuery.trim()) return;
@@ -1087,7 +1135,7 @@ export default function HomePage() {
                             {done ? <LotusMark className="w-7 h-7" /> : i + 1}
                           </span>
                           <span className="flex-1 min-w-0">
-                            <span className={`block text-xs font-semibold ${current ? "text-[#7A2218]" : review ? "text-[#8A5A00]" : "text-[#6B6253]"}`}>{done ? "Đã lĩnh ngộ" : current ? "Tu luyện tiếp" : review ? "Ôn tập" : "Chưa học"}</span>
+                            <span className={`block text-xs font-semibold ${current ? "text-[#7A2218]" : review ? "text-[#8A5A00]" : "text-[#6B6253]"}`}>{(() => { const m = masteryOf(lessonQi[lec.id], done); return done ? (m.n >= 2 ? `Đã lĩnh ngộ · ${m.vn}` : "Đã lĩnh ngộ") : m.n >= 1 ? `${m.zh} ${m.vn}` : current ? "Tu luyện tiếp" : review ? "Ôn tập" : "Chưa học"; })()}</span>
                             <span className="block font-bold text-[15px] leading-snug line-clamp-2">{lec.lectureName}</span>
                           </span>
                           <Icon name="chevron" className="w-5 h-5 text-[#A89C84] shrink-0" />
@@ -1270,6 +1318,12 @@ export default function HomePage() {
               <h3 className="font-bold text-[15px] truncate">{selectedLecture.lectureName}</h3>
               <p className="text-xs text-[#E2C3AC] truncate">{selectedLecture.level}</p>
             </div>
+            {(() => { const r = lessonQi[selectedLecture.id] || {}; const m = masteryOf(r, lessonsDone.includes(selectedLecture.id)); return (
+              <span className="hidden sm:inline-flex flex-col items-end leading-tight shrink-0" title="Mức lĩnh ngộ: Nhập môn (đọc ≥ nửa bài) → Tiểu thành (đọc hết + 10 câu đúng) → Đại thành (+ đánh dấu học xong)">
+                <span className="text-sm font-bold text-[#E6B656]"><span className="font-brush font-normal text-[17px] mr-1">{m.zh}</span>{m.vn}</span>
+                <span className="text-[11px] text-[#E2C3AC]">{(r.s || []).length}/{r.t || "–"} phần · {r.c || 0} câu đúng</span>
+              </span>
+            ); })()}
             {lessonsDone.includes(selectedLecture.id) ? (
               <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl bg-white/10 text-sm font-semibold shrink-0"><LotusMark className="w-5 h-5" /><span className="hidden sm:inline">Đã lĩnh ngộ</span></span>
             ) : (
@@ -1297,11 +1351,19 @@ export default function HomePage() {
             )}
             <iframe
               {...htmlFrameProps(selectedLecture)}
+              ref={lessonFrameRef}
+              onLoad={onLessonLoad}
               title={selectedLecture.lectureName}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
               allow="microphone; autoplay; fullscreen; clipboard-write"
             />
+            {qiToast && (
+              <div key={qiToast.k} role="status" className="pointer-events-none absolute top-3 right-3 z-20 flex items-center gap-2 rounded-md bg-[#1C1A17] text-[#F3EEE2] pl-2 pr-3 py-1.5 shadow-lg" style={{ animation: "hgPop .35s ease-out" }}>
+                <span className="font-brush text-[20px] text-[#E6B656] leading-none">{qiToast.zh}</span>
+                <span className="text-sm"><b className="text-[#E6B656]">+{qiToast.n} linh khí</b> · {qiToast.vn}</span>
+              </div>
+            )}
             {bloomFx && (
               <div className="pointer-events-none absolute inset-0 grid place-items-center bg-[#1C1A17]/30">
                 <div className="bg-white rounded-3xl px-8 py-6 flex flex-col items-center gap-2 shadow-2xl" style={{ animation: "hgPop .5s ease-out" }}>
