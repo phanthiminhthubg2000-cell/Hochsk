@@ -2,7 +2,7 @@
 // ============================================================
 // THANH ĐIỀU HƯỚNG CHUNG — Sơn Hải Thư Viện 山海书院
 // Dùng cho mọi trang con (Từ vựng, Ngữ pháp, Nghe chép, Dịch, Nói, HSKK, Đánh giá, Linh căn…)
-// Giống thanh trên của trang chủ: logo · 5 khu (Động phủ/Công pháp/Tu luyện/Độ kiếp/Giang hồ) · chuỗi ngày · linh khí · tài khoản.
+// Giống thanh trên của trang chủ: logo · 5 khu (Động phủ/Công pháp/Tu luyện/Độ kiếp/Giang hồ) · chuỗi ngày · tu vi · tài khoản.
 // Trên điện thoại: thanh 5 khu cố định ở đáy màn hình.
 // ============================================================
 import Link from "next/link";
@@ -87,7 +87,7 @@ export default function GardenNav({ active = "practice", title, right }) {
               <GIcon name="flame" className="w-4 h-4 text-[#9E2F22]" />{streak}<span className="hidden xl:inline font-semibold"> ngày</span>
             </span>
             <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#F0E3BF] border border-[#D9B970] text-sm font-bold text-[#5C3D00]" title="Linh khí">
-              <GIcon name="qi" className="w-4 h-4 text-[#9A6B12]" />{fmt(leaves)}<span className="hidden xl:inline font-semibold"> linh khí</span>
+              <GIcon name="qi" className="w-4 h-4 text-[#9A6B12]" />{fmt(leaves)}<span className="hidden xl:inline font-semibold"> tu vi</span>
             </span>
             {isSignedIn ? (
               <div className="ml-1"><UserButton afterSignOutUrl="/" /></div>

@@ -3,7 +3,9 @@
 // TRẮC NGHIỆM LINH CĂN 测灵根 — Sơn Hải Thư Viện
 // 20 câu · 5 hệ ngũ hành (Kim=Nghe · Mộc=Từ vựng · Thủy=Đọc · Hỏa=Phát âm · Thổ=Ngữ pháp)
 // Mỗi hệ 4 câu, độ khó 1→4 = trọng số 1→4 (tổng 10) → điểm hệ 0–100
-// Kết quả lưu ở users/{uid}.linhCan (Firestore) và localStorage "sh_linh_can"; 30 ngày được đo lại một lần
+// Phần 2 · Định cảnh giới: từ vựng theo từng cấp HSK1 → HSK7–9, mỗi cấp 4 câu, đúng ≥3 là qua.
+//   Cấp đầu tiên chưa qua = cấp đang cần tu → cảnh giới khởi đầu (tuVi.realm). Chỉ xếp lên, không hạ.
+// Kết quả lưu ở users/{uid}.linhCan + users/{uid}.tuVi (Firestore) và localStorage; 30 ngày được đo lại một lần
 // ============================================================
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -12,6 +14,8 @@ import { db } from "../../firebase";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import GardenNav from "../GardenNav";
 import { ELEMENTS, elementOf, judgeLinhCan, LinhCanStone, NguHanhChart, Seal, VText } from "../tuTien";
+import { REALMS8 } from "../tuVi";
+import PLACEMENT from "./placement.json";
 
 const RETEST_DAYS = 30;
 const LABELS = ["甲", "乙", "丙", "丁"];
@@ -68,6 +72,30 @@ function speakZh(text) {
 
 const fmtDate = (ms) => new Date(ms).toLocaleDateString("vi-VN");
 
+// ---------- Định cảnh giới ----------
+const PL_LEVELS = [
+  { key: "hsk1", n: 1, vn: "HSK 1" }, { key: "hsk2", n: 2, vn: "HSK 2" }, { key: "hsk3", n: 3, vn: "HSK 3" },
+  { key: "hsk4", n: 4, vn: "HSK 4" }, { key: "hsk5", n: 5, vn: "HSK 5" }, { key: "hsk6", n: 6, vn: "HSK 6" }, { key: "hsk7-9", n: 7, vn: "HSK 7–9" },
+];
+const PL_PER = 4, PL_PASS = 3;
+const shuffle = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+function makeLevelQs(key) {
+  const pool = PLACEMENT[key] || [];
+  return shuffle(pool).slice(0, PL_PER).map(([zh, py, vn]) => {
+    const wrong = shuffle(pool.filter((x) => x[2] !== vn)).slice(0, 3).map((x) => x[2]);
+    const opts = shuffle([vn, ...wrong]);
+    return { zh, py, opts, right: opts.indexOf(vn) };
+  });
+}
+// levels = [{n, ok}] theo thứ tự đã làm → cảnh giới khởi đầu
+function realmFromPlacement(levels) {
+  if (!levels.length) return 0;
+  const fail = levels.find((l) => l.ok < PL_PASS);
+  if (!fail) return 7;
+  if (fail.n === 1) return fail.ok >= 2 ? 1 : 0; // chưa vững HSK1: biết vài từ → Luyện Khí, chưa biết → Phàm Nhân
+  return Math.min(7, fail.n);
+}
+
 export default function LinhCanPage() {
   const { isSignedIn, userId } = useAuth();
   const [phase, setPhase] = useState("intro"); // intro | quiz | result
@@ -79,6 +107,10 @@ export default function LinhCanPage() {
   const [canSpeak, setCanSpeak] = useState(true);
   const [result, setResult] = useState(null); // {scores, atMs}
   const [saved, setSaved] = useState("");
+  // Định cảnh giới
+  const [pl, setPl] = useState(null); // { li, qi, qs, ok, levels: [{n, ok}] }
+  const [plPicked, setPlPicked] = useState(null);
+  const [scoresDraft, setScoresDraft] = useState(null);
 
   useEffect(() => { setCanSpeak(typeof window !== "undefined" && !!window.speechSynthesis); try { window.speechSynthesis?.getVoices(); } catch (_) {} }, []);
 
@@ -90,7 +122,7 @@ export default function LinhCanPage() {
     if (!isSignedIn || !userId) return;
     getDoc(doc(db, "users", userId)).then((s) => {
       const lc = s.exists() ? s.data().linhCan : null;
-      if (lc?.scores) { setResult({ scores: lc.scores, atMs: lc.atMs || lc.at?.toMillis?.() || Date.now() }); setPhase("result"); }
+      if (lc?.scores) { setResult({ scores: lc.scores, atMs: lc.atMs || lc.at?.toMillis?.() || Date.now(), placement: lc.placement || null }); setPhase("result"); }
     }).catch(() => {});
   }, [isSignedIn, userId]);
 
@@ -113,16 +145,42 @@ export default function LinhCanPage() {
     const sum = {}; const max = {};
     VIEW.forEach((v, i) => { max[v.el] = (max[v.el] || 0) + v.d; if (next[i] === v.right) sum[v.el] = (sum[v.el] || 0) + v.d; });
     const scores = Object.fromEntries(ELEMENTS.map((e) => [e.key, Math.round(((sum[e.key] || 0) / (max[e.key] || 1)) * 100)]));
-    const r = { scores, atMs: Date.now() };
-    setResult(r); setPhase("result"); window.scrollTo({ top: 0 });
-    try { localStorage.setItem("sh_linh_can", JSON.stringify(r)); } catch (_) {}
-    if (isSignedIn && userId) {
-      setDoc(doc(db, "users", userId), { linhCan: { scores, atMs: r.atMs, at: serverTimestamp() } }, { merge: true })
-        .then(() => setSaved("Đã lưu vào hồ sơ thư sinh.")).catch(() => setSaved("Chưa lưu được lên hồ sơ — kết quả vẫn được giữ trên máy này."));
-    } else setSaved("Kết quả đang lưu trên máy này. Đăng nhập để giữ vào hồ sơ.");
+    setScoresDraft(scores); setPhase("dinh"); window.scrollTo({ top: 0 });
   };
 
-  const restart = () => { setAnswers([]); setIdx(0); setPicked(null); setPlays(0); setShowText(false); setSaved(""); setPhase("quiz"); };
+  const startPlacement = () => { setPl({ li: 0, qi: 0, qs: makeLevelQs(PL_LEVELS[0].key), ok: 0, levels: [] }); setPlPicked(null); setPhase("pl"); window.scrollTo({ top: 0 }); };
+  const plSubmit = () => {
+    if (plPicked == null || !pl) return;
+    const ok = pl.ok + (plPicked === pl.qs[pl.qi].right ? 1 : 0);
+    setPlPicked(null);
+    if (pl.qi + 1 < PL_PER) { setPl({ ...pl, qi: pl.qi + 1, ok }); return; }
+    const levels = [...pl.levels, { n: PL_LEVELS[pl.li].n, ok }];
+    if (ok >= PL_PASS && pl.li + 1 < PL_LEVELS.length) { setPl({ li: pl.li + 1, qi: 0, ok: 0, qs: makeLevelQs(PL_LEVELS[pl.li + 1].key), levels }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    finish(levels);
+  };
+
+  // Lưu linh căn + cảnh giới khởi đầu
+  const finish = async (levels) => {
+    const scores = scoresDraft || {};
+    const realm = realmFromPlacement(levels);
+    const placement = { realm, levels, atMs: Date.now() };
+    const r = { scores, atMs: placement.atMs, placement };
+    setResult(r); setPhase("result"); window.scrollTo({ top: 0 });
+    try { localStorage.setItem("sh_linh_can", JSON.stringify(r)); } catch (_) {}
+    if (!(isSignedIn && userId)) { setSaved("Kết quả đang lưu trên máy này. Đăng nhập để giữ vào hồ sơ và bắt đầu tích tu vi."); return; }
+    try {
+      const snap = await getDoc(doc(db, "users", userId));
+      const u = snap.exists() ? snap.data() : {};
+      const cur = u.tuVi && Number.isFinite(u.tuVi.realm) ? u.tuVi.realm : -1;
+      const upd = { linhCan: { scores, atMs: r.atMs, at: serverTimestamp(), placement } };
+      // Chỉ xếp lên: cảnh giới mới cao hơn hiện tại thì vào tầng 1 của cảnh giới mới
+      if (realm > cur) upd.tuVi = { realm, base: u.xp || 0, src: "trac-linh", at: Date.now(), placed: true };
+      await setDoc(doc(db, "users", userId), upd, { merge: true });
+      setSaved(realm > cur ? "Đã ghi danh cảnh giới vào hồ sơ thư sinh." : `Đã lưu linh căn. Cảnh giới hiện tại (${REALMS8[cur].vn}) đã cao hơn kết quả định cảnh nên được giữ nguyên.`);
+    } catch (_) { setSaved("Chưa lưu được lên hồ sơ — kết quả vẫn được giữ trên máy này."); }
+  };
+
+  const restart = () => { setAnswers([]); setIdx(0); setPicked(null); setPlays(0); setShowText(false); setSaved(""); setPl(null); setScoresDraft(null); setPhase("quiz"); };
   const nextTestMs = result ? result.atMs + RETEST_DAYS * 864e5 : 0;
   const canRetest = !result || Date.now() >= nextTestMs || !isSignedIn;
 
@@ -136,7 +194,7 @@ export default function LinhCanPage() {
 
   return (
     <div className="min-h-screen bg-[#EFE7D6] text-[#1C1A17]" style={{ fontFamily: '"Be Vietnam Pro","Noto Sans SC",system-ui,sans-serif' }}>
-      <GardenNav active="home" title="Trắc nghiệm linh căn" />
+      <GardenNav active="home" title="Trắc Linh Đài" />
       <main className="max-w-[560px] mx-auto px-4 pt-6 pb-28 md:pb-16 flex flex-col gap-5">
 
         {phase === "intro" && (
@@ -147,12 +205,14 @@ export default function LinhCanPage() {
             </div>
             <div className="flex justify-center"><LinhCanStone active="kim" className="w-[240px] h-[240px]" /></div>
             <div className="rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-5 flex flex-col gap-3 text-[15px] leading-relaxed">
-              <p>Linh Căn Thạch sẽ cảm ứng năm hệ ngũ hành của thư sinh qua <b>20 câu</b>, khoảng <b>5 phút</b>:</p>
+              <p>Trắc Linh Đài có hai phần, khoảng <b>8 phút</b>:</p>
+              <p><b>1 · Cảm ứng linh căn</b> — 20 câu đo năm hệ ngũ hành:</p>
               <ul className="grid gap-1.5">
                 {ELEMENTS.map((e) => (
                   <li key={e.key} className="flex items-center gap-3"><span className="font-brush text-[22px] w-7 text-center leading-none">{e.zh}</span><span><b>{e.vn}</b> · {e.skill}</span></li>
                 ))}
               </ul>
+              <p><b>2 · Định cảnh giới</b> — từ vựng đi dần từ HSK 1 lên HSK 7–9, mỗi cấp 4 câu. Dừng ở cấp đầu tiên chưa vững; đó là cảnh giới khởi đầu của bạn. Biết tới đâu xếp tới đó, không cần học lại từ đầu.</p>
               <p className="text-sm text-[#6B6253]">Câu nghe dùng giọng đọc của trình duyệt — nhớ bật loa. Câu khó hơn được tính nhiều điểm hơn. {isSignedIn ? `Đo xong được lưu vào hồ sơ; ${RETEST_DAYS} ngày đo lại một lần.` : "Đăng nhập để lưu kết quả vào hồ sơ."}</p>
             </div>
             <button onClick={restart} className="h-14 rounded-md bg-[#1C1A17] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22] tt-shine">Bắt đầu cảm ứng</button>
@@ -219,6 +279,65 @@ export default function LinhCanPage() {
           </>
         )}
 
+        {phase === "dinh" && (
+          <>
+            <div className="flex flex-col items-center text-center gap-1">
+              <div className="font-brush text-[44px] leading-none">定境界</div>
+              <div className="font-serif-vn text-sm font-bold tracking-[0.12em] text-[#4A4238]">PHẦN 2 · ĐỊNH CẢNH GIỚI</div>
+            </div>
+            <div className="rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-5 flex flex-col gap-3 text-[15px] leading-relaxed">
+              <p>Linh căn đã cảm ứng xong. Giờ Linh Căn Thạch thử độ sâu tu vi: mỗi cấp HSK <b>4 từ</b>, chọn nghĩa đúng. Đúng <b>3/4</b> là qua cấp, đi tiếp lên cấp cao hơn.</p>
+              <ol className="grid grid-cols-4 gap-1.5 text-center text-[12px]">
+                {REALMS8.slice(0, 8).map((r) => (
+                  <li key={r.key} className="rounded-[4px] border border-[#D8CBAE] bg-white px-1 py-1.5"><span className="block font-brush text-[18px] leading-none">{r.zh}</span><span className="block font-semibold">{r.vn}</span><span className="block text-[#6B6253]">{r.hsk.split(" · ")[0]}</span></li>
+                ))}
+              </ol>
+              <p className="text-sm text-[#6B6253]">Không biết thì đừng đoán bừa — xếp quá cao sẽ khó tích tu vi. Cảnh giới chỉ được xếp lên, không bao giờ bị hạ.</p>
+            </div>
+            <button onClick={startPlacement} className="h-14 rounded-md bg-[#1C1A17] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22]">Thử độ sâu tu vi</button>
+            <button onClick={() => finish([])} className="text-sm font-semibold text-[#7A2218] underline underline-offset-2 self-center">Tôi mới bắt đầu học — vào Phàm Nhân Giới</button>
+          </>
+        )}
+
+        {phase === "pl" && pl && (() => {
+          const L = PL_LEVELS[pl.li]; const R = REALMS8[Math.min(7, L.n)]; const cq = pl.qs[pl.qi];
+          return (
+            <>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col">
+                  <span className="font-serif-vn text-xs font-bold tracking-[0.12em] text-[#6B6253]">ĐỊNH CẢNH GIỚI · {L.vn}</span>
+                  <span className="font-serif-vn text-[18px] font-extrabold">Ải {R.vn} <span className="font-brush font-normal text-[22px]">{R.zh}</span></span>
+                </div>
+                <span className="h-11 min-w-11 px-2 rounded-md bg-[#9E2F22] text-[#FBF3E4] inline-flex items-baseline justify-center pt-2.5 font-extrabold" aria-label={`Câu ${pl.qi + 1} trên ${PL_PER}`}>{pl.qi + 1}<span className="text-[11px] font-semibold">/{PL_PER}</span></span>
+              </div>
+              <div className="flex gap-1" aria-hidden="true">
+                {PL_LEVELS.map((x, i) => <div key={x.key} className={`flex-1 h-1.5 rounded-sm ${i < pl.li ? "bg-[#2F6E5A]" : i === pl.li ? "bg-[#9E2F22]" : "bg-[#D8CBAE]"}`} />)}
+              </div>
+              <div className="rounded-[14px] bg-[#FAF5E8] border border-[#CDBF9F] p-4 flex flex-col gap-3">
+                <div className="font-serif-vn font-bold">Từ này nghĩa là gì?</div>
+                <div className="rounded-md bg-[#EFE7D6] px-3 py-5 text-center text-[40px] leading-none" style={{ fontFamily: '"Noto Serif SC",serif' }} lang="zh-CN">{cq.zh}</div>
+                <div role="radiogroup" aria-label="Các đáp án" className="flex flex-col gap-2">
+                  {cq.opts.map((o, i) => {
+                    const on = plPicked === i;
+                    return (
+                      <button key={i} role="radio" aria-checked={on} onClick={() => setPlPicked(i)}
+                        className={`min-h-[48px] flex items-center gap-3 px-3 py-2 rounded-[4px] text-left transition-colors ${on ? "border-2 border-[#9E2F22] bg-[#F3E3D2]" : "border border-[#D8CBAE] bg-white hover:border-[#9E2F22]"}`}>
+                        <span className={`w-7 h-7 rounded-[3px] grid place-items-center font-brush text-[18px] shrink-0 ${on ? "bg-[#9E2F22] text-[#FBF3E4]" : "bg-[#EFE7D6]"}`} aria-hidden="true">{LABELS[i]}</span>
+                        <span className="text-[16px]">{o}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <button onClick={plSubmit} disabled={plPicked == null}
+                className="h-14 rounded-md bg-[#1C1A17] disabled:bg-[#8C7F68] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22]">
+                {pl.qi + 1 < PL_PER ? "Tiếp" : "Xong ải này"}
+              </button>
+              <button onClick={() => finish([...pl.levels, { n: L.n, ok: 0 }])} className="text-sm font-semibold text-[#7A2218] underline underline-offset-2 self-center">Cấp này tôi chưa học — dừng ở đây</button>
+            </>
+          );
+        })()}
+
         {phase === "result" && result && judged && (
           <>
             <div className="flex flex-col items-center text-center gap-1">
@@ -230,6 +349,26 @@ export default function LinhCanPage() {
               <div className="font-serif-vn text-[19px] font-extrabold">{judged.vn}</div>
               <div className="text-sm text-[#4A4238]">Tư chất <b>{judged.grade.vn}</b> · đo ngày {fmtDate(result.atMs)}</div>
             </div>
+            {result.placement && (() => { const R = REALMS8[result.placement.realm] || REALMS8[0]; return (
+              <section className="rounded-[14px] bg-[#1C1A17] text-[#F3EEE2] p-5 flex items-center gap-4 shadow-[4px_4px_0_#9E2F22]" aria-label="Cảnh giới khởi đầu">
+                <VText lines={R.zh} className="font-brush text-[44px] text-[#E6B656] shrink-0" />
+                <div className="flex-1 min-w-0 flex flex-col gap-1">
+                  <span className="font-serif-vn text-xs font-bold tracking-[0.14em] text-[#CFC3A8]">CẢNH GIỚI KHỞI ĐẦU</span>
+                  <span className="font-serif-vn text-[22px] font-extrabold leading-tight">{R.vn} · Tầng 1</span>
+                  <span className="text-sm text-[#E6B656] font-bold">{R.hsk} · {R.region}</span>
+                  <span className="flex flex-wrap gap-1 mt-1">
+                    {result.placement.levels.map((l) => <span key={l.n} className={`text-[11px] font-bold px-1.5 py-0.5 rounded-[3px] ${l.ok >= PL_PASS ? "bg-[#2F6E5A] text-white" : "bg-[#5E5446] text-[#E9DFC8]"}`}>{PL_LEVELS.find((x) => x.n === l.n)?.vn} {l.ok}/{PL_PER}</span>)}
+                  </span>
+                </div>
+              </section>
+            ); })()}
+            {!result.placement && (
+              <button onClick={() => { setScoresDraft(result.scores); setPhase("dinh"); window.scrollTo({ top: 0 }); }}
+                className="rounded-[14px] border-2 border-[#1C1A17] bg-[#FBF8F1] p-4 flex items-center gap-3 text-left shadow-[4px_4px_0_#9E2F22]">
+                <span className="font-brush text-[32px] leading-none text-[#9E2F22] shrink-0" aria-hidden="true">定境</span>
+                <span className="flex-1"><b className="block font-serif-vn">Chưa định cảnh giới</b><span className="block text-sm text-[#4A4238]">Làm phần 2 (vài phút) để được xếp đúng cảnh giới theo trình độ thật.</span></span>
+              </button>
+            )}
             <div className="flex justify-center"><NguHanhChart scores={result.scores} weak={judged.weak} /></div>
             <div className="flex flex-col gap-2">
               {ELEMENTS.map((e) => {
@@ -249,7 +388,7 @@ export default function LinhCanPage() {
                 <span aria-hidden="true" className="shrink-0"><VText lines="心魔" className="font-brush text-[22px] text-[#E6B656]" /></span>
                 <span className="flex flex-col gap-1">
                   <b className="text-sm text-[#E6B656]">Tâm ma: hệ {w.vn} ({w.skill}) còn yếu</b>
-                  <span className="text-[15px] leading-relaxed">Công pháp đề cử <span style={{ fontFamily: '"Noto Serif SC",serif' }}>{w.book}</span> — {w.tip}. Tu luyện hệ này được nhiều linh khí hơn.</span>
+                  <span className="text-[15px] leading-relaxed">Công pháp đề cử <span style={{ fontFamily: '"Noto Serif SC",serif' }}>{w.book}</span> — {w.tip}. Luyện hệ yếu trước để ngũ hành cân bằng, độ kiếp dễ qua hơn.</span>
                 </span>
               </Link>
             ); })()}

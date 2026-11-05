@@ -2,7 +2,7 @@
 // ============================================================
 // SƠN HẢI THƯ VIỆN 山海书院 — GIAO DIỆN TU TIÊN (v7, trước đây là HSK Garden)
 // 5 khu: Động phủ (trang chủ) · Công pháp · Tu luyện · Độ kiếp · Giang hồ
-// Một loại điểm duy nhất: "linh khí" (dùng trường xp sẵn có trong Firestore)
+// Một loại điểm duy nhất: "tu vi" (trường xp trong Firestore); cảnh giới tính trong ./tuVi.js
 // Cảnh giới theo giáo trình đang học; mỗi bài đánh dấu "Đã học xong" = lĩnh ngộ một trọng công pháp
 // ============================================================
 import Link from "next/link";
@@ -17,6 +17,7 @@ import { BRAND, BrandMark, KimThiem, MountainScene, Seal, VText, Gourd, dayKey, 
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp, increment } from "firebase/firestore";
 import { ThienBang } from "./giangHo";
 import { attachTuTien, masteryOf, reviewOf, isTieuThanh, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
+import { tuViState, REALMS8, LESSON_DONE_MIN_CORRECT, TIEU_THANH_TV } from "./tuVi";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 
@@ -433,6 +434,9 @@ export default function HomePage() {
   const tuRef = useRef({ streak: 0, last: "", pills: { trucCo: 0, hoiXuan: 0 }, boostUntil: 0 });
   // Độ kiếp: doKiep = { hsk4: {passed, pct, at} }, cooldown = ms (tẩu hỏa nhập ma: tĩnh dưỡng 24 giờ)
   const [doKiep, setDoKiep] = useState({});
+  const [tuVi, setTuVi] = useState(null); // users.tuVi = { realm, base, src, at, placed }
+  const tvRef = useRef({ xp: 0, tuVi: null, doKiep: {} }); // bản mới nhất cho các trình nghe sự kiện
+  useEffect(() => { tvRef.current = { xp: leaves, tuVi, doKiep }; }, [leaves, tuVi, doKiep]);
   const [doKiepCooldown, setDoKiepCooldown] = useState(0);
   const [doKiepResult, setDoKiepResult] = useState(null); // {pass, pct, n, mismatch, examLevel}
   const doKiepPendingRef = useRef(null); // cấp HSK đang độ kiếp
@@ -472,8 +476,11 @@ export default function HomePage() {
       const pass = pct >= 60;
       if (pass) {
         const rec = { passed: true, pct, at: Date.now() };
-        setDoKiep(k => ({ ...k, [`hsk${n}`]: rec })); setLeaves(l => l + 200);
-        if (userId) setDoc(doc(db, "users", userId), { doKiep: { [`hsk${n}`]: rec }, xp: increment(200) }, { merge: true }).catch(() => {});
+        // Đột phá: lên cảnh giới kế, tu vi trong cảnh giới mới tính từ 0 (base = tổng tu vi sau thưởng)
+        const st = tuViState(tvRef.current.xp, tvRef.current.tuVi, tvRef.current.doKiep);
+        const nextTv = { realm: Math.min(7, st.idx + 1), base: (tvRef.current.xp || 0) + 200, src: "do-kiep", at: rec.at, placed: true };
+        setDoKiep(k => ({ ...k, [`hsk${n}`]: rec })); setLeaves(l => l + 200); setTuVi(nextTv);
+        if (userId) setDoc(doc(db, "users", userId), { doKiep: { [`hsk${n}`]: rec }, xp: increment(200), tuVi: nextTv }, { merge: true }).catch(() => {});
       } else {
         const until = Date.now() + 864e5;
         setDoKiepCooldown(until);
@@ -671,6 +678,7 @@ export default function HomePage() {
         setPills(pl); setBoostUntil(uData.boostUntil || 0);
         tuRef.current = { streak: uData.streak ?? 0, last: uData.lastActiveDay || "", pills: pl, boostUntil: uData.boostUntil || 0 };
         if (uData.doKiep && typeof uData.doKiep === "object") setDoKiep(uData.doKiep);
+        if (uData.tuVi && Number.isFinite(uData.tuVi.realm)) setTuVi(uData.tuVi);
         setDoKiepCooldown(uData.doKiepCooldown || 0);
         if (uData.lastLecture?.id) setLastLecture(uData.lastLecture);
         if (uData.lectureLevel) setSelectedLectureLevel(l => l || uData.lectureLevel);
@@ -740,16 +748,19 @@ export default function HomePage() {
   const markLessonDone = async () => {
     if (!selectedLecture || lessonsDone.includes(selectedLecture.id)) return;
     const next = [...lessonsDone, selectedLecture.id];
-    const newLeaves = leaves + LEAF_PER_LESSON;
+    // Tu vi chỉ khi đã thật sự luyện bài: đúng ít nhất LESSON_DONE_MIN_CORRECT câu trong bài
+    const earned = (lessonQiRef.current[selectedLecture.id]?.c || 0) >= LESSON_DONE_MIN_CORRECT;
+    const gain = earned ? LEAF_PER_LESSON : 0;
     setLessonsDone(next);
-    setLeaves(newLeaves);
-    setBloomFx(true);
+    if (gain) setLeaves(l => l + gain);
+    setBloomFx(earned ? "tv" : "no");
     setTimeout(() => setBloomFx(false), 2600);
     if (userId) {
-      try { await setDoc(doc(db, "users", userId), { lessonsDone: next, xp: newLeaves }, { merge: true }); }
+      // increment: không ghi đè tu vi vừa nhận ở trang khác (luận võ, ôn từ…)
+      try { await setDoc(doc(db, "users", userId), { lessonsDone: next, ...(gain ? { xp: increment(gain) } : {}) }, { merge: true }); }
       catch (err) { console.error("Lỗi lưu tiến độ:", err); }
     }
-    touchStreak();
+    if (gain) touchStreak();
   };
 
   // ---------- Chuỗi ngày tu luyện + đan dược ----------
@@ -782,7 +793,7 @@ export default function HomePage() {
 
   // ---------- Lớp tu tiên trong bài giảng: linh khí theo từng bước ----------
   const saveLessonQi = (id, rec, gain) => {
-    if (!rec.f && isTieuThanh(rec)) rec = { ...rec, f: dayKey() }; // mốc để tính ôn tập Viên mãn
+    if (!rec.f && isTieuThanh(rec)) { rec = { ...rec, f: dayKey() }; gain += TIEU_THANH_TV; setTimeout(() => showQi(TIEU_THANH_TV, "小成", "Bài đạt Tiểu thành"), 2300); } // mốc để tính ôn tập Viên mãn
     const next = { ...lessonQiRef.current, [id]: rec };
     lessonQiRef.current = next;
     setLessonQi(next);
@@ -815,10 +826,10 @@ export default function HomePage() {
       seen: cur().s,
       onInit: ({ total }) => { const r = cur(); if (r.t !== total) saveLessonQi(id, { ...r, t: total }, 0); },
       onStep: ({ key, zh, vn, qi }) => {
+        // v2: qua bước chỉ ghi tiến độ, không cộng tu vi (tu vi chỉ đến từ kết quả)
         const r = cur(); if (r.s.includes(key)) return;
-        const g = boosted() ? qi * 2 : qi;
-        saveLessonQi(id, { ...r, s: [...r.s, key] }, g);
-        showQi(g, zh, vn);
+        saveLessonQi(id, { ...r, s: [...r.s, key] }, 0);
+        showQi(0, zh, `Lĩnh ngộ · ${vn}`);
       },
       onCorrect: () => {
         const r = cur(); if ((r.c || 0) >= CORRECT_CAP) return;
@@ -903,13 +914,22 @@ export default function HomePage() {
     </section>
   );
 
-  const realm = realmOf(currentCourse, coursePct);
-  // Độ kiếp theo cấp HSK của công pháp đang tu luyện (phòng thi hiện có đề HSK 1–5)
-  const kiepN = (() => { const m = String(currentCourse || "").match(/HSK\s*(\d)/i); return m ? Number(m[1]) : 0; })();
-  const kiep = kiepN ? doKiep[`hsk${kiepN}`] : null;
-  const kiepReady = coursePct >= 75;
+  // Cảnh giới v2: theo tu vi (users.xp − tuVi.base), không theo giáo trình đang chọn
+  const realm = tuViState(leaves, tuVi, doKiep);
+  // Độ kiếp theo cảnh giới hiện tại (phòng thi có đề HSK 1–5); chỉ mở khi đạt Đỉnh phong
+  const kiepN = realm.kiepN;
+  const kiepRaw = kiepN ? doKiep[`hsk${kiepN}`] : null;
+  const kiep = kiepRaw?.passed && (!tuVi?.at || kiepRaw.at > tuVi.at) ? kiepRaw : null; // lần đậu trước khi vào cảnh giới này không tính
+  const kiepReady = realm.peak;
   const kiepCool = doKiepCooldown > nowMs;
   const kiepAvail = kiepN >= 1 && kiepN <= 5;
+  // Phàm Nhân Đỉnh phong → nhập môn (không cần đề thi)
+  const nhapMon = () => {
+    const nextTv = { realm: 1, base: leaves, src: "nhap-mon", at: Date.now(), placed: true };
+    setTuVi(nextTv);
+    if (userId) setDoc(doc(db, "users", userId), { tuVi: nextTv }, { merge: true }).catch(() => {});
+    showQi(0, "入门", "Nhập môn · bước vào Luyện Khí");
+  };
   const startDoKiep = () => { doKiepPendingRef.current = kiepN; setActiveHskExamView(EXAM_CENTER); };
   const fmtTime = (ms) => new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" });
   const PondCard = () => (
@@ -920,19 +940,21 @@ export default function HomePage() {
           <div className="flex flex-col gap-1 pt-1">
             <div className="font-serif-vn text-[12px] font-bold tracking-[0.14em] text-[#CFC3A8]">CẢNH GIỚI</div>
             <h3 className="font-serif-vn text-[24px] font-extrabold leading-tight">{realm.vn}</h3>
-            <div className="text-sm font-bold text-[#E6B656]">{realm.stage} · ≈ {realm.hsk}</div>
-            <div className="text-xs text-[#CFC3A8] max-w-[210px] leading-snug">{currentCourse ? `Công pháp: ${currentCourse}` : "Chưa chọn công pháp"}</div>
-            {kiep?.passed ? <div className="text-xs font-bold text-[#8FD3B5]">✓ Đã độ kiếp · đạt {kiep.pct}%</div>
-              : kiepReady && kiepAvail ? <button onClick={() => goTab("exam")} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Sẵn sàng độ kiếp →</button> : null}
+            <div className="text-sm font-bold text-[#E6B656]">{realm.stage} · {realm.hsk}</div>
+            <div className="text-xs text-[#CFC3A8] max-w-[210px] leading-snug">{realm.region}{currentCourse ? ` · công pháp ${currentCourse}` : ""}</div>
+            {realm.provisional ? <Link href="/linh-can" className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold inline-flex items-center">Định cảnh giới ở Trắc Linh Đài →</Link>
+              : realm.peak && realm.idx === 0 ? <button onClick={nhapMon} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Nhập môn → Luyện Khí</button>
+              : realm.peak && kiepAvail ? <button onClick={() => goTab("exam")} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Đỉnh phong · độ kiếp →</button> : null}
           </div>
         </div>
         <div className="absolute right-4 bottom-12"><KimThiem bob className="w-16 h-14" /></div>
         <div className="absolute left-4 right-4 bottom-3 flex flex-col gap-1.5 text-[#1C1A17]">
           <div className="flex justify-between text-[13px]">
-            <span><b>{courseDone}</b> / {courseLessons.length || 0} trọng đã lĩnh ngộ</span>
-            <span className="font-bold">Kim Thiềm · cấp {realm.idx + 1}</span>
+            <span>Tu vi <b>{fmt(realm.tv)}</b> / {fmt(realm.need)}</span>
+            <span className="font-bold">{realm.peak ? "Đỉnh phong" : `còn ${fmt(realm.toNext)} lên tầng ${realm.tang + 1 > 9 ? "Đỉnh phong" : realm.tang + 1}`}</span>
           </div>
-          <div className="h-2 rounded-[2px] bg-[#DCD1BA] overflow-hidden"><div className="h-full bg-[#9E2F22] tt-shine transition-all duration-700" style={{ width: `${Math.max(2, coursePct)}%` }} /></div>
+          <div className="relative h-2.5 rounded-[2px] bg-[#DCD1BA] overflow-hidden"><div className="h-full tt-shine transition-all duration-700" style={{ width: `${Math.max(2, realm.pct)}%`, background: "linear-gradient(90deg,#9E2F22,#D9A23A)" }} />
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <span key={i} className="absolute top-0 bottom-0 w-px bg-[#FBF8F1]/70" style={{ left: `${(i / 9) * 100}%` }} aria-hidden="true" />)}</div>
         </div>
       </MountainScene>
     </section>
@@ -944,8 +966,8 @@ export default function HomePage() {
       <section className="rounded-[18px] border-2 border-[#1C1A17] bg-[#FBF8F1] p-5 flex flex-wrap sm:flex-nowrap items-center gap-4 shadow-[4px_4px_0_#9E2F22] self-start">
         <span className="font-brush text-[34px] sm:text-[40px] leading-none text-[#9E2F22] shrink-0" aria-hidden="true">灵根</span>
         <span className="flex-1 min-w-[180px]">
-          <span className="block font-serif-vn font-extrabold text-[17px]">Chưa đo linh căn</span>
-          <span className="block text-sm text-[#4A4238]">20 câu · 5 phút — biết hệ mạnh, hệ yếu để tu luyện đúng hướng.</span>
+          <span className="block font-serif-vn font-extrabold text-[17px]">Lên Trắc Linh Đài</span>
+          <span className="block text-sm text-[#4A4238]">Khoảng 8 phút — đo linh căn (hệ mạnh, hệ yếu) và định cảnh giới khởi đầu theo trình độ thật của bạn.</span>
         </span>
         <Link href="/linh-can" className="h-11 px-4 rounded-lg bg-[#9E2F22] hover:bg-[#7A2218] text-white font-bold text-sm inline-flex items-center shrink-0">Đo ngay</Link>
       </section>
@@ -1037,7 +1059,7 @@ export default function HomePage() {
             <Gourd color="#9E2F22" ch="丹" />
             <div className="flex-1 min-w-0 leading-tight">
               <div className="text-sm font-bold">Trúc Cơ Đan ×{pills.trucCo || 0}</div>
-              <div className="text-[11px] text-[#6B6253]">{boostUntil > nowMs ? `×2 linh khí đến ${new Date(boostUntil).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}` : "×2 linh khí trong 1 giờ"}</div>
+              <div className="text-[11px] text-[#6B6253]">{boostUntil > nowMs ? `×2 tu vi đến ${new Date(boostUntil).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}` : "×2 tu vi trong 1 giờ"}</div>
             </div>
             <button onClick={eatTrucCo} disabled={!pills.trucCo} className="h-9 px-2.5 rounded-md bg-[#9E2F22] disabled:bg-[#CDBF9F] text-white text-xs font-bold shrink-0">Dùng</button>
           </div>
@@ -1112,7 +1134,7 @@ export default function HomePage() {
                 <Icon name="flame" className="w-4 h-4 text-[#9E2F22]" />{streak}<span className="hidden xl:inline font-semibold"> ngày</span>
               </span>
               <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#F0E3BF] border border-[#D9B970] text-sm font-bold text-[#5C3D00]" title="Linh khí">
-                <Icon name="qi" className="w-4 h-4 text-[#9A6B12]" />{fmt(leaves)}<span className="hidden xl:inline font-semibold"> linh khí</span>
+                <Icon name="qi" className="w-4 h-4 text-[#9A6B12]" />{fmt(leaves)}<span className="hidden xl:inline font-semibold"> tu vi</span>
               </span>
               {isTeacher && (
                 <Link href="/teacher" className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-[#CDBF9F] bg-white text-sm font-semibold hover:bg-[#F6EEDD]">
@@ -1311,7 +1333,7 @@ export default function HomePage() {
                 <Link href="/luan-vo" className="group relative overflow-hidden rounded-[14px] bg-[#121318] text-[#EDE8DC] p-6 flex flex-col gap-3 min-h-[220px] hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,.5)] transition-shadow">
                   <svg viewBox="0 0 120 120" className="absolute -right-4 -bottom-4 w-40 h-40 opacity-20" aria-hidden="true"><path d="M20 100 L95 25 M95 25 l-14 2 M95 25 l-2 14 M100 100 L25 25 M25 25 l14 2 M25 25 l2 14" stroke="#E6B656" strokeWidth="6" strokeLinecap="round" fill="none" /></svg>
                   <div className="flex items-baseline gap-3"><span className="font-brush text-[44px] leading-none text-[#E6B656]" aria-hidden="true">论武</span><h2 className="font-serif-vn text-[24px] font-extrabold">Luận võ</h2></div>
-                  <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[440px]">Đấu từ vựng một chọi một với đồng song theo thời gian thực: 10 câu, mỗi câu 10 giây. Thắng <b className="text-[#E6B656]">+50 linh khí</b>, hòa +25, thua +10.</p>
+                  <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[440px]">Đấu từ vựng một chọi một với đồng song theo thời gian thực: 10 câu, mỗi câu 10 giây. Thắng <b className="text-[#E6B656]">+50 tu vi</b>, hòa +25, thua +10.</p>
                   <span className="mt-auto self-start h-11 px-5 inline-flex items-center rounded-[4px] bg-[#E6B656] text-[#121318] font-serif-vn font-extrabold">Lên lôi đài</span>
                 </Link>
                 <ThienBang n={5} me={userId} compact />
@@ -1357,15 +1379,17 @@ export default function HomePage() {
                 <VText lines="雷劫" className="font-brush text-[46px] md:text-[56px] text-[#EDE8DC] shrink-0 hidden md:inline-flex" />
                 <div className="flex-1 min-w-0 flex flex-col gap-1.5 relative">
                   <div className="font-serif-vn text-xs font-bold tracking-[0.14em] text-[#A6A9B4]">THI ĐỘT PHÁ{kiepN ? ` · HSK ${kiepN}` : ""}</div>
-                  <h2 className="font-serif-vn text-[22px] md:text-[26px] font-extrabold">Lôi kiếp {realm.vn}</h2>
-                  <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[620px]">Ba đạo lôi <b>Nghe → Đọc → Viết</b> trong phòng thi HSK 3.0{kiepN ? <> (chọn <b>Cấp độ {kiepN}</b>)</> : ""}. Đúng từ <b>60%</b> số câu tự chấm là độ kiếp thành công, nhận <b>200 linh khí</b>. Thất bại sẽ tẩu hỏa nhập ma, phải tĩnh dưỡng 24 giờ mới độ kiếp lại.</p>
+                  <h2 className="font-serif-vn text-[22px] md:text-[26px] font-extrabold">Lôi kiếp {realm.vn}{realm.next ? ` → ${realm.next.vn}` : ""}</h2>
+                  <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[620px]">Đạt <b>Đỉnh phong</b> mới được độ kiếp. Ba đạo lôi <b>Nghe → Đọc → Viết</b> trong phòng thi HSK 3.0{kiepN ? <> (chọn <b>Cấp độ {kiepN}</b>)</> : ""}. Đúng từ <b>60%</b> số câu tự chấm là độ kiếp thành công: <b>+200 tu vi</b> và lên cảnh giới mới. Thất bại sẽ tẩu hỏa nhập ma, phải tĩnh dưỡng 24 giờ mới độ kiếp lại.</p>
                   <div className="text-sm font-bold" role="status">
-                    {!kiepN ? <span className="text-[#C9CBD3]">Hãy chọn công pháp ở khu Công pháp trước.</span>
-                      : !kiepAvail ? <span className="text-[#C9CBD3]">Đề độ kiếp HSK {kiepN} đang được chuẩn bị.</span>
+                    {realm.provisional ? <span className="text-[#E6B656]">Bạn chưa định cảnh giới. <Link href="/linh-can" className="underline underline-offset-2">Lên Trắc Linh Đài</Link> để được xếp đúng trình độ.</span>
+                      : realm.idx === 0 ? <span className="text-[#C9CBD3]">Phàm Nhân không cần độ kiếp: đủ Đỉnh phong là được nhập môn vào Luyện Khí.</span>
+                      : realm.idx === 7 ? <span className="text-[#8FD3B5]">Đã Phi Thăng — cảnh giới cao nhất.</span>
+                      : !kiepAvail ? <span className="text-[#C9CBD3]">Đề độ kiếp HSK {realm.idx} đang được chuẩn bị.</span>
                       : kiep?.passed ? <span className="text-[#8FD3B5]">✓ Đã độ kiếp ngày {new Date(kiep.at).toLocaleDateString("vi-VN")} · đạt {kiep.pct}%</span>
                       : kiepCool ? <span className="text-[#F08A7A]">Đang tĩnh dưỡng sau tẩu hỏa nhập ma — độ kiếp lại từ {fmtTime(doKiepCooldown)}</span>
-                      : !kiepReady ? <span className="text-[#E6B656]">Cần lĩnh ngộ từ 75% công pháp (hiện {coursePct}%) mới được độ kiếp.</span>
-                      : <span className="text-[#E6B656]">Công pháp đã đạt {coursePct}% — sẵn sàng nghênh tiếp lôi kiếp.</span>}
+                      : !kiepReady ? <span className="text-[#E6B656]">{realm.vn} {realm.stage} — còn {fmt(realm.toPeak)} tu vi nữa mới đến Đỉnh phong.</span>
+                      : <span className="text-[#E6B656]">{realm.vn} Đỉnh phong — sẵn sàng nghênh tiếp lôi kiếp.</span>}
                   </div>
                 </div>
                 {kiepAvail && !kiep?.passed && (
@@ -1505,7 +1529,7 @@ export default function HomePage() {
             {qiToast && (
               <div key={qiToast.k} role="status" className="pointer-events-none absolute top-3 right-3 z-20 flex items-center gap-2 rounded-md bg-[#1C1A17] text-[#F3EEE2] pl-2 pr-3 py-1.5 shadow-lg" style={{ animation: "hgPop .35s ease-out" }}>
                 <span className="font-brush text-[20px] text-[#E6B656] leading-none">{qiToast.zh}</span>
-                <span className="text-sm">{qiToast.n > 0 && <><b className="text-[#E6B656]">+{qiToast.n} linh khí</b> · </>}{qiToast.vn}</span>
+                <span className="text-sm">{qiToast.n > 0 && <><b className="text-[#E6B656]">+{qiToast.n} tu vi</b> · </>}{qiToast.vn}</span>
               </div>
             )}
             {bloomFx && (
@@ -1513,7 +1537,7 @@ export default function HomePage() {
                 <div className="bg-white rounded-3xl px-8 py-6 flex flex-col items-center gap-2 shadow-2xl" style={{ animation: "hgPop .5s ease-out" }}>
                   <div className="flex items-end gap-1"><Frog mood="cheer" className="w-20 h-16" /><LotusMark className="w-12 h-12" /></div>
                   <p className="font-extrabold text-lg font-serif-vn">Lĩnh ngộ thêm một trọng công pháp!</p>
-                  <p className="text-sm font-bold text-[#7A2218]">+{LEAF_PER_LESSON} linh khí</p>
+                  <p className="text-sm font-bold text-[#7A2218]">{bloomFx === "tv" ? `+${LEAF_PER_LESSON} tu vi` : `Làm đúng từ ${LESSON_DONE_MIN_CORRECT} câu bài tập trong bài để nhận tu vi`}</p>
                 </div>
               </div>
             )}
@@ -1529,8 +1553,8 @@ export default function HomePage() {
             <h2 className="font-serif-vn text-xl font-extrabold">{doKiepResult.mismatch ? "Lôi kiếp chưa được tính" : doKiepResult.pass ? "Độ kiếp thành công!" : "Tẩu hỏa nhập ma"}</h2>
             <p className="text-sm leading-relaxed">
               {doKiepResult.mismatch ? `Bạn vừa thi đề Cấp độ ${doKiepResult.examLevel || "?"}, còn lôi kiếp này là HSK ${doKiepResult.n}. Hãy chọn đúng Cấp độ ${doKiepResult.n} trong phòng thi.`
-                : doKiepResult.pass ? `Đạt ${doKiepResult.pct}% câu tự chấm. Nhận 200 linh khí — con đường lên cảnh giới mới đã mở.`
-                : `Đạt ${doKiepResult.pct}% (cần 60%). Hãy tĩnh dưỡng 24 giờ, ôn lại công pháp rồi độ kiếp lần nữa. Linh khí không bị mất.`}
+                : doKiepResult.pass ? `Đạt ${doKiepResult.pct}% câu tự chấm. +200 tu vi — đột phá lên ${REALMS8[Math.min(7, (doKiepResult.n || 0) + 1)].vn} tầng 1.`
+                : `Đạt ${doKiepResult.pct}% (cần 60%). Hãy tĩnh dưỡng 24 giờ, ôn lại công pháp rồi độ kiếp lần nữa. Tu vi không bị mất.`}
             </p>
             <button onClick={() => setDoKiepResult(null)} className={`h-11 px-6 rounded-[4px] font-bold ${doKiepResult.pass ? "bg-[#E6B656] text-[#121318]" : "bg-[#1C1A17] text-[#F3EEE2]"}`}>Đóng</button>
           </div>
