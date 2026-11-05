@@ -13,12 +13,12 @@ Chạy lại thì bỏ qua file đã có. Muốn làm lại một từ: xoá fil
 import argparse, base64, json, os, shutil, subprocess, sys, time, wave
 
 # ========= CẤU HÌNH — điền theo nút "Get code" trong Google AI Studio =========
-MODEL = os.environ.get("TTS_MODEL", "")          # mã model TTS (vd. lấy từ Get code); để trống sẽ báo lỗi
+MODEL = os.environ.get("TTS_MODEL", "gemini-3.8-flash-tts")          # mã model TTS (vd. lấy từ Get code); để trống sẽ báo lỗi
 VOICE = os.environ.get("TTS_VOICE", "Sulafat")    # giọng có sẵn; series video HSK đã dùng Sulafat
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
 NGHI_GIUA = 0.6                                   # giây nghỉ giữa hai lần gọi (tránh vượt hạn mức)
 # Cách ghép Style + Text thành một lời nhắc. Nếu "Get code" của AI Studio ghép khác, sửa dòng này cho giống.
-PROMPT = "{style}\nRead aloud exactly the following Chinese text and nothing else:\n{text}"
+PROMPT = "### DIRECTOR'S NOTES\n{style}\n\n#### TRANSCRIPT\n{text}"  # đã thử với gemini-3.8-flash-tts: chỉ đọc phần TRANSCRIPT
 # ==============================================================================
 
 HERE = os.path.dirname(os.path.abspath(__file__))
