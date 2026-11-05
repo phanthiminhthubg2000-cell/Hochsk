@@ -4,41 +4,56 @@
 // Bài giảng là tệp HTML tĩnh (nhiều khuôn: cuộn dài, thẻ tab, trang chiếu) mở trong iframe cùng nguồn.
 // Trang chính "khoác" lớp tu tiên từ bên ngoài, không sửa tệp bài:
 //   1. Nhận ra các bước học qua chữ trên tiêu đề / nút mục lục (热身, 生词, 课文, 练习… hoặc tiếng Việt)
-//   2. Gắn nhãn bước tu luyện (调息 Điều tức, 聚气 Tụ khí…) lên nút mục lục / tab
-//   3. Người học ở một bước ≥3 giây (tiêu đề đang hiện, hoặc tab đang chọn) → onStep một lần cho bước đó
-//   4. Một câu được chấm đúng (phần tử nhận class right/ok/correct ngay sau thao tác) → onCorrect
+//   2. Gắn nhãn 5 bước (开卷 Khai quyển, 领悟 Lĩnh ngộ, 修炼 Tu luyện, 试炼 Thí luyện, 悟道 Ngộ đạo) lên mục lục / tiêu đề
+//   3. Người học ở một bước ≥3 giây → onStep (đã đọc qua, không có tu vi)
+//   4. Một câu được chấm đúng (phần tử nhận class right/ok/correct ngay sau thao tác) → onCorrect({step}); bước đó "đạt"
 // ============================================================
 
-// Thứ tự quan trọng: mẫu cụ thể đứng trước mẫu chung
+// v2 · Bài học 5 bước: Khai quyển → Lĩnh ngộ → Tu luyện → Thí luyện → Ngộ đạo
+// Bước 1 tính "đã qua" khi đọc; bước 2–5 chỉ "đạt" khi có câu làm đúng trong bước đó (nhận tu vi một lần).
 export const STEPS = [
-  { key: "dieu-tuc", zh: "调息", vn: "Điều tức", qi: 10, re: /khởi động|热身|mục tiêu|目标|mở đầu/i },
-  { key: "pha-chuong", zh: "破障", vn: "Phá chướng", qi: 20, re: /phân biệt|辨析|搭配/i },
-  { key: "than-thong", zh: "神通", vn: "Thần thông", qi: 20, re: /mở rộng|扩展|tu từ|篇章|修辞|văn hoá|văn hóa|文化/i },
-  { key: "thi-luyen", zh: "试炼", vn: "Thí luyện", qi: 10, re: /luyện đề|模拟|真题|đề hsk|thi thử|听力|阅读/i },
-  { key: "ngung-dan", zh: "凝丹", vn: "Ngưng đan", qi: 20, re: /viết|写作|缩写|作文|运用|vận dụng/i },
-  { key: "be-quan", zh: "闭关", vn: "Bế quan", qi: 10, re: /tổng kết|总结|bài về nhà|作业|小结/i },
-  { key: "tu-khi", zh: "聚气", vn: "Tụ khí", qi: 20, re: /từ vựng|từ mới|生词|词汇|vocab/i },
-  { key: "tham-ngo", zh: "参悟", vn: "Tham ngộ", qi: 30, re: /bài khóa|bài khoá|hội thoại|课文|会话|đoạn văn/i },
-  { key: "chieu-thuc", zh: "招式", vn: "Luyện chiêu", qi: 20, re: /ngữ pháp|chú thích|注释|语法|cấu trúc|句型/i },
-  { key: "luyen-am", zh: "炼音", vn: "Luyện âm", qi: 10, re: /语音|phát âm|ngữ âm|thanh điệu|thanh mẫu|vận mẫu|bút thuận|nét cơ bản|nét chữ/i },
-  { key: "dien-vo", zh: "演武", vn: "Diễn võ", qi: 10, re: /bài tập|luyện tập|练习|thực hành|trò chơi|判断/i },
+  { key: "khai-quyen", zh: "开卷", vn: "Khai quyển", qi: 0 },
+  { key: "linh-ngo", zh: "领悟", vn: "Lĩnh ngộ", qi: 10 },
+  { key: "tu-luyen", zh: "修炼", vn: "Tu luyện", qi: 20 },
+  { key: "thi-luyen", zh: "试炼", vn: "Thí luyện", qi: 20 },
+  { key: "ngo-dao", zh: "悟道", vn: "Ngộ đạo", qi: 30 },
 ];
+// Nhận dạng phần của bài → bước. Thứ tự quan trọng: mẫu cụ thể đứng trước mẫu chung
+const PATTERNS = [
+  [/khởi động|热身|mục tiêu|目标|mở đầu/i, "khai-quyen"],
+  [/phân biệt|辨析|搭配/i, "tu-luyen"],
+  [/mở rộng|扩展|tu từ|篇章|修辞|văn hoá|văn hóa|文化/i, "tu-luyen"],
+  [/luyện đề|模拟|真题|đề hsk|thi thử|听力|阅读/i, "thi-luyen"],
+  [/viết|写作|缩写|作文|运用|vận dụng/i, "ngo-dao"],
+  [/tổng kết|总结|bài về nhà|作业|小结/i, "ngo-dao"],
+  [/từ vựng|từ mới|生词|词汇|vocab/i, "linh-ngo"],
+  [/bài khóa|bài khoá|hội thoại|课文|会话|đoạn văn/i, "tu-luyen"],
+  [/ngữ pháp|chú thích|注释|语法|cấu trúc|句型/i, "tu-luyen"],
+  [/语音|phát âm|ngữ âm|thanh điệu|thanh mẫu|vận mẫu|bút thuận|nét cơ bản|nét chữ/i, "tu-luyen"],
+  [/bài tập|luyện tập|练习|thực hành|trò chơi|判断/i, "thi-luyen"],
+];
+// Khóa bước cũ (11 nhãn, giai đoạn 2) → bước mới
+const ALIAS = { "dieu-tuc": "khai-quyen", "tu-khi": "linh-ngo", "tham-ngo": "tu-luyen", "chieu-thuc": "tu-luyen", "pha-chuong": "tu-luyen", "than-thong": "tu-luyen", "luyen-am": "tu-luyen", "dien-vo": "thi-luyen", "thi-luyen": "thi-luyen", "ngung-dan": "ngo-dao", "be-quan": "ngo-dao" };
+const uniq = (a) => [...new Set(a)];
+export const normKeys = (arr) => uniq((arr || []).map((k) => ALIAS[k] || k).filter((k) => STEPS.some((x) => x.key === k)));
+export const stepByKey = (k) => STEPS.find((x) => x.key === k) || null;
 export const CORRECT_QI = 5;      // mỗi câu đúng (Diễn võ)
 export const CORRECT_CAP = 30;    // tối đa số câu đúng được tính linh khí trong một bài
 
 export const stepOf = (text) => {
   const t = String(text || "").replace(/\s+/g, " ").trim();
   if (!t || t.length > 80) return null;
-  return STEPS.find((s) => s.re.test(t)) || null;
+  const hit = PATTERNS.find(([re]) => re.test(t));
+  return hit ? stepByKey(hit[1]) : null;
 };
 
 // Mức lĩnh ngộ (ước lượng từ bên ngoài bài)
 // rec = { s: [bước đã qua], t: số bước của bài, c: câu đúng, f: ngày đạt Tiểu thành, r: [ngày ôn lại] }
 const dn = (k) => { const [y, m, d] = String(k || "").split("-").map(Number); return y ? Math.round(Date.UTC(y, m - 1, d) / 864e5) : 0; };
 const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
-export const isTieuThanh = (rec) => { const seen = rec?.s?.length || 0, total = rec?.t || 0; return total > 0 && seen >= total && (rec?.c || 0) >= 10; };
+export const isTieuThanh = (rec) => { const seen = normKeys(rec?.s).length, total = rec?.t || 0; return total > 0 && seen >= total && (rec?.c || 0) >= 10; };
 export function masteryOf(rec, done) {
-  const seen = rec?.s?.length || 0, total = rec?.t || 0;
+  const seen = normKeys(rec?.s).length, total = rec?.t || 0;
   if (isTieuThanh(rec)) {
     const f = dn(rec.f), r = (rec.r || []).map(dn);
     if (f && r.some((x) => x - f >= 3) && r.some((x) => x - f >= 7)) return { zh: "圆满", vn: "Viên mãn", n: 4 };
@@ -62,6 +77,7 @@ export function reviewOf(rec, done) {
 const CSS = `
 tt-b{display:inline-flex!important;align-items:center;gap:4px;flex:none;margin:0 6px 0 0;padding:1px 6px;border:0;border-radius:3px;background:#9E2F22;color:#FBF3E4;font:700 11px/1.5 "Noto Serif SC","Be Vietnam Pro",serif;vertical-align:middle;white-space:nowrap;letter-spacing:0;text-transform:none;text-decoration:none;pointer-events:none;box-shadow:none;width:auto;height:auto;min-width:0}
 tt-b tt-i{display:inline;font-style:normal;font-weight:600;font-family:"Be Vietnam Pro",system-ui,sans-serif;opacity:.92}
+tt-b.seen{background:#6B4A2E}
 tt-b.done{background:#1C1A17}
 tt-b.done::after{content:"✓";margin-left:1px}
 `;
@@ -73,17 +89,19 @@ const NAV_KEY = /^[^\u4e00-\u9fff]{0,8}(热身|目标|生词|课文|注释|语�
 /**
  * Gắn lớp tu tiên vào iframe bài giảng. Trả về hàm gỡ.
  * @param frame     phần tử iframe (đã load)
- * @param seen      mảng key bước đã nhận linh khí (để đánh dấu ✓)
+ * @param seen      mảng key bước đã đọc qua
+ * @param passed    mảng key bước đã đạt (có câu đúng trong bước) → ✓
  * @param onInit    ({total, steps})
- * @param onStep    ({key, zh, vn, qi})
- * @param onCorrect ()
+ * @param onStep    ({key, zh, vn, qi})   — đọc qua một bước (không kèm tu vi)
+ * @param onCorrect ({step})             — một câu đúng; step = key bước chứa câu đó (có thể null)
  */
-export function attachTuTien(frame, { seen = [], onInit, onStep, onCorrect } = {}) {
+export function attachTuTien(frame, { seen = [], passed = [], onInit, onStep, onCorrect } = {}) {
   let doc, win;
   try { doc = frame.contentDocument; win = frame.contentWindow; } catch (_) { return () => {}; }
   if (!doc || !win || !doc.body) return () => {};
   const cleanups = [];
-  const got = new Set(seen);
+  const got = new Set(normKeys(seen));
+  const pass = new Set(normKeys(passed));
 
   if (!doc.getElementById("tt-style")) {
     const st = doc.createElement("style"); st.id = "tt-style"; st.textContent = CSS; (doc.head || doc.body).appendChild(st);
@@ -99,7 +117,7 @@ export function attachTuTien(frame, { seen = [], onInit, onStep, onCorrect } = {
   // Thẻ riêng <tt-b> để CSS của bài không ảnh hưởng; ở mục lục chỉ ghi chữ Hán (chỗ hẹp), ở tiêu đề ghi đủ
   const badge = (step, full) => {
     const b = doc.createElement("tt-b");
-    if (got.has(step.key)) b.className = "done";
+    if (pass.has(step.key)) b.className = "done"; else if (got.has(step.key)) b.className = "seen";
     b.dataset.tt = step.key;
     b.title = `${step.zh} ${step.vn}`;
     b.innerHTML = full ? `${step.zh}<tt-i>${step.vn}</tt-i>` : step.zh;
@@ -144,7 +162,20 @@ export function attachTuTien(frame, { seen = [], onInit, onStep, onCorrect } = {
   cleanups.push(() => win.clearInterval(rescan));
   cleanups.push(() => doc.querySelectorAll("tt-b").forEach((b) => b.remove()));
 
-  const markDone = (key) => doc.querySelectorAll(`tt-b[data-tt="${key}"]`).forEach((b) => b.classList.add("done"));
+  const markSeen = (key) => doc.querySelectorAll(`tt-b[data-tt="${key}"]`).forEach((b) => { if (!b.classList.contains("done")) b.classList.add("seen"); });
+  const markDone = (key) => { pass.add(key); doc.querySelectorAll(`tt-b[data-tt="${key}"]`).forEach((b) => { b.classList.remove("seen"); b.classList.add("done"); }); };
+  // Câu vừa làm thuộc bước nào: tiêu đề bước gần nhất phía trên câu đó, nếu không có thì bước đang chọn ở mục lục
+  // Thứ tự: mục/tab đang chọn (bài dạng thẻ, trang chiếu, mục lục theo cuộn) → tiêu đề gần nhất trong cùng khối → mục vừa bấm
+  const stepAt = (el) => {
+    const act = navs.find((n) => isActive(n.el));
+    if (act) return act.step.key;
+    for (let a = el; a && a !== doc.body; a = a.parentElement) {
+      let best = null;
+      heads.forEach((h) => { try { if (a.contains(h.el) && (h.el === el || h.el.compareDocumentPosition(el) & 4)) best = h.step.key; } catch (_) {} });
+      if (best) return best;
+    }
+    return clickedStep;
+  };
 
   // ---- Bước nào đang được học: tiêu đề đang hiện trong khung nhìn, hoặc tab/mục đang chọn ----
   const onScreen = (el) => {
@@ -182,8 +213,8 @@ export function attachTuTien(frame, { seen = [], onInit, onStep, onCorrect } = {
       if (got.has(k)) return;
       dwell[k] = (dwell[k] || 0) + 1;
       if (dwell[k] >= 3) {
-        got.add(k); markDone(k);
-        const step = STEPS.find((s) => s.key === k);
+        got.add(k); if (k === "khai-quyen") markDone(k); else markSeen(k);
+        const step = stepByKey(k);
         onStep && onStep({ key: k, zh: step.zh, vn: step.vn, qi: step.qi });
       }
     });
@@ -212,7 +243,12 @@ export function attachTuTien(frame, { seen = [], onInit, onStep, onCorrect } = {
     // Chọn sai thì bài thường tô luôn đáp án đúng → không tính; chỉ tính phần tử gần chỗ vừa bấm
     if (wrongNow) return;
     const near = (el) => !lastTarget || el === lastTarget || el.contains(lastTarget) || lastTarget.contains?.(el) || el.parentElement?.contains(lastTarget) || el.parentElement?.parentElement?.contains(lastTarget);
-    rights.filter(near).slice(0, 1).forEach((el) => { counted.add(el); onCorrect && onCorrect(); });
+    rights.filter(near).slice(0, 1).forEach((el) => {
+      counted.add(el);
+      const k = stepAt(el);
+      if (k && k !== "khai-quyen" && !pass.has(k)) markDone(k);
+      onCorrect && onCorrect({ step: k });
+    });
   });
   mo.observe(doc.body, { subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true });
   cleanups.push(() => {

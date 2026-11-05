@@ -72,3 +72,43 @@ export const TV_RULES = [
 ];
 export const LESSON_DONE_MIN_CORRECT = 5;
 export const TIEU_THANH_TV = 60;
+
+// ---------- Nhiệm vụ cảnh giới (điều kiện thứ hai để độ kiếp, cùng với Đỉnh phong) ----------
+// Đạt Tiểu thành một số bài của đúng cấp cảnh giới. Không có bài của cấp đó thì không chặn.
+export const QUEST_LESSONS = 5;
+const levelMatch = (idx, lec) => {
+  const t = `${lec?.level || ""} ${lec?.lectureName || ""}`;
+  if (idx === 0) return /ng[uữ]\s*[aâ]m|语音|pinyin|phát âm/i.test(t);
+  const m = String(lec?.level || "").match(/HSK\s*(\d)/i);
+  return !!m && Number(m[1]) === idx && !/ng[uữ]\s*[aâ]m|语音/i.test(t);
+};
+export function realmQuest(idx, lectures = [], lessonQi = {}, isTieuThanh = () => false) {
+  if (idx >= 7) return { need: 0, have: 0, done: true, total: 0, label: "" };
+  const pool = lectures.filter((l) => levelMatch(idx, l));
+  const need = Math.min(idx === 0 ? 3 : QUEST_LESSONS, pool.length);
+  const have = pool.filter((l) => isTieuThanh(lessonQi[l.id])).length;
+  const R = REALMS8[idx];
+  return { need, have: Math.min(have, need), done: have >= need, total: pool.length,
+    label: need ? `Tiểu thành ${need} bài ${idx === 0 ? "Ngữ âm" : R.hsk}` : "" };
+}
+
+// ---------- Chuỗi ngày tu luyện (dùng chung trang chủ và trang con) ----------
+// st = { streak, last: "YYYY-MM-DD", pills: { trucCo, hoiXuan } } → trạng thái mới + ghi chú (đan dược nhận/dùng)
+export function nextStreak(st, today, dayNum) {
+  if (st.last === today) return null;
+  const gap = st.last ? dayNum(today) - dayNum(st.last) : 0;
+  const pills = { trucCo: 0, hoiXuan: 0, ...(st.pills || {}) }; let streak = st.streak || 0; const notes = [];
+  if (!st.last) streak = Math.max(1, streak);
+  else if (gap === 1) streak += 1;
+  else if (gap === 2 && pills.hoiXuan > 0) { pills.hoiXuan -= 1; streak += 1; notes.push("Hồi Xuân Đan đã giữ chuỗi"); }
+  else streak = 1;
+  if (st.last && streak % 3 === 0) { pills.trucCo += 1; notes.push("+1 Trúc Cơ Đan"); }
+  if (st.last && streak % 7 === 0) { pills.hoiXuan += 1; notes.push("+1 Hồi Xuân Đan"); }
+  return { streak, last: today, pills, notes };
+}
+
+// Ngũ hành của từng trang con (hiện trên thông báo tu vi)
+export const PAGE_ELEMENT = {
+  "/vocab": "moc", "/topic": "moc", "/luan-vo": "moc", "/dictation": "kim", "/translate": "thuy", "/test": "thuy",
+  "/arrange": "tho", "/roleplay": "hoa", "/hskk": "hoa",
+};

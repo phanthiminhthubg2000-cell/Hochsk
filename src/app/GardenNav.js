@@ -6,11 +6,14 @@
 // Trên điện thoại: thanh 5 khu cố định ở đáy màn hình.
 // ============================================================
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { BrandMark, KimThiem } from "./tuTien";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { BrandMark, KimThiem, dayKey, dayNum, elementOf } from "./tuTien";
+import { tuViState, nextStreak, PAGE_ELEMENT } from "./tuVi";
+import { DotPha, useDotPha } from "./dotPha";
 
 export const GARDEN_TABS = [
   { key: "home", label: "Động phủ", zh: "府", icon: "qi" },
@@ -49,18 +52,37 @@ export default function GardenNav({ active = "practice", title, right }) {
   useUser();
   const [streak, setStreak] = useState(0);
   const [leaves, setLeaves] = useState(0);
+  const [u, setU] = useState(null); // hồ sơ thư sinh (đọc trực tiếp, cập nhật khi trang con cộng tu vi)
+  const [toast, setToast] = useState(null);
+  const path = usePathname() || "";
+  const el = PAGE_ELEMENT[Object.keys(PAGE_ELEMENT).find((k) => path.startsWith(k)) || ""];
+  const lastXp = useRef(null);
 
+  // v2: mọi trang con cùng một thông báo tu vi + chuỗi ngày + màn đột phá
   useEffect(() => {
     if (!isSignedIn || !userId) return;
-    let off = false;
-    getDoc(doc(db, "users", userId)).then((s) => {
-      if (off || !s.exists()) return;
-      const d = s.data();
-      setStreak(d.streak ?? 0);
-      setLeaves(d.xp ?? 0);
-    }).catch(() => {});
-    return () => { off = true; };
+    const ref = doc(db, "users", userId);
+    let off = () => {};
+    try {
+      off = onSnapshot(ref, (s) => {
+        if (!s.exists()) return;
+        const d = s.data();
+        setU(d); setStreak(d.streak ?? 0); setLeaves(d.xp ?? 0);
+        const xp = d.xp || 0;
+        if (lastXp.current != null && xp > lastXp.current) {
+          const n = xp - lastXp.current; const k = Date.now();
+          setToast({ n, k }); setTimeout(() => setToast((t) => (t && t.k === k ? null : t)), 2400);
+          // Nhận tu vi = có tu luyện hôm nay → giữ chuỗi ngày (trang chủ cũng làm việc này)
+          const ns = nextStreak({ streak: d.streak || 0, last: d.lastActiveDay || "", pills: d.pills }, dayKey(), dayNum);
+          if (ns) setDoc(ref, { streak: ns.streak, lastActiveDay: ns.last, pills: ns.pills }, { merge: true }).catch(() => {});
+        }
+        lastXp.current = xp;
+      }, () => {});
+    } catch (_) {}
+    return () => { try { off(); } catch (_) {} };
   }, [isSignedIn, userId]);
+  const tv = u ? tuViState(u.xp || 0, u.tuVi, u.doKiep) : null;
+  const [dotPha, closeDotPha] = useDotPha(tv);
 
   const href = (k) => (k === "home" ? "/" : `/?tab=${k}`);
 
@@ -68,7 +90,9 @@ export default function GardenNav({ active = "practice", title, right }) {
     <>
       <style>{`.hg-nav{font-family:"Be Vietnam Pro","Noto Sans SC",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .hg-nav a:focus-visible,.hg-nav button:focus-visible{outline:3px solid #9E2F22;outline-offset:2px}
-@media (max-width:767px){body{padding-bottom:76px}}`}</style>
+@media (max-width:767px){body{padding-bottom:76px}}
+@keyframes hgNavPop{0%{transform:translateY(-6px) scale(.9);opacity:0}100%{transform:none;opacity:1}}`}</style>
+      <DotPha ev={dotPha} onClose={closeDotPha} />
       <header className="hg-nav sticky top-0 z-40 bg-[#EFE7D6]/95 backdrop-blur border-b border-[#D8CBAE] text-[#1C1A17]">
         <div className="max-w-[1200px] mx-auto h-16 md:h-[72px] px-4 md:px-8 flex items-center gap-4">
           <Link href="/" className="shrink-0" aria-label="Sơn Hải Thư Viện — về Động phủ">
@@ -86,8 +110,19 @@ export default function GardenNav({ active = "practice", title, right }) {
             <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap border border-[#1C1A17]/70 text-sm font-bold text-[#1C1A17]" title="Tu luyện liên tục (chuỗi ngày)">
               <GIcon name="flame" className="w-4 h-4 text-[#9E2F22]" />{streak}<span className="hidden xl:inline font-semibold"> ngày</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#F0E3BF] border border-[#D9B970] text-sm font-bold text-[#5C3D00]" title="Linh khí">
+            {tv && (
+              <Link href={tv.provisional ? "/linh-can" : "/"} className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#1C1A17] text-[#F3EEE2] text-sm font-bold" title={tv.provisional ? "Chưa định cảnh giới — lên Trắc Linh Đài" : `Tu vi ${tv.tv}/${tv.need} trong cảnh giới`}>
+                <span className="font-brush text-[18px] leading-none text-[#E6B656]" aria-hidden="true">{tv.zh}</span>{tv.vn}<span className="hidden lg:inline font-semibold text-[#E6B656]">{tv.provisional ? " · chưa định" : ` · ${tv.stage}`}</span>
+              </Link>
+            )}
+            <span className="relative inline-flex items-center gap-1.5 h-9 px-3 rounded-lg whitespace-nowrap bg-[#F0E3BF] border border-[#D9B970] text-sm font-bold text-[#5C3D00]" title="Tu vi">
               <GIcon name="qi" className="w-4 h-4 text-[#9A6B12]" />{fmt(leaves)}<span className="hidden xl:inline font-semibold"> tu vi</span>
+              {toast && (
+                <span key={toast.k} role="status" className="absolute right-0 top-[calc(100%+8px)] z-50 flex items-center gap-2 rounded-md bg-[#1C1A17] text-[#F3EEE2] pl-2 pr-3 py-1.5 shadow-lg whitespace-nowrap" style={{ animation: "hgNavPop .35s ease-out" }}>
+                  <span className="font-brush text-[20px] text-[#E6B656] leading-none" aria-hidden="true">{el ? elementOf(el).zh : "修"}</span>
+                  <span className="text-sm"><b className="text-[#E6B656]">+{toast.n} tu vi</b>{el ? ` · hệ ${elementOf(el).vn}` : ""}</span>
+                </span>
+              )}
             </span>
             {isSignedIn ? (
               <div className="ml-1"><UserButton afterSignOutUrl="/" /></div>

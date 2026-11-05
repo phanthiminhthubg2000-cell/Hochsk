@@ -16,8 +16,9 @@ import { useHskkResultSaver } from "../hskkResultSaver";
 import { BRAND, BrandMark, KimThiem, MountainScene, Seal, VText, Gourd, dayKey, dayNum, realmOf, judgeLinhCan, elementOf, ELEMENTS } from "./tuTien";
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp, increment } from "firebase/firestore";
 import { ThienBang } from "./giangHo";
-import { attachTuTien, masteryOf, reviewOf, isTieuThanh, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
-import { tuViState, REALMS8, LESSON_DONE_MIN_CORRECT, TIEU_THANH_TV } from "./tuVi";
+import { attachTuTien, masteryOf, reviewOf, isTieuThanh, normKeys, stepByKey, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
+import { tuViState, realmQuest, nextStreak, REALMS8, LESSON_DONE_MIN_CORRECT, TIEU_THANH_TV } from "./tuVi";
+import { DotPha, useDotPha } from "./dotPha";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 
@@ -767,15 +768,8 @@ export default function HomePage() {
   // Gọi mỗi khi thư sinh thật sự tu luyện (nhận linh khí). Lỡ đúng 1 ngày mà có Hồi Xuân Đan → tự dùng để giữ chuỗi.
   const touchStreak = () => {
     const today = dayKey(); const st = tuRef.current;
-    if (st.last === today) return;
-    const gap = st.last ? dayNum(today) - dayNum(st.last) : 0;
-    const p = { ...st.pills }; let streakN = st.streak || 0; const notes = [];
-    if (!st.last) streakN = Math.max(1, streakN);
-    else if (gap === 1) streakN += 1;
-    else if (gap === 2 && (p.hoiXuan || 0) > 0) { p.hoiXuan -= 1; streakN += 1; notes.push("Hồi Xuân Đan đã giữ chuỗi"); }
-    else streakN = 1;
-    if (st.last && streakN % 3 === 0) { p.trucCo = (p.trucCo || 0) + 1; notes.push("+1 Trúc Cơ Đan"); }
-    if (st.last && streakN % 7 === 0) { p.hoiXuan = (p.hoiXuan || 0) + 1; notes.push("+1 Hồi Xuân Đan"); }
+    const ns = nextStreak(st, today, dayNum); if (!ns) return;
+    const p = ns.pills; const streakN = ns.streak; const notes = ns.notes;
     tuRef.current = { ...st, streak: streakN, last: today, pills: p };
     setStreak(streakN); setPills(p);
     if (userId) setDoc(doc(db, "users", userId), { streak: streakN, lastActiveDay: today, pills: p }, { merge: true }).catch(() => {});
@@ -814,7 +808,8 @@ export default function HomePage() {
     const lec = selectedLecture; const frame = lessonFrameRef.current;
     if (!lec || !frame) return;
     const id = lec.id;
-    const cur = () => lessonQiRef.current[id] || { s: [], t: 0, c: 0 };
+    // rec: s = bước đã đọc qua, d = bước đã đạt (có câu đúng), c = câu đúng (khóa bước cũ được quy về 5 bước)
+    const cur = () => { const r = lessonQiRef.current[id] || { s: [], t: 0, c: 0 }; return { ...r, s: normKeys(r.s), d: normKeys(r.d) }; };
     // Ôn tập: ở lại bài ≥ 60 giây vào một ngày khác ngày đạt Tiểu thành → ghi một lần ôn
     const reviewTimer = setTimeout(() => {
       const r = cur(); const today = dayKey();
@@ -823,19 +818,23 @@ export default function HomePage() {
       showQi(0, "温", "Đã ghi một lần ôn công pháp");
     }, 60000);
     const off = attachTuTien(frame, {
-      seen: cur().s,
+      seen: cur().s, passed: cur().d,
       onInit: ({ total }) => { const r = cur(); if (r.t !== total) saveLessonQi(id, { ...r, t: total }, 0); },
       onStep: ({ key, zh, vn, qi }) => {
         // v2: qua bước chỉ ghi tiến độ, không cộng tu vi (tu vi chỉ đến từ kết quả)
         const r = cur(); if (r.s.includes(key)) return;
-        saveLessonQi(id, { ...r, s: [...r.s, key] }, 0);
-        showQi(0, zh, `Lĩnh ngộ · ${vn}`);
+        saveLessonQi(id, { ...r, s: [...r.s, key], ...(key === "khai-quyen" && !r.d.includes(key) ? { d: [...r.d, key] } : {}) }, 0);
+        showQi(0, zh, `Đã đọc · ${vn}`);
       },
-      onCorrect: () => {
-        const r = cur(); if ((r.c || 0) >= CORRECT_CAP) return;
-        const g = boosted() ? CORRECT_QI * 2 : CORRECT_QI;
-        saveLessonQi(id, { ...r, c: (r.c || 0) + 1 }, g);
-        showQi(g, "演武", "Diễn võ · câu đúng");
+      onCorrect: ({ step } = {}) => {
+        const r = cur(); const x2 = boosted() ? 2 : 1;
+        // Bước 2–5 "đạt" khi có câu đúng đầu tiên trong bước → thưởng tu vi của bước (một lần)
+        const st = step && step !== "khai-quyen" && !r.d.includes(step) ? stepByKey(step) : null;
+        const capped = (r.c || 0) >= CORRECT_CAP;
+        if (capped && !st) return;
+        const g = (capped ? 0 : CORRECT_QI * x2) + (st ? st.qi * x2 : 0);
+        saveLessonQi(id, { ...r, c: capped ? r.c : (r.c || 0) + 1, ...(st ? { d: [...r.d, st.key], s: r.s.includes(st.key) ? r.s : [...r.s, st.key] } : {}) }, g);
+        showQi(g, st ? st.zh : "演武", st ? `Đạt bước ${st.vn}` : "Câu đúng");
       },
     });
     detachRef.current = () => { clearTimeout(reviewTimer); off(); };
@@ -916,11 +915,13 @@ export default function HomePage() {
 
   // Cảnh giới v2: theo tu vi (users.xp − tuVi.base), không theo giáo trình đang chọn
   const realm = tuViState(leaves, tuVi, doKiep);
+  const quest = realmQuest(realm.idx, lecturesBankList, lessonQi, isTieuThanh);
+  const [dotPha, closeDotPha] = useDotPha(realm);
   // Độ kiếp theo cảnh giới hiện tại (phòng thi có đề HSK 1–5); chỉ mở khi đạt Đỉnh phong
   const kiepN = realm.kiepN;
   const kiepRaw = kiepN ? doKiep[`hsk${kiepN}`] : null;
   const kiep = kiepRaw?.passed && (!tuVi?.at || kiepRaw.at > tuVi.at) ? kiepRaw : null; // lần đậu trước khi vào cảnh giới này không tính
-  const kiepReady = realm.peak;
+  const kiepReady = realm.peak && quest.done;
   const kiepCool = doKiepCooldown > nowMs;
   const kiepAvail = kiepN >= 1 && kiepN <= 5;
   // Phàm Nhân Đỉnh phong → nhập môn (không cần đề thi)
@@ -943,6 +944,7 @@ export default function HomePage() {
             <div className="text-sm font-bold text-[#E6B656]">{realm.stage} · {realm.hsk}</div>
             <div className="text-xs text-[#CFC3A8] max-w-[210px] leading-snug">{realm.region}{currentCourse ? ` · công pháp ${currentCourse}` : ""}</div>
             {realm.provisional ? <Link href="/linh-can" className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold inline-flex items-center">Định cảnh giới ở Trắc Linh Đài →</Link>
+              : realm.peak && !quest.done ? <div className="text-xs font-bold text-[#E6B656]">Nhiệm vụ cảnh giới: {quest.label} ({quest.have}/{quest.need})</div>
               : realm.peak && realm.idx === 0 ? <button onClick={nhapMon} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Nhập môn → Luyện Khí</button>
               : realm.peak && kiepAvail ? <button onClick={() => goTab("exam")} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Đỉnh phong · độ kiếp →</button> : null}
           </div>
@@ -1388,7 +1390,8 @@ export default function HomePage() {
                       : !kiepAvail ? <span className="text-[#C9CBD3]">Đề độ kiếp HSK {realm.idx} đang được chuẩn bị.</span>
                       : kiep?.passed ? <span className="text-[#8FD3B5]">✓ Đã độ kiếp ngày {new Date(kiep.at).toLocaleDateString("vi-VN")} · đạt {kiep.pct}%</span>
                       : kiepCool ? <span className="text-[#F08A7A]">Đang tĩnh dưỡng sau tẩu hỏa nhập ma — độ kiếp lại từ {fmtTime(doKiepCooldown)}</span>
-                      : !kiepReady ? <span className="text-[#E6B656]">{realm.vn} {realm.stage} — còn {fmt(realm.toPeak)} tu vi nữa mới đến Đỉnh phong.</span>
+                      : !realm.peak ? <span className="text-[#E6B656]">{realm.vn} {realm.stage} — còn {fmt(realm.toPeak)} tu vi nữa mới đến Đỉnh phong.{quest.need ? ` Nhiệm vụ cảnh giới: ${quest.label} (${quest.have}/${quest.need}).` : ""}</span>
+                      : !quest.done ? <span className="text-[#E6B656]">Đã Đỉnh phong. Còn nhiệm vụ cảnh giới: {quest.label} — mới {quest.have}/{quest.need}.</span>
                       : <span className="text-[#E6B656]">{realm.vn} Đỉnh phong — sẵn sàng nghênh tiếp lôi kiếp.</span>}
                   </div>
                 </div>
@@ -1489,7 +1492,7 @@ export default function HomePage() {
             {(() => { const r = lessonQi[selectedLecture.id] || {}; const m = masteryOf(r, lessonsDone.includes(selectedLecture.id)); return (
               <span className="hidden sm:inline-flex flex-col items-end leading-tight shrink-0" title="Mức lĩnh ngộ: Nhập môn (đọc ≥ nửa bài) → Tiểu thành (đọc hết + 10 câu đúng) → Đại thành (+ đánh dấu học xong)">
                 <span className="text-sm font-bold text-[#E6B656]"><span className="font-brush font-normal text-[17px] mr-1">{m.zh}</span>{m.vn}</span>
-                <span className="text-[11px] text-[#E2C3AC]">{(r.s || []).length}/{r.t || "–"} phần · {r.c || 0} câu đúng</span>
+                <span className="text-[11px] text-[#E2C3AC]">{normKeys(r.d).length}/{r.t || "–"} bước đạt · {r.c || 0} câu đúng</span>
               </span>
             ); })()}
             {lessonsDone.includes(selectedLecture.id) ? (
@@ -1546,6 +1549,7 @@ export default function HomePage() {
       )}
 
       {/* ---------- KẾT QUẢ ĐỘ KIẾP ---------- */}
+      <DotPha ev={dotPha} onClose={closeDotPha} />
       {doKiepResult && !activeHskExamView && (
         <div className="fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-label="Kết quả độ kiếp">
           <div className={`w-full max-w-md rounded-[14px] p-6 flex flex-col items-center text-center gap-3 ${doKiepResult.pass ? "bg-[#121318] text-[#EDE8DC]" : "bg-[#FBF8F1] text-[#1C1A17]"}`} style={{ animation: "hgPop .4s ease-out" }}>
