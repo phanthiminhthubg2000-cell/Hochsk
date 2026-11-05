@@ -32,14 +32,31 @@ export const stepOf = (text) => {
   return STEPS.find((s) => s.re.test(t)) || null;
 };
 
-// Mức lĩnh ngộ (ước lượng từ bên ngoài bài): rec = { s: [bước đã qua], t: số bước của bài, c: câu đúng }
+// Mức lĩnh ngộ (ước lượng từ bên ngoài bài)
+// rec = { s: [bước đã qua], t: số bước của bài, c: câu đúng, f: ngày đạt Tiểu thành, r: [ngày ôn lại] }
+const dn = (k) => { const [y, m, d] = String(k || "").split("-").map(Number); return y ? Math.round(Date.UTC(y, m - 1, d) / 864e5) : 0; };
+const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+export const isTieuThanh = (rec) => { const seen = rec?.s?.length || 0, total = rec?.t || 0; return total > 0 && seen >= total && (rec?.c || 0) >= 10; };
 export function masteryOf(rec, done) {
-  const seen = rec?.s?.length || 0, total = rec?.t || 0, c = rec?.c || 0;
-  const all = total > 0 && seen >= total;
-  if (done && all && c >= 10) return { zh: "大成", vn: "Đại thành", n: 3 };
-  if (all && c >= 10) return { zh: "小成", vn: "Tiểu thành", n: 2 };
+  const seen = rec?.s?.length || 0, total = rec?.t || 0;
+  if (isTieuThanh(rec)) {
+    const f = dn(rec.f), r = (rec.r || []).map(dn);
+    if (f && r.some((x) => x - f >= 3) && r.some((x) => x - f >= 7)) return { zh: "圆满", vn: "Viên mãn", n: 4 };
+    if (done) return { zh: "大成", vn: "Đại thành", n: 3 };
+    return { zh: "小成", vn: "Tiểu thành", n: 2 };
+  }
   if (total > 0 && seen / total >= 0.5) return { zh: "入门", vn: "Nhập môn", n: 1 };
   return { zh: "初窥", vn: "Mới bước vào", n: 0 };
+}
+// Ôn tập: bài đã Tiểu thành cần ôn lại ở mốc +3 và +7 ngày để lên Viên mãn
+export function reviewOf(rec, done) {
+  const m = masteryOf(rec, done);
+  if (m.n < 2 || m.n >= 4 || !rec?.f) return { due: false, crack: false };
+  const f = dn(rec.f), t = dn(todayKey()), r = (rec.r || []).map(dn);
+  const has3 = r.some((x) => x - f >= 3);
+  const due = (!has3 && t - f >= 3) || (has3 && !r.some((x) => x - f >= 7) && t - f >= 7);
+  const last = Math.max(f, ...r);
+  return { due, crack: t - last > 7 };
 }
 
 const CSS = `

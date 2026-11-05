@@ -13,9 +13,9 @@ import { db } from "../firebase";
 import { HSK3_BRIDGE, HSK3_STUDENT_MODE } from "./hsk3Bridge";
 import { usePhoneticsResultSaver } from "../phoneticsResultSaver";
 import { useHskkResultSaver } from "../hskkResultSaver";
-import { BRAND, BrandMark, KimThiem, MountainScene, Seal, VText, realmOf, judgeLinhCan, elementOf, ELEMENTS } from "./tuTien";
+import { BRAND, BrandMark, KimThiem, MountainScene, Seal, VText, Gourd, dayKey, dayNum, realmOf, judgeLinhCan, elementOf, ELEMENTS } from "./tuTien";
 import { doc, setDoc, getDoc, collection, getDocs, query, where, addDoc, serverTimestamp, increment } from "firebase/firestore";
-import { attachTuTien, masteryOf, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
+import { attachTuTien, masteryOf, reviewOf, isTieuThanh, CORRECT_QI, CORRECT_CAP } from "./tuTienLesson";
 
 // TỪ ĐIỂN LOCAL (dùng cho ô tìm kiếm trong khu Học)
 
@@ -426,6 +426,17 @@ export default function HomePage() {
   useEffect(() => { lessonQiRef.current = lessonQi; }, [lessonQi]);
   useEffect(() => { try { const x = JSON.parse(localStorage.getItem("sh_lesson_qi") || "null"); if (x && typeof x === "object") setLessonQi(q => (Object.keys(q).length ? q : x)); } catch (_) {} }, []);
   const [qiToast, setQiToast] = useState(null); // {n, zh, vn, k}
+  // Chuỗi ngày + đan dược: pills = { trucCo, hoiXuan }, boostUntil = ms (Trúc Cơ Đan: linh khí ×2)
+  const [pills, setPills] = useState({ trucCo: 0, hoiXuan: 0 });
+  const [boostUntil, setBoostUntil] = useState(0);
+  const tuRef = useRef({ streak: 0, last: "", pills: { trucCo: 0, hoiXuan: 0 }, boostUntil: 0 });
+  // Độ kiếp: doKiep = { hsk4: {passed, pct, at} }, cooldown = ms (tẩu hỏa nhập ma: tĩnh dưỡng 24 giờ)
+  const [doKiep, setDoKiep] = useState({});
+  const [doKiepCooldown, setDoKiepCooldown] = useState(0);
+  const [doKiepResult, setDoKiepResult] = useState(null); // {pass, pct, n, mismatch, examLevel}
+  const doKiepPendingRef = useRef(null); // cấp HSK đang độ kiếp
+  const [nowMs, setNowMs] = useState(0);
+  useEffect(() => { setNowMs(Date.now()); const t = setInterval(() => setNowMs(Date.now()), 30000); return () => clearInterval(t); }, []);
   const lessonFrameRef = useRef(null);
   const detachRef = useRef(null);
   const [bloomFx, setBloomFx] = useState(false);
@@ -446,7 +457,29 @@ export default function HomePage() {
   // ---------- Đề HSK 3.0 gửi kết quả qua postMessage ----------
   const hsk3SavedRef = useRef(null);
   useEffect(() => { hsk3SavedRef.current = null; }, [activeHskExamView]);
+  useEffect(() => { if (!activeHskExamView) doKiepPendingRef.current = null; }, [activeHskExamView]);
   useEffect(() => {
+    // Chấm độ kiếp từ kết quả tự chấm của phòng thi (Nghe + Đọc + phần Viết tự chấm)
+    const judgeKiep = (d) => {
+      const n = doKiepPendingRef.current; if (!n) return;
+      doKiepPendingRef.current = null;
+      const lv = Number((String(d.level || "").match(/(\d)\s*$/) || [])[1] || 0);
+      const parts = [d.listening, d.reading, d.writing?.auto].filter(x => x && x.total);
+      const cor = parts.reduce((a, x) => a + (x.correct || 0), 0), tot = parts.reduce((a, x) => a + (x.total || 0), 0);
+      const pct = tot ? Math.round((cor / tot) * 100) : 0;
+      if (lv !== n) { setDoKiepResult({ mismatch: true, n, examLevel: lv, pct }); return; }
+      const pass = pct >= 60;
+      if (pass) {
+        const rec = { passed: true, pct, at: Date.now() };
+        setDoKiep(k => ({ ...k, [`hsk${n}`]: rec })); setLeaves(l => l + 200);
+        if (userId) setDoc(doc(db, "users", userId), { doKiep: { [`hsk${n}`]: rec }, xp: increment(200) }, { merge: true }).catch(() => {});
+      } else {
+        const until = Date.now() + 864e5;
+        setDoKiepCooldown(until);
+        if (userId) setDoc(doc(db, "users", userId), { doKiepCooldown: until }, { merge: true }).catch(() => {});
+      }
+      setDoKiepResult({ pass, pct, n });
+    };
     const onMsg = async (e) => {
       const d = e.data;
       if (!d || d.source !== "hsk-garden-hsk3") return;
@@ -493,8 +526,10 @@ export default function HomePage() {
         });
         hsk3SavedRef.current = ref.id;
         reply({ type: "HSK3_SAVED" });
+        judgeKiep(d);
       } catch (err) {
         reply({ type: "HSK3_ERROR", message: err.message });
+        judgeKiep(d);
       }
     };
     window.addEventListener("message", onMsg);
@@ -631,6 +666,11 @@ export default function HomePage() {
         if (Array.isArray(uData.lessonsDone)) setLessonsDone(uData.lessonsDone);
         if (uData.linhCan?.scores) setLinhCan(uData.linhCan);
         if (uData.lessonQi && typeof uData.lessonQi === "object") setLessonQi(uData.lessonQi);
+        const pl = { trucCo: uData.pills?.trucCo || 0, hoiXuan: uData.pills?.hoiXuan || 0 };
+        setPills(pl); setBoostUntil(uData.boostUntil || 0);
+        tuRef.current = { streak: uData.streak ?? 0, last: uData.lastActiveDay || "", pills: pl, boostUntil: uData.boostUntil || 0 };
+        if (uData.doKiep && typeof uData.doKiep === "object") setDoKiep(uData.doKiep);
+        setDoKiepCooldown(uData.doKiepCooldown || 0);
         if (uData.lastLecture?.id) setLastLecture(uData.lastLecture);
         if (uData.lectureLevel) setSelectedLectureLevel(l => l || uData.lectureLevel);
 
@@ -674,6 +714,9 @@ export default function HomePage() {
     { label: "Nghe chép 1 bài", done: todayListeningLearned >= 1, sub: `${Math.min(todayListeningLearned, 1)}/1`, href: "/dictation", leaf: 15 },
     { label: "Sắp xếp 10 câu", done: todayGrammarLearned >= 10, sub: `${Math.min(todayGrammarLearned, 10)}/10`, href: "/arrange", leaf: 20 },
   ];
+  // Bài đến hạn ôn (để lên Viên mãn)
+  const reviewLesson = lecturesBankList.find(l => reviewOf(lessonQi[l.id], lessonsDone.includes(l.id)).due);
+  if (reviewLesson) missions.splice(2, 0, { label: `Ôn công pháp: ${reviewLesson.lectureName}`, done: false, sub: "Viên mãn", lesson: reviewLesson, leaf: 0 });
   const missionsDone = missions.filter(m => m.done).length;
 
   // ---------- Hành động ----------
@@ -705,18 +748,50 @@ export default function HomePage() {
       try { await setDoc(doc(db, "users", userId), { lessonsDone: next, xp: newLeaves }, { merge: true }); }
       catch (err) { console.error("Lỗi lưu tiến độ:", err); }
     }
+    touchStreak();
+  };
+
+  // ---------- Chuỗi ngày tu luyện + đan dược ----------
+  // Gọi mỗi khi thư sinh thật sự tu luyện (nhận linh khí). Lỡ đúng 1 ngày mà có Hồi Xuân Đan → tự dùng để giữ chuỗi.
+  const touchStreak = () => {
+    const today = dayKey(); const st = tuRef.current;
+    if (st.last === today) return;
+    const gap = st.last ? dayNum(today) - dayNum(st.last) : 0;
+    const p = { ...st.pills }; let streakN = st.streak || 0; const notes = [];
+    if (!st.last) streakN = Math.max(1, streakN);
+    else if (gap === 1) streakN += 1;
+    else if (gap === 2 && (p.hoiXuan || 0) > 0) { p.hoiXuan -= 1; streakN += 1; notes.push("Hồi Xuân Đan đã giữ chuỗi"); }
+    else streakN = 1;
+    if (st.last && streakN % 3 === 0) { p.trucCo = (p.trucCo || 0) + 1; notes.push("+1 Trúc Cơ Đan"); }
+    if (st.last && streakN % 7 === 0) { p.hoiXuan = (p.hoiXuan || 0) + 1; notes.push("+1 Hồi Xuân Đan"); }
+    tuRef.current = { ...st, streak: streakN, last: today, pills: p };
+    setStreak(streakN); setPills(p);
+    if (userId) setDoc(doc(db, "users", userId), { streak: streakN, lastActiveDay: today, pills: p }, { merge: true }).catch(() => {});
+    if (notes.length) setTimeout(() => showQi(0, "丹", notes.join(" · ")), 2400);
+  };
+  const boosted = () => (tuRef.current.boostUntil || 0) > Date.now();
+  const eatTrucCo = () => {
+    const st = tuRef.current; if ((st.pills.trucCo || 0) < 1) return;
+    const p = { ...st.pills, trucCo: st.pills.trucCo - 1 };
+    const until = Math.max(Date.now(), st.boostUntil || 0) + 3600000;
+    tuRef.current = { ...st, pills: p, boostUntil: until };
+    setPills(p); setBoostUntil(until);
+    if (userId) setDoc(doc(db, "users", userId), { pills: p, boostUntil: until }, { merge: true }).catch(() => {});
   };
 
   // ---------- Lớp tu tiên trong bài giảng: linh khí theo từng bước ----------
   const saveLessonQi = (id, rec, gain) => {
+    if (!rec.f && isTieuThanh(rec)) rec = { ...rec, f: dayKey() }; // mốc để tính ôn tập Viên mãn
     const next = { ...lessonQiRef.current, [id]: rec };
     lessonQiRef.current = next;
     setLessonQi(next);
     try { localStorage.setItem("sh_lesson_qi", JSON.stringify(next)); } catch (_) {}
     if (gain > 0) setLeaves(l => l + gain);
     if (userId) setDoc(doc(db, "users", userId), { lessonQi: { [id]: rec }, ...(gain > 0 ? { xp: increment(gain) } : {}) }, { merge: true }).catch(err => console.warn("Lỗi lưu linh khí:", err?.message));
+    if (gain > 0) touchStreak();
   };
   const showQi = (n, zh, vn) => {
+    if (n > 0 && boosted()) vn = `${vn} · Trúc Cơ Đan ×2`;
     const k = Date.now();
     setQiToast({ n, zh, vn, k });
     setTimeout(() => setQiToast(t => (t && t.k === k ? null : t)), 2200);
@@ -728,20 +803,30 @@ export default function HomePage() {
     if (!lec || !frame) return;
     const id = lec.id;
     const cur = () => lessonQiRef.current[id] || { s: [], t: 0, c: 0 };
-    detachRef.current = attachTuTien(frame, {
+    // Ôn tập: ở lại bài ≥ 60 giây vào một ngày khác ngày đạt Tiểu thành → ghi một lần ôn
+    const reviewTimer = setTimeout(() => {
+      const r = cur(); const today = dayKey();
+      if (!r.f || r.f === today || (r.r || []).includes(today)) return;
+      saveLessonQi(id, { ...r, r: [...(r.r || []), today].slice(-6) }, 0);
+      showQi(0, "温", "Đã ghi một lần ôn công pháp");
+    }, 60000);
+    const off = attachTuTien(frame, {
       seen: cur().s,
       onInit: ({ total }) => { const r = cur(); if (r.t !== total) saveLessonQi(id, { ...r, t: total }, 0); },
       onStep: ({ key, zh, vn, qi }) => {
         const r = cur(); if (r.s.includes(key)) return;
-        saveLessonQi(id, { ...r, s: [...r.s, key] }, qi);
-        showQi(qi, zh, vn);
+        const g = boosted() ? qi * 2 : qi;
+        saveLessonQi(id, { ...r, s: [...r.s, key] }, g);
+        showQi(g, zh, vn);
       },
       onCorrect: () => {
         const r = cur(); if ((r.c || 0) >= CORRECT_CAP) return;
-        saveLessonQi(id, { ...r, c: (r.c || 0) + 1 }, CORRECT_QI);
-        showQi(CORRECT_QI, "演武", "Diễn võ · câu đúng");
+        const g = boosted() ? CORRECT_QI * 2 : CORRECT_QI;
+        saveLessonQi(id, { ...r, c: (r.c || 0) + 1 }, g);
+        showQi(g, "演武", "Diễn võ · câu đúng");
       },
     });
+    detachRef.current = () => { clearTimeout(reviewTimer); off(); };
   };
   useEffect(() => { if (!selectedLecture) { try { detachRef.current && detachRef.current(); } catch (_) {} detachRef.current = null; } }, [selectedLecture]);
 
@@ -818,6 +903,14 @@ export default function HomePage() {
   );
 
   const realm = realmOf(currentCourse, coursePct);
+  // Độ kiếp theo cấp HSK của công pháp đang tu luyện (phòng thi hiện có đề HSK 1–5)
+  const kiepN = (() => { const m = String(currentCourse || "").match(/HSK\s*(\d)/i); return m ? Number(m[1]) : 0; })();
+  const kiep = kiepN ? doKiep[`hsk${kiepN}`] : null;
+  const kiepReady = coursePct >= 75;
+  const kiepCool = doKiepCooldown > nowMs;
+  const kiepAvail = kiepN >= 1 && kiepN <= 5;
+  const startDoKiep = () => { doKiepPendingRef.current = kiepN; setActiveHskExamView(EXAM_CENTER); };
+  const fmtTime = (ms) => new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" });
   const PondCard = () => (
     <section className="rounded-[18px] overflow-hidden text-[#F3EEE2] flex flex-col">
       <MountainScene className="h-[300px]">
@@ -828,6 +921,8 @@ export default function HomePage() {
             <h3 className="font-serif-vn text-[24px] font-extrabold leading-tight">{realm.vn}</h3>
             <div className="text-sm font-bold text-[#E6B656]">{realm.stage} · ≈ {realm.hsk}</div>
             <div className="text-xs text-[#CFC3A8] max-w-[210px] leading-snug">{currentCourse ? `Công pháp: ${currentCourse}` : "Chưa chọn công pháp"}</div>
+            {kiep?.passed ? <div className="text-xs font-bold text-[#8FD3B5]">✓ Đã độ kiếp · đạt {kiep.pct}%</div>
+              : kiepReady && kiepAvail ? <button onClick={() => goTab("exam")} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Sẵn sàng độ kiếp →</button> : null}
           </div>
         </div>
         <div className="absolute right-4 bottom-12"><KimThiem bob className="w-16 h-14" /></div>
@@ -936,6 +1031,24 @@ export default function HomePage() {
             );
           })}
         </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="flex items-center gap-2 rounded-lg border border-[#D8CBAE] bg-[#FBF8F1] p-2">
+            <Gourd color="#9E2F22" ch="丹" />
+            <div className="flex-1 min-w-0 leading-tight">
+              <div className="text-sm font-bold">Trúc Cơ Đan ×{pills.trucCo || 0}</div>
+              <div className="text-[11px] text-[#6B6253]">{boostUntil > nowMs ? `×2 linh khí đến ${new Date(boostUntil).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}` : "×2 linh khí trong 1 giờ"}</div>
+            </div>
+            <button onClick={eatTrucCo} disabled={!pills.trucCo} className="h-9 px-2.5 rounded-md bg-[#9E2F22] disabled:bg-[#CDBF9F] text-white text-xs font-bold shrink-0">Dùng</button>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg border border-[#D8CBAE] bg-[#FBF8F1] p-2">
+            <Gourd color="#2F6E5A" ch="春" />
+            <div className="flex-1 min-w-0 leading-tight">
+              <div className="text-sm font-bold">Hồi Xuân Đan ×{pills.hoiXuan || 0}</div>
+              <div className="text-[11px] text-[#6B6253]">Tự giữ chuỗi khi lỡ 1 ngày</div>
+            </div>
+          </div>
+        </div>
+        <p className="text-[11px] text-[#6B6253] -mt-2">Cứ 3 ngày liên tục được 1 Trúc Cơ Đan, 7 ngày được 1 Hồi Xuân Đan.</p>
         <div className="flex items-center gap-3 rounded-xl bg-[#FFF8EA] p-3">
           <Frog mood={streak > 0 ? "happy" : "sleepy"} className="w-10 h-8 shrink-0" />
           <p className="text-sm text-[#5C3D00]">{streak > 0 ? "Tu luyện hôm nay để giữ chuỗi nhé!" : "Kim Thiềm đang ngủ gật… tu luyện một bài để đánh thức nhé."}</p>
@@ -1135,7 +1248,7 @@ export default function HomePage() {
                             {done ? <LotusMark className="w-7 h-7" /> : i + 1}
                           </span>
                           <span className="flex-1 min-w-0">
-                            <span className={`block text-xs font-semibold ${current ? "text-[#7A2218]" : review ? "text-[#8A5A00]" : "text-[#6B6253]"}`}>{(() => { const m = masteryOf(lessonQi[lec.id], done); return done ? (m.n >= 2 ? `Đã lĩnh ngộ · ${m.vn}` : "Đã lĩnh ngộ") : m.n >= 1 ? `${m.zh} ${m.vn}` : current ? "Tu luyện tiếp" : review ? "Ôn tập" : "Chưa học"; })()}</span>
+                            <span className={`block text-xs font-semibold ${current ? "text-[#7A2218]" : review ? "text-[#8A5A00]" : "text-[#6B6253]"}`}>{(() => { const m = masteryOf(lessonQi[lec.id], done); const rv = reviewOf(lessonQi[lec.id], done); if (rv.crack) return "裂 Lâu chưa ôn — công pháp rạn nứt"; if (rv.due) return `${m.zh} ${m.vn} · đến hạn ôn`; return done ? (m.n >= 2 ? `Đã lĩnh ngộ · ${m.vn}` : "Đã lĩnh ngộ") : m.n >= 1 ? `${m.zh} ${m.vn}` : current ? "Tu luyện tiếp" : review ? "Ôn tập" : "Chưa học"; })()}</span>
                             <span className="block font-bold text-[15px] leading-snug line-clamp-2">{lec.lectureName}</span>
                           </span>
                           <Icon name="chevron" className="w-5 h-5 text-[#A89C84] shrink-0" />
@@ -1229,6 +1342,27 @@ export default function HomePage() {
           {activeTab === "exam" && (
             <div className="flex flex-col gap-5">
               <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">劫</span>Độ kiếp</h1>
+              <section className="relative overflow-hidden rounded-[18px] bg-[#121318] text-[#EDE8DC] p-5 md:p-6 flex flex-col md:flex-row gap-4 md:gap-6 md:items-center">
+                <svg viewBox="0 0 120 160" className="absolute right-2 -top-2 w-32 h-44 opacity-25 md:opacity-40 pointer-events-none" aria-hidden="true"><path d="M70 0 L40 70 L62 70 L30 160 L96 52 L72 52 L92 0 Z" fill="#E6B656" /></svg>
+                <VText lines="雷劫" className="font-brush text-[46px] md:text-[56px] text-[#EDE8DC] shrink-0 hidden md:inline-flex" />
+                <div className="flex-1 min-w-0 flex flex-col gap-1.5 relative">
+                  <div className="font-serif-vn text-xs font-bold tracking-[0.14em] text-[#A6A9B4]">THI ĐỘT PHÁ{kiepN ? ` · HSK ${kiepN}` : ""}</div>
+                  <h2 className="font-serif-vn text-[22px] md:text-[26px] font-extrabold">Lôi kiếp {realm.vn}</h2>
+                  <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[620px]">Ba đạo lôi <b>Nghe → Đọc → Viết</b> trong phòng thi HSK 3.0{kiepN ? <> (chọn <b>Cấp độ {kiepN}</b>)</> : ""}. Đúng từ <b>60%</b> số câu tự chấm là độ kiếp thành công, nhận <b>200 linh khí</b>. Thất bại sẽ tẩu hỏa nhập ma, phải tĩnh dưỡng 24 giờ mới độ kiếp lại.</p>
+                  <div className="text-sm font-bold" role="status">
+                    {!kiepN ? <span className="text-[#C9CBD3]">Hãy chọn công pháp ở khu Công pháp trước.</span>
+                      : !kiepAvail ? <span className="text-[#C9CBD3]">Đề độ kiếp HSK {kiepN} đang được chuẩn bị.</span>
+                      : kiep?.passed ? <span className="text-[#8FD3B5]">✓ Đã độ kiếp ngày {new Date(kiep.at).toLocaleDateString("vi-VN")} · đạt {kiep.pct}%</span>
+                      : kiepCool ? <span className="text-[#F08A7A]">Đang tĩnh dưỡng sau tẩu hỏa nhập ma — độ kiếp lại từ {fmtTime(doKiepCooldown)}</span>
+                      : !kiepReady ? <span className="text-[#E6B656]">Cần lĩnh ngộ từ 75% công pháp (hiện {coursePct}%) mới được độ kiếp.</span>
+                      : <span className="text-[#E6B656]">Công pháp đã đạt {coursePct}% — sẵn sàng nghênh tiếp lôi kiếp.</span>}
+                  </div>
+                </div>
+                {kiepAvail && !kiep?.passed && (
+                  <button onClick={startDoKiep} disabled={kiepCool || !kiepReady}
+                    className="relative h-12 px-6 rounded-[4px] bg-[#E6B656] disabled:bg-[#3A3D48] disabled:text-[#8A8D98] text-[#121318] font-serif-vn font-extrabold shrink-0 shadow-[0_0_0_3px_#121318,0_0_0_4px_#E6B656] disabled:shadow-none">Nghênh tiếp lôi kiếp</button>
+                )}
+              </section>
               <div role="tablist" aria-label="Loại đề" className="grid grid-cols-3 gap-1 p-1 rounded-[14px] bg-[#E4DAC4] md:max-w-md">
                 {[["hsk3", "HSK 3.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
                   <button key={k} role="tab" aria-selected={examTab === k} onClick={() => setExamTab(k)}
@@ -1242,7 +1376,7 @@ export default function HomePage() {
                     <section className="rounded-[22px] bg-[#FBF7DF] border border-[#E9DFB0] px-5 py-10 md:py-14 flex flex-col items-center text-center gap-4">
                       <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1F3F8A] to-[#2C5BB6] text-white grid place-items-center text-4xl md:text-5xl font-extrabold shadow-md" style={{ fontFamily: "STKaiti, KaiTi, serif" }}>汉</div>
                       <div>
-                        <div className="text-[#1F2F6E] font-extrabold tracking-wide">HSK GARDEN · 汉语水平模拟考试系统</div>
+                        <div className="text-[#1F2F6E] font-extrabold tracking-wide">SƠN HẢI THƯ VIỆN · 汉语水平模拟考试系统</div>
                         <p className="text-sm text-[#6B6253] mt-2 max-w-md">Phòng thi mô phỏng giao diện thi HSK 3.0 trên máy. Vào phòng thi, điền thông tin thí sinh rồi chọn <b>cấp độ</b> và <b>đề thi</b>.</p>
                       </div>
                       <button onClick={() => setActiveHskExamView(EXAM_CENTER)} className="h-14 px-10 rounded-[14px] bg-[#E07A2B] hover:bg-[#C9661D] text-white text-lg font-bold shadow-sm transition-colors">Vào phòng thi</button>
@@ -1361,7 +1495,7 @@ export default function HomePage() {
             {qiToast && (
               <div key={qiToast.k} role="status" className="pointer-events-none absolute top-3 right-3 z-20 flex items-center gap-2 rounded-md bg-[#1C1A17] text-[#F3EEE2] pl-2 pr-3 py-1.5 shadow-lg" style={{ animation: "hgPop .35s ease-out" }}>
                 <span className="font-brush text-[20px] text-[#E6B656] leading-none">{qiToast.zh}</span>
-                <span className="text-sm"><b className="text-[#E6B656]">+{qiToast.n} linh khí</b> · {qiToast.vn}</span>
+                <span className="text-sm">{qiToast.n > 0 && <><b className="text-[#E6B656]">+{qiToast.n} linh khí</b> · </>}{qiToast.vn}</span>
               </div>
             )}
             {bloomFx && (
@@ -1373,6 +1507,22 @@ export default function HomePage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ---------- KẾT QUẢ ĐỘ KIẾP ---------- */}
+      {doKiepResult && !activeHskExamView && (
+        <div className="fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-label="Kết quả độ kiếp">
+          <div className={`w-full max-w-md rounded-[14px] p-6 flex flex-col items-center text-center gap-3 ${doKiepResult.pass ? "bg-[#121318] text-[#EDE8DC]" : "bg-[#FBF8F1] text-[#1C1A17]"}`} style={{ animation: "hgPop .4s ease-out" }}>
+            <div className={`font-brush text-[52px] leading-none ${doKiepResult.pass ? "text-[#E6B656]" : "text-[#9E2F22]"}`}>{doKiepResult.mismatch ? "未渡" : doKiepResult.pass ? "渡劫成功" : "走火入魔"}</div>
+            <h2 className="font-serif-vn text-xl font-extrabold">{doKiepResult.mismatch ? "Lôi kiếp chưa được tính" : doKiepResult.pass ? "Độ kiếp thành công!" : "Tẩu hỏa nhập ma"}</h2>
+            <p className="text-sm leading-relaxed">
+              {doKiepResult.mismatch ? `Bạn vừa thi đề Cấp độ ${doKiepResult.examLevel || "?"}, còn lôi kiếp này là HSK ${doKiepResult.n}. Hãy chọn đúng Cấp độ ${doKiepResult.n} trong phòng thi.`
+                : doKiepResult.pass ? `Đạt ${doKiepResult.pct}% câu tự chấm. Nhận 200 linh khí — con đường lên cảnh giới mới đã mở.`
+                : `Đạt ${doKiepResult.pct}% (cần 60%). Hãy tĩnh dưỡng 24 giờ, ôn lại công pháp rồi độ kiếp lần nữa. Linh khí không bị mất.`}
+            </p>
+            <button onClick={() => setDoKiepResult(null)} className={`h-11 px-6 rounded-[4px] font-bold ${doKiepResult.pass ? "bg-[#E6B656] text-[#121318]" : "bg-[#1C1A17] text-[#F3EEE2]"}`}>Đóng</button>
           </div>
         </div>
       )}

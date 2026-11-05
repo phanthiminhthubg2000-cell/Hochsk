@@ -217,3 +217,18 @@ export function VText({ lines, className = "", colClass = "", gap = "gap-3" }) {
     </span>
   );
 }
+
+// ---------- Ngày (giờ máy người học) ----------
+export const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export const dayNum = (key) => { const [y, m, d] = String(key || "").split("-").map(Number); return y ? Math.round(Date.UTC(y, m - 1, d) / 864e5) : 0; };
+
+// Hồ lô đan dược
+export function Gourd({ color = "#9E2F22", ch = "丹", className = "w-7 h-9" }) {
+  return (
+    <svg viewBox="0 0 28 34" className={className} aria-hidden="true">
+      <path d="M8 2h12v5l5 6v15a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V13l5-6z" fill={color} />
+      <rect x="6" y="1" width="16" height="4" rx="1" fill="#6E4B2E" />
+      <text x="14" y="25" textAnchor="middle" fontFamily='"Ma Shan Zheng","Noto Serif SC",serif' fontSize="12" fill="#FBF3E4">{ch}</text>
+    </svg>
+  );
+}
