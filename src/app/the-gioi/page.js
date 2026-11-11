@@ -32,7 +32,7 @@ export default function TheGioiPage() {
   return (
     <div className="min-h-screen bg-[#EFE7D6] text-[#1C1A17]" style={{ fontFamily: '"Be Vietnam Pro","Noto Sans SC",system-ui,sans-serif' }}>
       <GardenNav active="home" title="Sơn Hải Dư Đồ" />
-      <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-6 pb-28 md:pb-16 grid gap-6 lg:grid-cols-[1.4fr_1fr] items-start">
+      <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-6 pb-28 md:pb-16 grid gap-6 items-start">
         <div className="flex flex-col gap-3">
           <div className="flex items-baseline gap-3 flex-wrap">
             <h1 className="font-brush text-[44px] md:text-[54px] leading-none text-[#9E2F22]">山海舆图</h1>
@@ -42,7 +42,7 @@ export default function TheGioiPage() {
           <WorldMap realmIdx={idx} picked={r.key} onPick={setPick} unplaced={unplaced} />
           {unplaced && <p className="tt-card px-4 py-3 text-sm">{isSignedIn ? <>Bạn chưa định cảnh giới nên chưa biết mình ở vùng nào. <Link href="/linh-can" className="font-bold text-[#9E2F22] underline">Lên Trắc Linh Đài</Link> để được xếp theo trình độ thật.</> : "Đăng nhập và lên Trắc Linh Đài để biết mình đang ở vùng nào."}</p>}
         </div>
-        <section className="rounded-[14px] bg-[#FBF6EA] border-[1.5px] border-[#3B2F22] p-5 flex flex-col gap-3 shadow-[4px_4px_0_rgba(59,47,34,.3)] lg:sticky lg:top-24" aria-live="polite">
+        <section className="rounded-[14px] bg-[#FBF6EA] border-[1.5px] border-[#3B2F22] p-5 flex flex-col gap-3 shadow-[4px_4px_0_rgba(59,47,34,.3)]" aria-live="polite">
           <div className="flex items-baseline gap-2 flex-wrap">
             <span className="font-brush text-[34px] leading-none text-[#9E2F22]">{r.zh}</span>
             <h2 className="font-serif-vn text-[21px] font-extrabold">{r.vn}</h2>
