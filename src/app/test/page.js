@@ -94,27 +94,27 @@ function ArrangeQuestion({ item, index, onChange }) {
   };
 
   return (
-    <div className="bg-[#EEF5E9]/50 p-6 rounded-[24px] border border-[#8FD9A8]/40">
+    <div className="bg-[#EFE7D6]/50 p-6 rounded-[24px] border border-[#CDBF9F]/40">
       <div className="flex items-start gap-3 mb-4">
-        <span className="w-8 h-8 shrink-0 rounded-full bg-white text-[#2F8F6E] text-xs font-black flex items-center justify-center shadow-sm border border-[#8FD9A8]">{index + 1}</span>
+        <span className="w-8 h-8 shrink-0 rounded-full bg-white text-[#2F6E5A] text-xs font-black flex items-center justify-center shadow-sm border border-[#CDBF9F]">{index + 1}</span>
         <div className="flex-1 w-full">
-          <p className="text-xs font-black text-[#1B5E4B] uppercase tracking-widest mb-3">Sắp xếp các từ sau thành câu đúng:</p>
+          <p className="text-xs font-black text-[#1C1A17] uppercase tracking-widest mb-3">Sắp xếp các từ sau thành câu đúng:</p>
           
-          <div className="min-h-[70px] p-5 bg-white border-2 border-dashed border-[#8FD9A8] rounded-2xl mb-4 flex flex-wrap gap-2 items-center transition-all shadow-inner">
+          <div className="min-h-[70px] p-5 bg-white border-2 border-dashed border-[#CDBF9F] rounded-2xl mb-4 flex flex-wrap gap-2 items-center transition-all shadow-inner">
             {selected.length === 0 && <span className="text-slate-400 text-sm font-medium italic opacity-70">Chạm vào từ bên dưới để ghép lên đây...</span>}
             {selected.map(w => (
               <button 
                 key={w.id} onClick={() => handleDeselect(w)} 
-                className="px-4 py-2 bg-[#8FD9A8]/30 text-[#1B5E4B] border border-[#8FD9A8] font-black rounded-xl shadow-sm text-lg hover:bg-[#FFF1F2] hover:text-[#BE123C] hover:border-[#FECDD3] hover:line-through transition-all"
+                className="px-4 py-2 bg-[#CDBF9F]/30 text-[#1C1A17] border border-[#CDBF9F] font-black rounded-xl shadow-sm text-lg hover:bg-[#FFF1F2] hover:text-[#BE123C] hover:border-[#FECDD3] hover:line-through transition-all"
               >{w.text}</button>
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-2 p-2 bg-[#F4F7F6] rounded-2xl border border-[#E2E8F0]">
+          <div className="flex flex-wrap gap-2 p-2 bg-[#F6F0E2] rounded-2xl border border-[#D8CBAE]">
             {available.map(w => (
               <button 
                 key={w.id} onClick={() => handleSelect(w)} 
-                className="px-4 py-2 bg-white border border-[#E2E8F0] text-[#2F8F6E] font-black rounded-xl shadow-sm text-lg hover:border-[#2F8F6E] hover:bg-[#2F8F6E] hover:text-white hover:-translate-y-1 transition-all"
+                className="px-4 py-2 bg-white border border-[#D8CBAE] text-[#2F6E5A] font-black rounded-xl shadow-sm text-lg hover:border-[#2F6E5A] hover:bg-[#2F6E5A] hover:text-white hover:-translate-y-1 transition-all"
               >{w.text}</button>
             ))}
             {available.length === 0 && <span className="text-slate-400 text-sm font-bold w-full text-center py-2 opacity-60">Bạn đã dùng hết từ</span>}
@@ -176,7 +176,7 @@ function AudioRecorder({ onRecord }) {
         )}
       </div>
       {audioUrl && (
-        <div className="bg-[#F8FAFC] p-3 rounded-xl border border-[#E2E8F0] w-full max-w-sm">
+        <div className="bg-[#FBF8F1] p-3 rounded-xl border border-[#D8CBAE] w-full max-w-sm">
           <span className="text-[10px] font-black uppercase tracking-widest text-[#64748B] block mb-1">Bản ghi của bạn:</span>
           <audio src={audioUrl} controls className="w-full h-8 outline-none" />
         </div>
@@ -411,38 +411,38 @@ export default function PlacementTestPage() {
 
   if (!testMode && !testData) {
     return (
-      <main className="min-h-screen bg-[#F4F7F6] relative selection:bg-[#8FD9A8]/50">
+      <main className="min-h-screen bg-[#F6F0E2] relative selection:bg-[#CDBF9F]/50">
         <div className="fixed inset-0 z-0 pointer-events-none">
            <div className="absolute inset-0 bg-[url('/hskk/kiemtra.jpg')] bg-cover bg-center opacity-10"></div>
-           <div className="absolute inset-0 bg-[#EEF5E9]/90 backdrop-blur-[2px]"></div>
+           <div className="absolute inset-0 bg-[#EFE7D6]/90 backdrop-blur-[2px]"></div>
         </div>
 
         <GardenNav active="exam" title="Đánh giá năng lực" />
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center animate-fade-in">
           <div className="text-center mb-12">
-            <div className="w-20 h-20 bg-white rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#8FD9A8]">🎯</div>
-            <h1 className="text-4xl md:text-5xl font-black text-[#1B5E4B] tracking-tight mb-4 drop-shadow-sm">Đánh Giá Năng Lực</h1>
-            <p className="text-[#2F8F6E] font-medium max-w-lg mx-auto leading-relaxed">Thực hiện bài kiểm tra để gửi về hệ thống. Giáo viên chuyên môn sẽ đánh giá trực tiếp năng lực của bạn.</p>
+            <div className="w-20 h-20 bg-white rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#CDBF9F]">🎯</div>
+            <h1 className="text-4xl md:text-5xl font-black text-[#1C1A17] tracking-tight mb-4 drop-shadow-sm">Đánh Giá Năng Lực</h1>
+            <p className="text-[#2F6E5A] font-medium max-w-lg mx-auto leading-relaxed">Thực hiện bài kiểm tra để gửi về hệ thống. Giáo viên chuyên môn sẽ đánh giá trực tiếp năng lực của bạn.</p>
           </div>
 
-          <div onClick={startComprehensiveTest} className="w-full max-w-2xl bg-[#1B5E4B] p-5 md:p-8 rounded-[28px] md:rounded-[32px] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer mb-10 flex items-center gap-4 md:gap-6 group border-b-[8px] border-[#2F8F6E]">
-            <div className="w-14 h-14 md:w-20 md:h-20 shrink-0 bg-[#EEF5E9]/20 rounded-full flex items-center justify-center text-3xl md:text-4xl shadow-inner group-hover:scale-110 transition-transform border border-white/20">📋</div>
+          <div onClick={startComprehensiveTest} className="w-full max-w-2xl bg-[#1C1A17] p-5 md:p-8 rounded-[28px] md:rounded-[32px] shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer mb-10 flex items-center gap-4 md:gap-6 group border-b-[8px] border-[#2F6E5A]">
+            <div className="w-14 h-14 md:w-20 md:h-20 shrink-0 bg-[#EFE7D6]/20 rounded-full flex items-center justify-center text-3xl md:text-4xl shadow-inner group-hover:scale-110 transition-transform border border-white/20">📋</div>
             <div className="flex-1 text-left text-white">
-              <h2 className="text-xl md:text-2xl font-black mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 drop-shadow-sm">Test Chẩn Đoán Toàn Diện <span className="bg-[#F2765B] text-white text-[10px] px-2 py-0.5 rounded uppercase tracking-widest shadow-sm">Khuyên dùng</span></h2>
-              <p className="text-[#8FD9A8] text-sm font-medium">Đánh giá 4 Kỹ năng: Nghe, Nói, Đọc, Viết rút ngẫu nhiên từ 6 cấp độ HSK.</p>
+              <h2 className="text-xl md:text-2xl font-black mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 drop-shadow-sm">Test Chẩn Đoán Toàn Diện <span className="bg-[#9E2F22] text-white text-[10px] px-2 py-0.5 rounded uppercase tracking-widest shadow-sm">Khuyên dùng</span></h2>
+              <p className="text-[#CDBF9F] text-sm font-medium">Đánh giá 4 Kỹ năng: Nghe, Nói, Đọc, Viết rút ngẫu nhiên từ 6 cấp độ HSK.</p>
             </div>
           </div>
 
           <div className="w-full max-w-4xl text-left mb-6">
-            <h3 className="font-black text-[#2F8F6E] uppercase tracking-widest text-sm ml-2 bg-[#8FD9A8]/20 px-4 py-2 rounded-xl inline-block border border-[#8FD9A8]/40">Hoặc chọn bài thi theo cấp độ</h3>
+            <h3 className="font-black text-[#2F6E5A] uppercase tracking-widest text-sm ml-2 bg-[#CDBF9F]/20 px-4 py-2 rounded-xl inline-block border border-[#CDBF9F]/40">Hoặc chọn bài thi theo cấp độ</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
             {[1, 2, 3, 4, 5, 6].map((lvl) => (
-              <div key={lvl} onClick={() => startLevelTest(lvl)} className="bg-white p-6 rounded-[32px] shadow-sm border border-[#E2E8F0] hover:border-[#8FD9A8] hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center">
-                <div className="w-14 h-14 bg-[#F4F7F6] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mb-4 flex items-center justify-center text-2xl group-hover:bg-[#EEF5E9] group-hover:border-[#8FD9A8] border border-transparent transition-colors">📘</div>
-                <h2 className="text-2xl font-black text-[#1B5E4B] group-hover:text-[#2F8F6E] transition-colors mb-2">HSK {lvl}</h2>
+              <div key={lvl} onClick={() => startLevelTest(lvl)} className="bg-white p-6 rounded-[32px] shadow-sm border border-[#D8CBAE] hover:border-[#CDBF9F] hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-[#F6F0E2] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] mb-4 flex items-center justify-center text-2xl group-hover:bg-[#EFE7D6] group-hover:border-[#CDBF9F] border border-transparent transition-colors">📘</div>
+                <h2 className="text-2xl font-black text-[#1C1A17] group-hover:text-[#2F6E5A] transition-colors mb-2">HSK {lvl}</h2>
                 <p className="text-xs text-slate-500 font-bold bg-slate-50 px-3 py-1 rounded-lg">{lvl <= 2 ? "2 Phần (Dịch, Sắp xếp)" : "3 Phần (Dịch, Xếp, Viết)"}</p>
               </div>
             ))}
@@ -454,9 +454,9 @@ export default function PlacementTestPage() {
 
   if (loading || isSubmitting) {
     return (
-      <div className="min-h-screen bg-[#EEF5E9] flex flex-col items-center justify-center relative selection:bg-[#8FD9A8]/50">
-        <div className="w-16 h-16 border-[6px] border-[#2F8F6E] border-t-transparent rounded-full animate-spin mb-6"></div>
-        <h3 className="text-xl font-black text-[#1B5E4B] uppercase tracking-widest animate-pulse">
+      <div className="min-h-screen bg-[#EFE7D6] flex flex-col items-center justify-center relative selection:bg-[#CDBF9F]/50">
+        <div className="w-16 h-16 border-[6px] border-[#2F6E5A] border-t-transparent rounded-full animate-spin mb-6"></div>
+        <h3 className="text-xl font-black text-[#1C1A17] uppercase tracking-widest animate-pulse">
           {isSubmitting ? "Đang gửi bài lên hệ thống..." : "Hệ thống đang chuẩn bị đề..."}
         </h3>
       </div>
@@ -465,18 +465,18 @@ export default function PlacementTestPage() {
 
   if (result && result.status === "PENDING") {
     return (
-      <main className="min-h-screen bg-[#F4F7F6] flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-[#8FD9A8]/50">
+      <main className="min-h-screen bg-[#F6F0E2] flex flex-col items-center justify-center p-6 relative overflow-hidden selection:bg-[#CDBF9F]/50">
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-10" style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }}></div>
-        <div className="absolute inset-0 bg-[#F4F7F6]/80 backdrop-blur-md"></div>
+        <div className="absolute inset-0 bg-[#F6F0E2]/80 backdrop-blur-md"></div>
         
         <div className="bg-white p-10 md:p-14 rounded-[40px] shadow-2xl border border-white max-w-lg w-full text-center relative z-10 flex flex-col items-center animate-slide-up-fade">
-          <div className="w-28 h-28 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#FFF8E8] flex items-center justify-center text-6xl shadow-inner border border-[#FFD666]/50 mb-6 relative">⏳</div>
+          <div className="w-28 h-28 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#FBF8F1] flex items-center justify-center text-6xl shadow-inner border border-[#E6B656]/50 mb-6 relative">⏳</div>
           <h2 className="text-3xl font-black mb-2 drop-shadow-sm text-[#F59E0B]">Nộp bài thành công!</h2>
-          <div className="p-6 rounded-[24px] w-full my-6 bg-[#F4F7F6] border border-[#E2E8F0]">
-            <p className="text-[#1B5E4B] font-bold leading-relaxed text-sm">{result.message}</p>
+          <div className="p-6 rounded-[24px] w-full my-6 bg-[#F6F0E2] border border-[#D8CBAE]">
+            <p className="text-[#1C1A17] font-bold leading-relaxed text-sm">{result.message}</p>
           </div>
           <Link className="w-full" href="/">
-            <button className="w-full px-6 py-4.5 bg-[#1B5E4B] text-white rounded-2xl font-black text-sm shadow-xl transition-colors uppercase tracking-widest border-b-[4px] hover:bg-[#2F8F6E] border-[#0F3F31]">Về Trang Chủ</button>
+            <button className="w-full px-6 py-4.5 bg-[#1C1A17] text-white rounded-2xl font-black text-sm shadow-xl transition-colors uppercase tracking-widest border-b-[4px] hover:bg-[#2F6E5A] border-[#121318]">Về Trang Chủ</button>
           </Link>
         </div>
       </main>
@@ -486,16 +486,16 @@ export default function PlacementTestPage() {
   const isHSK12 = testMode === 'level' ? selectedLevel <= 2 : true; 
 
   return (
-    <main className="min-h-screen bg-[#F4F7F6] pb-20 relative selection:bg-[#8FD9A8]/50">
-      <header className="bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] sticky top-0 z-30 shadow-sm">
+    <main className="min-h-screen bg-[#F6F0E2] pb-20 relative selection:bg-[#CDBF9F]/50">
+      <header className="bg-white/90 backdrop-blur-xl border-b border-[#D8CBAE] sticky top-0 z-30 shadow-sm">
         <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#EEF5E9] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-[#2F8F6E] text-2xl shadow-inner border border-[#8FD9A8]">🎯</div>
+            <div className="w-12 h-12 bg-[#EFE7D6] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-[#2F6E5A] text-2xl shadow-inner border border-[#CDBF9F]">🎯</div>
             <div>
-              <h1 className="font-black text-[#1B5E4B] text-lg drop-shadow-sm">
+              <h1 className="font-black text-[#1C1A17] text-lg drop-shadow-sm">
                 {testMode === 'level' ? `Bài Thi Năng Lực HSK ${selectedLevel}` : `Bài Test Tổng Hợp Toàn Diện`}
               </h1>
-              <p className="text-[10px] font-bold text-[#2F8F6E] uppercase tracking-widest bg-[#8FD9A8]/20 px-2 py-0.5 rounded-md inline-block mt-1 border border-[#8FD9A8]/50">
+              <p className="text-[10px] font-bold text-[#2F6E5A] uppercase tracking-widest bg-[#CDBF9F]/20 px-2 py-0.5 rounded-md inline-block mt-1 border border-[#CDBF9F]/50">
                 {testMode === 'comprehensive' ? "Đánh giá 4 kỹ năng" : (isHSK12 ? "2 Phần • Đọc, Dịch" : "3 Phần • Đọc, Dịch, Viết")}
               </p>
             </div>
@@ -516,21 +516,21 @@ export default function PlacementTestPage() {
       <div className="max-w-5xl mx-auto px-4 mt-10 space-y-10 animate-fade-in">
         
         {testData?.sections?.translate && testData.sections.translate.length > 0 && (
-          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
-            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#D8CBAE]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F6F0E2] pb-5">
               <span className="text-3xl">📖</span>
               <div>
-                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần 1: Đọc Hiểu / Dịch Câu</h3>
+                <h3 className="text-2xl font-black text-[#1C1A17]">Phần 1: Đọc Hiểu / Dịch Câu</h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testData.sections.translate.length} Câu</p>
               </div>
             </div>
             
             <div className="space-y-6">
               {testData.sections.translate.map((item, idx) => (
-                <div key={`trans-${idx}`} className="bg-[#F4F7F6] p-6 md:p-8 rounded-[32px] border border-[#E2E8F0] shadow-sm">
+                <div key={`trans-${idx}`} className="bg-[#F6F0E2] p-6 md:p-8 rounded-[32px] border border-[#D8CBAE] shadow-sm">
                   <div className="flex items-start gap-4 mb-5">
-                    <span className="w-8 h-8 shrink-0 rounded-full bg-[#1B5E4B] text-white text-sm font-black flex items-center justify-center shadow-md">{idx + 1}</span>
-                    <p className="font-bold text-[#1B5E4B] text-lg mt-0.5 bg-white px-4 py-2 rounded-2xl shadow-sm border border-[#E2E8F0]">
+                    <span className="w-8 h-8 shrink-0 rounded-full bg-[#1C1A17] text-white text-sm font-black flex items-center justify-center shadow-md">{idx + 1}</span>
+                    <p className="font-bold text-[#1C1A17] text-lg mt-0.5 bg-white px-4 py-2 rounded-2xl shadow-sm border border-[#D8CBAE]">
                       {item.vietnamese || item.front}
                     </p>
                   </div>
@@ -538,7 +538,7 @@ export default function PlacementTestPage() {
                     type="text" placeholder="Nhập bản dịch tiếng Trung (Chữ Hán)..."
                     value={answers[`translate_${idx}`] || ""}
                     onChange={(e) => handleAnswerChange("translate", idx, e.target.value)}
-                    className="w-full p-5 border-2 border-[#E2E8F0] rounded-2xl text-base outline-none focus:border-[#2F8F6E] focus:ring-4 focus:ring-[#8FD9A8]/20 bg-white font-medium text-[#1B5E4B] transition-all placeholder:text-slate-400 shadow-inner"
+                    className="w-full p-5 border-2 border-[#D8CBAE] rounded-2xl text-base outline-none focus:border-[#2F6E5A] focus:ring-4 focus:ring-[#CDBF9F]/20 bg-white font-medium text-[#1C1A17] transition-all placeholder:text-slate-400 shadow-inner"
                   />
                 </div>
               ))}
@@ -547,11 +547,11 @@ export default function PlacementTestPage() {
         )}
 
         {testData?.sections?.arrange && testData.sections.arrange.length > 0 && (
-          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
-            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#D8CBAE]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F6F0E2] pb-5">
               <span className="text-3xl">🧩</span>
               <div>
-                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần 2: Ngữ Pháp / Sắp Xếp Câu</h3>
+                <h3 className="text-2xl font-black text-[#1C1A17]">Phần 2: Ngữ Pháp / Sắp Xếp Câu</h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testData.sections.arrange.length} Câu</p>
               </div>
             </div>
@@ -570,29 +570,29 @@ export default function PlacementTestPage() {
         )}
 
         {testMode === 'comprehensive' && testData?.sections?.dictation && testData.sections.dictation.length > 0 && (
-          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
-            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#D8CBAE]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F6F0E2] pb-5">
               <span className="text-3xl">🎧</span>
               <div>
-                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần 3: Kỹ năng Nghe (Nghe & Nhắc lại / Chép chính tả)</h3>
+                <h3 className="text-2xl font-black text-[#1C1A17]">Phần 3: Kỹ năng Nghe (Nghe & Nhắc lại / Chép chính tả)</h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testData.sections.dictation.length} Câu</p>
               </div>
             </div>
             
             <div className="space-y-8">
               {testData.sections.dictation.map((item, idx) => (
-                <div key={`dict-${idx}`} className="bg-[#F4F7F6] p-6 md:p-8 rounded-[32px] border border-[#E2E8F0] shadow-sm">
-                  <div className="flex items-center justify-between mb-5 bg-white p-4 rounded-2xl border border-[#E2E8F0]">
+                <div key={`dict-${idx}`} className="bg-[#F6F0E2] p-6 md:p-8 rounded-[32px] border border-[#D8CBAE] shadow-sm">
+                  <div className="flex items-center justify-between mb-5 bg-white p-4 rounded-2xl border border-[#D8CBAE]">
                     <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-full bg-[#1B5E4B] text-white font-black flex items-center justify-center">{idx + 1}</span>
+                      <span className="w-8 h-8 rounded-full bg-[#1C1A17] text-white font-black flex items-center justify-center">{idx + 1}</span>
                       <p className="font-bold text-[#142033]">Bấm nghe audio và ghi âm nhắc lại.</p>
                     </div>
-                    <button onClick={() => playAudio(item)} className="bg-[#EEF5E9] text-[#2F8F6E] px-4 py-2 rounded-xl font-black text-sm flex items-center gap-2 hover:bg-[#8FD9A8] transition-colors border border-[#8FD9A8]/50 shadow-sm">
+                    <button onClick={() => playAudio(item)} className="bg-[#EFE7D6] text-[#2F6E5A] px-4 py-2 rounded-xl font-black text-sm flex items-center gap-2 hover:bg-[#CDBF9F] transition-colors border border-[#CDBF9F]/50 shadow-sm">
                       🔊 Nghe Audio
                     </button>
                   </div>
                   
-                  <div className="bg-white p-5 rounded-2xl border border-[#E2E8F0]">
+                  <div className="bg-white p-5 rounded-2xl border border-[#D8CBAE]">
                     <AudioRecorder onRecord={(base64) => handleAnswerChange("dictation", idx, base64)} />
                   </div>
                 </div>
@@ -602,32 +602,32 @@ export default function PlacementTestPage() {
         )}
 
         {testMode === 'comprehensive' && testData?.sections?.picture && testData.sections.picture.length > 0 && (
-          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
-            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#D8CBAE]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F6F0E2] pb-5">
               <span className="text-3xl">🗣️</span>
               <div>
-                <h3 className="text-2xl font-black text-[#1B5E4B]">Phần 4: Kỹ năng Nói (Nhìn tranh miêu tả)</h3>
+                <h3 className="text-2xl font-black text-[#1C1A17]">Phần 4: Kỹ năng Nói (Nhìn tranh miêu tả)</h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testData.sections.picture.length} Câu</p>
               </div>
             </div>
             
             <div className="space-y-8">
               {testData.sections.picture.map((item, idx) => (
-                <div key={`pic-${idx}`} className="bg-[#F4F7F6] p-6 md:p-8 rounded-[32px] border border-[#E2E8F0] shadow-sm">
+                <div key={`pic-${idx}`} className="bg-[#F6F0E2] p-6 md:p-8 rounded-[32px] border border-[#D8CBAE] shadow-sm">
                   <div className="flex items-center gap-3 mb-5">
-                    <span className="w-8 h-8 rounded-full bg-[#1B5E4B] text-white font-black flex items-center justify-center">{idx + 1}</span>
+                    <span className="w-8 h-8 rounded-full bg-[#1C1A17] text-white font-black flex items-center justify-center">{idx + 1}</span>
                     <p className="font-bold text-[#142033]">Miêu tả bức tranh sau bằng tiếng Trung:</p>
                   </div>
                   
                   {item.images && item.images.length > 0 && (
-                    <div className="mb-6 flex justify-center bg-white p-4 rounded-2xl border border-[#E2E8F0]">
+                    <div className="mb-6 flex justify-center bg-white p-4 rounded-2xl border border-[#D8CBAE]">
                       {item.images.map((img, i) => (
-                        <img key={i} src={img} alt="đề bài" className="max-w-xs md:max-w-md w-full rounded-xl shadow-sm border border-[#E2E8F0] object-cover" />
+                        <img key={i} src={img} alt="đề bài" className="max-w-xs md:max-w-md w-full rounded-xl shadow-sm border border-[#D8CBAE] object-cover" />
                       ))}
                     </div>
                   )}
 
-                  <div className="bg-white p-5 rounded-2xl border border-[#E2E8F0]">
+                  <div className="bg-white p-5 rounded-2xl border border-[#D8CBAE]">
                     <AudioRecorder onRecord={(base64) => handleAnswerChange("picture", idx, base64)} />
                   </div>
                 </div>
@@ -637,22 +637,22 @@ export default function PlacementTestPage() {
         )}
 
         {testData?.sections?.essay && testData.sections.essay.length > 0 && (
-          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#E2E8F0]">
-            <div className="flex items-center gap-3 mb-8 border-b border-[#F4F7F6] pb-5">
+          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-[#D8CBAE]">
+            <div className="flex items-center gap-3 mb-8 border-b border-[#F6F0E2] pb-5">
               <span className="text-3xl">📝</span>
               <div>
-                <h3 className="text-2xl font-black text-[#1B5E4B]">{testMode === 'comprehensive' ? 'Phần 5: Kỹ năng Viết (Luận)' : 'Phần 3: Viết Luận / Phản Xạ'}</h3>
+                <h3 className="text-2xl font-black text-[#1C1A17]">{testMode === 'comprehensive' ? 'Phần 5: Kỹ năng Viết (Luận)' : 'Phần 3: Viết Luận / Phản Xạ'}</h3>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{testData.sections.essay.length} Câu</p>
               </div>
             </div>
             
             <div className="space-y-8">
               {testData.sections.essay.map((item, idx) => (
-                <div key={`essay-${idx}`} className="bg-[#F4F7F6] p-8 rounded-[32px] border border-[#E2E8F0] shadow-sm">
-                  <div className="bg-[#1B5E4B] p-5 rounded-2xl shadow-md mb-6 relative overflow-hidden">
+                <div key={`essay-${idx}`} className="bg-[#F6F0E2] p-8 rounded-[32px] border border-[#D8CBAE] shadow-sm">
+                  <div className="bg-[#1C1A17] p-5 rounded-2xl shadow-md mb-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                     <p className="font-bold text-white text-base leading-relaxed relative z-10 flex items-start gap-3">
-                      <span className="bg-[#F2765B] text-white px-2 py-0.5 rounded text-sm font-black shrink-0 shadow-sm mt-0.5">Q{idx + 1}</span>
+                      <span className="bg-[#9E2F22] text-white px-2 py-0.5 rounded text-sm font-black shrink-0 shadow-sm mt-0.5">Q{idx + 1}</span>
                       {item.prompt}
                     </p>
                   </div>
@@ -661,7 +661,7 @@ export default function PlacementTestPage() {
                     placeholder="Viết câu trả lời bằng tiếng Trung tại đây..."
                     value={answers[`essay_${idx}`] || ""}
                     onChange={(e) => handleAnswerChange("essay", idx, e.target.value)}
-                    className="w-full p-6 border-2 border-[#E2E8F0] rounded-3xl text-base outline-none focus:border-[#2F8F6E] focus:ring-4 focus:ring-[#8FD9A8]/20 bg-white font-medium text-[#1B5E4B] transition-all resize-none placeholder:text-slate-400 shadow-inner leading-relaxed"
+                    className="w-full p-6 border-2 border-[#D8CBAE] rounded-3xl text-base outline-none focus:border-[#2F6E5A] focus:ring-4 focus:ring-[#CDBF9F]/20 bg-white font-medium text-[#1C1A17] transition-all resize-none placeholder:text-slate-400 shadow-inner leading-relaxed"
                   />
                 </div>
               ))}
@@ -674,7 +674,7 @@ export default function PlacementTestPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className={`w-full md:w-auto md:min-w-[320px] py-5 px-10 text-white rounded-[24px] font-black shadow-xl transition-all text-lg tracking-widest flex items-center justify-center gap-3 uppercase border-b-[6px] ${isSubmitting ? 'bg-[#94A3B8] border-[#64748B] cursor-not-allowed' : 'bg-[#1B5E4B] border-[#0F3F31] shadow-[#8FD9A8]/40 hover:bg-[#2F8F6E] hover:-translate-y-1'}`}
+            className={`w-full md:w-auto md:min-w-[320px] py-5 px-10 text-white rounded-[24px] font-black shadow-xl transition-all text-lg tracking-widest flex items-center justify-center gap-3 uppercase border-b-[6px] ${isSubmitting ? 'bg-[#94A3B8] border-[#64748B] cursor-not-allowed' : 'bg-[#1C1A17] border-[#121318] shadow-[#CDBF9F]/40 hover:bg-[#2F6E5A] hover:-translate-y-1'}`}
           >
             {isSubmitting ? "Đang gửi..." : "✓ Nộp Bài"}
           </button>

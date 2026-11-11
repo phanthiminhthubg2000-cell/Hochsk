@@ -58,7 +58,7 @@ export default function DeTuPage() {
           <div className="flex-1 min-w-0 flex flex-col gap-1">
             <span className="text-xs font-bold tracking-[0.14em] text-[#CFC3A8]">ĐẠO HIỆU</span>
             <h1 className="font-serif-vn text-[26px] font-extrabold leading-tight">{dh} {u?.daoHieu?.zh && <span className="text-[#E6B656] text-[22px]" style={{ fontFamily: '"Noto Serif SC",serif' }}>{u.daoHieu.zh}</span>}</h1>
-            <span className="text-sm text-[#E6B656] font-bold">{tv ? `${tv.zh} ${tv.vn} · ${tv.provisional ? "chưa định cảnh giới" : tv.stage} · ${tv.region}` : "…"}</span>
+            <span className="text-sm text-[#E6B656] font-bold">{tv ? (tv.provisional ? "Chưa định cảnh giới — lên Trắc Linh Đài để được xếp theo trình độ" : `${tv.zh} ${tv.vn} · ${tv.stage} · ${tv.region}`) : "…"}</span>
             <span className="text-xs text-[#CFC3A8]">{u?.tongMon ? `Tông môn: ${u.tongMon.name}` : "Chưa gia nhập tông môn"} · chuỗi {u?.streak || 0} ngày · tổng tu vi {fmt(u?.xp)}</span>
           </div>
           <Link href="/thien-thu" className="hidden sm:inline-flex h-10 px-4 rounded-[6px] border border-[#CFC3A8] text-sm font-bold items-center">Đổi đạo hiệu</Link>

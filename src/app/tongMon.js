@@ -88,7 +88,7 @@ export const REGIONS = [
 ];
 export const regionOfRealm = (idx) => REGIONS.find((r) => r.realms.includes(idx)) || REGIONS[0];
 
-export function WorldMap({ realmIdx = 0, onPick, picked, className = "" }) {
+export function WorldMap({ realmIdx = 0, onPick, picked, unplaced = false, className = "" }) {
   const here = regionOfRealm(realmIdx);
   return (
     <div className={`relative w-full aspect-[517/496] overflow-hidden rounded-[6px] bg-[#E9DAB8] border border-[#8C6A3A] shadow-[0_0_0_3px_#F3E8CF,0_0_0_4px_#8C6A3A] [container-type:inline-size] ${className}`}>
@@ -111,7 +111,7 @@ export function WorldMap({ realmIdx = 0, onPick, picked, className = "" }) {
         const [l, t, rr, d] = r.box; const locked = Math.min(...r.realms) > realmIdx; const passed = Math.max(...r.realms) < realmIdx;
         const label = `${r.vn} — ${r.realms.map((x) => REALMS8[x].hsk.split(" · ")[0]).join(", ")}${locked ? " (chưa mở)" : passed ? " (đã qua)" : r === here ? " (bạn đang ở đây)" : ""}`;
         return <button key={r.key} type="button" aria-label={label} title={label} onClick={() => onPick && onPick(r)}
-          className={`absolute rounded-[30px] outline-none transition-shadow hover:shadow-[0_0_0_2px_rgba(230,182,86,.95),0_0_36px_10px_rgba(230,182,86,.4)] focus-visible:shadow-[0_0_0_3px_#E6B656] ${picked === r.key ? "shadow-[0_0_0_2px_rgba(230,182,86,.95),0_0_36px_10px_rgba(230,182,86,.4)]" : r === here ? "shadow-[0_0_0_2.5px_#9E2F22,0_0_28px_6px_rgba(158,47,34,.35)]" : ""}`}
+          className={`absolute rounded-[30px] outline-none transition-shadow hover:shadow-[0_0_0_2px_rgba(230,182,86,.95),0_0_36px_10px_rgba(230,182,86,.4)] focus-visible:shadow-[0_0_0_3px_#E6B656] ${picked === r.key ? "shadow-[0_0_0_2px_rgba(230,182,86,.95),0_0_36px_10px_rgba(230,182,86,.4)]" : r === here && !unplaced ? "shadow-[0_0_0_2.5px_#9E2F22,0_0_28px_6px_rgba(158,47,34,.35)]" : ""}`}
           style={{ left: `${l}%`, top: `${t}%`, width: `${rr - l}%`, height: `${d - t}%` }} />;
       })}
       {REGIONS.map((r, i) => {
@@ -128,7 +128,7 @@ export function WorldMap({ realmIdx = 0, onPick, picked, className = "" }) {
           </div>
         );
       })}
-      {(() => { const [l, t, rr, d] = here.box; return <>
+      {!unplaced && (() => { const [l, t, rr, d] = here.box; return <>
         <span aria-hidden="true" className="wm-anim absolute w-[4%] aspect-square rounded-full bg-[#9E2F22] pointer-events-none" style={{ left: `${(l + rr) / 2}%`, top: `${(t + d) / 2}%`, animation: "wmPing 1.8s ease-out infinite" }} />
         <span aria-hidden="true" className="absolute w-[2.6%] aspect-square rounded-full bg-[#9E2F22] border-2 border-[#FBF8F1] shadow -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{ left: `${(l + rr) / 2}%`, top: `${(t + d) / 2}%` }} />
       </>; })()}
@@ -141,6 +141,7 @@ export function WorldMap({ realmIdx = 0, onPick, picked, className = "" }) {
 export function suPhuTip(s) {
   const r = s.realm;
   if (!r) return { text: "Đồ nhi, đăng nhập để vi sư ghi danh con vào tông môn.", glow: null };
+  if (r.provisional && s.nextLesson) return { text: `Đồ nhi chưa định cảnh giới. Lúc rảnh hãy lên Trắc Linh Đài; còn hôm nay cứ luyện tiếp "${s.nextLesson.lectureName}" — tu vi vẫn được tính đủ.`, glow: "tang-kinh", tab: "learn" };
   if (r.provisional) return { text: "Đồ nhi mới nhập môn — lên Trắc Linh Đài đo linh căn và định cảnh giới trước đã, để vi sư biết nên truyền công pháp nào.", glow: "trac-linh", href: "/linh-can" };
   if (r.peak && s.quest?.done && r.kiepN) return { text: `Tu vi ${r.vn} đã viên mãn. Lôi kiếp đang chờ ở Độ Kiếp Đài — qua được là lên ${r.next?.vn}.`, glow: "do-kiep", tab: "exam" };
   if (r.peak && r.idx === 0 && s.quest?.done) return { text: "Con đã đủ căn cơ. Bấm Nhập môn để bước vào Luyện Khí.", glow: null };

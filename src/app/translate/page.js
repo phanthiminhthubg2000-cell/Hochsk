@@ -191,7 +191,7 @@ export default function TranslatePage() {
   };
 
   // ============================================================
-  // CẬP NHẬT XP & NƯỚC NGAY LẬP TỨC KHI TRẢ LỜI ĐÚNG
+  // CẬP NHẬT tu vi & NƯỚC NGAY LẬP TỨC KHI TRẢ LỜI ĐÚNG
   // ============================================================
   const handleEvaluationResult = async (result, currentUserInput, currentTask) => {
     const isPass = result.score >= 80;
@@ -219,7 +219,7 @@ export default function TranslatePage() {
       setCombo(prev => prev + 1);
 
       if (userId) {
-        // TÍNH TOÁN ĐIỂM MỚI (Thử thách dịch được 15 XP và 2 Nước)
+        // TÍNH TOÁN ĐIỂM MỚI (Thử thách dịch được 15 tu vi và 2 Nước)
         const bonusXp = 15;
         const bonusWater = 2;
         const newXp = hskXp + bonusXp;
@@ -263,16 +263,16 @@ export default function TranslatePage() {
       setChatHistory(prev => [
         ...prev, 
         { role: 'system', content: "🎉 HOÀN THÀNH BÀI TẬP 🎉" },
-        { role: 'contact', content: "Tuyệt vời, bạn đã hoàn thành toàn bộ thử thách dịch thuật của phiên này! Bạn rất siêu đó nha 🐸✨" }
+        { role: 'contact', content: "Tuyệt vời, bạn đã hoàn thành toàn bộ thử thách dịch thuật của phiên này! Bạn rất siêu đó nha 师✨" }
       ]);
       setFeedbackState("finished");
     }
   };
 
-  if (loadingUser) return <div className="min-h-screen bg-[#EEF5E9]"></div>;
+  if (loadingUser) return <div className="min-h-screen bg-[#EFE7D6]"></div>;
 
   return (
-    <div className="flex flex-col min-h-screen font-sans text-[#1B5E4B] bg-[#F4F7EF] selection:bg-[#8FD9A8]/50">
+    <div className="flex flex-col min-h-screen font-sans text-[#1C1A17] bg-[#F6F0E2] selection:bg-[#CDBF9F]/50">
       <GardenNav active="practice" />
       
       {/* ==========================================
@@ -285,25 +285,25 @@ export default function TranslatePage() {
         {/* ==========================================
             TOP BAR ĐỒNG BỘ
             ========================================== */}
-        <header className="px-4 md:px-8 xl:px-[calc((100vw-1200px)/2+2rem)] h-14 md:h-16 border-b border-[#8FD9A8]/30 bg-[#EEF5E9]/80 backdrop-blur-xl flex items-center justify-between">
+        <header className="px-4 md:px-8 xl:px-[calc((100vw-1200px)/2+2rem)] h-14 md:h-16 border-b border-[#CDBF9F]/30 bg-[#EFE7D6]/80 backdrop-blur-xl flex items-center justify-between">
           <div className="flex items-center gap-4">
             {step === "DO_TRANSLATION" ? (
-              <button onClick={() => setStep("SELECT_LEVEL")} className="text-slate-500 hover:text-[#2F8F6E] transition flex items-center gap-1 font-bold text-sm bg-white px-4 py-2 rounded-xl border border-[#E2E8F0] shadow-sm">
+              <button onClick={() => setStep("SELECT_LEVEL")} className="text-slate-500 hover:text-[#2F6E5A] transition flex items-center gap-1 font-bold text-sm bg-white px-4 py-2 rounded-xl border border-[#D8CBAE] shadow-sm">
                 ← <span className="hidden sm:inline">Trở về</span>
               </button>
             ) : (
-              <h2 className="font-black text-base md:text-lg text-[#1B5E4B]">Dịch Thuật Cùng Ếch xanh</h2>
+              <h2 className="font-black text-base md:text-lg text-[#1C1A17]">Văn Tự Tháp · dịch cùng sư phụ</h2>
             )}
             
             {step === "DO_TRANSLATION" && (
-              <div className="flex items-center gap-2 text-sm font-bold bg-[#F4F7F6] px-4 py-2 rounded-xl border border-[#E2E8F0] shadow-sm">
-                <span className="text-[#2F8F6E]">Tiến trình: {currentTaskIndex + 1} / {taskList.length}</span>
+              <div className="flex items-center gap-2 text-sm font-bold bg-[#F6F0E2] px-4 py-2 rounded-xl border border-[#D8CBAE] shadow-sm">
+                <span className="text-[#2F6E5A]">Tiến trình: {currentTaskIndex + 1} / {taskList.length}</span>
               </div>
             )}
           </div>
           
           <div className="flex items-center gap-3">
-            {combo > 1 && <span className="text-xs font-black text-[#F2765B] bg-[#FFF1F2] px-3 py-1.5 rounded-xl border border-[#FECDD3] animate-pulse shadow-sm">🔥 Combo {combo}</span>}
+            {combo > 1 && <span className="text-xs font-black text-[#9E2F22] bg-[#FFF1F2] px-3 py-1.5 rounded-xl border border-[#FECDD3] animate-pulse shadow-sm">🔥 Combo {combo}</span>}
           </div>
         </header>
 
@@ -313,9 +313,9 @@ export default function TranslatePage() {
           {step === "SELECT_LEVEL" && (
             <div className="animate-fade-in mt-6 max-w-4xl mx-auto">
               <div className="text-center mb-10">
-                <div className="w-20 h-20 bg-white rounded-[24px] mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#E2E8F0]">✍️</div>
-                <h1 className="text-3xl md:text-4xl font-black text-[#1B5E4B] tracking-tight mb-4">Luyện Dịch AI</h1>
-                <p className="text-slate-500 font-medium text-sm max-w-lg mx-auto">Giáo viên Ếch Xanh sẽ chấm điểm chi tiết, phân tích lỗi sai và gợi ý cách diễn đạt tự nhiên như người bản xứ.</p>
+                <div className="w-20 h-20 bg-white rounded-[24px] mx-auto flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#D8CBAE]">✍️</div>
+                <h1 className="text-3xl md:text-4xl font-black text-[#1C1A17] tracking-tight mb-4">Luyện Dịch AI</h1>
+                <p className="text-slate-500 font-medium text-sm max-w-lg mx-auto">Sư phụ Vân Tẩu sẽ chấm điểm chi tiết, phân tích lỗi sai và gợi ý cách diễn đạt tự nhiên như người bản xứ.</p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
@@ -324,12 +324,12 @@ export default function TranslatePage() {
                   const hasData = tasks.length > 0;
                   
                   return (
-                    <div key={lvl} onClick={() => { if (hasData) startLevel(lvl); }} className={`bg-white border rounded-[24px] p-6 text-center transition-all ${hasData ? "border-[#E2E8F0] hover:border-[#8FD9A8] hover:shadow-md cursor-pointer hover:-translate-y-1" : "border-[#E2E8F0] opacity-60 cursor-not-allowed bg-[#F8FAFC]"}`}>
-                      <div className={`w-14 h-14 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl mb-4 mx-auto shadow-inner ${hasData ? 'bg-[#EEF5E9] text-[#2F8F6E] border border-[#8FD9A8]' : 'bg-[#F1F5F9] text-[#94A3B8]'}`}>
+                    <div key={lvl} onClick={() => { if (hasData) startLevel(lvl); }} className={`bg-white border rounded-[24px] p-6 text-center transition-all ${hasData ? "border-[#D8CBAE] hover:border-[#CDBF9F] hover:shadow-md cursor-pointer hover:-translate-y-1" : "border-[#D8CBAE] opacity-60 cursor-not-allowed bg-[#FBF8F1]"}`}>
+                      <div className={`w-14 h-14 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl mb-4 mx-auto shadow-inner ${hasData ? 'bg-[#EFE7D6] text-[#2F6E5A] border border-[#CDBF9F]' : 'bg-[#EFE7D6] text-[#94A3B8]'}`}>
                         {hasData ? '🎓' : '🔒'}
                       </div>
-                      <h3 className="text-lg font-black text-[#1B5E4B] mb-1">{lvl}</h3>
-                      <span className={`text-[9px] font-bold uppercase tracking-widest ${hasData ? 'text-[#2F8F6E]' : 'text-[#94A3B8]'}`}>{hasData ? `${tasks.length} Câu hỏi` : "Sắp ra mắt"}</span>
+                      <h3 className="text-lg font-black text-[#1C1A17] mb-1">{lvl}</h3>
+                      <span className={`text-[9px] font-bold uppercase tracking-widest ${hasData ? 'text-[#2F6E5A]' : 'text-[#94A3B8]'}`}>{hasData ? `${tasks.length} Câu hỏi` : "Sắp ra mắt"}</span>
                     </div>
                   );
                 })}
@@ -342,30 +342,30 @@ export default function TranslatePage() {
             <div className="h-[calc(100vh-160px)] flex flex-col lg:flex-row gap-6 animate-fade-in">
               
               {/* CỘT TRÁI: ĐIỆN THOẠI NHẮN TIN */}
-              <div className="lg:col-span-8 w-full flex flex-col h-full bg-white rounded-[32px] border border-[#E2E8F0] shadow-xl overflow-hidden relative">
+              <div className="lg:col-span-8 w-full flex flex-col h-full bg-white rounded-[32px] border border-[#D8CBAE] shadow-xl overflow-hidden relative">
                 
                 {/* Header Điện thoại */}
-                <div className="h-16 bg-white border-b border-[#E2E8F0] flex items-center px-6 shrink-0 z-10 shadow-sm">
+                <div className="h-16 bg-white border-b border-[#D8CBAE] flex items-center px-6 shrink-0 z-10 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] border border-[#8FD9A8] flex items-center justify-center text-xl shadow-sm">🐸</div>
+                    <div className="w-10 h-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EFE7D6] border border-[#CDBF9F] flex items-center justify-center text-xl shadow-sm">师</div>
                     <div>
-                      <h3 className="font-black text-[#1B5E4B] text-sm">Giáo viên Ếch xanh</h3>
+                      <h3 className="font-black text-[#1C1A17] text-sm">Sư phụ Vân Tẩu</h3>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#2F8F6E] animate-pulse"></div>
-                        <span className="text-[9px] font-bold text-[#2F8F6E] uppercase tracking-wider">Đang theo dõi</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#2F6E5A] animate-pulse"></div>
+                        <span className="text-[9px] font-bold text-[#2F6E5A] uppercase tracking-wider">Đang theo dõi</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Khung Chat Liên Tục */}
-                <div ref={chatContainerRef} className="flex-1 bg-[#F4F7F6] p-4 md:p-6 overflow-y-auto custom-scrollbar flex flex-col gap-4 relative scroll-smooth">
+                <div ref={chatContainerRef} className="flex-1 bg-[#F6F0E2] p-4 md:p-6 overflow-y-auto custom-scrollbar flex flex-col gap-4 relative scroll-smooth">
                   
                   {chatHistory.map((msg, idx) => {
                     if (msg.role === 'system') {
                       return (
                         <div key={idx} className="flex justify-center w-full my-2 animate-fade-in">
-                          <span className="bg-[#1B5E4B]/80 backdrop-blur-md text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest text-center shadow-sm">
+                          <span className="bg-[#1C1A17]/80 backdrop-blur-md text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest text-center shadow-sm">
                             {msg.content}
                           </span>
                         </div>
@@ -375,15 +375,15 @@ export default function TranslatePage() {
                       if (msg.isDetailedFeedback) {
                         return (
                           <div key={idx} className="flex items-end gap-2 w-full animate-fade-in">
-                            <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] border border-[#8FD9A8] flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">🐸</div>
-                            <div className={`p-5 rounded-2xl rounded-bl-sm max-w-[85%] shadow-sm border ${msg.isPass ? 'bg-[#EEF5E9] border-[#8FD9A8]' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
+                            <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EFE7D6] border border-[#CDBF9F] flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">师</div>
+                            <div className={`p-5 rounded-2xl rounded-bl-sm max-w-[85%] shadow-sm border ${msg.isPass ? 'bg-[#EFE7D6] border-[#CDBF9F]' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
                               <div className="flex items-center gap-2 mb-3 border-b border-black/5 pb-3">
-                                 <span className={`text-3xl font-black ${msg.isPass ? 'text-[#2F8F6E]' : 'text-[#BE123C]'}`}>{msg.score}</span>
+                                 <span className={`text-3xl font-black ${msg.isPass ? 'text-[#2F6E5A]' : 'text-[#BE123C]'}`}>{msg.score}</span>
                                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-white/80 px-2 py-1 rounded-lg">Điểm AI</span>
                               </div>
-                              <p className="text-[14px] font-medium text-[#1B5E4B] whitespace-pre-wrap leading-relaxed mb-3"><strong>📝 Phân tích:</strong> {msg.feedback}</p>
+                              <p className="text-[14px] font-medium text-[#1C1A17] whitespace-pre-wrap leading-relaxed mb-3"><strong>📝 Phân tích:</strong> {msg.feedback}</p>
                               {msg.suggestion && (
-                                <p className="text-[14px] font-medium text-[#1B5E4B] whitespace-pre-wrap leading-relaxed bg-white/80 p-4 rounded-xl border border-black/5 shadow-sm"><strong className="text-[#F2765B]">💡 Gợi ý hay:</strong> {msg.suggestion}</p>
+                                <p className="text-[14px] font-medium text-[#1C1A17] whitespace-pre-wrap leading-relaxed bg-white/80 p-4 rounded-xl border border-black/5 shadow-sm"><strong className="text-[#9E2F22]">💡 Gợi ý hay:</strong> {msg.suggestion}</p>
                               )}
                             </div>
                           </div>
@@ -391,8 +391,8 @@ export default function TranslatePage() {
                       }
                       return (
                         <div key={idx} className="flex items-end gap-2 w-full animate-fade-in">
-                          <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] border border-[#8FD9A8] flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">🐸</div>
-                          <div className={`p-4 rounded-2xl rounded-bl-sm max-w-[85%] shadow-sm ${msg.isReaction ? 'bg-transparent shadow-none text-3xl p-0' : 'bg-white border border-[#E2E8F0] text-[#1B5E4B]'}`}>
+                          <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EFE7D6] border border-[#CDBF9F] flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">师</div>
+                          <div className={`p-4 rounded-2xl rounded-bl-sm max-w-[85%] shadow-sm ${msg.isReaction ? 'bg-transparent shadow-none text-3xl p-0' : 'bg-white border border-[#D8CBAE] text-[#1C1A17]'}`}>
                             {msg.isReaction ? msg.content : <p className="text-[15px] font-medium whitespace-pre-wrap leading-relaxed">{msg.content}</p>}
                           </div>
                         </div>
@@ -401,8 +401,8 @@ export default function TranslatePage() {
                     if (msg.role === 'user') {
                       return (
                         <div key={idx} className="flex items-end gap-2 w-full flex-row-reverse animate-fade-in">
-                          <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F8F6E] text-white flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">🧑‍🎓</div>
-                          <div className={`p-4 rounded-2xl rounded-br-sm max-w-[85%] shadow-sm transition-all ${msg.status === 'correct' ? 'bg-[#2F8F6E] text-white' : msg.status === 'incorrect' ? 'bg-[#F2765B] text-white' : 'bg-[#E2E8F0] text-slate-600'}`}>
+                          <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#2F6E5A] text-white flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">🧑‍🎓</div>
+                          <div className={`p-4 rounded-2xl rounded-br-sm max-w-[85%] shadow-sm transition-all ${msg.status === 'correct' ? 'bg-[#2F6E5A] text-white' : msg.status === 'incorrect' ? 'bg-[#9E2F22] text-white' : 'bg-[#D8CBAE] text-slate-600'}`}>
                             <p className="text-[15px] font-medium whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                           </div>
                         </div>
@@ -413,19 +413,19 @@ export default function TranslatePage() {
                   {/* HIỆU ỨNG AI ĐANG GÕ */}
                   {isEvaluating && (
                     <div className="flex items-end gap-2 w-full animate-fade-in">
-                      <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EEF5E9] border border-[#8FD9A8] flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">🐸</div>
-                      <div className="px-5 py-4 rounded-2xl rounded-bl-sm bg-white border border-[#E2E8F0] shadow-sm flex items-center gap-1.5 h-[46px]">
-                        <div className="w-2 h-2 bg-[#8FD9A8] rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-[#2F8F6E] rounded-full animate-bounce" style={{animationDelay: '0.15s'}}></div>
-                        <div className="w-2 h-2 bg-[#1B5E4B] rounded-full animate-bounce" style={{animationDelay: '0.3s'}}></div>
+                      <div className="w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#EFE7D6] border border-[#CDBF9F] flex items-center justify-center text-sm shrink-0 mb-1 shadow-sm">师</div>
+                      <div className="px-5 py-4 rounded-2xl rounded-bl-sm bg-white border border-[#D8CBAE] shadow-sm flex items-center gap-1.5 h-[46px]">
+                        <div className="w-2 h-2 bg-[#CDBF9F] rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-[#2F6E5A] rounded-full animate-bounce" style={{animationDelay: '0.15s'}}></div>
+                        <div className="w-2 h-2 bg-[#1C1A17] rounded-full animate-bounce" style={{animationDelay: '0.3s'}}></div>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Khu vực Gõ Tin Nhắn */}
-                <div className="bg-white border-t border-[#E2E8F0] p-4 shrink-0">
-                  <div className="bg-[#F4F7F6] border border-[#E2E8F0] rounded-2xl p-2 flex flex-col gap-2 transition-all focus-within:border-[#8FD9A8] focus-within:bg-white focus-within:shadow-md">
+                <div className="bg-white border-t border-[#D8CBAE] p-4 shrink-0">
+                  <div className="bg-[#F6F0E2] border border-[#D8CBAE] rounded-2xl p-2 flex flex-col gap-2 transition-all focus-within:border-[#CDBF9F] focus-within:bg-white focus-within:shadow-md">
                     <textarea 
                       rows="2"
                       placeholder={feedbackState === "finished" ? "Bạn đã hoàn thành phiên luyện tập này." : isEvaluating ? "Giáo viên AI đang chấm điểm..." : "Gõ bản dịch tiếng Trung vào đây..."}
@@ -433,14 +433,14 @@ export default function TranslatePage() {
                       onChange={(e) => { setUserInput(e.target.value); setFeedbackState("idle"); setShowAnswer(false); }}
                       onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey && userInput.trim() && feedbackState !== 'correct' && feedbackState !== 'finished' && !isEvaluating) checkAnswer(); }}
                       disabled={feedbackState === "correct" || feedbackState === "finished" || isEvaluating}
-                      className="w-full bg-transparent resize-none outline-none text-[#1B5E4B] font-medium px-3 py-2 placeholder:text-slate-400 disabled:opacity-50 text-[15px]"
+                      className="w-full bg-transparent resize-none outline-none text-[#1C1A17] font-medium px-3 py-2 placeholder:text-slate-400 disabled:opacity-50 text-[15px]"
                     ></textarea>
                     <div className="flex items-center justify-between px-3 pb-1">
                       <span className="text-[10px] font-bold text-slate-400">Ctrl + ↵ để gửi</span>
                       <button 
                         onClick={checkAnswer} 
                         disabled={!userInput.trim() || feedbackState === "correct" || feedbackState === "finished" || isEvaluating}
-                        className="bg-[#1B5E4B] text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-[#2F8F6E] disabled:opacity-50 disabled:bg-[#E2E8F0] shadow-md transition-all"
+                        className="bg-[#1C1A17] text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-[#2F6E5A] disabled:opacity-50 disabled:bg-[#D8CBAE] shadow-md transition-all"
                       >
                         Gửi
                       </button>
@@ -453,47 +453,47 @@ export default function TranslatePage() {
               <aside className="lg:col-span-4 w-full h-full flex flex-col gap-4">
                 
                 {feedbackState !== "finished" && (
-                  <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-8 shadow-sm flex flex-col flex-1">
-                    <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#F4F7F6] shrink-0">
+                  <div className="bg-white rounded-[32px] border border-[#D8CBAE] p-8 shadow-sm flex flex-col flex-1">
+                    <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#F6F0E2] shrink-0">
                       <span className="text-2xl">🎯</span>
-                      <h3 className="font-black text-[#1B5E4B] text-lg">Câu cần dịch hiện tại</h3>
+                      <h3 className="font-black text-[#1C1A17] text-lg">Câu cần dịch hiện tại</h3>
                     </div>
                     
-                    <p className="text-[#2F8F6E] font-bold text-xl leading-relaxed mb-6 shrink-0 bg-[#EEF5E9] p-5 rounded-2xl border border-[#8FD9A8]/40 shadow-inner">"{taskList[currentTaskIndex]?.vietnamese}"</p>
+                    <p className="text-[#2F6E5A] font-bold text-xl leading-relaxed mb-6 shrink-0 bg-[#EFE7D6] p-5 rounded-2xl border border-[#CDBF9F]/40 shadow-inner">"{taskList[currentTaskIndex]?.vietnamese}"</p>
 
                     {/* KHU VỰC TRẠNG THÁI (LẤP ĐẦY KHOẢNG TRỐNG) */}
                     <div className="flex-1 flex flex-col justify-center mb-6">
                       
                       {feedbackState === "idle" && !isEvaluating && !showAnswer && (
-                        <div className="bg-white border border-[#E2E8F0] border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center h-full animate-fade-in shadow-sm">
-                          <div className="w-16 h-16 bg-[#EEF5E9] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-3xl shadow-inner mb-4 border border-[#8FD9A8]">💬</div>
-                          <h4 className="text-base font-black text-[#1B5E4B] mb-2">Đến lượt bạn!</h4>
+                        <div className="bg-white border border-[#D8CBAE] border-dashed rounded-3xl p-8 flex flex-col items-center justify-center text-center h-full animate-fade-in shadow-sm">
+                          <div className="w-16 h-16 bg-[#EFE7D6] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-3xl shadow-inner mb-4 border border-[#CDBF9F]">💬</div>
+                          <h4 className="text-base font-black text-[#1C1A17] mb-2">Đến lượt bạn!</h4>
                           <p className="text-xs text-slate-500 font-medium leading-relaxed px-2">Nhập bản dịch vào khung chat bên trái để Giáo viên AI chấm điểm nhé.</p>
                         </div>
                       )}
 
                       {isEvaluating && (
-                        <div className="bg-[#EEF5E9]/50 border border-[#8FD9A8]/50 rounded-3xl p-8 flex flex-col items-center justify-center text-center h-full animate-fade-in">
-                          <div className="w-12 h-12 border-[5px] border-[#2F8F6E] border-t-transparent rounded-full animate-spin mb-5 shadow-sm"></div>
-                          <h4 className="text-sm font-bold text-[#2F8F6E] animate-pulse">Xiao Qingwa đang chấm điểm...</h4>
+                        <div className="bg-[#EFE7D6]/50 border border-[#CDBF9F]/50 rounded-3xl p-8 flex flex-col items-center justify-center text-center h-full animate-fade-in">
+                          <div className="w-12 h-12 border-[5px] border-[#2F6E5A] border-t-transparent rounded-full animate-spin mb-5 shadow-sm"></div>
+                          <h4 className="text-sm font-bold text-[#2F6E5A] animate-pulse">Xiao Qingwa đang chấm điểm...</h4>
                         </div>
                       )}
 
                       {showAnswer && (
-                        <div className="bg-white p-6 rounded-3xl border border-[#8FD9A8] shadow-sm h-full flex flex-col justify-center animate-fade-in relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#8FD9A8]/30 to-transparent rounded-bl-full pointer-events-none"></div>
-                          <span className="text-[10px] font-black text-[#2F8F6E] uppercase tracking-widest block mb-3 text-center bg-[#EEF5E9] py-1.5 rounded-lg w-fit mx-auto px-4 border border-[#8FD9A8]/50">Đáp án tiêu chuẩn</span>
-                          <span className="text-2xl font-black text-[#1B5E4B] text-center mb-3">{taskList[currentTaskIndex]?.chinese}</span>
+                        <div className="bg-white p-6 rounded-3xl border border-[#CDBF9F] shadow-sm h-full flex flex-col justify-center animate-fade-in relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#CDBF9F]/30 to-transparent rounded-bl-full pointer-events-none"></div>
+                          <span className="text-[10px] font-black text-[#2F6E5A] uppercase tracking-widest block mb-3 text-center bg-[#EFE7D6] py-1.5 rounded-lg w-fit mx-auto px-4 border border-[#CDBF9F]/50">Đáp án tiêu chuẩn</span>
+                          <span className="text-2xl font-black text-[#1C1A17] text-center mb-3">{taskList[currentTaskIndex]?.chinese}</span>
                           {taskList[currentTaskIndex]?.ipa && <p className="text-sm font-bold text-slate-500 text-center">{taskList[currentTaskIndex]?.ipa}</p>}
                         </div>
                       )}
 
                       {feedbackState === "correct" && (
-                        <div className="bg-[#FFF8E8] p-8 rounded-3xl border border-[#FFD666] h-full flex flex-col items-center justify-center text-center animate-fade-in shadow-sm relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#FFD666]/30 to-transparent rounded-bl-full pointer-events-none"></div>
+                        <div className="bg-[#FBF8F1] p-8 rounded-3xl border border-[#E6B656] h-full flex flex-col items-center justify-center text-center animate-fade-in shadow-sm relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#E6B656]/30 to-transparent rounded-bl-full pointer-events-none"></div>
                           <div className="text-5xl mb-4 drop-shadow-md">🏆</div>
-                          <p className="text-xs font-black text-[#F2765B] uppercase tracking-widest mb-1">Chính xác!</p>
-                          <p className="text-4xl font-black text-[#1B5E4B] drop-shadow-sm">+15 XP <span className="text-xl">& +2 💧</span></p>
+                          <p className="text-xs font-black text-[#9E2F22] uppercase tracking-widest mb-1">Chính xác!</p>
+                          <p className="text-4xl font-black text-[#1C1A17] drop-shadow-sm">+15 tu vi</p>
                         </div>
                       )}
                     </div>
@@ -501,7 +501,7 @@ export default function TranslatePage() {
                     {/* Vùng Button (Cố định dưới cùng) */}
                     <div className="shrink-0">
                       {feedbackState === "incorrect" && !isEvaluating && (
-                        <button onClick={() => setShowAnswer(!showAnswer)} className="w-full py-4 mb-3 bg-[#F4F7F6] border border-[#E2E8F0] text-slate-600 font-bold text-sm rounded-2xl hover:bg-white hover:border-[#8FD9A8] transition-all shadow-sm">
+                        <button onClick={() => setShowAnswer(!showAnswer)} className="w-full py-4 mb-3 bg-[#F6F0E2] border border-[#D8CBAE] text-slate-600 font-bold text-sm rounded-2xl hover:bg-white hover:border-[#CDBF9F] transition-all shadow-sm">
                           {showAnswer ? "Ẩn đáp án" : "Bí quá? Xem đáp án mẫu"}
                         </button>
                       )}
@@ -509,7 +509,7 @@ export default function TranslatePage() {
                       <button 
                         onClick={nextTask}
                         disabled={feedbackState !== "correct"}
-                        className="w-full py-4.5 bg-[#2F8F6E] text-white rounded-2xl font-black text-sm uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#1B5E4B] hover:-translate-y-1 transition-all shadow-md"
+                        className="w-full py-4.5 bg-[#2F6E5A] text-white rounded-2xl font-black text-sm uppercase tracking-widest disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#1C1A17] hover:-translate-y-1 transition-all shadow-md"
                       >
                         Câu tiếp theo →
                       </button>
@@ -519,14 +519,14 @@ export default function TranslatePage() {
 
                 {/* Khi kết thúc Session */}
                 {feedbackState === "finished" && (
-                  <div className="bg-white rounded-[32px] border border-[#E2E8F0] p-10 shadow-sm flex flex-col items-center justify-center flex-1 text-center animate-fade-in relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#8FD9A8]/20 to-transparent rounded-bl-full pointer-events-none"></div>
-                    <div className="text-7xl mb-6 drop-shadow-md">🐸🎉</div>
-                    <h3 className="font-black text-[#1B5E4B] text-3xl mb-3">Tuyệt cú mèo!</h3>
-                    <p className="text-sm text-slate-500 font-medium mb-10 leading-relaxed max-w-[80%]">Bạn đã xuất sắc hoàn thành phiên dịch cùng Xiao Qingwa. Khu vườn lại thêm xanh tươi!</p>
+                  <div className="bg-white rounded-[32px] border border-[#D8CBAE] p-10 shadow-sm flex flex-col items-center justify-center flex-1 text-center animate-fade-in relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#CDBF9F]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+                    <div className="text-7xl mb-6 drop-shadow-md">悟</div>
+                    <h3 className="font-black text-[#1C1A17] text-3xl mb-3">Tuyệt cú mèo!</h3>
+                    <p className="text-sm text-slate-500 font-medium mb-10 leading-relaxed max-w-[80%]">Bạn đã xuất sắc hoàn thành phiên dịch cùng Xiao Qingwa. Bí cảnh lại thêm xanh tươi!</p>
                     <button 
                       onClick={() => setStep("SELECT_LEVEL")}
-                      className="w-full py-4.5 bg-[#2F8F6E] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#1B5E4B] hover:-translate-y-1 transition-all shadow-xl"
+                      className="w-full py-4.5 bg-[#2F6E5A] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#1C1A17] hover:-translate-y-1 transition-all shadow-xl"
                     >
                       Chọn cấp độ khác
                     </button>

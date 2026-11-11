@@ -198,29 +198,19 @@ const GAME_STYLE = {
 
 const GAME_COVERS = ["nghieng-dau", "trieu-phu", "san-bo-thu", "doan-thanh-ngu", "duoi-hinh", "bom", "keo-co", "dua", "nhanh"];
 
+// Bìa trò chơi (v2): biển mực tàu chữ thư pháp — bỏ ảnh bìa có linh vật ếch của HSK Garden
+const GAME_SEAL = { "nghieng-dau": ["倾", "Khuynh Thủ Trận"], "trieu-phu": ["富", "Vạn Kim Lâu"], "san-bo-thu": ["部", "Truy Bộ Thủ"], "doan-thanh-ngu": ["成", "Thành Ngữ Các"], "duoi-hinh": ["图", "Đồ Tự Cục"], bom: ["炸", "Lôi Hỏa Đạn"], "keo-co": ["拔", "Bạt Hà Đài"], dua: ["赛", "Trục Lộc Lộ"], nhanh: ["抢", "Tranh Phong Đài"] };
 function GameCover({ g }) {
-  const st = GAME_STYLE[g.key] || {};
-  if (GAME_COVERS.includes(g.key)) return (
-    <div className="relative aspect-video overflow-hidden bg-[#F3E3D2]">
-      <img src={`/games/covers/${g.key}.webp`} alt={g.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-      {st.badge && <span className="absolute top-3 left-3 z-10 text-[11px] font-extrabold tracking-wide text-white bg-black/35 backdrop-blur px-2.5 py-1 rounded-full">{st.badge}</span>}
-    </div>
-  );
+  const st = GAME_STYLE[g.key] || {}; const [ch, alias] = GAME_SEAL[g.key] || [g.face?.[0] || "戏", ""];
   return (
-    <div className={`h-44 bg-gradient-to-br ${g.bg} relative overflow-hidden`}>
-      {/* hoạ tiết chữ Hán mờ */}
-      <div aria-hidden="true" className="zh absolute inset-0 text-white/[.05] font-bold text-[44px] leading-[1.15] tracking-[.3em] select-none -rotate-12 scale-125 whitespace-pre">
-        {"汉字游戏学习\n中文快乐课堂\n汉语水平考试\n汉字游戏学习"}
-      </div>
-      <span className="absolute top-3 left-3 z-10 text-[11px] font-extrabold tracking-wide text-white bg-black/25 backdrop-blur px-2.5 py-1 rounded-full">{st.badge}</span>
-      <div className="absolute inset-0 grid place-items-center">
-        {g.key === "nghieng-dau" && <CoverTilt />}
-        {g.key === "trieu-phu" && <CoverMillion />}
-        {g.key === "bom" && <CoverBomb />}
-        {!["nghieng-dau", "trieu-phu", "bom"].includes(g.key) && (
-          <div className="flex gap-3 zh text-3xl font-bold">{g.face.map((f) => <span key={f} className="w-16 h-[70px] rounded-2xl bg-white grid place-items-center">{f}</span>)}</div>
-        )}
-      </div>
+    <div className="relative aspect-[16/8] overflow-hidden" style={{ background: "radial-gradient(circle at 75% 35%, rgba(201,162,78,.28), transparent 55%), linear-gradient(160deg,#24201B,#121014)" }}>
+      <div aria-hidden="true" className="absolute inset-0 text-[#C9A24E]/[.07] font-bold text-[40px] leading-[1.2] tracking-[.3em] select-none -rotate-12 scale-125 whitespace-pre" style={{ fontFamily: '"Noto Serif SC",serif' }}>{"山海书院江湖\n汉字论武天榜\n一书藏山海"}</div>
+      <span aria-hidden="true" className="absolute right-5 top-1/2 -translate-y-1/2 font-brush text-[86px] leading-none text-[#E6B656] transition-transform duration-500 group-hover:scale-110" style={{ textShadow: "0 0 24px rgba(230,182,86,.35)" }}>{ch}</span>
+      <span className="absolute left-4 bottom-3 flex flex-col leading-tight">
+        <span className="font-serif-vn text-[12px] tracking-[0.14em] text-[#CFC3A8]">GIANG HỒ</span>
+        <span className="font-serif-vn text-[19px] font-extrabold text-[#F6EBD2]">{alias}</span>
+      </span>
+      {st.badge && <span className="absolute top-3 left-3 text-[11px] font-extrabold text-[#121318] bg-[#E6B656] px-2 py-0.5 rounded-[3px]">{st.badge}</span>}
     </div>
   );
 }
@@ -739,11 +729,12 @@ export default function HomePage() {
   const nextIndex = nextLesson ? courseLessons.findIndex(l => l.id === nextLesson.id) + 1 : 0;
 
   const skills = [
-    { key: "vocabulary", label: "Từ vựng", sub: "Thẻ từ · theo chủ đề", href: "/vocab", extra: { href: "/topic", label: "Chủ đề" }, icon: "sprout", tone: "bg-[#F3E3D2] text-[#7A2218]" },
-    { key: "grammar", label: "Ngữ pháp", sub: "Sắp xếp câu", href: "/arrange", icon: "blocks", tone: "bg-[#FFF4DE] text-[#B36B00]" },
-    { key: "listening", label: "Nghe chép", sub: "Nghe và viết lại", href: "/dictation", icon: "headphones", tone: "bg-[#E3F3F7] text-[#1F7A8C]" },
-    { key: "translation", label: "Dịch câu", sub: "Việt ⇄ Trung", href: "/translate", icon: "translate", tone: "bg-[#EDEBFA] text-[#5747B5]" },
-    { key: "speaking", label: "Nói", sub: "Phim trường · đóng vai theo tình huống", href: "/roleplay", icon: "mic", tone: "bg-[#FFE9D2] text-[#B35400]" },
+    // v2: mỗi kỹ năng là một bí cảnh thuộc một hệ ngũ hành
+    { key: "vocabulary", label: "Từ vựng", bc: "Vạn Từ Bí Cảnh", bcZh: "万字秘境", el: "moc", sub: "Thẻ từ theo bài · học mới và ôn", href: "/vocab", extra: { href: "/topic", label: "Vạn Tượng Lâm · từ theo chủ đề" } },
+    { key: "grammar", label: "Ngữ pháp", bc: "Thiên Cơ Trận", bcZh: "天机阵", el: "tho", sub: "Sắp xếp câu cho đúng trận pháp", href: "/arrange" },
+    { key: "listening", label: "Nghe", bc: "Thiên Âm Cốc", bcZh: "天音谷", el: "kim", sub: "Nghe và chép lại", href: "/dictation" },
+    { key: "translation", label: "Đọc · dịch", bc: "Văn Tự Tháp", bcZh: "文字塔", el: "thuy", sub: "Dịch Việt ⇄ Trung, đọc hiểu", href: "/translate" },
+    { key: "speaking", label: "Nói", bc: "Khẩu Ngữ Đài", bcZh: "口语台", el: "hoa", sub: "Nhập vai hội thoại theo tình huống", href: "/roleplay", extra: { href: "/hskk", label: "Thiên Ngôn Điện · thi nói HSKK" } },
   ].map(s => ({ ...s, value: Math.round(Math.min(skillMap[s.key] || 0, 100)) }));
   const weakest = [...skills].sort((a, b) => a.value - b.value)[0];
 
@@ -979,32 +970,42 @@ export default function HomePage() {
   };
   const startDoKiep = () => { doKiepPendingRef.current = kiepN; setActiveHskExamView(EXAM_CENTER); };
   const fmtTime = (ms) => new Date(ms).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" });
+  // Ô cảnh giới (v2): thẻ mực tàu viền vàng — bỏ cảnh núi/mặt trời hoạt hình của HSK Garden
   const PondCard = () => (
-    <section className="rounded-[6px] overflow-hidden text-[#F3EEE2] flex flex-col border border-[#C9A24E] shadow-[0_0_0_3px_#1C1A17]">
-      <MountainScene className="h-[260px]">
-        <div className="absolute left-5 top-4 flex gap-3 items-start">
-          <VText lines={realm.zh} className="font-brush text-[54px]" aria-hidden="true" />
-          <div className="flex flex-col gap-1 pt-1">
-            <div className="font-serif-vn text-[12px] font-bold tracking-[0.14em] text-[#CFC3A8]">CẢNH GIỚI</div>
-            <h3 className="font-serif-vn text-[24px] font-extrabold leading-tight">{realm.vn}</h3>
-            <div className="text-sm font-bold text-[#E6B656]">{realm.stage} · {realm.hsk}</div>
-            <div className="text-xs text-[#CFC3A8] max-w-[210px] leading-snug">{realm.region}{currentCourse ? ` · công pháp ${currentCourse}` : ""}</div>
-            {realm.provisional ? <Link href="/linh-can" className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold inline-flex items-center">Định cảnh giới ở Trắc Linh Đài →</Link>
-              : realm.peak && !quest.done ? <div className="text-xs font-bold text-[#E6B656]">Nhiệm vụ cảnh giới: {quest.label} ({quest.have}/{quest.need})</div>
-              : realm.peak && realm.idx === 0 ? <button onClick={nhapMon} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Nhập môn → Luyện Khí</button>
-              : realm.peak && kiepAvail ? <button onClick={() => goTab("exam")} className="self-start mt-1 h-8 px-3 rounded-[4px] bg-[#E6B656] text-[#121318] text-xs font-extrabold">Đỉnh phong · độ kiếp →</button> : null}
-          </div>
+    <section className="relative rounded-[6px] overflow-hidden text-[#F3EEE2] border border-[#C9A24E] shadow-[0_0_0_3px_#1C1A17] p-5 flex flex-col gap-4" style={{ background: "radial-gradient(circle at 85% 15%, rgba(201,162,78,.22), transparent 45%), linear-gradient(160deg,#24201B,#15130F)" }} aria-label="Cảnh giới">
+      <div className="flex gap-4 items-start">
+        <VText lines={realm.provisional ? "未定" : realm.zh} className="font-brush text-[52px] text-[#E6B656] shrink-0" aria-hidden="true" />
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          <div className="font-serif-vn text-[12px] font-bold tracking-[0.14em] text-[#CFC3A8]">CẢNH GIỚI</div>
+          {realm.provisional ? (
+            <>
+              <h3 className="font-serif-vn text-[22px] font-extrabold leading-tight">Chưa định cảnh giới</h3>
+              <p className="text-[13px] text-[#CFC3A8] leading-snug">{currentCourse ? `Bạn đang học công pháp ${currentCourse}. ` : ""}Lên Trắc Linh Đài làm bài định cảnh (khoảng 8 phút) để được xếp đúng cảnh giới theo trình độ thật.</p>
+              <Link href="/linh-can" className="self-start mt-1 tt-btn !h-10 !text-sm">Lên Trắc Linh Đài</Link>
+            </>
+          ) : (
+            <>
+              <h3 className="font-serif-vn text-[24px] font-extrabold leading-tight">{realm.vn} <span className="text-[#E6B656]">· {realm.stage}</span></h3>
+              <div className="text-[13px] text-[#CFC3A8]">{realm.hsk} · {realm.region}{currentCourse ? ` · công pháp ${currentCourse}` : ""}</div>
+              {realm.peak && !quest.done ? <div className="text-[13px] font-bold text-[#E6B656]">Nhiệm vụ cảnh giới: {quest.label} ({quest.have}/{quest.need})</div>
+                : realm.peak && realm.idx === 0 ? <button onClick={nhapMon} className="self-start mt-1 tt-btn !h-10 !text-sm">Nhập môn → Luyện Khí</button>
+                : realm.peak && kiepAvail ? <button onClick={() => goTab("exam")} className="self-start mt-1 tt-btn !h-10 !text-sm">Đỉnh phong · độ kiếp</button> : null}
+            </>
+          )}
         </div>
-
-        <div className="absolute left-4 right-4 bottom-3 flex flex-col gap-1.5 text-[#1C1A17]">
-          <div className="flex justify-between text-[13px]">
-            <span>Tu vi <b>{fmt(realm.tv)}</b> / {fmt(realm.need)}</span>
-            <span className="font-bold">{realm.peak ? "Đỉnh phong" : `còn ${fmt(realm.toNext)} lên tầng ${realm.tang + 1 > 9 ? "Đỉnh phong" : realm.tang + 1}`}</span>
+      </div>
+      {realm.provisional ? (
+        <div className="flex justify-between text-[13px] text-[#CFC3A8] border-t border-[#C9A24E]/30 pt-3"><span>Tổng tu vi đã tích</span><b className="text-[#E6B656]">{fmt(leaves)}</b></div>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          <div className="flex justify-between text-[13px] text-[#CFC3A8]">
+            <span>Tu vi <b className="text-[#F3EEE2]">{fmt(realm.tv)}</b> / {fmt(realm.need)}</span>
+            <span className="font-bold text-[#E6B656]">{realm.peak ? "Đỉnh phong" : `còn ${fmt(realm.toNext)} lên ${realm.tang + 1 > 9 ? "Đỉnh phong" : `tầng ${realm.tang + 1}`}`}</span>
           </div>
-          <div className="relative h-2.5 rounded-[2px] bg-[#DCD1BA] overflow-hidden"><div className="h-full tt-shine transition-all duration-700" style={{ width: `${Math.max(2, realm.pct)}%`, background: "linear-gradient(90deg,#9E2F22,#D9A23A)" }} />
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <span key={i} className="absolute top-0 bottom-0 w-px bg-[#FBF8F1]/70" style={{ left: `${(i / 9) * 100}%` }} aria-hidden="true" />)}</div>
+          <div className="relative h-2.5 rounded-[2px] bg-[#3A352C] overflow-hidden"><div className="h-full tt-shine transition-all duration-700" style={{ width: `${Math.max(2, realm.pct)}%`, background: "linear-gradient(90deg,#9E2F22,#D9A23A)" }} />
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <span key={i} className="absolute top-0 bottom-0 w-px bg-[#15130F]" style={{ left: `${(i / 9) * 100}%` }} aria-hidden="true" />)}</div>
         </div>
-      </MountainScene>
+      )}
     </section>
   );
 
@@ -1186,8 +1187,9 @@ export default function HomePage() {
                 <div className="flex flex-col gap-3">
                   <TongMonMap tags={mapTags} lock={mapLock} glow={tip.glow} onTab={goTab} />
                   <nav aria-label="Lối tắt tông môn" className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {[["/the-gioi", "舆图", "Thế giới"], ["/luyen-dan", "炼丹", "Luyện đan"], ["/tam-ma", "心魔", "Tâm ma"], ["/ma-vuong", "魔王", "Ma Vương"], ["/bi-canh", "秘境", "Bí cảnh"], ["/tong-mon", "宗门", "Tông môn"]].map(([h, z, v]) => (
-                      <Link key={h} href={h} className="tt-plank"><span className="zh" aria-hidden="true">{z}</span><span className="vn">{v}</span></Link>
+                    {[["/the-gioi", "舆图", "Thế giới"], ["/luyen-dan", "炼丹", "Luyện đan"], ["/tam-ma", "心魔", "Tâm ma"], ["/ma-vuong", "魔王", "Ma Vương"], ["/?tab=practice", "秘境", "Bí cảnh"], ["/tong-mon", "宗门", "Tông môn"]].map(([h, z, v]) => (
+                      h.startsWith("/?tab=") ? <button key={h} onClick={() => goTab(h.slice(6))} className="tt-plank"><span className="zh" aria-hidden="true">{z}</span><span className="vn">{v}</span></button>
+                        : <Link key={h} href={h} className="tt-plank"><span className="zh" aria-hidden="true">{z}</span><span className="vn">{v}</span></Link>
                     ))}
                   </nav>
                 </div>
@@ -1304,38 +1306,57 @@ export default function HomePage() {
 
           {/* ===== LUYỆN ===== */}
           {activeTab === "practice" && (
-            <div className="flex flex-col gap-5">
-              <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">修</span>Tu luyện</h1>
+            <div className="flex flex-col gap-6">
+              <h1 className="text-[26px] md:text-[32px] font-extrabold font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">修</span>Tu luyện</h1>
               {weakest && (
-                <div className="flex items-center gap-3 p-4 rounded-[6px] bg-[#F3E3D2] border border-[#E2C3AC]">
-                  <Frog className="w-14 h-12 shrink-0" />
-                  <p className="flex-1 text-[15px] leading-snug text-[#3A2A1E]"><b>Kim Thiềm gợi ý:</b> kỹ năng <b>{weakest.label}</b> của bạn đang thấp nhất. Luyện 5 phút nhé!</p>
-                  <Link href={weakest.href} className="hidden sm:inline-flex h-11 px-5 items-center rounded-xl bg-[#9E2F22] hover:bg-[#7A2218] text-white font-bold text-sm shrink-0">Luyện ngay</Link>
+                <div className="tt-card p-4 flex items-center gap-3">
+                  <span className="w-11 h-11 shrink-0 rounded-full bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[22px] border-2 border-[#C9A24E]" aria-hidden="true">师</span>
+                  <p className="flex-1 text-[15px] leading-snug"><b className="font-serif-vn text-[#7A2218]">Sư phụ chỉ điểm:</b> hệ <b>{elementOf(weakest.el).vn}</b> ({weakest.label}) của con đang yếu nhất. Vào <b>{weakest.bc}</b> luyện một khắc.</p>
+                  <Link href={weakest.href} className="tt-btn hidden sm:inline-flex shrink-0">Vào bí cảnh</Link>
                 </div>
               )}
-              <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
-                {skills.map(s => {
-                  const hot = s.key === weakest?.key;
-                  return (
-                    <div key={s.key} className={`relative rounded-[6px] bg-white p-4 md:p-5 flex flex-col gap-3 ${hot ? "border-2 border-[#F0A43A]" : "border border-[#D8CBAE]"} ${s.key === "speaking" ? "col-span-2 lg:col-span-1" : ""}`}>
-                      <Link href={s.href} className="absolute inset-0 rounded-[6px]" aria-label={`Luyện ${s.label}`} />
-                      <div className="flex items-center justify-between">
-                        <span className={`w-11 h-11 rounded-xl grid place-items-center ${s.tone}`}><Icon name={s.icon} className="w-[22px] h-[22px]" /></span>
-                        {hot && <span className="text-xs font-bold text-[#B35400] bg-[#FFF1E0] px-2.5 py-1 rounded-full">Nên luyện</span>}
+              <section aria-label="Đan phòng và ma vực" className="grid gap-4 md:grid-cols-3">
+                {[
+                  { href: "/luyen-dan", img: "/tt/luyendan.jpg", zh: "炼丹房", vn: "Luyện Đan Phòng", sub: ldStat?.due ? `${ldStat.due} từ đến hạn ôn` : "Ôn từ vựng ngắt quãng, luyện thành đan", pos: "50% 55%" },
+                  { href: "/tam-ma", img: null, zh: "心魔洞", vn: "Tâm Ma Động", sub: ldStat?.tamMa ? `${ldStat.tamMa} tâm ma đang ẩn nấp` : "Trảm những từ hay sai", pos: "" },
+                  { href: "/ma-vuong", img: "/tt/mavuong.jpg", zh: "魔王", vn: "Ma Vương", sub: `Khiêu chiến Ma Vương ${realm.vn}`, pos: "30% 40%" },
+                ].map((x) => (
+                  <Link key={x.href} href={x.href} className="group relative h-[150px] rounded-[6px] overflow-hidden border border-[#C9A24E] shadow-[0_0_0_3px_#1C1A17] text-[#F6EBD2]">
+                    {x.img ? <img src={x.img} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: x.pos }} />
+                      : <span className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 30%, rgba(122,90,166,.75), transparent 60%), #17141C" }} />}
+                    <span className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(18,16,14,.85), rgba(18,16,14,.35) 70%, transparent)" }} />
+                    <span className="relative h-full p-4 flex flex-col justify-end gap-0.5">
+                      <span className="font-brush text-[34px] leading-none text-[#E6B656]">{x.zh}</span>
+                      <b className="font-serif-vn text-[18px]">{x.vn}</b>
+                      <span className="text-[13px] text-[#E9DFC8]">{x.sub}</span>
+                    </span>
+                  </Link>
+                ))}
+              </section>
+              <section aria-label="Ngũ hành bí cảnh" className="flex flex-col gap-3">
+                <div className="flex items-baseline gap-2"><span className="font-brush text-[26px] text-[#2F6E5A]">五行秘境</span><h2 className="font-serif-vn text-[18px] font-extrabold">Ngũ hành bí cảnh</h2><span className="text-sm text-[#6B6253]">mỗi bí cảnh nuôi một hệ linh căn</span></div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                  {skills.map((s) => {
+                    const hot = s.key === weakest?.key; const e = elementOf(s.el);
+                    return (
+                      <div key={s.key} className={`tt-card relative p-4 flex flex-col gap-2 ${hot ? "!shadow-[0_0_0_3px_#FBF8F1,0_0_0_5px_#9E2F22]" : ""}`}>
+                        <Link href={s.href} className="absolute inset-0 rounded-[6px]" aria-label={`Vào ${s.bc}`} />
+                        <div className="flex items-center gap-2">
+                          <span className="w-11 h-11 rounded-full grid place-items-center bg-[#1C1A17] text-[#E6B656] font-brush text-[24px] leading-none border border-[#C9A24E]" aria-hidden="true">{e.zh}</span>
+                          <span className="flex flex-col leading-tight min-w-0"><b className="font-serif-vn text-[15px] truncate">{s.bc}</b><span className="text-xs text-[#6B6253]" style={{ fontFamily: '"Noto Serif SC",serif' }}>{s.bcZh} · hệ {e.vn}</span></span>
+                        </div>
+                        <p className="text-[13px] text-[#4A4238] leading-snug">{s.sub}</p>
+                        <div className="flex items-center gap-2 mt-auto">
+                          <div className="flex-1"><Bar value={s.value} h="h-1.5" color={hot ? "bg-[#9E2F22]" : "bg-[#2F6E5A]"} /></div>
+                          <span className="text-xs font-bold tabular-nums">{s.value}</span>
+                        </div>
+                        {hot && <span className="absolute -top-2.5 right-3 text-[11px] font-bold text-white bg-[#9E2F22] px-2 py-0.5 rounded-[3px] shadow">nên luyện</span>}
+                        {s.extra && <Link href={s.extra.href} className="relative z-10 self-start text-xs font-semibold text-[#7A2218] underline underline-offset-2">{s.extra.label}</Link>}
                       </div>
-                      <div>
-                        <div className="font-bold text-base">{s.label}</div>
-                        <div className="text-xs text-[#6B6253]">{s.sub}</div>
-                      </div>
-                      <div className="flex items-center gap-2 mt-auto">
-                        <div className="flex-1"><Bar value={s.value} h="h-1.5" color={hot ? "bg-[#F0A43A]" : "bg-[#9E2F22]"} /></div>
-                        <span className="text-xs font-bold text-[#4A4238] tabular-nums">{s.value}</span>
-                      </div>
-                      {s.extra && <Link href={s.extra.href} className="relative z-10 self-start text-xs font-semibold text-[#7A2218] underline underline-offset-2">{s.extra.label}</Link>}
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              </section>
             </div>
           )}
 
@@ -1343,10 +1364,7 @@ export default function HomePage() {
           {activeTab === "play" && (
             <div className="flex flex-col gap-5">
               <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">江湖</span>Giang hồ</h1>
-              <div className="flex items-center gap-3 p-4 rounded-[6px] bg-[#F3E3D2] border border-[#E2C3AC]">
-                <Frog className="w-14 h-12 shrink-0" />
-                <p className="flex-1 text-[15px] leading-snug text-[#3A2A1E]"><b>Vừa chơi vừa học:</b> luận võ với đồng song, leo Thiên Bảng, hoặc chọn một trò để thử thách cả lớp!</p>
-              </div>
+              <p className="text-[15px] text-[#4A4238] -mt-2">Luận võ với đồng song, leo Thiên Bảng, hoặc mở một trận để cả lớp cùng tranh tài.</p>
               <div className="grid gap-4 md:gap-5 lg:grid-cols-[1.2fr_1fr] items-start">
                 <Link href="/luan-vo" className="group relative overflow-hidden rounded-[6px] bg-[#121318] text-[#EDE8DC] p-6 flex flex-col gap-3 min-h-[220px] hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,.5)] transition-shadow">
                   <svg viewBox="0 0 120 120" className="absolute -right-4 -bottom-4 w-40 h-40 opacity-20" aria-hidden="true"><path d="M20 100 L95 25 M95 25 l-14 2 M95 25 l-2 14 M100 100 L25 25 M25 25 l14 2 M25 25 l2 14" stroke="#E6B656" strokeWidth="6" strokeLinecap="round" fill="none" /></svg>
@@ -1359,7 +1377,7 @@ export default function HomePage() {
               <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {GAMES.map(g => (
                   <a key={g.key} href={g.href} target="_blank" rel="noopener"
-                    className="group rounded-[8px] overflow-hidden bg-white border border-[#D8CBAE] hover:-translate-y-1 hover:shadow-[0_14px_30px_-12px_rgba(19,38,28,.35)] transition-all duration-300 flex flex-col">
+                    className="group tt-card overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col">
                     <GameCover g={g} />
                     <div className="p-5 flex flex-col gap-2 flex-1">
                       <div className="flex items-baseline gap-2 flex-wrap">
@@ -1368,10 +1386,10 @@ export default function HomePage() {
                       </div>
                       <p className="text-sm text-[#4A4238] leading-snug">{g.desc}</p>
                       <div className="flex flex-wrap gap-1.5 mt-1">
-                        {g.tags.map(t => <span key={t} className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ color: GAME_STYLE[g.key]?.ink, background: GAME_STYLE[g.key]?.soft }}>{t}</span>)}
+                        {g.tags.map(t => <span key={t} className="text-xs font-semibold px-2 py-0.5 rounded-[3px] border border-[#CDBF9F] text-[#4A4238] bg-[#F6F0E2]">{t}</span>)}
                       </div>
                       <div className="mt-auto pt-4 flex items-center gap-3">
-                        <span className="inline-flex items-center gap-1.5 h-10 px-4 rounded-full text-sm font-bold text-white transition-transform group-hover:scale-105" style={{ background: GAME_STYLE[g.key]?.ink }}>
+                        <span className="tt-btn !h-10 !text-sm">
                           <Icon name="play" className="w-4 h-4" />Vào chơi
                         </span>
                         <span className="text-xs font-semibold text-[#6B6253]">{GAME_STYLE[g.key]?.meta}</span>
@@ -1379,9 +1397,9 @@ export default function HomePage() {
                     </div>
                   </a>
                 ))}
-                <div className="rounded-[8px] border-2 border-dashed border-[#CDBF9F] p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[220px] text-[#6B6253]">
-                  <Icon name="sprout" className="w-8 h-8 text-[#9E2F22]" />
-                  <div className="font-bold text-[#4A4238]">Trò chơi mới đang được ươm…</div>
+                <div className="rounded-[6px] border-2 border-dashed border-[#CDBF9F] p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[220px] text-[#6B6253]">
+                  <span className="font-brush text-[34px] text-[#9E2F22]" aria-hidden="true">待</span>
+                  <div className="font-bold text-[#4A4238] font-serif-vn">Trò chơi mới đang luyện thành…</div>
                   <div className="text-sm">Sắp có thêm trò để cả lớp cùng chơi.</div>
                 </div>
               </div>
@@ -1397,7 +1415,7 @@ export default function HomePage() {
                 <VText lines="雷劫" className="font-brush text-[46px] md:text-[56px] text-[#EDE8DC] shrink-0 hidden md:inline-flex" />
                 <div className="flex-1 min-w-0 flex flex-col gap-1.5 relative">
                   <div className="font-serif-vn text-xs font-bold tracking-[0.14em] text-[#A6A9B4]">THI ĐỘT PHÁ{kiepN ? ` · HSK ${kiepN}` : ""}</div>
-                  <h2 className="font-serif-vn text-[22px] md:text-[26px] font-extrabold">Lôi kiếp {realm.vn}{realm.next ? ` → ${realm.next.vn}` : ""}</h2>
+                  <h2 className="font-serif-vn text-[22px] md:text-[26px] font-extrabold">{realm.provisional ? "Lôi kiếp · chưa định cảnh giới" : `Lôi kiếp ${realm.vn}${realm.next ? ` → ${realm.next.vn}` : ""}`}</h2>
                   <p className="text-sm text-[#C9CBD3] leading-relaxed max-w-[620px]">Đạt <b>Đỉnh phong</b> mới được độ kiếp. Ba đạo lôi <b>Nghe → Đọc → Viết</b> trong phòng thi HSK 3.0{kiepN ? <> (chọn <b>Cấp độ {kiepN}</b>)</> : ""}. Đúng từ <b>60%</b> số câu tự chấm là độ kiếp thành công: <b>+200 tu vi</b> và lên cảnh giới mới. Thất bại sẽ tẩu hỏa nhập ma, phải tĩnh dưỡng 24 giờ mới độ kiếp lại.</p>
                   <div className="text-sm font-bold" role="status">
                     {realm.provisional ? <span className="text-[#E6B656]">Bạn chưa định cảnh giới. <Link href="/linh-can" className="underline underline-offset-2">Lên Trắc Linh Đài</Link> để được xếp đúng trình độ.</span>
@@ -1434,27 +1452,27 @@ export default function HomePage() {
               <div role="tablist" aria-label="Loại đề" className="grid grid-cols-3 gap-1 p-1 rounded-[6px] bg-[#E4DAC4] md:max-w-md">
                 {[["hsk3", "HSK 3.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
                   <button key={k} role="tab" aria-selected={examTab === k} onClick={() => setExamTab(k)}
-                    className={`h-10 rounded-[10px] text-sm transition-colors ${examTab === k ? "bg-white font-bold text-[#1C1A17] shadow-sm" : "font-semibold text-[#4A4238]"}`}>{l}</button>
+                    className={`h-10 rounded-[4px] text-sm font-serif-vn transition-colors ${examTab === k ? "bg-[#1C1A17] font-bold text-[#F3EEE2]" : "font-semibold text-[#4A4238]"}`}>{l}</button>
                 ))}
               </div>
 
               <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] items-start">
                 <div className="flex flex-col gap-5 min-w-0">
                   {examTab === "hsk3" && (
-                    <section className="rounded-[8px] bg-[#FBF7DF] border border-[#E9DFB0] px-5 py-10 md:py-14 flex flex-col items-center text-center gap-4">
-                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-[#1F3F8A] to-[#2C5BB6] text-white grid place-items-center text-4xl md:text-5xl font-extrabold shadow-md" style={{ fontFamily: "STKaiti, KaiTi, serif" }}>汉</div>
-                      <div>
-                        <div className="text-[#1F2F6E] font-extrabold tracking-wide">SƠN HẢI THƯ VIỆN · 汉语水平模拟考试系统</div>
-                        <p className="text-sm text-[#6B6253] mt-2 max-w-md">Phòng thi mô phỏng giao diện thi HSK 3.0 trên máy. Vào phòng thi, điền thông tin thí sinh rồi chọn <b>cấp độ</b> và <b>đề thi</b>.</p>
+                    <section className="tt-card px-5 py-8 md:py-10 flex flex-col sm:flex-row items-center gap-5">
+                      <span className="w-20 h-20 shrink-0 rounded-[6px] bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[46px] border border-[#C9A24E] shadow-[0_0_0_3px_#FBF8F1,0_0_0_4px_#C9A24E]" aria-hidden="true">考</span>
+                      <div className="flex-1 text-center sm:text-left">
+                        <div className="tt-eyebrow">Khảo Thí Điện · 汉语水平模拟考试</div>
+                        <h2 className="font-serif-vn text-[20px] font-extrabold mt-1">Phòng thi HSK 3.0</h2>
+                        <p className="text-sm text-[#4A4238] mt-1 max-w-md">Giao diện như phòng thi thật trên máy. Vào phòng, điền thông tin thí sinh rồi chọn <b>cấp độ</b> và <b>đề thi</b>. Đeo tai nghe; phần nghe chỉ phát một lần.</p>
                       </div>
-                      <button onClick={() => setActiveHskExamView(EXAM_CENTER)} className="h-14 px-10 rounded-[6px] bg-[#E07A2B] hover:bg-[#C9661D] text-white text-lg font-bold shadow-sm transition-colors">Vào phòng thi</button>
-                      <p className="text-xs text-[#8A7A4A]">Đeo tai nghe trước khi vào thi · Phần nghe chỉ phát một lần</p>
+                      <button onClick={() => setActiveHskExamView(EXAM_CENTER)} className="tt-btn shrink-0">Vào phòng thi</button>
                     </section>
                   )}
 
                   {examTab === "hskk" && (
                     <>
-                      <div className="rounded-[6px] bg-[#FFF8EA] border border-[#F6D99A] p-4 text-sm leading-relaxed text-[#5C3D00]">
+                      <div className="tt-card p-4 text-sm leading-relaxed">
                         <b>Trước khi vào thi:</b> đeo tai nghe, ngồi nơi yên tĩnh và cho phép trình duyệt dùng micro. Giao diện như phòng thi thật: đề chạy liên tục, hết câu cuối <b>tự nộp bài cho giáo viên</b> — thoát giữa chừng sẽ mất bản ghi âm.
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
@@ -1462,13 +1480,13 @@ export default function HomePage() {
                           const exams = hskkExams.filter(e => Number(e.level) === lv);
                           const first = exams[0] || {};
                           return (
-                            <section key={lv} className="rounded-[6px] bg-white border border-[#D8CBAE] p-4 flex flex-col gap-2">
-                              <div className="flex items-baseline justify-between"><h3 className="font-extrabold text-lg">HSKK {lv}</h3><span className="text-xs text-[#6B6253] inline-flex items-center gap-1"><Icon name="clock" className="w-3.5 h-3.5" />{first.minutes} phút</span></div>
+                            <section key={lv} className="tt-card p-4 flex flex-col gap-2">
+                              <div className="flex items-baseline justify-between"><h3 className="font-serif-vn font-extrabold text-lg">Thiên Ngôn Điện · HSKK {lv}</h3><span className="text-xs text-[#6B6253] inline-flex items-center gap-1"><Icon name="clock" className="w-3.5 h-3.5" />{first.minutes} phút</span></div>
                               <p className="text-xs text-[#6B6253]">{first.parts}</p>
                               {exams.map(ex => (
-                                <button key={ex.file} onClick={() => setActiveHskkExam(ex)} className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl bg-[#EFE7D6] hover:bg-[#F3E3D2] text-left">
+                                <button key={ex.file} onClick={() => setActiveHskkExam(ex)} className="flex items-center gap-2 min-h-[44px] px-3 rounded-[4px] border border-[#D8CBAE] bg-[#F6F0E2] hover:border-[#9E2F22] text-left">
                                   <span className="flex-1 min-w-0 truncate text-sm font-semibold">{ex.name || ex.label}</span>
-                                  {ex.isNew && <span className="text-[10px] font-bold text-[#1C1A17] bg-[#FFB547] px-1.5 py-0.5 rounded">Mới</span>}
+                                  {ex.isNew && <span className="text-[10px] font-bold text-white bg-[#9E2F22] px-1.5 py-0.5 rounded-[3px]">Mới</span>}
                                   <span className="text-xs font-bold text-[#7A2218] shrink-0">Vào thi</span>
                                 </button>
                               ))}
@@ -1483,10 +1501,10 @@ export default function HomePage() {
                     <section className={`${card} p-6 flex flex-col sm:flex-row sm:items-center gap-5`}>
                       <Frog mood="think" className="w-20 h-16 shrink-0" />
                       <div className="flex-1">
-                        <h2 className="text-xl font-extrabold">Thi đánh giá năng lực</h2>
+                        <h2 className="font-serif-vn text-xl font-extrabold">Vấn Đạo · thi đánh giá năng lực</h2>
                         <p className="text-sm text-[#4A4238] mt-1">Làm một bài kiểm tra tổng hợp Nghe · Nói · Đọc · Viết. Giáo viên chấm và gợi ý cấp độ phù hợp cho bạn.</p>
                       </div>
-                      <Link href="/test" className="h-12 px-6 inline-flex items-center justify-center rounded-[6px] bg-[#9E2F22] hover:bg-[#7A2218] text-white font-bold shrink-0">Bắt đầu</Link>
+                      <Link href="/test" className="tt-btn shrink-0">Bắt đầu</Link>
                     </section>
                   )}
                 </div>

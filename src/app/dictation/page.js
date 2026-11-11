@@ -158,11 +158,11 @@ export default function DictationPage() {
   };
 
   // ============================================================
-  // HÀM LƯU XP & WATER ĐỒNG BỘ TOÀN HỆ THỐNG
+  // HÀM LƯU tu vi & WATER ĐỒNG BỘ TOÀN HỆ THỐNG
   // ============================================================
   const claimReward = async () => {
     if (!userId) return;
-    const bonusXp = 10; // Nghe chép/Nhại thành công +10 XP
+    const bonusXp = 10; // Nghe chép/Nhại thành công +10 tu vi
     const bonusWater = 2; // +2 Nước
     
     const newXp = hskXp + bonusXp;
@@ -235,15 +235,15 @@ export default function DictationPage() {
     setIsPlaying(false); setUserInput(""); setIsCorrect(null); setShowAnswer(false); setAudioProgress(0); setShadowingResult(null); setIsRecording(false);
   }, [currentCard, mode]);
 
-  if (loadingUser) return <div className="min-h-screen bg-[#F4F7F6]"></div>;
+  if (loadingUser) return <div className="min-h-screen bg-[#F6F0E2]"></div>;
 
   return (
-    <div className="flex flex-col min-h-screen font-sans text-slate-800 relative selection:bg-[#8FD9A8]/50">
+    <div className="flex flex-col min-h-screen font-sans text-slate-800 relative selection:bg-[#CDBF9F]/50">
       <GardenNav active="practice" />
       
       {/* BACKGROUND MỜ DỊU NHẸ CHUẨN APP */}
       <div className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30" style={{ backgroundImage: "url('/hskk/nghechep.jpg')" }}>
-        <div className="absolute inset-0 bg-[#F4F7F6]/90 backdrop-blur-[4px]"></div>
+        <div className="absolute inset-0 bg-[#F6F0E2]/90 backdrop-blur-[4px]"></div>
       </div>
 
       {/* ==========================================
@@ -256,24 +256,24 @@ export default function DictationPage() {
           ====================================================== */}
       <main className={`min-h-screen transition-all duration-300 relative z-10 w-full flex flex-col `}>
         
-        {/* TOP BAR ĐỒNG BỘ NƯỚC - LỬA - XP */}
-        <header className="px-4 md:px-8 xl:px-[calc((100vw-1200px)/2+2rem)] h-14 md:h-16 border-b border-[#E2E8F0] bg-white/80 backdrop-blur-xl flex items-center justify-between shrink-0 shadow-sm">
+        {/* TOP BAR ĐỒNG BỘ NƯỚC - LỬA - tu vi */}
+        <header className="px-4 md:px-8 xl:px-[calc((100vw-1200px)/2+2rem)] h-14 md:h-16 border-b border-[#D8CBAE] bg-white/80 backdrop-blur-xl flex items-center justify-between shrink-0 shadow-sm">
           <div className="flex items-center gap-4">
             {step !== "SELECT_CURRICULUM" && (
-              <button onClick={() => setStep(step === "DO_DICTATION" ? "SELECT_LESSON" : step === "SELECT_LESSON" ? "SELECT_HSK_LEVEL" : "SELECT_CURRICULUM")} className="text-slate-500 hover:text-[#2F8F6E] transition flex items-center gap-2 font-bold text-sm bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200">
+              <button onClick={() => setStep(step === "DO_DICTATION" ? "SELECT_LESSON" : step === "SELECT_LESSON" ? "SELECT_HSK_LEVEL" : "SELECT_CURRICULUM")} className="text-slate-500 hover:text-[#2F6E5A] transition flex items-center gap-2 font-bold text-sm bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200">
                 ← <span className="hidden sm:inline">Quay lại</span>
               </button>
             )}
             {step === "DO_DICTATION" ? (
-              <div className="flex items-center gap-2 text-sm font-bold bg-[#F4F7F6] px-4 py-2 rounded-xl shadow-sm border border-slate-100">
-                <span className="text-[#2F8F6E] hidden sm:inline">{selectedHskLevel}</span>
+              <div className="flex items-center gap-2 text-sm font-bold bg-[#F6F0E2] px-4 py-2 rounded-xl shadow-sm border border-slate-100">
+                <span className="text-[#2F6E5A] hidden sm:inline">{selectedHskLevel}</span>
                 <span className="text-slate-300 hidden sm:inline">/</span>
-                <span className="text-[#2F8F6E]">{selectedLesson}</span>
+                <span className="text-[#2F6E5A]">{selectedLesson}</span>
                 <span className="text-slate-300">/</span>
-                <span className="text-[#1B5E4B]">Câu {currentCardIndex + 1}</span>
+                <span className="text-[#1C1A17]">Câu {currentCardIndex + 1}</span>
               </div>
             ) : (
-              <h2 className="font-black text-[#1B5E4B] text-base md:text-lg tracking-tight">Phòng Nghe Chép (Audio Room)</h2>
+              <h2 className="font-black text-[#1C1A17] text-base md:text-lg tracking-tight">Phòng Nghe Chép (Audio Room)</h2>
             )}
           </div>
           
@@ -290,29 +290,29 @@ export default function DictationPage() {
           {step === "SELECT_CURRICULUM" && (
             <div className="animate-fade-in mt-6">
               <div className="text-center mb-10">
-                <h1 className="text-3xl md:text-4xl font-black text-[#1B5E4B] tracking-tight mb-4 drop-shadow-sm">Luyện Nghe Chép Chính Tả</h1>
-                <p className="text-[#2F8F6E] font-medium text-sm">Rèn luyện phản xạ đôi tai và củng cố trí nhớ từ vựng với các bài nghe chuẩn HSK.</p>
+                <h1 className="text-3xl md:text-4xl font-black text-[#1C1A17] tracking-tight mb-4 drop-shadow-sm">Luyện Nghe Chép Chính Tả</h1>
+                <p className="text-[#2F6E5A] font-medium text-sm">Rèn luyện phản xạ đôi tai và củng cố trí nhớ từ vựng với các bài nghe chuẩn HSK.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div onClick={() => { setSelectedCurriculum("newhsk"); setStep("SELECT_HSK_LEVEL"); }} className="relative bg-white/60 backdrop-blur-xl border border-[#E2E8F0] hover:border-[#8FD9A8] p-8 md:p-10 rounded-[40px] shadow-sm hover:shadow-xl hover:-translate-y-2 cursor-pointer transition-all group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/tuvung.jpg')" }}>
+                <div onClick={() => { setSelectedCurriculum("newhsk"); setStep("SELECT_HSK_LEVEL"); }} className="relative bg-white/60 backdrop-blur-xl border border-[#D8CBAE] hover:border-[#CDBF9F] p-8 md:p-10 rounded-[40px] shadow-sm hover:shadow-xl hover:-translate-y-2 cursor-pointer transition-all group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/tuvung.jpg')" }}>
                   <div className="absolute inset-0 bg-white/90 group-hover:bg-white/80 transition-all z-0"></div>
-                  <div className="absolute top-0 right-0 bg-[#2F8F6E] text-white text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm z-10">Khuyên dùng</div>
+                  <div className="absolute top-0 right-0 bg-[#2F6E5A] text-white text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm z-10">Khuyên dùng</div>
                   <div className="relative z-10 flex flex-col items-center text-center h-full">
-                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#E2E8F0] group-hover:scale-110 transition-transform">📚</div>
-                    <h3 className="text-2xl font-black text-[#1B5E4B] mb-3 group-hover:text-[#2F8F6E] transition-colors">HSK 3.0 (Chuẩn mới)</h3>
+                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#D8CBAE] group-hover:scale-110 transition-transform">📚</div>
+                    <h3 className="text-2xl font-black text-[#1C1A17] mb-3 group-hover:text-[#2F6E5A] transition-colors">HSK 3.0 (Chuẩn mới)</h3>
                     <p className="text-sm text-slate-500 mb-8 font-medium">Giáo trình cập nhật nhất, bám sát cấu trúc đề thi thực tế và từ vựng thông dụng hiện nay.</p>
-                    <span className="mt-auto text-sm font-bold text-[#2F8F6E] bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#E2E8F0] w-full transition-colors group-hover:border-[#8FD9A8]">Chọn giáo trình →</span>
+                    <span className="mt-auto text-sm font-bold text-[#2F6E5A] bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#D8CBAE] w-full transition-colors group-hover:border-[#CDBF9F]">Chọn giáo trình →</span>
                   </div>
                 </div>
 
-                <div onClick={() => { setSelectedCurriculum("oldhsk"); setStep("SELECT_HSK_LEVEL"); }} className="relative bg-white/60 backdrop-blur-xl border border-[#E2E8F0] hover:border-[#FFD666] p-8 md:p-10 rounded-[40px] shadow-sm hover:shadow-xl hover:-translate-y-2 cursor-pointer transition-all group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/topic.jpg')" }}>
+                <div onClick={() => { setSelectedCurriculum("oldhsk"); setStep("SELECT_HSK_LEVEL"); }} className="relative bg-white/60 backdrop-blur-xl border border-[#D8CBAE] hover:border-[#E6B656] p-8 md:p-10 rounded-[40px] shadow-sm hover:shadow-xl hover:-translate-y-2 cursor-pointer transition-all group overflow-hidden bg-cover bg-center" style={{ backgroundImage: "url('/hskk/topic.jpg')" }}>
                   <div className="absolute inset-0 bg-white/90 group-hover:bg-white/80 transition-all z-0"></div>
                   <div className="relative z-10 flex flex-col items-center text-center h-full">
-                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#E2E8F0] group-hover:scale-110 transition-transform">📖</div>
-                    <h3 className="text-2xl font-black text-[#1B5E4B] mb-3 group-hover:text-[#F59E0B] transition-colors">HSK 2.0 (Cũ)</h3>
+                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl mb-6 shadow-sm border border-[#D8CBAE] group-hover:scale-110 transition-transform">📖</div>
+                    <h3 className="text-2xl font-black text-[#1C1A17] mb-3 group-hover:text-[#F59E0B] transition-colors">HSK 2.0 (Cũ)</h3>
                     <p className="text-sm text-slate-500 mb-8 font-medium">Hệ thống giáo trình truyền thống, quen thuộc để luyện tập bổ trợ.</p>
-                    <span className="mt-auto text-sm font-bold text-[#F59E0B] bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#E2E8F0] w-full transition-colors group-hover:border-[#FFD666]">Chọn giáo trình →</span>
+                    <span className="mt-auto text-sm font-bold text-[#F59E0B] bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#D8CBAE] w-full transition-colors group-hover:border-[#E6B656]">Chọn giáo trình →</span>
                   </div>
                 </div>
               </div>
@@ -324,17 +324,17 @@ export default function DictationPage() {
               ========================================= */}
           {step === "SELECT_HSK_LEVEL" && (
             <div className="max-w-4xl mx-auto animate-fade-in mt-4">
-              <h2 className="text-3xl font-black text-[#1B5E4B] mb-8 text-center tracking-tight">Chọn Trình Độ</h2>
+              <h2 className="text-3xl font-black text-[#1C1A17] mb-8 text-center tracking-tight">Chọn Trình Độ</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
                 {["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6"].map((lvl, index) => {
                   const hasData = dictationData.filter(d => (selectedCurriculum === "newhsk" ? d.audioUrl?.includes("newhsk") : (d.audioUrl?.includes("oldhsk") || !d.audioUrl?.includes("newhsk"))) && d.level?.toLowerCase().includes(lvl.toLowerCase())).length > 0;
                   return (
-                    <div key={lvl} onClick={() => { if (hasData) { setSelectedHskLevel(lvl); setStep("SELECT_LESSON"); } }} className={`relative bg-white/60 backdrop-blur-xl border-2 rounded-[32px] p-6 text-center transition-all duration-300 overflow-hidden bg-cover bg-center group ${hasData ? "border-white hover:border-[#8FD9A8] hover:shadow-xl hover:-translate-y-1 cursor-pointer" : "border-transparent opacity-60 cursor-not-allowed"}`} style={{ backgroundImage: `url('/hskk/anh${index + 1}.jpg')` }}>
-                      <div className="absolute inset-0 bg-[#EEF5E9]/90 group-hover:bg-[#EEF5E9]/80 transition-all z-0"></div>
+                    <div key={lvl} onClick={() => { if (hasData) { setSelectedHskLevel(lvl); setStep("SELECT_LESSON"); } }} className={`relative bg-white/60 backdrop-blur-xl border-2 rounded-[32px] p-6 text-center transition-all duration-300 overflow-hidden bg-cover bg-center group ${hasData ? "border-white hover:border-[#CDBF9F] hover:shadow-xl hover:-translate-y-1 cursor-pointer" : "border-transparent opacity-60 cursor-not-allowed"}`} style={{ backgroundImage: `url('/hskk/anh${index + 1}.jpg')` }}>
+                      <div className="absolute inset-0 bg-[#EFE7D6]/90 group-hover:bg-[#EFE7D6]/80 transition-all z-0"></div>
                       <div className="relative z-10 flex flex-col items-center">
-                        <div className={`w-14 h-14 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl mb-4 shadow-sm border ${hasData ? 'bg-white text-[#2F8F6E] border-[#8FD9A8]' : 'bg-slate-100 text-slate-400 border-slate-200'}`}>{hasData ? '🎓' : '🔒'}</div>
-                        <h3 className={`text-2xl font-black mb-1 ${hasData ? 'text-[#1B5E4B] group-hover:text-[#2F8F6E]' : 'text-slate-400'}`}>{lvl}</h3>
-                        <span className={`text-[9px] font-bold uppercase tracking-widest mt-2 px-3 py-1.5 rounded-lg border ${hasData ? 'text-[#1B5E4B] bg-[#8FD9A8]/30 border-[#8FD9A8]/50 shadow-sm' : 'text-slate-500 bg-slate-200 border-slate-300'}`}>{hasData ? "Khả dụng" : "Sắp ra mắt"}</span>
+                        <div className={`w-14 h-14 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl mb-4 shadow-sm border ${hasData ? 'bg-white text-[#2F6E5A] border-[#CDBF9F]' : 'bg-slate-100 text-slate-400 border-slate-200'}`}>{hasData ? '🎓' : '🔒'}</div>
+                        <h3 className={`text-2xl font-black mb-1 ${hasData ? 'text-[#1C1A17] group-hover:text-[#2F6E5A]' : 'text-slate-400'}`}>{lvl}</h3>
+                        <span className={`text-[9px] font-bold uppercase tracking-widest mt-2 px-3 py-1.5 rounded-lg border ${hasData ? 'text-[#1C1A17] bg-[#CDBF9F]/30 border-[#CDBF9F]/50 shadow-sm' : 'text-slate-500 bg-slate-200 border-slate-300'}`}>{hasData ? "Khả dụng" : "Sắp ra mắt"}</span>
                       </div>
                     </div>
                   );
@@ -348,7 +348,7 @@ export default function DictationPage() {
               ========================================= */}
           {step === "SELECT_LESSON" && (
             <div className="max-w-3xl mx-auto animate-fade-in mt-4">
-              <h2 className="text-3xl font-black text-[#1B5E4B] mb-8 text-center tracking-tight">Danh sách bài học</h2>
+              <h2 className="text-3xl font-black text-[#1C1A17] mb-8 text-center tracking-tight">Danh sách bài học</h2>
               <div className="flex flex-col gap-4 pb-10">
                 {totalStandardLessons.map((lessonName, index) => {
                   const lessonCards = lessonsMap[lessonName] || [];
@@ -356,15 +356,15 @@ export default function DictationPage() {
                   const progress = 0; 
 
                   return (
-                    <div key={lessonName} onClick={() => { if (hasData) { setSelectedLesson(lessonName); setCurrentCard(lessonCards[0]); setStep("DO_DICTATION"); } }} className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all bg-white/80 backdrop-blur-md shadow-sm ${hasData ? "border-white hover:border-[#8FD9A8] hover:shadow-md cursor-pointer" : "border-slate-50 opacity-60 cursor-not-allowed"}`}>
+                    <div key={lessonName} onClick={() => { if (hasData) { setSelectedLesson(lessonName); setCurrentCard(lessonCards[0]); setStep("DO_DICTATION"); } }} className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all bg-white/80 backdrop-blur-md shadow-sm ${hasData ? "border-white hover:border-[#CDBF9F] hover:shadow-md cursor-pointer" : "border-slate-50 opacity-60 cursor-not-allowed"}`}>
                       <div className="flex items-center gap-5">
-                        <span className={`text-3xl font-black ${hasData ? 'text-[#1B5E4B]' : 'text-slate-300'}`}>{String(index + 1).padStart(2, '0')}</span>
+                        <span className={`text-3xl font-black ${hasData ? 'text-[#1C1A17]' : 'text-slate-300'}`}>{String(index + 1).padStart(2, '0')}</span>
                         <div>
                           <h3 className="font-black text-slate-800 text-lg mb-1">{lessonName}</h3>
                           {hasData ? (
                             <div className="flex items-center gap-3">
-                              <div className="w-24 h-1.5 bg-[#EEF5E9] rounded-full overflow-hidden border border-[#E2E8F0]">
-                                <div className="h-full bg-[#2F8F6E]" style={{ width: `${progress}%` }}></div>
+                              <div className="w-24 h-1.5 bg-[#EFE7D6] rounded-full overflow-hidden border border-[#D8CBAE]">
+                                <div className="h-full bg-[#2F6E5A]" style={{ width: `${progress}%` }}></div>
                               </div>
                               <span className="text-[10px] font-bold text-slate-500">{progress}%</span>
                             </div>
@@ -374,7 +374,7 @@ export default function DictationPage() {
                         </div>
                       </div>
                       {hasData && (
-                        <div className="text-xs font-bold text-[#1B5E4B] bg-[#F4F7F6] px-3 py-1.5 rounded-lg border border-[#E2E8F0] shadow-sm">
+                        <div className="text-xs font-bold text-[#1C1A17] bg-[#F6F0E2] px-3 py-1.5 rounded-lg border border-[#D8CBAE] shadow-sm">
                           {lessonCards.length} Track
                         </div>
                       )}
@@ -399,43 +399,43 @@ export default function DictationPage() {
                   <div className="flex justify-between items-start mb-8 shrink-0">
                      <div>
                         <div className="flex items-center gap-4 mb-2">
-                           <div className="w-14 h-14 bg-[#EEF5E9] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-3xl shadow-inner border border-[#8FD9A8]">🎧</div>
-                           <h2 className="text-3xl font-black text-[#1B5E4B] tracking-tight">Nghe & {mode === 'dictation' ? 'Viết' : 'Nhại'}</h2>
+                           <div className="w-14 h-14 bg-[#EFE7D6] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-3xl shadow-inner border border-[#CDBF9F]">🎧</div>
+                           <h2 className="text-3xl font-black text-[#1C1A17] tracking-tight">Nghe & {mode === 'dictation' ? 'Viết' : 'Nhại'}</h2>
                         </div>
                         <p className="text-slate-500 text-sm font-medium ml-[72px]">
                           {mode === 'dictation' ? 'Nghe đoạn âm thanh và gõ lại tiếng Trung. Cố gắng viết chính xác nhé!' : 'Nghe và ghi âm đọc lại theo đúng tốc độ và ngữ điệu để AI chấm điểm.'}
                         </p>
                      </div>
                      <div className="hidden sm:flex flex-col items-center rotate-3 opacity-90">
-                        <span className="text-[#2F8F6E] font-black text-sm italic tracking-widest">加油！</span>
-                        <div className="text-6xl drop-shadow-sm mt-1">🐸</div>
+                        <span className="text-[#2F6E5A] font-black text-sm italic tracking-widest">加油！</span>
+                        <div className="text-6xl drop-shadow-sm mt-1">师</div>
                      </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="mb-10 shrink-0">
                      <div className="flex justify-between items-end mb-3">
-                        <h3 className="font-black text-[#1B5E4B] text-lg">Bài khóa {currentCardIndex + 1} / {cardsInLesson.length}</h3>
-                        <span className="font-black text-[#2F8F6E] text-lg">{Math.round(((currentCardIndex + 1)/cardsInLesson.length)*100)}%</span>
+                        <h3 className="font-black text-[#1C1A17] text-lg">Bài khóa {currentCardIndex + 1} / {cardsInLesson.length}</h3>
+                        <span className="font-black text-[#2F6E5A] text-lg">{Math.round(((currentCardIndex + 1)/cardsInLesson.length)*100)}%</span>
                      </div>
-                     <div className="w-full h-3 bg-[#EEF5E9] rounded-full overflow-hidden border border-[#E2E8F0]/50 shadow-inner">
-                        <div className="h-full bg-[#2F8F6E] rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(47,143,110,0.5)]" style={{width: `${((currentCardIndex + 1) / cardsInLesson.length) * 100}%`}}></div>
+                     <div className="w-full h-3 bg-[#EFE7D6] rounded-full overflow-hidden border border-[#D8CBAE]/50 shadow-inner">
+                        <div className="h-full bg-[#2F6E5A] rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(47,143,110,0.5)]" style={{width: `${((currentCardIndex + 1) / cardsInLesson.length) * 100}%`}}></div>
                      </div>
                   </div>
 
                   {/* Audio Player Nhỏ Gọn Sáng Sủa */}
-                  <div className="bg-[#F4F7F6] rounded-[24px] p-4 flex items-center gap-4 md:gap-6 border border-slate-100 shadow-sm mb-6 relative shrink-0">
+                  <div className="bg-[#F6F0E2] rounded-[24px] p-4 flex items-center gap-4 md:gap-6 border border-slate-100 shadow-sm mb-6 relative shrink-0">
                      <audio 
                        ref={audioRef} src={currentCard.audioUrl} className="hidden" 
                        onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} onEnded={() => setIsPlaying(false)}
                        onTimeUpdate={handleTimeUpdate}
                      />
-                     <button onClick={togglePlay} className="w-14 h-14 shrink-0 bg-[#1B5E4B] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 hover:bg-[#2F8F6E] transition-all z-10 border border-[#0F3F31]">
+                     <button onClick={togglePlay} className="w-14 h-14 shrink-0 bg-[#1C1A17] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 hover:bg-[#2F6E5A] transition-all z-10 border border-[#121318]">
                         {isPlaying ? <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> : <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" className="ml-1"><path d="M8 5v14l11-7z"/></svg>}
                      </button>
                      
                      <div className="flex flex-col gap-2 relative z-10">
-                       <button onClick={cycleSpeed} className="bg-white border border-slate-200 px-2 py-1 rounded text-[10px] font-bold text-[#1B5E4B] hover:text-[#2F8F6E] hover:border-[#8FD9A8] transition-colors shadow-sm">
+                       <button onClick={cycleSpeed} className="bg-white border border-slate-200 px-2 py-1 rounded text-[10px] font-bold text-[#1C1A17] hover:text-[#2F6E5A] hover:border-[#CDBF9F] transition-colors shadow-sm">
                          ⚡ {playbackRate}x
                        </button>
                      </div>
@@ -446,12 +446,12 @@ export default function DictationPage() {
                              const barProgress = (i / waveformHeights.length) * 100;
                              const isPlayed = audioProgress > barProgress;
                              return (
-                               <div key={i} className={`w-1.5 rounded-full transition-all ${isPlayed ? 'bg-[#2F8F6E]' : 'bg-[#8FD9A8]/40'}`} style={{height: `${isPlaying ? h : Math.max(6, h / 2)}px`, animationDelay: `${i * 0.05}s`}}></div>
+                               <div key={i} className={`w-1.5 rounded-full transition-all ${isPlayed ? 'bg-[#2F6E5A]' : 'bg-[#CDBF9F]/40'}`} style={{height: `${isPlaying ? h : Math.max(6, h / 2)}px`, animationDelay: `${i * 0.05}s`}}></div>
                              )
                          })}
                      </div>
                      <div className="hidden sm:flex flex-col items-end gap-1 shrink-0 px-2">
-                         <span className="text-xs font-bold text-[#2F8F6E] flex items-center gap-1">
+                         <span className="text-xs font-bold text-[#2F6E5A] flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span> Đang phát
                          </span>
                      </div>
@@ -459,9 +459,9 @@ export default function DictationPage() {
 
                   {/* Tabs chuyển đổi Mode */}
                   <div className="flex justify-center mb-6 shrink-0">
-                     <div className="bg-[#F4F7F6] p-1 rounded-xl flex gap-1 border border-[#E2E8F0] shadow-sm">
-                       <button onClick={() => { setMode("dictation"); setIsCorrect(null); setShowAnswer(false); setShadowingResult(null); }} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${mode === "dictation" ? 'bg-white text-[#2F8F6E] shadow-sm border border-[#8FD9A8]' : 'text-slate-400 hover:text-[#1B5E4B]'}`}>✍️ Gõ chính tả</button>
-                       <button onClick={() => { setMode("shadowing"); setIsCorrect(null); setShowAnswer(false); setShadowingResult(null); }} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${mode === "shadowing" ? 'bg-white text-[#2F8F6E] shadow-sm border border-[#8FD9A8]' : 'text-slate-400 hover:text-[#1B5E4B]'}`}>🗣️ Shadowing</button>
+                     <div className="bg-[#F6F0E2] p-1 rounded-xl flex gap-1 border border-[#D8CBAE] shadow-sm">
+                       <button onClick={() => { setMode("dictation"); setIsCorrect(null); setShowAnswer(false); setShadowingResult(null); }} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${mode === "dictation" ? 'bg-white text-[#2F6E5A] shadow-sm border border-[#CDBF9F]' : 'text-slate-400 hover:text-[#1C1A17]'}`}>✍️ Gõ chính tả</button>
+                       <button onClick={() => { setMode("shadowing"); setIsCorrect(null); setShowAnswer(false); setShadowingResult(null); }} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${mode === "shadowing" ? 'bg-white text-[#2F6E5A] shadow-sm border border-[#CDBF9F]' : 'text-slate-400 hover:text-[#1C1A17]'}`}>🗣️ Shadowing</button>
                      </div>
                   </div>
 
@@ -471,9 +471,9 @@ export default function DictationPage() {
                   {mode === 'dictation' && (
                     <div className="flex flex-col flex-1 animate-fade-in">
                       {/* Tip Box */}
-                      <div className="bg-white border border-[#FFD666] rounded-xl py-3 px-6 text-center mb-6 shadow-sm shrink-0 relative overflow-hidden">
-                         <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-[#FFD666]/30 to-transparent rounded-bl-full pointer-events-none"></div>
-                         <p className="text-xs font-bold text-[#1B5E4B] relative z-10"><span className="text-amber-500 text-sm">💡</span> Mẹo: Nghe kỹ và click vào sóng âm để tua lại khi cần. Chú ý các từ dễ nhầm nhé!</p>
+                      <div className="bg-white border border-[#E6B656] rounded-xl py-3 px-6 text-center mb-6 shadow-sm shrink-0 relative overflow-hidden">
+                         <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-[#E6B656]/30 to-transparent rounded-bl-full pointer-events-none"></div>
+                         <p className="text-xs font-bold text-[#1C1A17] relative z-10"><span className="text-amber-500 text-sm">💡</span> Mẹo: Nghe kỹ và click vào sóng âm để tua lại khi cần. Chú ý các từ dễ nhầm nhé!</p>
                       </div>
 
                       {/* Khu Vực Nhập Đáp Án */}
@@ -482,7 +482,7 @@ export default function DictationPage() {
                            ref={inputRef} rows="4" placeholder="Nghe và gõ lại tiếng Trung..." value={userInput}
                            onChange={(e) => { setUserInput(e.target.value); setIsCorrect(null); setShowAnswer(false); }}
                            onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey && userInput.trim() && isCorrect !== true) checkAnswer(); }}
-                           className={`w-full h-full bg-white border-2 text-[#1B5E4B] font-bold text-xl md:text-2xl rounded-[24px] p-6 outline-none transition-all resize-none shadow-sm placeholder:text-slate-300 placeholder:font-medium ${isCorrect === true ? 'border-[#8FD9A8] bg-[#EEF5E9]/50 text-[#2F8F6E]' : isCorrect === false ? 'border-[#FECDD3] bg-[#FFF1F2]/50 text-[#BE123C]' : 'border-[#E2E8F0] focus:border-[#2F8F6E] focus:ring-4 focus:ring-[#8FD9A8]/20'}`}
+                           className={`w-full h-full bg-white border-2 text-[#1C1A17] font-bold text-xl md:text-2xl rounded-[24px] p-6 outline-none transition-all resize-none shadow-sm placeholder:text-slate-300 placeholder:font-medium ${isCorrect === true ? 'border-[#CDBF9F] bg-[#EFE7D6]/50 text-[#2F6E5A]' : isCorrect === false ? 'border-[#FECDD3] bg-[#FFF1F2]/50 text-[#BE123C]' : 'border-[#D8CBAE] focus:border-[#2F6E5A] focus:ring-4 focus:ring-[#CDBF9F]/20'}`}
                            disabled={isCorrect === true}
                          ></textarea>
                          <div className="absolute bottom-4 right-4 text-slate-300 text-xl pointer-events-none opacity-50">⌨️</div>
@@ -498,18 +498,18 @@ export default function DictationPage() {
                       {isCorrect === false && (
                         <div className="mb-6 p-5 bg-[#FFF1F2] border border-[#FECDD3] rounded-2xl animate-fade-in shrink-0 shadow-sm">
                           <h4 className="font-black text-[#BE123C] text-sm mb-1 flex items-center gap-2"><span>💦</span> Gần đúng rồi, hãy nghe lại nhé!</h4>
-                          {showAnswer && <div className="mt-3 bg-white p-4 rounded-xl border border-[#FECDD3] shadow-inner"><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Đáp án</span><span className="text-lg font-black text-[#1B5E4B]">{currentCard.fullText}</span></div>}
+                          {showAnswer && <div className="mt-3 bg-white p-4 rounded-xl border border-[#FECDD3] shadow-inner"><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Đáp án</span><span className="text-lg font-black text-[#1C1A17]">{currentCard.fullText}</span></div>}
                         </div>
                       )}
 
                       {isCorrect === true && (
-                        <div className="mb-6 p-5 bg-[#EEF5E9] border border-[#8FD9A8]/50 rounded-2xl flex items-center gap-4 animate-fade-in shrink-0 shadow-sm relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#8FD9A8]/30 to-transparent rounded-bl-full pointer-events-none"></div>
+                        <div className="mb-6 p-5 bg-[#EFE7D6] border border-[#CDBF9F]/50 rounded-2xl flex items-center gap-4 animate-fade-in shrink-0 shadow-sm relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#CDBF9F]/30 to-transparent rounded-bl-full pointer-events-none"></div>
                           <div className="text-4xl drop-shadow-sm z-10">🏆</div>
                           <div className="z-10">
-                            <h4 className="font-black text-[#1B5E4B] text-base mb-0.5">Tuyệt vời! Chính xác 100%</h4>
-                            <p className="text-xs font-bold text-[#2F8F6E]">Đáp án: {currentCard.fullText}</p>
-                            <p className="text-[10px] font-black text-[#F2765B] mt-1 bg-white px-2 py-0.5 rounded inline-block border border-white shadow-sm">+10 XP, +2 💧</p>
+                            <h4 className="font-black text-[#1C1A17] text-base mb-0.5">Tuyệt vời! Chính xác 100%</h4>
+                            <p className="text-xs font-bold text-[#2F6E5A]">Đáp án: {currentCard.fullText}</p>
+                            <p className="text-[10px] font-black text-[#9E2F22] mt-1 bg-white px-2 py-0.5 rounded inline-block border border-white shadow-sm">+10 tu vi</p>
                           </div>
                         </div>
                       )}
@@ -517,17 +517,17 @@ export default function DictationPage() {
                       {/* Nút Action */}
                       <div className="flex gap-4 shrink-0 mt-auto">
                          {!isCorrect && (
-                           <button onClick={() => setShowAnswer(!showAnswer)} className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-500 rounded-2xl font-black text-sm hover:border-[#8FD9A8] hover:text-[#1B5E4B] hover:bg-[#F4F7F6] transition-all shadow-sm">
+                           <button onClick={() => setShowAnswer(!showAnswer)} className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-500 rounded-2xl font-black text-sm hover:border-[#CDBF9F] hover:text-[#1C1A17] hover:bg-[#F6F0E2] transition-all shadow-sm">
                              {showAnswer ? "🙈 Ẩn đáp án" : "👁 Xem đáp án"}
                            </button>
                          )}
                          
                          {isCorrect !== true ? (
-                           <button onClick={checkAnswer} disabled={!userInput.trim()} className="flex-1 py-4 bg-[#1B5E4B] text-white rounded-2xl font-black text-sm hover:bg-[#2F8F6E] hover:-translate-y-0.5 transition-all shadow-md disabled:opacity-50 disabled:hover:translate-y-0 uppercase tracking-widest border-b-[4px] border-[#0F3F31]">
+                           <button onClick={checkAnswer} disabled={!userInput.trim()} className="flex-1 py-4 bg-[#1C1A17] text-white rounded-2xl font-black text-sm hover:bg-[#2F6E5A] hover:-translate-y-0.5 transition-all shadow-md disabled:opacity-50 disabled:hover:translate-y-0 uppercase tracking-widest border-b-[4px] border-[#121318]">
                              Kiểm tra đáp án →
                            </button>
                          ) : (
-                           <button onClick={() => { const nextIdx = currentCardIndex + 1; if (nextIdx < cardsInLesson.length) { setCurrentCard(cardsInLesson[nextIdx]); } else { setStep("SELECT_LESSON"); } }} className="w-full py-4.5 bg-[#2F8F6E] text-white rounded-2xl font-black text-sm hover:bg-[#1B5E4B] hover:-translate-y-0.5 transition-all shadow-xl uppercase tracking-widest border-b-[4px] border-[#0F3F31]">
+                           <button onClick={() => { const nextIdx = currentCardIndex + 1; if (nextIdx < cardsInLesson.length) { setCurrentCard(cardsInLesson[nextIdx]); } else { setStep("SELECT_LESSON"); } }} className="w-full py-4.5 bg-[#2F6E5A] text-white rounded-2xl font-black text-sm hover:bg-[#1C1A17] hover:-translate-y-0.5 transition-all shadow-xl uppercase tracking-widest border-b-[4px] border-[#121318]">
                              {currentCardIndex + 1 < cardsInLesson.length ? "Câu tiếp theo →" : "Hoàn thành bài học 🎉"}
                            </button>
                          )}
@@ -542,8 +542,8 @@ export default function DictationPage() {
                     <div className="flex flex-col flex-1 animate-fade-in text-center items-center justify-center py-6">
                       {!shadowingResult ? (
                         <>
-                          <button onMouseDown={handleShadowing} onMouseUp={() => {}} className={`w-32 h-32 rounded-full flex items-center justify-center text-5xl shadow-2xl transition-all border-4 relative ${isRecording ? 'bg-[#BE123C] border-[#FECDD3] text-white scale-110 shadow-rose-500/30' : 'bg-white border-slate-100 text-[#1B5E4B] hover:border-[#8FD9A8] hover:scale-105'}`}>
-                            {isRecording && <div className="absolute inset-0 border-4 border-[#F2765B] rounded-full animate-ping opacity-50"></div>}
+                          <button onMouseDown={handleShadowing} onMouseUp={() => {}} className={`w-32 h-32 rounded-full flex items-center justify-center text-5xl shadow-2xl transition-all border-4 relative ${isRecording ? 'bg-[#BE123C] border-[#FECDD3] text-white scale-110 shadow-rose-500/30' : 'bg-white border-slate-100 text-[#1C1A17] hover:border-[#CDBF9F] hover:scale-105'}`}>
+                            {isRecording && <div className="absolute inset-0 border-4 border-[#9E2F22] rounded-full animate-ping opacity-50"></div>}
                             🎙️
                           </button>
                           <p className={`mt-8 font-black tracking-widest uppercase text-sm ${isRecording ? 'text-[#BE123C] animate-pulse' : 'text-slate-400'}`}>{isRecording ? "Đang lắng nghe..." : "Nhấn giữ để đọc"}</p>
@@ -554,7 +554,7 @@ export default function DictationPage() {
                           <div className="relative mb-6">
                             <svg className="w-40 h-40 transform -rotate-90">
                               <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-100" />
-                              <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={2 * Math.PI * 70} strokeDashoffset={(2 * Math.PI * 70) * (1 - shadowingResult.score / 100)} className={`${shadowingResult.score >= 80 ? 'text-[#08A66A]' : shadowingResult.score >= 50 ? 'text-[#F59E0B]' : 'text-[#BE123C]'} transition-all duration-1000 ease-out`} strokeLinecap="round" />
+                              <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={2 * Math.PI * 70} strokeDashoffset={(2 * Math.PI * 70) * (1 - shadowingResult.score / 100)} className={`${shadowingResult.score >= 80 ? 'text-[#2F6E5A]' : shadowingResult.score >= 50 ? 'text-[#F59E0B]' : 'text-[#BE123C]'} transition-all duration-1000 ease-out`} strokeLinecap="round" />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                               <span className="text-3xl font-black text-slate-800">{shadowingResult.score}</span>
@@ -563,20 +563,20 @@ export default function DictationPage() {
                           </div>
 
                           {shadowingResult.score >= 80 && (
-                            <p className="text-[10px] font-black text-[#F2765B] bg-[#FFF1F2] px-3 py-1 rounded-lg border border-[#FECDD3] shadow-sm mb-4">+10 XP, +2 💧</p>
+                            <p className="text-[10px] font-black text-[#9E2F22] bg-[#FFF1F2] px-3 py-1 rounded-lg border border-[#FECDD3] shadow-sm mb-4">+10 tu vi</p>
                           )}
 
-                          <div className="w-full bg-[#F4F7F6] p-6 rounded-3xl border border-[#E2E8F0] shadow-sm text-left mb-8 max-w-md">
+                          <div className="w-full bg-[#F6F0E2] p-6 rounded-3xl border border-[#D8CBAE] shadow-sm text-left mb-8 max-w-md">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Mẫu (Target)</p>
-                            <p className="text-lg font-black text-[#1B5E4B] mb-4">{currentCard.fullText}</p>
+                            <p className="text-lg font-black text-[#1C1A17] mb-4">{currentCard.fullText}</p>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Bạn đọc (You)</p>
-                            <p className={`text-base font-bold ${shadowingResult.score >= 80 ? 'text-[#2F8F6E]' : 'text-[#BE123C]'}`}>{shadowingResult.transcript || "Không nhận diện được giọng nói"}</p>
+                            <p className={`text-base font-bold ${shadowingResult.score >= 80 ? 'text-[#2F6E5A]' : 'text-[#BE123C]'}`}>{shadowingResult.transcript || "Không nhận diện được giọng nói"}</p>
                           </div>
 
                           <div className="flex gap-4 w-full max-w-md mt-auto">
-                            <button onClick={() => setShadowingResult(null)} className="flex-1 py-4.5 bg-white border-2 border-slate-200 text-slate-600 font-black text-sm rounded-2xl hover:bg-[#F4F7F6] hover:border-[#8FD9A8] transition-colors shadow-sm">Thử lại</button>
+                            <button onClick={() => setShadowingResult(null)} className="flex-1 py-4.5 bg-white border-2 border-slate-200 text-slate-600 font-black text-sm rounded-2xl hover:bg-[#F6F0E2] hover:border-[#CDBF9F] transition-colors shadow-sm">Thử lại</button>
                             {shadowingResult.score >= 80 && (
-                              <button onClick={() => { const nextIdx = currentCardIndex + 1; if (nextIdx < cardsInLesson.length) { setCurrentCard(cardsInLesson[nextIdx]); } else { setStep("SELECT_LESSON"); } }} className="flex-1 py-4.5 bg-[#1B5E4B] text-white rounded-2xl font-black text-sm hover:bg-[#2F8F6E] transition-all shadow-xl border-b-[4px] border-[#0F3F31]">
+                              <button onClick={() => { const nextIdx = currentCardIndex + 1; if (nextIdx < cardsInLesson.length) { setCurrentCard(cardsInLesson[nextIdx]); } else { setStep("SELECT_LESSON"); } }} className="flex-1 py-4.5 bg-[#1C1A17] text-white rounded-2xl font-black text-sm hover:bg-[#2F6E5A] transition-all shadow-xl border-b-[4px] border-[#121318]">
                                 Tiếp theo →
                               </button>
                             )}
@@ -594,11 +594,11 @@ export default function DictationPage() {
                  <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-6 shadow-sm border border-white sticky top-[104px]">
                     
                     {/* Header Sidebar */}
-                    <div className="flex items-center justify-between mb-6 border-b border-[#F4F7F6] pb-4">
-                       <h3 className="text-lg font-black text-[#1B5E4B] flex items-center gap-2">
+                    <div className="flex items-center justify-between mb-6 border-b border-[#F6F0E2] pb-4">
+                       <h3 className="text-lg font-black text-[#1C1A17] flex items-center gap-2">
                           <span className="text-2xl">📖</span> Bài học
                        </h3>
-                       <span className="bg-[#EEF5E9] text-[#2F8F6E] px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border border-[#8FD9A8]/50">{selectedHskLevel}</span>
+                       <span className="bg-[#EFE7D6] text-[#2F6E5A] px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border border-[#CDBF9F]/50">{selectedHskLevel}</span>
                     </div>
                     
                     <p className="font-bold text-sm text-slate-500 mb-5">{selectedLesson}</p>
@@ -608,17 +608,17 @@ export default function DictationPage() {
                        {cardsInLesson.map((card, idx) => {
                           const isActive = currentCard?.id === card.id;
                           return (
-                            <div key={card.id} onClick={() => setCurrentCard(card)} className={`flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-colors group border-2 ${isActive ? 'bg-[#EEF5E9] border-[#8FD9A8]/50 shadow-sm' : 'bg-white border-transparent hover:border-[#8FD9A8]/30 hover:bg-[#F4F7F6]'}`}>
+                            <div key={card.id} onClick={() => setCurrentCard(card)} className={`flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-colors group border-2 ${isActive ? 'bg-[#EFE7D6] border-[#CDBF9F]/50 shadow-sm' : 'bg-white border-transparent hover:border-[#CDBF9F]/30 hover:bg-[#F6F0E2]'}`}>
                                <div className="flex items-center gap-3">
-                                  <div className={`w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center font-black text-xs border ${isActive ? 'bg-white text-[#2F8F6E] shadow-sm border-[#8FD9A8]' : 'bg-[#F4F7F6] text-slate-400 border-[#E2E8F0]'}`}>
+                                  <div className={`w-8 h-8 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center font-black text-xs border ${isActive ? 'bg-white text-[#2F6E5A] shadow-sm border-[#CDBF9F]' : 'bg-[#F6F0E2] text-slate-400 border-[#D8CBAE]'}`}>
                                      {idx + 1}
                                   </div>
-                                  <span className={`font-bold text-sm flex items-center gap-1.5 ${isActive ? 'text-[#1B5E4B]' : 'text-slate-500 group-hover:text-slate-700'}`}>
-                                     {isActive && <span className="text-[10px] text-[#F2765B] animate-pulse">▶</span>} Bài khóa {idx + 1}
+                                  <span className={`font-bold text-sm flex items-center gap-1.5 ${isActive ? 'text-[#1C1A17]' : 'text-slate-500 group-hover:text-slate-700'}`}>
+                                     {isActive && <span className="text-[10px] text-[#9E2F22] animate-pulse">▶</span>} Bài khóa {idx + 1}
                                   </span>
                                </div>
                                {isActive ? (
-                                  <div className="w-4 h-4 rounded-full border-[4px] border-[#2F8F6E]"></div>
+                                  <div className="w-4 h-4 rounded-full border-[4px] border-[#2F6E5A]"></div>
                                ) : (
                                   <div className="text-slate-300 text-xs">📝</div>
                                )}
@@ -628,10 +628,10 @@ export default function DictationPage() {
                     </div>
 
                     {/* Quote */}
-                    <div className="bg-[#FFF8E8] p-6 rounded-[24px] border border-[#FFD666]/40 text-center relative mt-auto shadow-inner">
-                       <span className="absolute top-2 left-3 text-5xl text-[#FFD666]/50 font-serif leading-none">“</span>
-                       <p className="text-[#1B5E4B] font-black text-lg mb-1 relative z-10 pt-2 tracking-widest">积少成多，</p>
-                       <p className="text-[#2F8F6E] font-bold text-sm mb-3 relative z-10 tracking-widest">坚持就是胜利。</p>
+                    <div className="bg-[#FBF8F1] p-6 rounded-[24px] border border-[#E6B656]/40 text-center relative mt-auto shadow-inner">
+                       <span className="absolute top-2 left-3 text-5xl text-[#E6B656]/50 font-serif leading-none">“</span>
+                       <p className="text-[#1C1A17] font-black text-lg mb-1 relative z-10 pt-2 tracking-widest">积少成多，</p>
+                       <p className="text-[#2F6E5A] font-bold text-sm mb-3 relative z-10 tracking-widest">坚持就是胜利。</p>
                        <p className="text-xs text-slate-400 font-medium italic relative z-10">— 加油！ —</p>
                     </div>
                  </div>

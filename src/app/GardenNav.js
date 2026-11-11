@@ -122,7 +122,7 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
             </span>
             {tv && !isTeacher && (
               <Link href={tv.provisional ? "/linh-can" : "/de-tu"} className="tt-chip hidden xl:inline-flex" title={tv.provisional ? "Chưa định cảnh giới — lên Trắc Linh Đài" : `${tv.vn} · ${tv.stage} · tu vi ${tv.tv}/${tv.need}`}>
-                <span className="zh" aria-hidden="true">{tv.zh}</span><span className="text-[#E6B656]">{tv.provisional ? "chưa định" : tv.stage}</span>
+                <span className="zh" aria-hidden="true">{tv.provisional ? "未定" : tv.zh}</span><span className="text-[#E6B656]">{tv.provisional ? "chưa định cảnh giới" : tv.stage}</span>
               </Link>
             )}
             <span className="tt-chip gold relative" title="Tu vi">

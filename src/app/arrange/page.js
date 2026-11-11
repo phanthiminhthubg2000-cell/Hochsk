@@ -5,7 +5,7 @@
 //   • Theo bài  : câu ví dụ của từ vựng trong bài giảng (public/games/vocab.json, trường [4] câu · [5] nghĩa)
 //   • Theo cấp  : kho câu src/app/sentences.json (có pinyin + nghĩa)
 // Sai → các mảnh đã đúng vị trí được tô xanh; gợi ý đặt sẵn từng mảnh đúng.
-// XP chỉ ghi một nơi: users/{uid}.xp (+ water) bằng increment.
+// tu vi chỉ ghi một nơi: users/{uid}.xp (+ water) bằng increment.
 // ============================================================
 import Link from "next/link";
 import { useState, useEffect, useMemo, useRef } from "react";
@@ -221,52 +221,52 @@ export default function ArrangePage() {
   const tile = "px-5 py-3 text-2xl font-black rounded-2xl shadow-sm transition-all";
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F4F7EF] font-sans text-[#1B5E4B]">
+    <div className="flex flex-col min-h-screen bg-[#F6F0E2] font-sans text-[#1C1A17]">
       <GardenNav active="practice" />
       <style>{`.zh{font-family:"Noto Sans SC","PingFang SC",sans-serif}@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}.shk{animation:shk .3s}`}</style>
 
-      <header className="px-4 md:px-8 h-14 md:h-16 border-b border-[#E2E8F0] bg-white/80 backdrop-blur-xl flex items-center gap-4 shrink-0">
-        {phase !== "start" && <button onClick={() => setPhase("start")} className="text-slate-500 hover:text-[#2F8F6E] font-bold text-sm bg-white px-4 py-2 rounded-xl border border-slate-200">← <span className="hidden sm:inline">Quay lại</span></button>}
+      <header className="px-4 md:px-8 h-14 md:h-16 border-b border-[#D8CBAE] bg-white/80 backdrop-blur-xl flex items-center gap-4 shrink-0">
+        {phase !== "start" && <button onClick={() => setPhase("start")} className="text-slate-500 hover:text-[#2F6E5A] font-bold text-sm bg-white px-4 py-2 rounded-xl border border-slate-200">← <span className="hidden sm:inline">Quay lại</span></button>}
         <h2 className="font-black text-base md:text-lg">🧩 Xếp gạch ngữ pháp</h2>
       </header>
 
       <div className="flex-1 flex flex-col items-center w-full py-8 px-4 md:px-6">
         {/* ---------- CHỌN ĐỀ ---------- */}
         {phase === "start" && (
-          <div className="w-full max-w-xl bg-white p-6 md:p-10 rounded-[32px] border border-[#E2E8F0] shadow-sm">
+          <div className="w-full max-w-xl bg-white p-6 md:p-10 rounded-[32px] border border-[#D8CBAE] shadow-sm">
             <div className="text-5xl text-center">🧩</div>
             <h1 className="text-3xl font-black text-center mt-3">Trò chơi xếp gạch</h1>
-            <p className="text-slate-500 font-medium text-center mt-2 mb-6">Chạm các mảnh để ghép thành câu đúng. Mỗi lượt có <b className="text-[#F2765B]">{HEARTS} ❤️</b>.</p>
+            <p className="text-slate-500 font-medium text-center mt-2 mb-6">Chạm các mảnh để ghép thành câu đúng. Mỗi lượt có <b className="text-[#9E2F22]">{HEARTS} ❤️</b>.</p>
 
             <div className="grid grid-cols-2 gap-2 mb-5" role="tablist">
               {[["lesson", "📚 Theo bài học"], ["level", "🎯 Kho câu theo cấp"]].map(([k, l]) => (
                 <button key={k} role="tab" aria-selected={source === k} onClick={() => setSource(k)} disabled={k === "lesson" && !vocab}
-                  className={`h-12 rounded-2xl font-black text-sm border-2 ${source === k ? "bg-[#2F8F6E] text-white border-[#2F8F6E]" : "bg-white border-[#E2E8F0] text-slate-600"}`}>{l}</button>
+                  className={`h-12 rounded-2xl font-black text-sm border-2 ${source === k ? "bg-[#2F6E5A] text-white border-[#2F6E5A]" : "bg-white border-[#D8CBAE] text-slate-600"}`}>{l}</button>
               ))}
             </div>
 
             {source === "lesson" ? (
               !vocab ? <div className="text-slate-500">Đang tải bài học…</div> : (
-                <div className="flex flex-col gap-4 bg-[#F4F7F6] p-5 rounded-[24px]">
+                <div className="flex flex-col gap-4 bg-[#F6F0E2] p-5 rounded-[24px]">
                   <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Giáo trình
-                    <select value={lv} onChange={(e) => { setLv(+e.target.value); setUpto(1); }} className="mt-1 w-full bg-white border-2 border-[#E2E8F0] text-[#2F8F6E] font-black py-3 px-4 rounded-2xl normal-case tracking-normal text-base">
+                    <select value={lv} onChange={(e) => { setLv(+e.target.value); setUpto(1); }} className="mt-1 w-full bg-white border-2 border-[#D8CBAE] text-[#2F6E5A] font-black py-3 px-4 rounded-2xl normal-case tracking-normal text-base">
                       {vocab.map((v, i) => <option key={v.id} value={i}>{v.name}</option>)}
                     </select>
                   </label>
                   <label className="text-xs font-black text-slate-400 uppercase tracking-widest">{only ? "Bài" : "Ôn từ bài 1 đến bài"}
-                    <select value={upto} onChange={(e) => setUpto(+e.target.value)} className="mt-1 w-full bg-white border-2 border-[#E2E8F0] text-[#2F8F6E] font-black py-3 px-4 rounded-2xl normal-case tracking-normal text-base">
+                    <select value={upto} onChange={(e) => setUpto(+e.target.value)} className="mt-1 w-full bg-white border-2 border-[#D8CBAE] text-[#2F6E5A] font-black py-3 px-4 rounded-2xl normal-case tracking-normal text-base">
                       {level.lessons.map((l, i) => <option key={i} value={i + 1}>Bài {l.n} · {l.t}</option>)}
                     </select>
                   </label>
                   <label className="flex items-center gap-2 text-sm font-bold text-slate-600">
-                    <input type="checkbox" checked={only} onChange={(e) => setOnly(e.target.checked)} className="w-5 h-5 accent-[#2F8F6E]" /> Chỉ luyện riêng bài này
+                    <input type="checkbox" checked={only} onChange={(e) => setOnly(e.target.checked)} className="w-5 h-5 accent-[#2F6E5A]" /> Chỉ luyện riêng bài này
                   </label>
                 </div>
               )
             ) : (
-              <div className="bg-[#F4F7F6] p-5 rounded-[24px]">
+              <div className="bg-[#F6F0E2] p-5 rounded-[24px]">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Cấp độ
-                  <select value={selectedHsk} onChange={(e) => setSelectedHsk(e.target.value)} className="mt-1 w-full bg-white border-2 border-[#E2E8F0] text-[#2F8F6E] font-black py-3 px-4 rounded-2xl normal-case tracking-normal text-base">
+                  <select value={selectedHsk} onChange={(e) => setSelectedHsk(e.target.value)} className="mt-1 w-full bg-white border-2 border-[#D8CBAE] text-[#2F6E5A] font-black py-3 px-4 rounded-2xl normal-case tracking-normal text-base">
                     {HSK_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
                   </select>
                 </label>
@@ -276,56 +276,56 @@ export default function ArrangePage() {
             <div className="mt-5">
               <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Số câu mỗi lượt</div>
               <div className="flex gap-2">
-                {COUNTS.map((n) => <button key={n} onClick={() => setCount(n)} className={`flex-1 h-11 rounded-xl font-black border-2 ${count === n ? "bg-[#2F8F6E] text-white border-[#2F8F6E]" : "bg-white border-[#E2E8F0]"}`}>{n}</button>)}
+                {COUNTS.map((n) => <button key={n} onClick={() => setCount(n)} className={`flex-1 h-11 rounded-xl font-black border-2 ${count === n ? "bg-[#2F6E5A] text-white border-[#2F6E5A]" : "bg-white border-[#D8CBAE]"}`}>{n}</button>)}
               </div>
               <p className="text-sm text-slate-500 mt-2">Có <b>{available.length}</b> câu phù hợp{available.length && available.length < count ? ` — lượt này sẽ có ${available.length} câu` : ""}.</p>
             </div>
 
-            <button onClick={start} disabled={!available.length} className="w-full mt-6 py-4 bg-[#2F8F6E] text-white font-black text-lg rounded-[20px] hover:bg-[#1B5E4B] disabled:opacity-40 border-b-[4px] border-[#0F3F31]">Bắt đầu ghép câu ➔</button>
+            <button onClick={start} disabled={!available.length} className="w-full mt-6 py-4 bg-[#2F6E5A] text-white font-black text-lg rounded-[20px] hover:bg-[#1C1A17] disabled:opacity-40 border-b-[4px] border-[#121318]">Bắt đầu ghép câu ➔</button>
           </div>
         )}
 
         {/* ---------- ĐANG CHƠI ---------- */}
         {phase === "playing" && cur && (
           <div className="w-full max-w-3xl flex flex-col gap-5">
-            <div className="flex items-center gap-4 bg-white p-4 rounded-[20px] border border-[#E2E8F0]">
+            <div className="flex items-center gap-4 bg-white p-4 rounded-[20px] border border-[#D8CBAE]">
               <div className="flex gap-0.5 text-lg" aria-label={`Còn ${hearts} tim`}>
                 {Array.from({ length: HEARTS }).map((_, i) => <span key={i} className={i < hearts ? "" : "opacity-20 grayscale"}>❤️</span>)}
               </div>
-              <div className="flex-1 h-3 bg-[#EEF5E9] rounded-full overflow-hidden"><div className="h-full bg-[#2F8F6E] transition-all" style={{ width: `${progress}%` }} /></div>
-              <div className="font-black bg-[#EEF5E9] px-3 py-1 rounded-lg tabular-nums">{idx + 1} / {questions.length}</div>
+              <div className="flex-1 h-3 bg-[#EFE7D6] rounded-full overflow-hidden"><div className="h-full bg-[#2F6E5A] transition-all" style={{ width: `${progress}%` }} /></div>
+              <div className="font-black bg-[#EFE7D6] px-3 py-1 rounded-lg tabular-nums">{idx + 1} / {questions.length}</div>
             </div>
 
-            <div className="bg-white p-5 md:p-8 rounded-[28px] border border-[#E2E8F0]">
+            <div className="bg-white p-5 md:p-8 rounded-[28px] border border-[#D8CBAE]">
               {/* đề */}
               <div className="mb-4">
                 {cur.vietnamese ? <div className="text-lg font-bold text-slate-700">🇻🇳 {cur.vietnamese}</div>
                   : <div className="text-sm font-bold text-slate-400">Ghép thành câu hoàn chỉnh</div>}
-                {cur.key && <div className="mt-2 inline-flex items-center gap-2 text-sm bg-[#FFF8E8] border border-[#FFD666]/60 rounded-xl px-3 py-1.5"><span className="font-black text-amber-700">Từ trọng tâm</span><span className="zh font-black text-lg">{cur.key.z}</span><span className="text-slate-600">{cur.key.py}{cur.key.vn ? ` · ${cur.key.vn}` : ""}</span>{cur.lesson && <span className="text-slate-400">· Bài {cur.lesson}</span>}</div>}
+                {cur.key && <div className="mt-2 inline-flex items-center gap-2 text-sm bg-[#FBF8F1] border border-[#E6B656]/60 rounded-xl px-3 py-1.5"><span className="font-black text-amber-700">Từ trọng tâm</span><span className="zh font-black text-lg">{cur.key.z}</span><span className="text-slate-600">{cur.key.py}{cur.key.vn ? ` · ${cur.key.vn}` : ""}</span>{cur.lesson && <span className="text-slate-400">· Bài {cur.lesson}</span>}</div>}
               </div>
 
               {/* ô ghép */}
-              <div className={`min-h-[96px] rounded-[20px] p-4 flex flex-wrap content-start gap-2.5 mb-5 ${feedback === "correct" ? "border-2 border-[#8FD9A8] bg-[#EEF5E9]" : feedback === "incorrect" ? "border-2 border-[#FECDD3] bg-[#FFF1F2] shk" : feedback === "reveal" ? "border-2 border-[#FFD666] bg-[#FFF8E8]" : "border-2 border-dashed border-[#8FD9A8]/60 bg-[#F4F7F6]"}`}>
+              <div className={`min-h-[96px] rounded-[20px] p-4 flex flex-wrap content-start gap-2.5 mb-5 ${feedback === "correct" ? "border-2 border-[#CDBF9F] bg-[#EFE7D6]" : feedback === "incorrect" ? "border-2 border-[#FECDD3] bg-[#FFF1F2] shk" : feedback === "reveal" ? "border-2 border-[#E6B656] bg-[#FBF8F1]" : "border-2 border-dashed border-[#CDBF9F]/60 bg-[#F6F0E2]"}`}>
                 {!picked.length && <span className="text-slate-400 w-full text-center py-3">Chạm mảnh bên dưới để ghép câu</span>}
                 {picked.map((w, i) => (
                   <button key={"p" + w.id} onClick={() => unpick(w)} disabled={done}
-                    className={`zh ${tile} border-2 ${done ? "bg-[#2F8F6E] text-white border-transparent" : posOk(w, i) ? "bg-[#E7F5EC] border-[#2F8F6E] text-[#1B5E4B]" : feedback === "incorrect" ? "bg-white border-[#FECDD3] text-[#BE123C]" : "bg-white border-[#E2E8F0]"}`}>{w.text}</button>
+                    className={`zh ${tile} border-2 ${done ? "bg-[#2F6E5A] text-white border-transparent" : posOk(w, i) ? "bg-[#DDEBE4] border-[#2F6E5A] text-[#1C1A17]" : feedback === "incorrect" ? "bg-white border-[#FECDD3] text-[#BE123C]" : "bg-white border-[#D8CBAE]"}`}>{w.text}</button>
                 ))}
               </div>
 
               {feedback === "incorrect" && (
                 <div className="mb-5 p-4 bg-[#FFF1F2] border border-[#FECDD3] rounded-[18px] text-sm">
-                  <b className="text-[#BE123C]">Chưa đúng — mất 1 ❤️.</b> <span className="text-slate-600">Các mảnh <b className="text-[#2F8F6E]">viền xanh</b> đã đúng vị trí; chạm mảnh đỏ để gỡ ra, hoặc bấm 💡 Gợi ý để đặt sẵn mảnh tiếp theo.</span>
+                  <b className="text-[#BE123C]">Chưa đúng — mất 1 ❤️.</b> <span className="text-slate-600">Các mảnh <b className="text-[#2F6E5A]">viền xanh</b> đã đúng vị trí; chạm mảnh đỏ để gỡ ra, hoặc bấm 💡 Gợi ý để đặt sẵn mảnh tiếp theo.</span>
                 </div>
               )}
               {done && (
-                <div className={`mb-5 p-5 rounded-[18px] border ${feedback === "correct" ? "bg-[#EEF5E9] border-[#8FD9A8]" : "bg-[#FFF8E8] border-[#FFD666]"}`}>
+                <div className={`mb-5 p-5 rounded-[18px] border ${feedback === "correct" ? "bg-[#EFE7D6] border-[#CDBF9F]" : "bg-[#FBF8F1] border-[#E6B656]"}`}>
                   <div className="font-black">{feedback === "correct" ? "🎉 太棒了！Chính xác!" : hearts <= 0 ? "💔 Hết tim — đáp án đúng:" : "📖 Đáp án đúng:"}</div>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="zh text-2xl font-black">{cur.chinese}</span>
-                    <button onClick={() => speak(cur.chinese)} aria-label="Nghe câu" className="w-9 h-9 rounded-full bg-white border border-[#E2E8F0]">🔊</button>
+                    <button onClick={() => speak(cur.chinese)} aria-label="Nghe câu" className="w-9 h-9 rounded-full bg-white border border-[#D8CBAE]">🔊</button>
                   </div>
-                  {pyOf(cur) && <div className="text-[#2F8F6E] font-semibold mt-1">{pyOf(cur)}</div>}
+                  {pyOf(cur) && <div className="text-[#2F6E5A] font-semibold mt-1">{pyOf(cur)}</div>}
                   {cur.vietnamese && <div className="text-slate-600 mt-1">{cur.vietnamese}</div>}
                   {cur.key && <div className="text-sm text-slate-600 mt-2"><span className="zh font-black">{cur.key.z}</span> {cur.key.py} — {cur.key.vn}</div>}
                 </div>
@@ -333,19 +333,19 @@ export default function ArrangePage() {
 
               {!done && (
                 <div className="flex flex-wrap justify-center gap-2.5 mb-6">
-                  {pool.map((w) => <button key={"a" + w.id} onClick={() => pick(w)} className={`zh ${tile} bg-white border-2 border-slate-100 hover:-translate-y-0.5 hover:border-[#8FD9A8]`}>{w.text}</button>)}
+                  {pool.map((w) => <button key={"a" + w.id} onClick={() => pick(w)} className={`zh ${tile} bg-white border-2 border-slate-100 hover:-translate-y-0.5 hover:border-[#CDBF9F]`}>{w.text}</button>)}
                 </div>
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
                 {done ? (
-                  <button onClick={next} className="w-full py-4 bg-[#2F8F6E] text-white rounded-2xl font-black hover:bg-[#1B5E4B] border-b-[4px] border-[#0F3F31]">{hearts <= 0 || idx + 1 >= questions.length ? "Xem kết quả 🏁" : "Câu tiếp theo ➔"}</button>
+                  <button onClick={next} className="w-full py-4 bg-[#2F6E5A] text-white rounded-2xl font-black hover:bg-[#1C1A17] border-b-[4px] border-[#121318]">{hearts <= 0 || idx + 1 >= questions.length ? "Xem kết quả 🏁" : "Câu tiếp theo ➔"}</button>
                 ) : (
                   <>
-                    <button onClick={hint} className="flex-1 py-3.5 bg-[#FFF8E8] border-2 border-[#FFD666]/70 text-amber-700 rounded-2xl font-black text-sm">💡 Gợi ý (−3 XP)</button>
+                    <button onClick={hint} className="flex-1 py-3.5 bg-[#FBF8F1] border-2 border-[#E6B656]/70 text-amber-700 rounded-2xl font-black text-sm">💡 Gợi ý (−3 tu vi)</button>
                     <button onClick={clearAll} disabled={!picked.length} className="flex-1 py-3.5 bg-white border-2 border-slate-100 text-slate-500 rounded-2xl font-black text-sm disabled:opacity-40">↶ Làm lại</button>
                     <button onClick={giveUp} className="flex-1 py-3.5 bg-white border-2 border-slate-100 text-slate-500 rounded-2xl font-black text-sm">🏳️ Xem đáp án</button>
-                    <button onClick={check} disabled={!picked.length} className="flex-[2] py-3.5 bg-[#1B5E4B] text-white rounded-2xl font-black text-sm disabled:opacity-40 border-b-[4px] border-[#0F3F31]">Kiểm tra →</button>
+                    <button onClick={check} disabled={!picked.length} className="flex-[2] py-3.5 bg-[#1C1A17] text-white rounded-2xl font-black text-sm disabled:opacity-40 border-b-[4px] border-[#121318]">Kiểm tra →</button>
                   </>
                 )}
               </div>
@@ -355,14 +355,14 @@ export default function ArrangePage() {
 
         {/* ---------- KẾT QUẢ ---------- */}
         {phase === "result" && (
-          <div className="w-full max-w-xl bg-white p-8 md:p-12 rounded-[32px] border border-[#E2E8F0] text-center">
+          <div className="w-full max-w-xl bg-white p-8 md:p-12 rounded-[32px] border border-[#D8CBAE] text-center">
             <div className="text-7xl">{hearts > 0 ? "🎉" : "💔"}</div>
             <h2 className="text-3xl font-black mt-3">{hearts > 0 ? "Hoàn thành!" : "Hết tim rồi!"}</h2>
-            <div className="mt-6 bg-[#FFF8E8] border border-[#FFD666]/40 rounded-[24px] p-6 flex justify-around">
+            <div className="mt-6 bg-[#FBF8F1] border border-[#E6B656]/40 rounded-[24px] p-6 flex justify-around">
               <div><div className="text-xs font-bold text-amber-700">Câu đúng</div><div className="text-4xl font-black text-slate-800">{score}<span className="text-lg text-slate-400"> / {questions.length}</span></div></div>
-              <div><div className="text-xs font-bold text-amber-700">Phần thưởng</div><div className="text-2xl font-black text-[#E8A20C]">⭐ +{earned.xp}</div><div className="text-2xl font-black text-[#4FB6C7]">💧 +{earned.water}</div></div>
+              <div><div className="text-xs font-bold text-amber-700">Phần thưởng</div><div className="text-2xl font-black text-[#9E2F22]">+{earned.xp} tu vi</div></div>
             </div>
-            {!userId && <p className="text-sm text-slate-500 mt-3">Đăng nhập để được cộng XP.</p>}
+            {!userId && <p className="text-sm text-slate-500 mt-3">Đăng nhập để được cộng tu vi.</p>}
             {mistakes.length > 0 && (
               <div className="mt-6 text-left">
                 <div className="font-black mb-2">📌 Câu cần ôn lại</div>
@@ -370,7 +370,7 @@ export default function ArrangePage() {
                   {mistakes.map((m) => (
                     <li key={m.chinese} className="p-3 rounded-xl bg-[#FFF1F2]">
                       <div className="flex items-center gap-2"><span className="zh font-black text-lg flex-1">{m.chinese}</span><button onClick={() => speak(m.chinese)} aria-label="Nghe câu" className="w-8 h-8 rounded-full bg-white">🔊</button></div>
-                      {pyOf(m) && <div className="text-sm text-[#2F8F6E]">{pyOf(m)}</div>}
+                      {pyOf(m) && <div className="text-sm text-[#2F6E5A]">{pyOf(m)}</div>}
                       {m.vietnamese && <div className="text-sm text-slate-600">{m.vietnamese}</div>}
                     </li>
                   ))}
@@ -378,9 +378,9 @@ export default function ArrangePage() {
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
-              <Link href="/?tab=play" className="flex-1 py-4 bg-[#F4F7F6] text-slate-600 font-black rounded-2xl border border-[#E2E8F0] grid place-items-center">Về khu Chơi</Link>
-              {mistakes.length > 0 && <button onClick={() => { const qs = shuffle(mistakes); setQuestions(qs); setIdx(0); setHearts(HEARTS); setScore(0); setHintsUsed(0); setMistakes([]); ended.current = false; setPhase("playing"); load(qs[0]); }} className="flex-1 py-4 bg-[#FFF8E8] border-2 border-[#FFD666] font-black rounded-2xl">🔁 Luyện lại câu sai</button>}
-              <button onClick={start} className="flex-1 py-4 bg-[#1B5E4B] text-white font-black rounded-2xl border-b-[4px] border-[#0F3F31]">Chơi lượt mới</button>
+              <Link href="/?tab=play" className="flex-1 py-4 bg-[#F6F0E2] text-slate-600 font-black rounded-2xl border border-[#D8CBAE] grid place-items-center">Về khu Chơi</Link>
+              {mistakes.length > 0 && <button onClick={() => { const qs = shuffle(mistakes); setQuestions(qs); setIdx(0); setHearts(HEARTS); setScore(0); setHintsUsed(0); setMistakes([]); ended.current = false; setPhase("playing"); load(qs[0]); }} className="flex-1 py-4 bg-[#FBF8F1] border-2 border-[#E6B656] font-black rounded-2xl">🔁 Luyện lại câu sai</button>}
+              <button onClick={start} className="flex-1 py-4 bg-[#1C1A17] text-white font-black rounded-2xl border-b-[4px] border-[#121318]">Chơi lượt mới</button>
             </div>
           </div>
         )}

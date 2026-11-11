@@ -17,11 +17,11 @@ export async function POST(req) {
     let geminiContents = [];
 
     // ==========================================
-    // TRƯỜNG HỢP 1: TÍNH NĂNG TỪ ĐIỂN Ếch xanh
+    // TRƯỜNG HỢP 1: TÍNH NĂNG TỪ ĐIỂN sư phụ
     // ==========================================
     if (body.message && !body.messages) {
       isDictionaryQuery = true;
-      systemPrompt = `Bạn là "Ếch xanh", một trợ lý AI thông minh chuyên giảng dạy tiếng Trung trên nền tảng HSK Garden.
+      systemPrompt = `Bạn là "sư phụ", một trợ lý AI thông minh chuyên giảng dạy tiếng Trung trên nền tảng Sơn Hải Thư Viện.
       Nhiệm vụ của bạn là PHÂN TÍCH và GIẢI THÍCH CHI TIẾT câu hỏi, từ vựng hoặc ngữ pháp mà học viên nhập vào.
       
       Yêu cầu trình bày:

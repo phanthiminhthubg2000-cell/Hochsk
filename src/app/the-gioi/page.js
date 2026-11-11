@@ -23,6 +23,7 @@ const STORY = {
 
 export default function TheGioiPage() {
   const { tv, isSignedIn } = useTuVi();
+  const unplaced = !tv || tv.provisional;
   const idx = tv?.idx ?? 0;
   const here = regionOfRealm(idx);
   const [pick, setPick] = useState(null);
@@ -38,14 +39,14 @@ export default function TheGioiPage() {
             <span className="font-serif-vn text-[22px] md:text-[26px] font-extrabold">Sơn Hải Dư Đồ</span>
           </div>
           <p className="font-serif-vn italic text-[15px] text-[#3B2F22]">Bảy vùng đất, một con đường. Mỗi vùng mở khi thư sinh độ kiếp thành công ở vùng trước.</p>
-          <WorldMap realmIdx={idx} picked={r.key} onPick={setPick} />
-          {!isSignedIn && <p className="text-sm text-[#6B6253]">Đăng nhập và lên Trắc Linh Đài để biết mình đang ở vùng nào.</p>}
+          <WorldMap realmIdx={idx} picked={r.key} onPick={setPick} unplaced={unplaced} />
+          {unplaced && <p className="tt-card px-4 py-3 text-sm">{isSignedIn ? <>Bạn chưa định cảnh giới nên chưa biết mình ở vùng nào. <Link href="/linh-can" className="font-bold text-[#9E2F22] underline">Lên Trắc Linh Đài</Link> để được xếp theo trình độ thật.</> : "Đăng nhập và lên Trắc Linh Đài để biết mình đang ở vùng nào."}</p>}
         </div>
         <section className="rounded-[14px] bg-[#FBF6EA] border-[1.5px] border-[#3B2F22] p-5 flex flex-col gap-3 shadow-[4px_4px_0_rgba(59,47,34,.3)] lg:sticky lg:top-24" aria-live="polite">
           <div className="flex items-baseline gap-2 flex-wrap">
             <span className="font-brush text-[34px] leading-none text-[#9E2F22]">{r.zh}</span>
             <h2 className="font-serif-vn text-[21px] font-extrabold">{r.vn}</h2>
-            <span className={`ml-auto text-xs font-bold px-2 py-0.5 rounded-[3px] text-white ${locked ? "bg-[#5E5446]" : passed ? "bg-[#2F6E5A]" : "bg-[#9E2F22]"}`}>{locked ? "Chưa mở" : passed ? "Đã qua" : "Bạn đang ở đây"}</span>
+            {!unplaced && <span className={`ml-auto text-xs font-bold px-2 py-0.5 rounded-[3px] text-white ${locked ? "bg-[#5E5446]" : passed ? "bg-[#2F6E5A]" : "bg-[#9E2F22]"}`}>{locked ? "Chưa mở" : passed ? "Đã qua" : "Bạn đang ở đây"}</span>}
           </div>
           <p className="text-[15px] leading-relaxed text-[#3A352C]">{STORY[r.key]}</p>
           <ul className="flex flex-col gap-2">

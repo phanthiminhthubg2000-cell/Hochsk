@@ -127,9 +127,9 @@ export default function FlashcardPage() {
   }, [activeWordIndex, viewingLevel, filter, selectedHsk, mode]);
 
   if (levelsData.length === 0 || loadingUser) return (
-    <div className="min-h-screen bg-[#EEF5E9] flex flex-col items-center justify-center gap-4">
-      <div className="w-10 h-10 border-4 border-[#2F8F6E] border-t-transparent rounded-full animate-spin"></div>
-      <p className="font-bold text-[#1B5E4B]">Đang tải khu vườn từ vựng...</p>
+    <div className="min-h-screen bg-[#EFE7D6] flex flex-col items-center justify-center gap-4">
+      <div className="w-10 h-10 border-4 border-[#2F6E5A] border-t-transparent rounded-full animate-spin"></div>
+      <p className="font-bold text-[#1C1A17]">Đang mở bí cảnh từ vựng...</p>
     </div>
   );
 
@@ -156,7 +156,7 @@ export default function FlashcardPage() {
   const speak = (text) => { speakZh(text); }; // file thu sẵn nếu có, không thì giọng trình duyệt
 
   // ============================================================
-  // 1. THỬ THÁCH AI (+10 XP, +2 NƯỚC)
+  // 1. THỬ THÁCH AI (+10 tu vi)
   // ============================================================
   const handleCheckSentence = async () => {
     if (!sentenceInput.trim() || !activeWord || isCheckingSentence) return;
@@ -171,8 +171,8 @@ export default function FlashcardPage() {
       });
       
       if (!res.ok) {
-        if (res.status === 429) throw new Error("Ếch xanh đang trả lời quá nhiều bạn cùng lúc, đợi vài giây rồi thử lại nhé! 💦");
-        throw new Error("Lỗi kết nối đến não bộ của Ếch xanh. Vui lòng thử lại! 🐸");
+        if (res.status === 429) throw new Error("sư phụ đang trả lời quá nhiều bạn cùng lúc, đợi vài giây rồi thử lại nhé! 💦");
+        throw new Error("Lỗi kết nối đến não bộ của sư phụ. Vui lòng thử lại! 师");
       }
       
       const data = await res.json();
@@ -203,7 +203,7 @@ export default function FlashcardPage() {
   };
 
   // ============================================================
-  // 2. HỌC THUỘC TỪ (+5 XP, +1 NƯỚC)
+  // 2. HỌC THUỘC TỪ (+5 tu vi, +1 NƯỚC)
   // ============================================================
   const handleMarkMasteredAndNext = async () => {
     if (!activeWord) return;
@@ -252,7 +252,7 @@ export default function FlashcardPage() {
   const isAlreadyMastered = activeWord ? wordProgress[activeWord.front] === "mastered" : false;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#EEF5E9] font-sans text-[#1B5E4B] selection:bg-[#8FD9A8]/50">
+    <div className="flex flex-col min-h-screen bg-[#EFE7D6] font-sans text-[#1C1A17] selection:bg-[#CDBF9F]/50">
       <GardenNav active="practice" />
       
       
@@ -260,7 +260,7 @@ export default function FlashcardPage() {
 
       {/* MAIN CONTENT: VOCABULARY JOURNEY */}
       <main className="flex-1 relative flex flex-col min-w-0">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 10px 10px, #8FD9A8 2px, transparent 0)", backgroundSize: "40px 40px" }}></div>
+        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 10px 10px, #CDBF9F 2px, transparent 0)", backgroundSize: "40px 40px" }}></div>
         
         <div className="relative z-10 flex-1 overflow-y-auto scrollbar-hide pb-20">
           <div className="max-w-[1200px] mx-auto w-full px-4 md:px-8 pt-6 md:pt-8">
@@ -274,7 +274,7 @@ export default function FlashcardPage() {
                     <button
                       key={lvl}
                       onClick={() => setSelectedHsk(lvl)}
-                      className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all whitespace-nowrap ${selectedHsk === lvl ? 'bg-[#2F8F6E] text-white shadow-sm' : 'text-slate-500 hover:text-[#1B5E4B]'}`}
+                      className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all whitespace-nowrap ${selectedHsk === lvl ? 'bg-[#2F6E5A] text-white shadow-sm' : 'text-slate-500 hover:text-[#1C1A17]'}`}
                     >
                       {lvl.toUpperCase()}
                     </button>
@@ -285,16 +285,16 @@ export default function FlashcardPage() {
                 <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-[20px] border border-white shadow-sm backdrop-blur-md">
                   <button 
                     onClick={() => setMode("learn")}
-                    className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all ${mode === "learn" ? 'bg-[#1B5E4B] text-white shadow-md' : 'text-slate-500 hover:text-[#2F8F6E]'}`}
+                    className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all ${mode === "learn" ? 'bg-[#1C1A17] text-white shadow-md' : 'text-slate-500 hover:text-[#2F6E5A]'}`}
                   >
-                    🌱 Học Từ Mới
+                    Học từ mới
                   </button>
                   <button 
                     onClick={() => setMode("review")}
-                    className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all flex items-center gap-1.5 ${mode === "review" ? 'bg-[#F2765B] text-white shadow-md' : 'text-slate-500 hover:text-[#F2765B]'}`}
+                    className={`px-4 py-2 rounded-[14px] font-black text-xs transition-all flex items-center gap-1.5 ${mode === "review" ? 'bg-[#9E2F22] text-white shadow-md' : 'text-slate-500 hover:text-[#9E2F22]'}`}
                   >
-                    💦 Ôn Tập
-                    {Object.keys(errorDna).length > 0 && <span className={`w-4 h-4 rounded-full flex justify-center items-center text-[9px] ${mode === "review" ? 'bg-white text-[#F2765B]' : 'bg-[#FFF1F2] text-[#BE123C]'}`}>{Object.keys(errorDna).length}</span>}
+                    Ôn tập
+                    {Object.keys(errorDna).length > 0 && <span className={`w-4 h-4 rounded-full flex justify-center items-center text-[9px] ${mode === "review" ? 'bg-white text-[#9E2F22]' : 'bg-[#FFF1F2] text-[#BE123C]'}`}>{Object.keys(errorDna).length}</span>}
                   </button>
                 </div>
               </div>
@@ -308,28 +308,28 @@ export default function FlashcardPage() {
               const go = (d) => { const n = levelsData[(idx + d + levelsData.length) % levelsData.length]; if (n) setViewingLevel(n.level); };
               const doneLessons = levelsData.filter(l => l.words.length > 0 && l.words.every(w => wordProgress[w.front] === "mastered")).length;
               return (
-                <div className="mb-5 bg-white/85 backdrop-blur-md rounded-[22px] border border-[#E2E8F0] shadow-sm">
+                <div className="mb-5 bg-white/85 backdrop-blur-md rounded-[22px] border border-[#D8CBAE] shadow-sm">
                   <div className="p-3 md:p-4 flex flex-wrap items-center gap-3">
                     <div className="flex items-center gap-1.5">
-                      <button onClick={() => go(-1)} aria-label="Bài trước" className="w-10 h-10 rounded-xl border border-[#E2E8F0] bg-white text-slate-500 hover:text-[#2F8F6E] hover:border-[#8FD9A8] font-black">‹</button>
+                      <button onClick={() => go(-1)} aria-label="Bài trước" className="w-10 h-10 rounded-xl border border-[#D8CBAE] bg-white text-slate-500 hover:text-[#2F6E5A] hover:border-[#CDBF9F] font-black">‹</button>
                       <button onClick={() => setShowLessons(v => !v)} aria-expanded={showLessons}
-                        className="h-10 px-4 rounded-xl bg-[#1B5E4B] text-white font-black text-sm inline-flex items-center gap-2 min-w-[150px] justify-between">
+                        className="h-10 px-4 rounded-xl bg-[#1C1A17] text-white font-black text-sm inline-flex items-center gap-2 min-w-[150px] justify-between">
                         <span>Bài {cur?.level} <span className="font-semibold opacity-75">· {cur?.words.length} từ</span></span><span className={`transition-transform ${showLessons ? "rotate-180" : ""}`}>▾</span>
                       </button>
-                      <button onClick={() => go(1)} aria-label="Bài tiếp" className="w-10 h-10 rounded-xl border border-[#E2E8F0] bg-white text-slate-500 hover:text-[#2F8F6E] hover:border-[#8FD9A8] font-black">›</button>
+                      <button onClick={() => go(1)} aria-label="Bài tiếp" className="w-10 h-10 rounded-xl border border-[#D8CBAE] bg-white text-slate-500 hover:text-[#2F6E5A] hover:border-[#CDBF9F] font-black">›</button>
                     </div>
                     <div className="flex items-center gap-2 flex-1 min-w-[160px]">
-                      <div className="flex-1 h-2.5 bg-[#EEF5E9] rounded-full overflow-hidden"><div className="h-full bg-[#2F8F6E] rounded-full transition-all duration-700" style={{ width: `${progressPercent}%` }} /></div>
-                      <span className="text-xs font-black text-[#2F8F6E] shrink-0">{masteredCount}/{allCount} thuộc</span>
+                      <div className="flex-1 h-2.5 bg-[#EFE7D6] rounded-full overflow-hidden"><div className="h-full bg-[#2F6E5A] rounded-full transition-all duration-700" style={{ width: `${progressPercent}%` }} /></div>
+                      <span className="text-xs font-black text-[#2F6E5A] shrink-0">{masteredCount}/{allCount} thuộc</span>
                     </div>
-                    <div className="flex items-center bg-[#F4F7F6] p-1 rounded-xl border border-[#E2E8F0]">
-                      <button onClick={() => setFilter("all")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "all" ? 'bg-white text-[#1B5E4B] shadow-sm' : 'text-slate-500'}`}>Tất cả {allCount}</button>
-                      <button onClick={() => setFilter("learning")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "learning" ? 'bg-white text-[#F2765B] shadow-sm' : 'text-slate-500'}`}>Chưa thuộc {learningCount}</button>
-                      <button onClick={() => setFilter("mastered")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "mastered" ? 'bg-white text-[#2F8F6E] shadow-sm' : 'text-slate-500'}`}>Đã thuộc {masteredCount}</button>
+                    <div className="flex items-center bg-[#F6F0E2] p-1 rounded-xl border border-[#D8CBAE]">
+                      <button onClick={() => setFilter("all")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "all" ? 'bg-white text-[#1C1A17] shadow-sm' : 'text-slate-500'}`}>Tất cả {allCount}</button>
+                      <button onClick={() => setFilter("learning")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "learning" ? 'bg-white text-[#9E2F22] shadow-sm' : 'text-slate-500'}`}>Chưa thuộc {learningCount}</button>
+                      <button onClick={() => setFilter("mastered")} className={`px-3 py-1.5 rounded-lg text-xs font-black ${filter === "mastered" ? 'bg-white text-[#2F6E5A] shadow-sm' : 'text-slate-500'}`}>Đã thuộc {masteredCount}</button>
                     </div>
                   </div>
                   {showLessons && (
-                    <div className="border-t border-[#E2E8F0] p-3 md:p-4">
+                    <div className="border-t border-[#D8CBAE] p-3 md:p-4">
                       <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2">{selectedHsk.toUpperCase()} · {levelsData.length} bài · đã thuộc hết {doneLessons} bài</p>
                       <div className="grid grid-cols-[repeat(auto-fill,minmax(52px,1fr))] gap-1.5 max-h-[240px] overflow-y-auto pr-1">
                         {levelsData.map((lvlObj) => {
@@ -338,7 +338,7 @@ export default function FlashcardPage() {
                           return (
                             <button key={lvlObj.level} title={`Bài ${lvlObj.level} · ${lvlObj.words.length} từ`}
                               onClick={() => { setViewingLevel(lvlObj.level); setShowLessons(false); }}
-                              className={`h-9 rounded-lg text-xs font-black border transition-colors ${isCurrent ? 'bg-[#1B5E4B] text-white border-[#1B5E4B] ring-2 ring-offset-1 ring-[#8FD9A8]' : isAllMastered ? 'bg-[#E7F5EC] text-[#1B5E4B] border-[#8FD9A8]' : 'bg-white text-slate-500 border-[#E2E8F0] hover:border-[#8FD9A8]'}`}>
+                              className={`h-9 rounded-lg text-xs font-black border transition-colors ${isCurrent ? 'bg-[#1C1A17] text-white border-[#1C1A17] ring-2 ring-offset-1 ring-[#CDBF9F]' : isAllMastered ? 'bg-[#DDEBE4] text-[#1C1A17] border-[#CDBF9F]' : 'bg-white text-slate-500 border-[#D8CBAE] hover:border-[#CDBF9F]'}`}>
                               {lvlObj.level}{isAllMastered ? '✓' : ''}
                             </button>
                           );
@@ -352,40 +352,40 @@ export default function FlashcardPage() {
 
             {/* THÔNG BÁO HẾT TỪ */}
             {currentWordsPool.length === 0 ? (
-                <div className="bg-white/90 backdrop-blur-xl p-12 rounded-[40px] shadow-sm border border-[#E2E8F0] text-center">
-                  <div className="text-6xl mb-6">{mode === "learn" ? "✨" : "🐸🎉"}</div>
-                  <h3 className="text-2xl font-black text-[#1B5E4B]">
-                    {mode === "learn" ? "Không có từ vựng nào ở mục này!" : "Tuyệt vời! Khu vườn không còn từ nào cần ôn."}
+                <div className="bg-white/90 backdrop-blur-xl p-12 rounded-[40px] shadow-sm border border-[#D8CBAE] text-center">
+                  <div className="text-6xl mb-6">{mode === "learn" ? "✨" : "悟"}</div>
+                  <h3 className="text-2xl font-black text-[#1C1A17]">
+                    {mode === "learn" ? "Không có từ vựng nào ở mục này!" : "Tuyệt vời! Không còn từ nào cần ôn."}
                   </h3>
                 </div>
             ) : (
               <>
                 {/* KHU VỰC THẺ TỪ VỰNG */}
                 <div className="relative mb-10 mt-2">
-                  <button onClick={() => setActiveWordIndex(prev => prev > 0 ? prev - 1 : currentWordsPool.length - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F8F6E] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">←</span></button>
-                  <button onClick={() => setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F8F6E] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">→</span></button>
+                  <button onClick={() => setActiveWordIndex(prev => prev > 0 ? prev - 1 : currentWordsPool.length - 1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F6E5A] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">←</span></button>
+                  <button onClick={() => setActiveWordIndex(prev => prev < currentWordsPool.length - 1 ? prev + 1 : 0)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-14 h-14 bg-white rounded-full flex items-center justify-center text-slate-400 hover:text-[#2F6E5A] shadow-md border border-slate-50 hover:scale-110 transition-all z-20"><span className="text-xl font-black">→</span></button>
 
-                  <div className={`w-full max-w-xl mx-auto bg-white rounded-[40px] shadow-xl border-b-[8px] overflow-hidden relative group transition-all ${mode === "review" ? 'border-b-[#F2765B]' : 'border-b-[#2F8F6E]'}`}>
+                  <div className={`w-full max-w-xl mx-auto bg-white rounded-[40px] shadow-xl border-b-[8px] overflow-hidden relative group transition-all ${mode === "review" ? 'border-b-[#9E2F22]' : 'border-b-[#2F6E5A]'}`}>
                     
                     <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
                         <span className="font-bold text-slate-300 text-sm tracking-widest">{activeWordIndex + 1} / {currentWordsPool.length}</span>
-                        <span className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase border ${isAlreadyMastered ? 'bg-[#8FD9A8]/30 text-[#1B5E4B] border-[#8FD9A8]' : mode === 'review' ? 'bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]' : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
+                        <span className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase border ${isAlreadyMastered ? 'bg-[#CDBF9F]/30 text-[#1C1A17] border-[#CDBF9F]' : mode === 'review' ? 'bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]' : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
                           {isAlreadyMastered ? '✓ Đã thuộc' : mode === 'review' ? '💦 Cần ôn lại' : 'Đang học'}
                         </span>
                     </div>
 
                     <div className="px-8 py-16 md:p-16 flex flex-col items-center justify-center text-center relative min-h-[460px] mt-4">
-                      <button onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} className="w-16 h-16 bg-[#F4F7F6] text-[#2F8F6E] border border-[#E2E8F0] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl transition-all hover:scale-110 hover:bg-[#2F8F6E] hover:text-white mb-8 z-10 shadow-sm">🔊</button>
+                      <button onClick={(e) => { e.stopPropagation(); speak(wordDisplay); }} className="w-16 h-16 bg-[#F6F0E2] text-[#2F6E5A] border border-[#D8CBAE] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl transition-all hover:scale-110 hover:bg-[#2F6E5A] hover:text-white mb-8 z-10 shadow-sm">🔊</button>
                       
-                      <h2 className="text-[120px] md:text-[140px] font-black text-[#1B5E4B] leading-none mb-6 font-serif tracking-tight drop-shadow-sm">{wordDisplay}</h2>
+                      <h2 className="text-[120px] md:text-[140px] font-black text-[#1C1A17] leading-none mb-6 font-serif tracking-tight drop-shadow-sm">{wordDisplay}</h2>
 
                       <div className={`flex flex-col items-center w-full transition-all duration-500 z-10 ${isFlipped ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none absolute'}`}>
                         <p className="text-2xl font-bold text-slate-400 mb-3 tracking-widest uppercase">{pinyinDisplay}</p>
-                        <p className="text-3xl font-black text-[#2F8F6E] mb-6">{meaningDisplay}</p>
+                        <p className="text-3xl font-black text-[#2F6E5A] mb-6">{meaningDisplay}</p>
                         {exampleDisplay && (
-                          <div className="bg-white border border-[#8FD9A8] px-6 py-4 rounded-2xl shadow-sm max-w-lg mt-2 relative">
-                            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-3 py-0.5 border border-[#8FD9A8] rounded-full font-black text-[#2F8F6E] text-[9px] uppercase tracking-widest shadow-sm">Mẫu câu</span>
-                            <p className="text-base font-medium text-[#1B5E4B] leading-relaxed mt-2">{exampleDisplay}</p>
+                          <div className="bg-white border border-[#CDBF9F] px-6 py-4 rounded-2xl shadow-sm max-w-lg mt-2 relative">
+                            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-3 py-0.5 border border-[#CDBF9F] rounded-full font-black text-[#2F6E5A] text-[9px] uppercase tracking-widest shadow-sm">Mẫu câu</span>
+                            <p className="text-base font-medium text-[#1C1A17] leading-relaxed mt-2">{exampleDisplay}</p>
                           </div>
                         )}
                       </div>
@@ -393,45 +393,45 @@ export default function FlashcardPage() {
                       {!isFlipped && (
                         <button 
                           onClick={() => setIsFlipped(true)}
-                          className="absolute bottom-10 flex items-center gap-2 font-black text-xs px-6 py-3 rounded-full shadow-sm border transition-all z-10 text-[#2F8F6E] bg-white border-[#E2E8F0] hover:border-[#8FD9A8] hover:-translate-y-1 cursor-pointer animate-pulse"
+                          className="absolute bottom-10 flex items-center gap-2 font-black text-xs px-6 py-3 rounded-full shadow-sm border transition-all z-10 text-[#2F6E5A] bg-white border-[#D8CBAE] hover:border-[#CDBF9F] hover:-translate-y-1 cursor-pointer animate-pulse"
                         >
                           <span className="text-lg">👁</span> Bấm để xem nghĩa
                         </button>
                       )}
                     </div>
 
-                    <div className="h-2 w-full bg-[#EEF5E9] flex">
-                      <div className={`h-full transition-all ${mode === "review" ? 'bg-[#F2765B]' : 'bg-[#2F8F6E]'}`} style={{ width: `${((activeWordIndex + 1) / currentWordsPool.length) * 100}%` }}></div>
+                    <div className="h-2 w-full bg-[#EFE7D6] flex">
+                      <div className={`h-full transition-all ${mode === "review" ? 'bg-[#9E2F22]' : 'bg-[#2F6E5A]'}`} style={{ width: `${((activeWordIndex + 1) / currentWordsPool.length) * 100}%` }}></div>
                     </div>
                   </div>
                 </div>
 
                 {/* NÚT ACTION */}
                 <div className="flex gap-4 w-full max-w-xl mx-auto mb-10">
-                    <button onClick={handleSkipWord} className="flex-[0.8] py-4 bg-white border-2 border-[#E2E8F0] text-slate-500 rounded-2xl font-black text-sm hover:border-[#F2765B] hover:bg-[#FFF1F2] hover:text-[#BE123C] transition-all shadow-sm flex items-center justify-center gap-2">
+                    <button onClick={handleSkipWord} className="flex-[0.8] py-4 bg-white border-2 border-[#D8CBAE] text-slate-500 rounded-2xl font-black text-sm hover:border-[#9E2F22] hover:bg-[#FFF1F2] hover:text-[#BE123C] transition-all shadow-sm flex items-center justify-center gap-2">
                       <span>⏭️</span> Bỏ qua
                     </button>
                     <button 
                       onClick={handleMarkMasteredAndNext}
-                      className={`flex-[1.5] py-4 rounded-2xl font-black text-sm transition-all shadow-md flex justify-center items-center gap-2 ${isAlreadyMastered ? 'bg-[#8FD9A8] text-[#1B5E4B] hover:bg-[#2F8F6E] hover:text-white hover:-translate-y-1' : 'bg-[#2F8F6E] text-white hover:bg-[#1B5E4B] hover:shadow-lg hover:-translate-y-1'}`}
+                      className={`flex-[1.5] py-4 rounded-2xl font-black text-sm transition-all shadow-md flex justify-center items-center gap-2 ${isAlreadyMastered ? 'bg-[#CDBF9F] text-[#1C1A17] hover:bg-[#2F6E5A] hover:text-white hover:-translate-y-1' : 'bg-[#2F6E5A] text-white hover:bg-[#1C1A17] hover:shadow-lg hover:-translate-y-1'}`}
                     >
-                      <span>✓</span> {isAlreadyMastered ? "Tiếp theo ➔" : "Đã thuộc (+5 XP, +1 💧) ➔"}
+                      <span>✓</span> {isAlreadyMastered ? "Tiếp theo ➔" : "Đã thuộc (+5 tu vi) ➔"}
                     </button>
                 </div>
 
-                {/* KHU VỰC THỬ THÁCH BONUS (+10 XP, +2 NƯỚC) */}
+                {/* KHU VỰC THỬ THÁCH BONUS (+10 tu vi) */}
                 <div className="max-w-2xl mx-auto mb-10">
-                  <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 md:p-10 shadow-sm border border-[#E2E8F0] relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#FFD666]/20 to-transparent rounded-bl-full -z-0 pointer-events-none"></div>
+                  <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 md:p-10 shadow-sm border border-[#D8CBAE] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#E6B656]/20 to-transparent rounded-bl-full -z-0 pointer-events-none"></div>
 
                     <div className="relative z-10">
                       <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 bg-[#FFF8E8] text-[#FFC83D] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl shadow-sm border border-[#FFC83D]/20">✍️</div>
+                        <div className="w-12 h-12 bg-[#FBF8F1] text-[#D9A23A] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-2xl shadow-sm border border-[#D9A23A]/20">✍️</div>
                         <div>
-                          <h3 className="text-sm font-black text-[#1B5E4B] uppercase tracking-widest">
-                            Thử thách tạo ví dụ <span className="text-[#F2765B]">(+10 XP, +2 💧)</span>
+                          <h3 className="text-sm font-black text-[#1C1A17] uppercase tracking-widest">
+                            Thử thách tạo ví dụ <span className="text-[#9E2F22]">(+10 tu vi)</span>
                           </h3>
-                          <p className="text-xs font-medium text-slate-500 mt-1">Dùng từ <strong className="text-[#2F8F6E] text-sm bg-[#8FD9A8]/20 px-2 py-0.5 rounded border border-[#8FD9A8]/30"> {wordDisplay} </strong> để đặt một câu:</p>
+                          <p className="text-xs font-medium text-slate-500 mt-1">Dùng từ <strong className="text-[#2F6E5A] text-sm bg-[#CDBF9F]/20 px-2 py-0.5 rounded border border-[#CDBF9F]/30"> {wordDisplay} </strong> để đặt một câu:</p>
                         </div>
                       </div>
 
@@ -446,12 +446,12 @@ export default function FlashcardPage() {
                             if (aiError) setAiError(null); 
                           }}
                           disabled={sentenceResult?.isPass || isCheckingSentence}
-                          className="w-full sm:flex-1 bg-white border-2 border-[#E2E8F0] text-[#1B5E4B] font-bold text-sm rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-[#8FD9A8]/30 focus:border-[#2F8F6E] transition-all disabled:opacity-60 disabled:bg-slate-50"
+                          className="w-full sm:flex-1 bg-white border-2 border-[#D8CBAE] text-[#1C1A17] font-bold text-sm rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-[#CDBF9F]/30 focus:border-[#2F6E5A] transition-all disabled:opacity-60 disabled:bg-slate-50"
                         />
                         <button 
                           onClick={handleCheckSentence} 
                           disabled={sentenceResult?.isPass || !sentenceInput.trim() || isCheckingSentence}
-                          className={`w-full sm:w-auto px-8 py-4 font-black text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${sentenceResult?.isPass ? 'bg-[#2F8F6E] text-white shadow-[#8FD9A8]/50' : 'bg-[#1B5E4B] hover:bg-[#2F8F6E] text-white hover:-translate-y-0.5'}`}
+                          className={`w-full sm:w-auto px-8 py-4 font-black text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${sentenceResult?.isPass ? 'bg-[#2F6E5A] text-white shadow-[#CDBF9F]/50' : 'bg-[#1C1A17] hover:bg-[#2F6E5A] text-white hover:-translate-y-0.5'}`}
                         >
                           <span>{isCheckingSentence ? "Đang chấm..." : (sentenceResult?.isPass ? "✓ Đã chấm" : "Kiểm tra")}</span>
                         </button>
@@ -465,13 +465,13 @@ export default function FlashcardPage() {
                       )}
 
                       {sentenceResult && !aiError && (
-                        <div className={`mt-6 p-5 rounded-2xl border animate-fade-in flex gap-4 shadow-inner ${sentenceResult.isPass ? 'bg-[#EEF5E9] border-[#8FD9A8]/50' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
-                            <div className="text-3xl shrink-0 mt-1">{sentenceResult.isPass ? '🐸' : '💦'}</div>
+                        <div className={`mt-6 p-5 rounded-2xl border animate-fade-in flex gap-4 shadow-inner ${sentenceResult.isPass ? 'bg-[#EFE7D6] border-[#CDBF9F]/50' : 'bg-[#FFF1F2] border-[#FECDD3]'}`}>
+                            <div className="text-3xl shrink-0 mt-1">{sentenceResult.isPass ? '师' : '💦'}</div>
                             <div>
-                              <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#1B5E4B] ' : 'text-[#BE123C]'}`}>{sentenceResult.isPass ? "太棒了！Tuyệt vời! (+10 XP)" : "再试一次！Chưa chính xác:"}</h4>
-                              <p className="text-xs font-medium text-[#1B5E4B]/80 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
+                              <h4 className={`font-black text-sm mb-1 ${sentenceResult.isPass ? 'text-[#1C1A17] ' : 'text-[#BE123C]'}`}>{sentenceResult.isPass ? "太棒了！Tuyệt vời! (+10 tu vi)" : "再试一次！Chưa chính xác:"}</h4>
+                              <p className="text-xs font-medium text-[#1C1A17]/80 mb-2 leading-relaxed">{sentenceResult.feedback}</p>
                               {!sentenceResult.isPass && sentenceResult.suggestion && (
-                                  <p className="text-xs text-[#1B5E4B] bg-white p-3 rounded-xl border border-slate-200/60 leading-relaxed shadow-sm"><span className="font-black text-[#FFC83D]">💡 Gợi ý:</span> {sentenceResult.suggestion}</p>
+                                  <p className="text-xs text-[#1C1A17] bg-white p-3 rounded-xl border border-slate-200/60 leading-relaxed shadow-sm"><span className="font-black text-[#D9A23A]">💡 Gợi ý:</span> {sentenceResult.suggestion}</p>
                               )}
                             </div>
                         </div>

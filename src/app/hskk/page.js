@@ -558,7 +558,7 @@ export default function HskkPage() {
         className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: "url('/hskk/kiemtra.jpg')" }} 
       >
-        <div className="absolute inset-0 bg-[#F4F8F5]/90 backdrop-blur-[4px]"></div>
+        <div className="absolute inset-0 bg-[#F6F0E2]/90 backdrop-blur-[4px]"></div>
       </div>
       
       <GardenNav active="exam" title="Phòng thi HSKK · 口语考试" />
@@ -595,7 +595,7 @@ export default function HskkPage() {
                               <span className="font-black text-slate-800 text-base">{exam.level}</span>
                               <span className="text-slate-400 text-xs font-bold block mt-0.5">{dateStr}</span>
                             </div>
-                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${isGraded ? 'bg-[#DDF7EA] text-[#08A66A] border-[#08A66A]/20' : 'bg-amber-50 text-amber-600 border-amber-200/50'}`}>
+                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${isGraded ? 'bg-[#DDEBE4] text-[#2F6E5A] border-[#2F6E5A]/20' : 'bg-amber-50 text-amber-600 border-amber-200/50'}`}>
                               {isGraded ? "Đã chấm" : "Chờ chấm"}
                             </span>
                           </div>
@@ -604,7 +604,7 @@ export default function HskkPage() {
                             {isGraded ? (
                               <div>
                                 <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Điểm số</span>
-                                <p className="text-2xl font-black text-[#08A66A] leading-none">{exam.teacherScore} <span className="text-sm text-slate-400">/100</span></p>
+                                <p className="text-2xl font-black text-[#2F6E5A] leading-none">{exam.teacherScore} <span className="text-sm text-slate-400">/100</span></p>
                               </div>
                             ) : (
                               <div>
@@ -632,7 +632,7 @@ export default function HskkPage() {
                   <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-rose-100/50 to-transparent rounded-bl-full z-0 pointer-events-none"></div>
                   
                   <div className="relative z-10 mb-8 flex gap-4 items-center">
-                    <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-3xl shadow-inner border border-rose-200">🐸</div>
+                    <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-3xl shadow-inner border border-rose-200">师</div>
                     <div>
                       <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Phòng Thi HSKK</h2>
                       <p className="text-slate-500 font-medium text-sm mt-1">Chọn cấp độ để bắt đầu mô phỏng bài thi thực tế.</p>
@@ -689,7 +689,7 @@ export default function HskkPage() {
                   )}
                 </div>
 
-                <div className="bg-[#FFF8E8]/90 backdrop-blur-xl p-8 rounded-[32px] shadow-sm border border-amber-200/60">
+                <div className="bg-[#FBF8F1]/90 backdrop-blur-xl p-8 rounded-[32px] shadow-sm border border-amber-200/60">
                   <h3 className="text-base font-black text-amber-900 mb-4 flex items-center gap-2">
                     <span>💡</span> Nguyên Tắc Phòng Thi
                   </h3>
@@ -700,7 +700,7 @@ export default function HskkPage() {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-amber-500 mt-0.5 font-bold">2.</span>
-                      <p className="text-sm font-medium text-amber-800/80 leading-relaxed">Nhấn gửi bài thành công sẽ nhận được <strong className="text-amber-600">+100 XP, +10 💧</strong> ngay lập tức.</p>
+                      <p className="text-sm font-medium text-amber-800/80 leading-relaxed">Nhấn gửi bài thành công sẽ nhận được <strong className="text-amber-600">+100 tu vi</strong> ngay lập tức.</p>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-amber-500 mt-0.5 font-bold">3.</span>
@@ -731,7 +731,7 @@ export default function HskkPage() {
                 </div>
 
                 {selectedHistoryExam.teacherScore === null ? (
-                  <div className="text-center py-16 bg-[#F4F8F5] rounded-[32px] border border-emerald-100">
+                  <div className="text-center py-16 bg-[#F6F0E2] rounded-[32px] border border-emerald-100">
                     <div className="text-7xl mb-6">⏳</div>
                     <h3 className="text-2xl font-black text-slate-800 mb-2">Đang chờ giáo viên chấm</h3>
                     <p className="text-slate-500 font-medium max-w-md mx-auto">
@@ -740,7 +740,7 @@ export default function HskkPage() {
                   </div>
                 ) : (
                   <div className="animate-slide-up-fade">
-                    <div className="bg-gradient-to-br from-[#DDF7EA] to-emerald-50 border border-[#08A66A]/20 rounded-[32px] p-8 mb-10 shadow-sm relative overflow-hidden">
+                    <div className="bg-gradient-to-br from-[#DDEBE4] to-emerald-50 border border-[#2F6E5A]/20 rounded-[32px] p-8 mb-10 shadow-sm relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-40 h-40 bg-white/40 rounded-bl-full pointer-events-none"></div>
                       
                       <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -753,7 +753,7 @@ export default function HskkPage() {
                         
                         <div className="bg-white px-6 py-4 rounded-3xl shadow-sm border border-emerald-100 text-center shrink-0">
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tổng điểm</p>
-                          <p className="text-4xl font-black text-[#08A66A]">{selectedHistoryExam.teacherScore}<span className="text-xl text-slate-300">/100</span></p>
+                          <p className="text-4xl font-black text-[#2F6E5A]">{selectedHistoryExam.teacherScore}<span className="text-xl text-slate-300">/100</span></p>
                         </div>
                       </div>
                     </div>
@@ -770,7 +770,7 @@ export default function HskkPage() {
                               {item.questionIndex}
                             </span>
                             <div>
-                              <span className="text-[10px] font-black text-[#08A66A] bg-[#DDF7EA] px-2 py-0.5 rounded-lg uppercase tracking-wider mb-2 inline-block">
+                              <span className="text-[10px] font-black text-[#2F6E5A] bg-[#DDEBE4] px-2 py-0.5 rounded-lg uppercase tracking-wider mb-2 inline-block">
                                 {item.type}
                               </span>
                               <p className="font-bold text-slate-800 text-base">{item.question}</p>
@@ -793,7 +793,7 @@ export default function HskkPage() {
                             </div>
                           )}
 
-                          <div className="bg-[#FFF8E8] p-4 rounded-2xl border border-[#FFC83D]/30">
+                          <div className="bg-[#FBF8F1] p-4 rounded-2xl border border-[#D9A23A]/30">
                             <p className="text-xs font-black text-amber-700 mb-1 flex items-center gap-1.5"><span>👨‍🏫</span> Lời phê:</p>
                             <p className="text-slate-700 text-sm font-medium">
                               {item.teacherComment ? item.teacherComment : "Giáo viên không để lại lời phê cho câu này."}
@@ -811,14 +811,14 @@ export default function HskkPage() {
           {examPhase === "device_check" && (
             <div className="max-w-3xl mx-auto py-8 animate-fade-in bg-white/95 backdrop-blur-xl p-8 md:p-12 rounded-[40px] shadow-sm border border-white relative overflow-hidden mt-6">
               <div className="text-center mb-10 relative z-10 flex flex-col items-center">
-                <div className="text-5xl mb-4 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-rose-50 w-20 h-20 flex items-center justify-center border border-rose-100 shadow-sm">🐸</div>
+                <div className="text-5xl mb-4 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-rose-50 w-20 h-20 flex items-center justify-center border border-rose-100 shadow-sm">师</div>
                 <h2 className="text-3xl font-black text-slate-900 mb-3">Kiểm Tra Loa & Micro</h2>
                 <p className="text-slate-500 font-medium">Hoàn tất 2 bước dưới đây để tránh rủi ro mất bản ghi âm khi thi nhé.</p>
               </div>
 
-              <div className={`p-6 md:p-8 rounded-[32px] border-2 mb-6 transition-all relative z-10 ${isSpeakerTested ? 'border-[#08A66A] bg-[#DDF7EA]/30' : 'border-slate-100 bg-slate-50'}`}>
+              <div className={`p-6 md:p-8 rounded-[32px] border-2 mb-6 transition-all relative z-10 ${isSpeakerTested ? 'border-[#2F6E5A] bg-[#DDEBE4]/30' : 'border-slate-100 bg-slate-50'}`}>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ${isSpeakerTested ? 'bg-[#08A66A] text-white' : 'bg-white text-slate-400 border border-slate-200'}`}>🔊</div>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ${isSpeakerTested ? 'bg-[#2F6E5A] text-white' : 'bg-white text-slate-400 border border-slate-200'}`}>🔊</div>
                   <div>
                     <h3 className="text-lg font-black text-slate-800">1. Kiểm tra Loa</h3>
                     <p className="text-slate-500 text-xs font-medium mt-1">Phát audio tiếng Trung để chắc chắn bạn nghe rõ đề bài.</p>
@@ -829,15 +829,15 @@ export default function HskkPage() {
                   <button onClick={testSpeaker} className="px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl shadow-sm hover:shadow hover:-translate-y-0.5 transition text-sm flex items-center gap-2">
                     <span>▶</span> Phát âm thanh mẫu
                   </button>
-                  <button onClick={() => setIsSpeakerTested(true)} className={`px-6 py-3 font-bold rounded-xl text-sm transition-all flex items-center gap-2 ${isSpeakerTested ? 'bg-[#08A66A] text-white shadow-md' : 'bg-slate-200 text-slate-400'}`}>
+                  <button onClick={() => setIsSpeakerTested(true)} className={`px-6 py-3 font-bold rounded-xl text-sm transition-all flex items-center gap-2 ${isSpeakerTested ? 'bg-[#2F6E5A] text-white shadow-md' : 'bg-slate-200 text-slate-400'}`}>
                     <span>✓</span> Tôi đã nghe rõ
                   </button>
                 </div>
               </div>
 
-              <div className={`p-6 md:p-8 rounded-[32px] border-2 mb-8 transition-all relative z-10 ${isMicTested ? 'border-[#08A66A] bg-[#DDF7EA]/30' : 'border-slate-100 bg-slate-50'}`}>
+              <div className={`p-6 md:p-8 rounded-[32px] border-2 mb-8 transition-all relative z-10 ${isMicTested ? 'border-[#2F6E5A] bg-[#DDEBE4]/30' : 'border-slate-100 bg-slate-50'}`}>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ${isMicTested ? 'bg-[#08A66A] text-white' : 'bg-white text-slate-400 border border-slate-200'}`}>🎙️</div>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner ${isMicTested ? 'bg-[#2F6E5A] text-white' : 'bg-white text-slate-400 border border-slate-200'}`}>🎙️</div>
                   <div>
                     <h3 className="text-lg font-black text-slate-800">2. Kiểm tra Micro</h3>
                     <p className="text-slate-500 text-xs font-medium mt-1">Đọc to "Ni hao" trong vòng 3 giây và nghe lại bản ghi.</p>
@@ -856,7 +856,7 @@ export default function HskkPage() {
                       <span className="text-rose-500">●</span> Ghi thử 3 giây
                     </button>
                     {testAudioUrl && (
-                      <button onClick={() => setIsMicTested(true)} className={`px-6 py-3 font-bold rounded-xl text-sm transition-all flex items-center gap-2 ${isMicTested ? 'bg-[#08A66A] text-white shadow-md' : 'bg-slate-200 text-slate-400'}`}>
+                      <button onClick={() => setIsMicTested(true)} className={`px-6 py-3 font-bold rounded-xl text-sm transition-all flex items-center gap-2 ${isMicTested ? 'bg-[#2F6E5A] text-white shadow-md' : 'bg-slate-200 text-slate-400'}`}>
                         <span>✓</span> Nghe rõ tiếng mình
                       </button>
                     )}
@@ -897,7 +897,7 @@ export default function HskkPage() {
           {(examPhase === "loading" || examPhase === "submitting") && (
              <div className="text-center py-32 flex flex-col items-center animate-fade-in bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white max-w-2xl mx-auto w-full mt-10">
                <div className="w-24 h-24 bg-rose-50 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center mb-6 relative shadow-inner">
-                  <div className="text-5xl absolute z-10">🐸</div>
+                  <div className="text-5xl absolute z-10">师</div>
                   <div className="absolute inset-0 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
                </div>
                <h2 className="text-2xl font-black text-slate-800 mb-2">
@@ -909,7 +909,7 @@ export default function HskkPage() {
 
           {examPhase === "intro" && (
             <div className="text-center py-20 animate-fade-in flex flex-col items-center bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white max-w-4xl mx-auto px-6 w-full mt-10">
-              <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-5xl mb-6 shadow-inner border border-blue-100">🐸</div>
+              <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center text-5xl mb-6 shadow-inner border border-blue-100">师</div>
               <h2 className="text-3xl font-black text-slate-900 mb-8 uppercase tracking-widest">Khai Mạc Kỳ Thi</h2>
               
               <div className="bg-slate-50 border border-slate-200 rounded-3xl p-10 w-full mb-10 shadow-inner">
@@ -927,7 +927,7 @@ export default function HskkPage() {
 
           {examPhase === "intro_countdown" && (
             <div className="text-center py-24 animate-fade-in flex flex-col items-center bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white max-w-3xl mx-auto w-full mt-10">
-              <div className="text-6xl mb-6 animate-bounce">🐸</div>
+              <div className="text-6xl mb-6 animate-bounce">师</div>
               <h2 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-widest">Kỳ thi bắt đầu sau</h2>
               <p className="text-slate-500 font-medium mb-10">Vui lòng giữ im lặng và chú ý màn hình.</p>
               
@@ -987,7 +987,7 @@ export default function HskkPage() {
                    <textarea 
                      value={scratchpad} 
                      onChange={e => setScratchpad(e.target.value)} 
-                     className="flex-1 w-full p-6 rounded-2xl border-2 border-amber-100 bg-[#FFF8E8]/50 resize-none text-base font-medium outline-none focus:border-amber-400 focus:bg-[#FFF8E8] transition-colors placeholder:text-amber-700/30" 
+                     className="flex-1 w-full p-6 rounded-2xl border-2 border-amber-100 bg-[#FBF8F1]/50 resize-none text-base font-medium outline-none focus:border-amber-400 focus:bg-[#FBF8F1] transition-colors placeholder:text-amber-700/30" 
                      placeholder="Đề bài khó ghi chú tại đây nhé..." 
                    />
                 </div>
@@ -1051,8 +1051,8 @@ export default function HskkPage() {
           {examPhase === "done" && (
             <div className="flex flex-col items-center justify-center gap-8 animate-slide-up-fade text-center py-16 px-4 max-w-2xl mx-auto mt-10 bg-white/95 backdrop-blur-xl rounded-[40px] shadow-sm border border-white">
               
-              <div className="w-32 h-32 bg-[#DDF7EA] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center relative shadow-inner border border-emerald-100">
-                <div className="text-6xl absolute z-10">🐸</div>
+              <div className="w-32 h-32 bg-[#DDEBE4] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] flex items-center justify-center relative shadow-inner border border-emerald-100">
+                <div className="text-6xl absolute z-10">师</div>
                 <div className="absolute -inset-4 border-2 border-emerald-400 border-dashed rounded-full animate-[spin_10s_linear_infinite] opacity-50"></div>
               </div>
 
@@ -1063,23 +1063,23 @@ export default function HskkPage() {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-[#FFF8E8] to-[#FFF0D4] border border-[#FFD666]/50 rounded-[32px] p-8 w-full shadow-sm relative overflow-hidden">
+              <div className="bg-gradient-to-br from-[#FBF8F1] to-[#FFF0D4] border border-[#E6B656]/50 rounded-[32px] p-8 w-full shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-20 h-20 bg-white/40 rounded-bl-full pointer-events-none"></div>
                 <p className="text-xs font-black text-amber-700 uppercase tracking-widest mb-3">Phần Thưởng Hoàn Thành</p>
                 <div className="flex justify-center items-center gap-6">
-                  <p className="text-4xl font-black text-[#1B5E4B] drop-shadow-sm">+100 <span className="text-xl">XP</span></p>
+                  <p className="text-4xl font-black text-[#1C1A17] drop-shadow-sm">+100 <span className="text-xl">tu vi</span></p>
                   <div className="w-1 h-10 bg-amber-200 rounded-full"></div>
-                  <p className="text-4xl font-black text-[#4FB6C7] drop-shadow-sm">+10 <span className="text-xl">💧</span></p>
+                  <p className="text-4xl font-black text-[#4FB6C7] drop-shadow-sm">+10 <span className="text-xl">linh thủy</span></p>
                 </div>
               </div>
 
-              <div className="bg-[#F4F8F5] w-full rounded-[32px] border border-emerald-50 p-8 shadow-inner text-left">
+              <div className="bg-[#F6F0E2] w-full rounded-[32px] border border-emerald-50 p-8 shadow-inner text-left">
                  <h4 className="font-black text-slate-800 mb-6 border-b border-slate-200/60 pb-4">Trạng thái xử lý</h4>
                  
                  <div className="flex flex-col gap-6 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
                    
                    <div className="flex items-center gap-4 relative z-10">
-                     <div className="w-8 h-8 bg-[#08A66A] rounded-full text-white font-black flex items-center justify-center text-xs shadow-sm ring-4 ring-[#F4F8F5]">✓</div>
+                     <div className="w-8 h-8 bg-[#2F6E5A] rounded-full text-white font-black flex items-center justify-center text-xs shadow-sm ring-4 ring-[#F6F0E2]">✓</div>
                      <div>
                        <p className="font-black text-slate-800 text-sm">Nộp bài thi</p>
                        <p className="text-xs text-slate-500 font-medium">Hoàn tất lưu file âm thanh.</p>
@@ -1087,7 +1087,7 @@ export default function HskkPage() {
                    </div>
 
                    <div className="flex items-center gap-4 relative z-10">
-                     <div className="w-8 h-8 bg-amber-400 rounded-full text-white font-black flex items-center justify-center text-xs shadow-sm ring-4 ring-[#F4F8F5] animate-pulse">⏳</div>
+                     <div className="w-8 h-8 bg-amber-400 rounded-full text-white font-black flex items-center justify-center text-xs shadow-sm ring-4 ring-[#F6F0E2] animate-pulse">⏳</div>
                      <div>
                        <p className="font-black text-amber-600 text-sm">Đang chờ chấm điểm</p>
                        <p className="text-xs text-slate-500 font-medium">Giáo viên đang xử lý...</p>
@@ -1095,7 +1095,7 @@ export default function HskkPage() {
                    </div>
 
                    <div className="flex items-center gap-4 relative z-10 opacity-40">
-                     <div className="w-8 h-8 bg-slate-200 rounded-full text-slate-500 font-black flex items-center justify-center text-xs shadow-sm ring-4 ring-[#F4F8F5]">🔒</div>
+                     <div className="w-8 h-8 bg-slate-200 rounded-full text-slate-500 font-black flex items-center justify-center text-xs shadow-sm ring-4 ring-[#F6F0E2]">🔒</div>
                      <div>
                        <p className="font-black text-slate-600 text-sm">Xem kết quả</p>
                        <p className="text-xs text-slate-500 font-medium">Chỉ mở khi có điểm thi.</p>
