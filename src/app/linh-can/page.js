@@ -3,8 +3,9 @@
 // TRẮC NGHIỆM LINH CĂN 测灵根 — Sơn Hải Thư Viện
 // 20 câu · 5 hệ ngũ hành (Kim=Nghe · Mộc=Từ vựng · Thủy=Đọc · Hỏa=Phát âm · Thổ=Ngữ pháp)
 // Mỗi hệ 4 câu, độ khó 1→4 = trọng số 1→4 (tổng 10) → điểm hệ 0–100
-// Phần 2 · Định cảnh giới: từ vựng theo từng cấp HSK1 → HSK7–9, mỗi cấp 4 câu, đúng ≥3 là qua.
-//   Cấp đầu tiên chưa qua = cấp đang cần tu → cảnh giới khởi đầu (tuVi.realm). Chỉ xếp lên, không hạ.
+// Phần 2 · Định cảnh giới: thích ứng — bắt đầu ở cấp người học tự chọn, qua thì lên, trượt thì xuống.
+//   Mỗi cấp 6 câu lấy ngẫu nhiên từ kho thẻ của cấp đó (điền chỗ trống, nghĩa, thanh điệu), 25 giây/câu, đúng ≥5 là qua.
+//   Cảnh giới khởi đầu = cấp cao nhất đã qua + 1. Chỉ xếp lên, không hạ.
 // Kết quả lưu ở users/{uid}.linhCan + users/{uid}.tuVi (Firestore) và localStorage; 30 ngày được đo lại một lần
 // ============================================================
 import Link from "next/link";
@@ -15,7 +16,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import GardenNav from "../GardenNav";
 import { ELEMENTS, elementOf, judgeLinhCan, LinhCanStone, NguHanhChart, Seal, VText } from "../tuTien";
 import { REALMS8 } from "../tuVi";
-import PLACEMENT from "./placement.json";
+import { loadCards } from "../luyenDan";
 import { speakZh, preloadAudio, stopSpeak } from "../amThanh";
 
 const RETEST_DAYS = 30;
@@ -23,31 +24,31 @@ const LABELS = ["甲", "乙", "丙", "丁"];
 
 // a = đáp án đúng luôn ở vị trí 0 trong khai báo; khi hiển thị sẽ xoay vòng theo số câu
 const QUESTIONS = [
-  // 金 Kim · Nghe — đọc bằng giọng máy (zh-CN), chọn nghĩa đúng
-  { el: "kim", d: 1, say: "你好，我叫王明。", q: "Nghe và chọn nghĩa đúng", o: ["Xin chào, tôi tên là Vương Minh.", "Tạm biệt, hẹn gặp lại.", "Bạn tên là gì?", "Tôi là giáo viên."] },
-  { el: "kim", d: 2, say: "我明天下午去图书馆借书。", q: "Nghe và chọn nghĩa đúng", o: ["Chiều mai tôi đến thư viện mượn sách.", "Sáng mai tôi đi hiệu sách mua sách.", "Chiều nay tôi ở nhà đọc sách.", "Hôm qua tôi đến thư viện trả sách."] },
-  { el: "kim", d: 3, say: "虽然外面下着大雨，他还是准时到了。", q: "Nghe và chọn nghĩa đúng", o: ["Dù ngoài trời mưa to, anh ấy vẫn đến đúng giờ.", "Vì trời mưa to nên anh ấy đến muộn.", "Trời mưa to nên anh ấy không đến.", "Anh ấy đến đúng giờ trước khi trời mưa."] },
-  { el: "kim", d: 4, say: "与其在这里抱怨，不如想办法解决问题。", q: "Nghe và chọn nghĩa đúng", o: ["Thay vì ngồi đây than phiền, chi bằng nghĩ cách giải quyết vấn đề.", "Vừa than phiền vừa nghĩ cách giải quyết vấn đề.", "Vấn đề này không giải quyết được, chỉ biết than phiền.", "Anh ấy than phiền vì không ai giải quyết vấn đề."] },
-  // 木 Mộc · Từ vựng
-  { el: "moc", d: 1, zh: "朋友", q: "Từ này nghĩa là gì?", o: ["bạn bè", "gia đình", "giáo viên", "bệnh viện"] },
-  { el: "moc", d: 2, zh: "准备", q: "Từ này nghĩa là gì?", o: ["chuẩn bị", "quyết định", "đồng ý", "lo lắng"] },
-  { el: "moc", d: 3, zh: "坚持", q: "Từ này nghĩa là gì?", o: ["kiên trì", "nghi ngờ", "từ chối", "thất vọng"] },
-  { el: "moc", d: 4, zh: "举足轻重", q: "Thành ngữ này nghĩa là gì?", o: ["có vai trò then chốt, ảnh hưởng lớn", "nhẹ như lông hồng", "đi đứng nhẹ nhàng, khoan thai", "do dự, không quyết được"] },
-  // 水 Thủy · Đọc hiểu
-  { el: "thuy", d: 1, zh: "我家有四口人：爸爸、妈妈、哥哥和我。", q: "Nhà người viết có mấy người?", o: ["4 người", "3 người", "5 người", "6 người"] },
-  { el: "thuy", d: 2, zh: "这家饭馆的菜又便宜又好吃，所以每天中午人都很多。", q: "Vì sao buổi trưa quán này đông?", o: ["Đồ ăn vừa rẻ vừa ngon", "Quán ở gần trường học", "Quán mới khai trương", "Buổi trưa quán giảm giá"] },
-  { el: "thuy", d: 3, zh: "小李本来打算周末去爬山，可是天气预报说会下雨，他只好在家看书了。", q: "Cuối tuần Tiểu Lý làm gì?", o: ["Ở nhà đọc sách", "Đi leo núi", "Đi xem dự báo thời tiết", "Đi chơi dưới mưa"] },
-  { el: "thuy", d: 4, zh: "成功并非一蹴而就，它往往是无数次失败之后厚积薄发的结果。", q: "Ý chính của câu là gì?", o: ["Thành công cần tích lũy lâu dài qua nhiều lần thất bại", "Thành công đến rất nhanh nếu gặp may", "Thất bại nhiều lần thì nên bỏ cuộc", "Người thành công chưa từng thất bại"] },
-  // 火 Hỏa · Phát âm (pinyin, thanh điệu, biến điệu)
-  { el: "hoa", d: 1, zh: "谢谢", q: "Chọn phiên âm đúng", o: ["xièxie", "xiéxie", "xiěxie", "xīxi"] },
-  { el: "hoa", d: 2, zh: "学习", q: "Chọn phiên âm đúng", o: ["xuéxí", "xuěxí", "xuèxì", "xuēxī"] },
-  { el: "hoa", d: 3, zh: "一定", q: "Khi đọc thực tế (có biến điệu), từ này đọc là:", o: ["yídìng", "yīdìng", "yìdìng", "yǐdìng"] },
-  { el: "hoa", d: 4, zh: "不得不", q: "Khi đọc thực tế (có biến điệu), cụm này đọc là:", o: ["bùdébù", "búdébù", "bùděibù", "búdèbú"] },
-  // 土 Thổ · Viết · ngữ pháp
-  { el: "tho", d: 1, zh: "我＿＿学生。", q: "Chọn từ điền vào chỗ trống", o: ["是", "在", "有", "很"] },
-  { el: "tho", d: 2, zh: "", q: "Câu nào đúng ngữ pháp?", o: ["我把作业做完了。", "我把作业做。", "我做完作业把了。", "把我作业做完了。"] },
-  { el: "tho", d: 3, zh: "他汉语说＿＿很流利。", q: "Chọn từ điền vào chỗ trống", o: ["得", "的", "地", "了"] },
-  { el: "tho", d: 4, zh: "这么难的题，连老师都做不出来，＿＿是我们呢？", q: "Chọn từ điền vào chỗ trống", o: ["何况", "尽管", "因此", "甚至"] },
+  // 金 Kim · Nghe — nghe rồi trả lời câu hỏi về chi tiết
+  { el: "kim", d: 1, say: "我昨天本来想去看电影，但是朋友临时有事，我们就改成明天了。", q: "Họ đi xem phim khi nào?", o: ["Ngày mai", "Hôm qua", "Hôm nay", "Không đi nữa"] },
+  { el: "kim", d: 2, say: "这件衣服打八折以后是两百块。如果买两件，一共再便宜二十块。", q: "Mua hai cái thì tổng cộng bao nhiêu tiền?", o: ["380 tệ", "400 tệ", "360 tệ", "320 tệ"] },
+  { el: "kim", d: 3, say: "老王说他不是不想帮忙，而是这几天实在抽不出时间。", q: "Lão Vương muốn nói gì?", o: ["Muốn giúp nhưng mấy hôm nay quá bận", "Không muốn giúp", "Đã giúp xong rồi", "Hôm nay sẽ giúp ngay"] },
+  { el: "kim", d: 4, say: "与其说他是运气好，倒不如说他早就为这个机会做足了准备。", q: "Theo người nói, anh ấy thành công nhờ đâu?", o: ["Đã chuẩn bị kỹ từ trước", "Gặp may", "Được người khác giúp", "Cơ hội tự tìm đến"] },
+  // 木 Mộc · Từ vựng — kết hợp từ, thành ngữ
+  { el: "moc", d: 1, zh: "我每天早上七点＿＿床。", q: "Chọn từ điền vào chỗ trống", o: ["起", "上", "开", "站"] },
+  { el: "moc", d: 2, zh: "这个问题很难，我得好好＿＿一下。", q: "Chọn từ điền vào chỗ trống", o: ["考虑", "考试", "关心", "打算"] },
+  { el: "moc", d: 3, zh: "为了＿＿环境，我们应该少用塑料袋。", q: "Chọn từ điền vào chỗ trống", o: ["保护", "保持", "保存", "保证"] },
+  { el: "moc", d: 4, zh: "杯弓蛇影", q: "Thành ngữ này nghĩa là gì?", o: ["Đa nghi, tự mình sợ hãi vô cớ", "Vẽ rắn thêm chân, làm điều thừa", "Cung tên sắc bén, sẵn sàng chiến đấu", "Rắn mất đầu, rối loạn vì không người dẫn"] },
+  // 水 Thủy · Đọc hiểu — phải suy luận, không chỉ dịch
+  { el: "thuy", d: 1, zh: "我比哥哥小三岁，哥哥今年二十岁。", q: "Người viết năm nay bao nhiêu tuổi?", o: ["17 tuổi", "23 tuổi", "20 tuổi", "3 tuổi"] },
+  { el: "thuy", d: 2, zh: "小王平时坐地铁上班，今天地铁出了故障，他只好打车去公司。", q: "Hôm nay Tiểu Vương đi làm bằng gì?", o: ["Taxi", "Tàu điện ngầm", "Xe buýt", "Đi bộ"] },
+  { el: "thuy", d: 3, zh: "这家公司几乎不做广告，靠的是过硬的产品质量和顾客之间的口口相传。", q: "Công ty này phát triển nhờ đâu?", o: ["Chất lượng tốt và khách truyền miệng", "Quảng cáo rầm rộ", "Giá rẻ nhất thị trường", "Được nhà nước hỗ trợ"] },
+  { el: "thuy", d: 4, zh: "所谓“慢生活”，并不是让人做事拖拉，而是在快节奏中给自己留出时间，去感受生活本身的意义。", q: "Theo đoạn văn, “慢生活” là gì?", o: ["Giữa nhịp sống nhanh, dành thời gian cảm nhận ý nghĩa cuộc sống", "Làm việc chậm chạp, lề mề", "Rời thành phố về nông thôn sống", "Bỏ việc để nghỉ ngơi"] },
+  // 火 Hỏa · Phát âm — biến điệu và chữ đa âm
+  { el: "hoa", d: 1, zh: "你好", q: "Khi nói thực tế (có biến điệu), từ này đọc là:", o: ["níhǎo", "nǐhǎo", "nìhǎo", "níhāo"] },
+  { el: "hoa", d: 2, zh: "一起", q: "Khi nói thực tế (có biến điệu), từ này đọc là:", o: ["yìqǐ", "yīqǐ", "yíqǐ", "yìqí"] },
+  { el: "hoa", d: 3, zh: "他还没还我书。", q: "Hai chữ 还 trong câu lần lượt đọc là:", o: ["hái … huán", "huán … hái", "hái … hái", "huán … huán"] },
+  { el: "hoa", d: 4, zh: "展览馆", q: "Ba thanh 3 liền nhau — khi nói thực tế thường đọc là:", o: ["zhánlánguǎn", "zhǎnlánguǎn", "zhánlǎnguǎn", "zhǎnlǎnguán"] },
+  // 土 Thổ · Ngữ pháp
+  { el: "tho", d: 1, zh: "我＿＿北京来的。", q: "Chọn từ điền vào chỗ trống", o: ["是从", "从是", "在从", "是在"] },
+  { el: "tho", d: 2, zh: "", q: "Câu nào đúng ngữ pháp?", o: ["他汉语说得很流利。", "他说汉语得很流利。", "他汉语说很流利得。", "他说得汉语很流利。"] },
+  { el: "tho", d: 3, zh: "这么多菜，我一个人吃＿＿。", q: "Chọn từ điền vào chỗ trống", o: ["不完", "没完", "完不", "不到完"] },
+  { el: "tho", d: 4, zh: "这么难的题，连老师都做不出来，＿＿是我们呢？", q: "Chọn từ điền vào chỗ trống", o: ["何况", "尽管", "况且", "甚至"] },
 ];
 // Xoay vị trí đáp án theo số câu (cố định, không ngẫu nhiên → không lệch khi tải trang)
 const SHIFT = [0, 2, 1, 3, 2, 0, 3, 1, 1, 3, 0, 2, 3, 1, 2, 0, 2, 3, 0, 1];
@@ -65,23 +66,58 @@ const PL_LEVELS = [
   { key: "hsk1", n: 1, vn: "HSK 1" }, { key: "hsk2", n: 2, vn: "HSK 2" }, { key: "hsk3", n: 3, vn: "HSK 3" },
   { key: "hsk4", n: 4, vn: "HSK 4" }, { key: "hsk5", n: 5, vn: "HSK 5" }, { key: "hsk6", n: 6, vn: "HSK 6" }, { key: "hsk7-9", n: 7, vn: "HSK 7–9" },
 ];
-const PL_PER = 4, PL_PASS = 3;
+const PL_PER = 6, PL_PASS = 5, PL_TIME = 25;
 const shuffle = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
-function makeLevelQs(key) {
-  const pool = PLACEMENT[key] || [];
-  return shuffle(pool).slice(0, PL_PER).map(([zh, py, vn]) => {
-    const wrong = shuffle(pool.filter((x) => x[2] !== vn)).slice(0, 3).map((x) => x[2]);
-    const opts = shuffle([vn, ...wrong]);
-    return { zh, py, opts, right: opts.indexOf(vn) };
-  });
+const shares = (a, b) => [...a].some((c) => b.includes(c));
+// Thanh điệu: đổi dấu của một/hai nguyên âm để tạo phương án sai
+const TONE = { a: "āáǎà", e: "ēéěè", i: "īíǐì", o: "ōóǒò", u: "ūúǔù", "ü": "ǖǘǚǜ" };
+const MARK = {}; Object.entries(TONE).forEach(([v, t]) => [...t].forEach((c, k) => { MARK[c] = [v, k]; }));
+function toneVariants(py) {
+  const ch = [...py]; const at = ch.map((c, i) => (MARK[c] ? i : -1)).filter((i) => i >= 0);
+  if (!at.length) return [];
+  const out = new Set();
+  const swap = (arr, i) => { const [v, k] = MARK[arr[i]]; const t = shuffle([0, 1, 2, 3].filter((x) => x !== k))[0]; arr[i] = TONE[v][t]; };
+  for (let n = 0; n < 40 && out.size < 3; n++) {
+    const c = [...ch]; const pick = shuffle(at).slice(0, at.length > 1 && Math.random() < 0.4 ? 2 : 1);
+    pick.forEach((i) => swap(c, i)); const v = c.join(""); if (v !== py) out.add(v);
+  }
+  return [...out];
 }
-// levels = [{n, ok}] theo thứ tự đã làm → cảnh giới khởi đầu
+const pick3 = (near, far) => { const a = shuffle(near).slice(0, 2); return [...a, ...shuffle(far.filter((x) => !a.includes(x)))].slice(0, 3); };
+// 6 câu/cấp từ kho thẻ thật: 2 điền chỗ trống trong câu ví dụ, 2 chọn nghĩa (nhiễu là từ cùng chữ), 2 thanh điệu
+function makeLevelQs(cards) {
+  const pool = cards.filter((c) => c[0] && c[2]);
+  const used = new Set(); const qs = [];
+  const take = (ok) => { const c = shuffle(pool).find((x) => !used.has(x[0]) && ok(x)); if (c) used.add(c[0]); return c; };
+  const mk = (type, sub, ask, right, wrong, extra) => { const opts = shuffle([right, ...wrong]); return { type, sub, ask, opts, right: opts.indexOf(right), ...extra }; };
+  for (let i = 0; i < 2; i++) {
+    const c = take((x) => x[3] && x[3].split(x[0]).length === 2 && x[3].length >= x[0].length + 4);
+    if (!c) continue;
+    // Có gợi ý nghĩa để chỉ một đáp án đúng; nhiễu là từ cùng độ dài (ưu tiên cùng chữ) mang nghĩa khác
+    const same = pool.filter((x) => x[0] !== c[0] && x[2] !== c[2] && x[0].length === c[0].length && !c[3].includes(x[0]));
+    qs.push(mk("fill", `Điền từ mang nghĩa “${c[2].split(";")[0].trim()}”`, c[3].replace(c[0], "＿＿"), c[0], pick3(same.filter((x) => shares(x[0], c[0])).map((x) => x[0]), same.map((x) => x[0])), { zh: c[0] }));
+  }
+  for (let i = 0; i < 2; i++) {
+    const c = take(() => true); if (!c) continue;
+    const other = pool.filter((x) => x[0] !== c[0] && x[2] !== c[2]);
+    const wrong = pick3(other.filter((x) => shares(x[0], c[0])).map((x) => x[2]), other.filter((x) => x[0].length === c[0].length).map((x) => x[2]));
+    qs.push(mk("nghia", "Từ này nghĩa là gì?", c[0], c[2], [...new Set(wrong)].slice(0, 3), { zh: c[0] }));
+  }
+  for (let i = 0; i < 2; i++) {
+    const c = take((x) => toneVariants(x[1]).length >= 3 && (x[0].length >= 2 || i === 0));
+    if (!c) continue;
+    qs.push(mk("am", "Chọn phiên âm đúng (theo từ điển)", c[0], c[1], toneVariants(c[1]).slice(0, 3), { zh: c[0] }));
+  }
+  return shuffle(qs);
+}
+// levels = [{n, ok, of}] → cảnh giới khởi đầu = cấp cao nhất đã qua + 1
+const passOf = (l) => l.ok >= (l.of ? PL_PASS : 3);
 function realmFromPlacement(levels) {
   if (!levels.length) return 0;
-  const fail = levels.find((l) => l.ok < PL_PASS);
-  if (!fail) return 7;
-  if (fail.n === 1) return fail.ok >= 2 ? 1 : 0; // chưa vững HSK1: biết vài từ → Luyện Khí, chưa biết → Phàm Nhân
-  return Math.min(7, fail.n);
+  const top = Math.max(0, ...levels.filter(passOf).map((l) => l.n));
+  if (top > 0) return Math.min(7, top + 1);
+  const h1 = levels.find((l) => l.n === 1);
+  return h1 && h1.ok >= Math.ceil((h1.of || 4) / 2) ? 1 : 0; // chưa vững HSK1: biết khoảng nửa → Luyện Khí, chưa biết → Phàm Nhân
 }
 
 export default function LinhCanPage() {
@@ -98,6 +134,9 @@ export default function LinhCanPage() {
   // Định cảnh giới
   const [pl, setPl] = useState(null); // { li, qi, qs, ok, levels: [{n, ok}] }
   const [plPicked, setPlPicked] = useState(null);
+  const [plStart, setPlStart] = useState(0);
+  const [plLoading, setPlLoading] = useState(false);
+  const [plLeft, setPlLeft] = useState(PL_TIME);
   const [scoresDraft, setScoresDraft] = useState(null);
 
   useEffect(() => { preloadAudio(); try { window.speechSynthesis?.getVoices(); } catch (_) {} }, []);
@@ -137,16 +176,39 @@ export default function LinhCanPage() {
     setScoresDraft(scores); setPhase("dinh"); window.scrollTo({ top: 0 });
   };
 
-  const startPlacement = () => { setPl({ li: 0, qi: 0, qs: makeLevelQs(PL_LEVELS[0].key), ok: 0, levels: [] }); setPlPicked(null); setPhase("pl"); window.scrollTo({ top: 0 }); };
-  const plSubmit = () => {
-    if (plPicked == null || !pl) return;
-    const ok = pl.ok + (plPicked === pl.qs[pl.qi].right ? 1 : 0);
-    setPlPicked(null);
-    if (pl.qi + 1 < PL_PER) { setPl({ ...pl, qi: pl.qi + 1, ok }); return; }
-    const levels = [...pl.levels, { n: PL_LEVELS[pl.li].n, ok }];
-    if (ok >= PL_PASS && pl.li + 1 < PL_LEVELS.length) { setPl({ li: pl.li + 1, qi: 0, ok: 0, qs: makeLevelQs(PL_LEVELS[pl.li + 1].key), levels }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  const goLevel = async (li, base) => {
+    setPlLoading(true); setPlPicked(null);
+    try {
+      const qs = makeLevelQs(await loadCards(PL_LEVELS[li].key));
+      setPl({ ...base, li, qi: 0, ok: 0, qs }); setPhase("pl"); window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (_) { setSaved("Không tải được đề định cảnh giới — kiểm tra mạng rồi thử lại."); }
+    setPlLoading(false);
+  };
+  const startPlacement = () => goLevel(plStart, { start: plStart, dir: "up", levels: [] });
+  // Thích ứng: đi lên khi qua; trượt ngay cấp khởi đầu thì đi xuống tới khi qua được một cấp
+  const endLevel = (ok) => {
+    const levels = [...pl.levels, { n: PL_LEVELS[pl.li].n, ok, of: PL_PER }];
+    const pass = ok >= PL_PASS; const base = { ...pl, levels };
+    if (pass && pl.dir === "up" && pl.li + 1 < PL_LEVELS.length) return goLevel(pl.li + 1, base);
+    if (!pass && pl.li > 0 && (pl.dir === "down" || pl.li === pl.start)) return goLevel(pl.li - 1, { ...base, dir: "down" });
     finish(levels);
   };
+  const plAnswer = (choice) => {
+    if (!pl || plLoading) return;
+    const ok = pl.ok + (choice === pl.qs[pl.qi].right ? 1 : 0);
+    setPlPicked(null);
+    if (pl.qi + 1 < pl.qs.length) { setPl({ ...pl, qi: pl.qi + 1, ok }); return; }
+    endLevel(ok);
+  };
+  const plSubmit = () => { if (plPicked != null) plAnswer(plPicked); };
+  // Đồng hồ 25 giây mỗi câu; hết giờ tính là sai
+  useEffect(() => {
+    if (phase !== "pl" || !pl || plLoading) return;
+    setPlLeft(PL_TIME);
+    const t = setInterval(() => setPlLeft((x) => x - 1), 1000);
+    return () => clearInterval(t);
+  }, [phase, pl?.li, pl?.qi, pl?.qs, plLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (plLeft <= 0 && phase === "pl" && pl && !plLoading) plAnswer(-1); }, [plLeft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Lưu linh căn + cảnh giới khởi đầu
   const finish = async (levels) => {
@@ -194,14 +256,14 @@ export default function LinhCanPage() {
             </div>
             <div className="flex justify-center"><LinhCanStone active="kim" className="w-[240px] h-[240px]" /></div>
             <div className="rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-5 flex flex-col gap-3 text-[15px] leading-relaxed">
-              <p>Trắc Linh Đài có hai phần, khoảng <b>8 phút</b>:</p>
+              <p>Trắc Linh Đài có hai phần, khoảng <b>12 phút</b>:</p>
               <p><b>1 · Cảm ứng linh căn</b> — 20 câu đo năm hệ ngũ hành:</p>
               <ul className="grid gap-1.5">
                 {ELEMENTS.map((e) => (
                   <li key={e.key} className="flex items-center gap-3"><span className="font-brush text-[22px] w-7 text-center leading-none">{e.zh}</span><span><b>{e.vn}</b> · {e.skill}</span></li>
                 ))}
               </ul>
-              <p><b>2 · Định cảnh giới</b> — từ vựng đi dần từ HSK 1 lên HSK 7–9, mỗi cấp 4 câu. Dừng ở cấp đầu tiên chưa vững; đó là cảnh giới khởi đầu của bạn. Biết tới đâu xếp tới đó, không cần học lại từ đầu.</p>
+              <p><b>2 · Định cảnh giới</b> — đề rút ngẫu nhiên từ kho từ thật của từng cấp HSK: điền từ vào câu, chọn nghĩa, chọn thanh điệu. Mỗi cấp 6 câu, 25 giây một câu, đúng 5/6 mới qua. Qua thì lên cấp, trượt thì xuống — dừng ở đâu, đó là cảnh giới khởi đầu.</p>
               <p className="text-sm text-[#6B6253]">Câu nghe dùng giọng đọc của trình duyệt — nhớ bật loa. Câu khó hơn được tính nhiều điểm hơn. {isSignedIn ? `Đo xong được lưu vào hồ sơ; ${RETEST_DAYS} ngày đo lại một lần.` : "Đăng nhập để lưu kết quả vào hồ sơ."}</p>
             </div>
             <button onClick={restart} className="h-14 rounded-md bg-[#1C1A17] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22] tt-shine">Bắt đầu cảm ứng</button>
@@ -275,15 +337,23 @@ export default function LinhCanPage() {
               <div className="font-serif-vn text-sm font-bold tracking-[0.12em] text-[#4A4238]">PHẦN 2 · ĐỊNH CẢNH GIỚI</div>
             </div>
             <div className="rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-5 flex flex-col gap-3 text-[15px] leading-relaxed">
-              <p>Linh căn đã cảm ứng xong. Giờ Linh Căn Thạch thử độ sâu tu vi: mỗi cấp HSK <b>4 từ</b>, chọn nghĩa đúng. Đúng <b>3/4</b> là qua cấp, đi tiếp lên cấp cao hơn.</p>
-              <ol className="grid grid-cols-4 gap-1.5 text-center text-[12px]">
-                {REALMS8.slice(0, 8).map((r) => (
-                  <li key={r.key} className="rounded-[4px] border border-[#D8CBAE] bg-white px-1 py-1.5"><span className="block font-brush text-[18px] leading-none">{r.zh}</span><span className="block font-semibold">{r.vn}</span><span className="block text-[#6B6253]">{r.hsk.split(" · ")[0]}</span></li>
-                ))}
-              </ol>
+              <p>Linh căn đã cảm ứng xong. Giờ Linh Căn Thạch thử độ sâu tu vi: mỗi ải <b>6 câu</b> rút ngẫu nhiên từ kho từ của cấp đó, <b>25 giây</b> một câu, đúng <b>5/6</b> mới qua. Qua thì lên ải trên, trượt thì xuống ải dưới.</p>
+              <div className="flex flex-col gap-2">
+                <div className="font-serif-vn font-bold">Bạn đang học tới khoảng cấp nào?</div>
+                <div role="radiogroup" aria-label="Cấp bắt đầu" className="grid grid-cols-4 gap-1.5">
+                  {PL_LEVELS.map((L, i) => { const R = REALMS8[L.n]; const on = plStart === i; return (
+                    <button key={L.key} role="radio" aria-checked={on} onClick={() => setPlStart(i)}
+                      className={`rounded-[4px] px-1 py-1.5 text-center text-[12px] ${on ? "border-2 border-[#9E2F22] bg-[#F3E3D2]" : "border border-[#D8CBAE] bg-white hover:border-[#9E2F22]"}`}>
+                      <span className="block font-extrabold text-[13px]">{L.vn}</span><span className="block text-[#6B6253]">{R.vn}</span>
+                    </button>
+                  ); })}
+                </div>
+                <p className="text-sm text-[#6B6253]">Đây chỉ là ải xuất phát. Chọn cao quá cũng không sao — trượt thì Linh Căn Thạch tự hạ xuống.</p>
+              </div>
               <p className="text-sm text-[#6B6253]">Không biết thì đừng đoán bừa — xếp quá cao sẽ khó tích tu vi. Cảnh giới chỉ được xếp lên, không bao giờ bị hạ.</p>
             </div>
-            <button onClick={startPlacement} className="h-14 rounded-md bg-[#1C1A17] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22]">Thử độ sâu tu vi</button>
+            {saved && <p className="text-sm font-semibold text-[#7A2218] text-center">{saved}</p>}
+            <button onClick={startPlacement} disabled={plLoading} className="h-14 disabled:opacity-60 rounded-md bg-[#1C1A17] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22]">{plLoading ? "Đang rút đề…" : `Thử độ sâu tu vi · bắt đầu ${PL_LEVELS[plStart].vn}`}</button>
             <button onClick={() => finish([])} className="text-sm font-semibold text-[#7A2218] underline underline-offset-2 self-center">Tôi mới bắt đầu học — vào Phàm Nhân Giới</button>
           </>
         )}
@@ -297,14 +367,18 @@ export default function LinhCanPage() {
                   <span className="font-serif-vn text-xs font-bold tracking-[0.12em] text-[#6B6253]">ĐỊNH CẢNH GIỚI · {L.vn}</span>
                   <span className="font-serif-vn text-[18px] font-extrabold">Ải {R.vn} <span className="font-brush font-normal text-[22px]">{R.zh}</span></span>
                 </div>
-                <span className="h-11 min-w-11 px-2 rounded-md bg-[#9E2F22] text-[#FBF3E4] inline-flex items-baseline justify-center pt-2.5 font-extrabold" aria-label={`Câu ${pl.qi + 1} trên ${PL_PER}`}>{pl.qi + 1}<span className="text-[11px] font-semibold">/{PL_PER}</span></span>
+                <span className="h-11 min-w-11 px-2 rounded-md bg-[#9E2F22] text-[#FBF3E4] inline-flex items-baseline justify-center pt-2.5 font-extrabold" aria-label={`Câu ${pl.qi + 1} trên ${pl.qs.length}`}>{pl.qi + 1}<span className="text-[11px] font-semibold">/{pl.qs.length}</span></span>
               </div>
               <div className="flex gap-1" aria-hidden="true">
                 {PL_LEVELS.map((x, i) => <div key={x.key} className={`flex-1 h-1.5 rounded-sm ${i < pl.li ? "bg-[#2F6E5A]" : i === pl.li ? "bg-[#9E2F22]" : "bg-[#D8CBAE]"}`} />)}
               </div>
+              <div className="flex items-center gap-2" role="timer" aria-label={`Còn ${Math.max(0, plLeft)} giây`}>
+                <div className="flex-1 h-2 rounded-sm bg-[#D8CBAE] overflow-hidden"><div className={`h-full transition-[width] duration-1000 ease-linear ${plLeft <= 8 ? "bg-[#9E2F22]" : "bg-[#1C1A17]"}`} style={{ width: `${Math.max(0, plLeft) / PL_TIME * 100}%` }} /></div>
+                <span className={`w-9 text-right text-sm font-extrabold tabular-nums ${plLeft <= 8 ? "text-[#9E2F22]" : ""}`}>{Math.max(0, plLeft)}s</span>
+              </div>
               <div className="rounded-[14px] bg-[#FAF5E8] border border-[#CDBF9F] p-4 flex flex-col gap-3">
-                <div className="font-serif-vn font-bold">Từ này nghĩa là gì?</div>
-                <div className="rounded-md bg-[#EFE7D6] px-3 py-5 text-center text-[40px] leading-none" style={{ fontFamily: '"Noto Serif SC",serif' }} lang="zh-CN">{cq.zh}</div>
+                <div className="font-serif-vn font-bold">{cq.sub}</div>
+                <div className={`rounded-md bg-[#EFE7D6] px-3 text-center ${cq.type === "fill" ? "py-4 text-[22px] leading-snug" : "py-5 text-[40px] leading-none"}`} style={{ fontFamily: '"Noto Serif SC",serif' }} lang="zh-CN">{cq.ask}</div>
                 <div role="radiogroup" aria-label="Các đáp án" className="flex flex-col gap-2">
                   {cq.opts.map((o, i) => {
                     const on = plPicked === i;
@@ -312,17 +386,17 @@ export default function LinhCanPage() {
                       <button key={i} role="radio" aria-checked={on} onClick={() => setPlPicked(i)}
                         className={`min-h-[48px] flex items-center gap-3 px-3 py-2 rounded-[4px] text-left transition-colors ${on ? "border-2 border-[#9E2F22] bg-[#F3E3D2]" : "border border-[#D8CBAE] bg-white hover:border-[#9E2F22]"}`}>
                         <span className={`w-7 h-7 rounded-[3px] grid place-items-center font-brush text-[18px] shrink-0 ${on ? "bg-[#9E2F22] text-[#FBF3E4]" : "bg-[#EFE7D6]"}`} aria-hidden="true">{LABELS[i]}</span>
-                        <span className="text-[16px]">{o}</span>
+                        <span className="text-[16px]" style={cq.type === "fill" ? { fontFamily: '"Noto Serif SC",serif' } : undefined} lang={cq.type === "fill" ? "zh-CN" : undefined}>{o}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
-              <button onClick={plSubmit} disabled={plPicked == null}
+              <button onClick={plSubmit} disabled={plPicked == null || plLoading}
                 className="h-14 rounded-md bg-[#1C1A17] disabled:bg-[#8C7F68] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[4px_4px_0_#9E2F22]">
-                {pl.qi + 1 < PL_PER ? "Tiếp" : "Xong ải này"}
+                {plLoading ? "Đang rút đề…" : pl.qi + 1 < pl.qs.length ? "Tiếp" : "Xong ải này"}
               </button>
-              <button onClick={() => finish([...pl.levels, { n: L.n, ok: 0 }])} className="text-sm font-semibold text-[#7A2218] underline underline-offset-2 self-center">Cấp này tôi chưa học — dừng ở đây</button>
+              <button onClick={() => endLevel(0)} disabled={plLoading} className="text-sm font-semibold text-[#7A2218] underline underline-offset-2 self-center">Cấp này tôi chưa học — bỏ qua ải này</button>
             </>
           );
         })()}
@@ -346,7 +420,7 @@ export default function LinhCanPage() {
                   <span className="font-serif-vn text-[22px] font-extrabold leading-tight">{R.vn} · Tầng 1</span>
                   <span className="text-sm text-[#E6B656] font-bold">{R.hsk} · {R.region}</span>
                   <span className="flex flex-wrap gap-1 mt-1">
-                    {result.placement.levels.map((l) => <span key={l.n} className={`text-[11px] font-bold px-1.5 py-0.5 rounded-[3px] ${l.ok >= PL_PASS ? "bg-[#2F6E5A] text-white" : "bg-[#5E5446] text-[#E9DFC8]"}`}>{PL_LEVELS.find((x) => x.n === l.n)?.vn} {l.ok}/{PL_PER}</span>)}
+                    {[...result.placement.levels].sort((x, y) => x.n - y.n).map((l) => <span key={l.n} className={`text-[11px] font-bold px-1.5 py-0.5 rounded-[3px] ${passOf(l) ? "bg-[#2F6E5A] text-white" : "bg-[#5E5446] text-[#E9DFC8]"}`}>{PL_LEVELS.find((x) => x.n === l.n)?.vn} {l.ok}/{l.of || 4}</span>)}
                   </span>
                 </div>
               </section>
