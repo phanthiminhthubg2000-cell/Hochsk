@@ -81,6 +81,7 @@ export default function ReviewManager({ db, levels }) {
   const [testForm, setTestForm] = useState(null);       // {id?, testName, level, kind, text}
   const [setup, setSetup] = useState(null);             // {cls, st, level, testId, n, dir, sec, prioritize}
   const [session, setSession] = useState(null);         // live test
+  const askedToday = useRef({});                       // {"lớp|bài|ngày": {studentId: [từ đã hỏi]}} — trong phiên này
   const [reportFor, setReportFor] = useState(null);     // {cls, testName}
   const [profileFor, setProfileFor] = useState(null);   // {cls, st}
 
@@ -227,11 +228,22 @@ export default function ReviewManager({ db, levels }) {
       const past = resultsOf(cfg.cls.id, cfg.st.id).filter((r) => r.level === t.level);
       const wrongSet = new Set(); const askedSet = new Set();
       past.forEach((r) => (r.logs || []).forEach((l) => { askedSet.add(l.z); if (!l.ok) wrongSet.add(l.z); }));
+      // Từ đã hỏi các bạn khác trong lớp hôm nay (cùng bài): xoay vòng cho đều, từ hỏi ít lần nhất lên trước
+      // → học sinh sau không nghe lại đúng những từ bạn trước vừa trả lời
+      const day = today(); const used = {};
+      results.filter((r) => r.classId === cfg.cls.id && r.testName === t.testName && r.date === day && r.studentId !== cfg.st.id && !r.retry)
+        .forEach((r) => (r.logs || []).forEach((l) => { used[l.z] = (used[l.z] || 0) + 1; }));
+      const mem = askedToday.current[`${cfg.cls.id}|${t.id}|${day}`] || {};
+      Object.entries(mem).forEach(([sid, zs]) => { if (sid !== cfg.st.id && !results.some((r) => r.studentId === sid && r.testName === t.testName && r.date === day)) zs.forEach((z) => { used[z] = (used[z] || 0) + 1; }); });
       const sh = shuffle(pool);
-      const score = (it) => (cfg.prioritize && wrongSet.has(it.z) ? 0 : askedSet.has(it.z) ? 2 : 1);
-      picked = cfg.prioritize ? [...sh].sort((a, b) => score(a) - score(b)) : sh;
+      const own = (it) => (cfg.prioritize && wrongSet.has(it.z) ? 0 : askedSet.has(it.z) ? 2 : 1);
+      picked = [...sh].sort((a, b) => (used[a.z] || 0) - (used[b.z] || 0) || own(a) - own(b));
       const n = cfg.n === 0 ? pool.length : Math.min(cfg.n, pool.length);
       picked = shuffle(picked.slice(0, n));
+    }
+    if (!onlyItems) {
+      const k = `${cfg.cls.id}|${t.id}|${today()}`;
+      askedToday.current[k] = { ...(askedToday.current[k] || {}), [cfg.st.id]: picked.map((it) => it.z) };
     }
     setSetup(null);
     setSession({
