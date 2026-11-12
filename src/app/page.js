@@ -752,6 +752,8 @@ export default function HomePage() {
   // ---------- Hành động ----------
   const goTab = (key) => { setActiveTab(key); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
+  // Bài HSK6 có Con đường tu luyện (chuỗi ải kiểu trò chơi)
+  const aiOf = (lec) => { const m = /\/lectures\/hsk6-\d\/LESSON_(\d+)\.html/.exec(lec?.fileUrl || ""); return m ? `/con-duong/hsk6-${m[1].padStart(2, "0")}` : null; };
   const openLecture = async (lec) => {
     if (!lec) return;
     setSelectedLecture(lec);
@@ -1295,7 +1297,14 @@ export default function HomePage() {
                             <span className={`block text-xs font-semibold ${current ? "text-[#7A2218]" : review ? "text-[#8A5A00]" : "text-[#6B6253]"}`}>{(() => { const m = masteryOf(lessonQi[lec.id], done); const rv = reviewOf(lessonQi[lec.id], done); if (rv.crack) return "裂 Lâu chưa ôn — công pháp rạn nứt"; if (rv.due) return `${m.zh} ${m.vn} · đến hạn ôn`; return done ? (m.n >= 2 ? `Đã lĩnh ngộ · ${m.vn}` : "Đã lĩnh ngộ") : m.n >= 1 ? `${m.zh} ${m.vn}` : current ? "Tu luyện tiếp" : review ? "Ôn tập" : "Chưa học"; })()}</span>
                             <span className="block font-bold text-[15px] leading-snug line-clamp-2">{lec.lectureName}</span>
                           </span>
-                          <Icon name="chevron" className="w-5 h-5 text-[#A89C84] shrink-0" />
+                          {aiOf(lec) ? (
+                            <span role="link" tabIndex={0} title="Học bài này theo chuỗi ải kiểu trò chơi"
+                              onClick={(e) => { e.stopPropagation(); window.location.href = aiOf(lec); }}
+                              onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); e.preventDefault(); window.location.href = aiOf(lec); } }}
+                              className="h-10 px-3 rounded-[6px] bg-[#9E2F22] hover:bg-[#7A2218] text-white text-sm font-bold inline-flex items-center gap-1.5 shrink-0">
+                              <span className="font-brush font-normal text-[17px]" aria-hidden="true">关</span>Vào ải
+                            </span>
+                          ) : <Icon name="chevron" className="w-5 h-5 text-[#A89C84] shrink-0" />}
                         </button>
                       );
                     })}
@@ -1533,12 +1542,7 @@ export default function HomePage() {
                 <span className="text-[11px] text-[#E2C3AC]">{normKeys(r.d).length}/{r.t || "–"} bước đạt · {r.c || 0} câu đúng</span>
               </span>
             ); })()}
-            {(() => { const m = /\/lectures\/hsk6-\d\/LESSON_(\d+)\.html/.exec(selectedLecture.fileUrl || ""); return m ? (
-              <Link href={`/con-duong/hsk6-${m[1].padStart(2, "0")}`} title="Học bài này theo chuỗi ải kiểu trò chơi"
-                className="h-10 px-3 rounded-xl bg-[#9E2F22] hover:bg-[#7A2218] text-white text-sm font-bold inline-flex items-center gap-1.5 shrink-0">
-                <span className="font-brush font-normal text-[17px]" aria-hidden="true">关</span><span className="hidden sm:inline">Vào ải</span>
-              </Link>
-            ) : null; })()}
+            
             {lessonsDone.includes(selectedLecture.id) ? (
               <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl bg-white/10 text-sm font-semibold shrink-0"><LotusMark className="w-5 h-5" /><span className="hidden sm:inline">Đã lĩnh ngộ</span></span>
             ) : (
@@ -1563,6 +1567,12 @@ export default function HomePage() {
                   <Icon name="chevron" className="w-4 h-4 rotate-90" />
                 </button>
               </div>
+            )}
+            {aiOf(selectedLecture) && (
+              <Link href={aiOf(selectedLecture)} title="Học bài này theo chuỗi ải kiểu trò chơi"
+                className="absolute bottom-4 left-4 z-10 h-11 px-4 rounded-full bg-[#9E2F22] hover:bg-[#7A2218] text-white text-sm font-extrabold shadow-[0_4px_14px_rgba(0,0,0,.25)] inline-flex items-center gap-2">
+                <span className="font-brush font-normal text-[19px]" aria-hidden="true">关</span>Vào ải · học kiểu trò chơi
+              </Link>
             )}
             <iframe
               {...htmlFrameProps(selectedLecture)}
