@@ -29,6 +29,8 @@ import { weekBump } from "./useTuVi";
 // 6 CẤP ĐỘ HSK 3.0 (kho đề thi)
 // Phòng thi HSK 3.0 dùng chung (chọn cấp độ + đề ngay trong phòng thi)
 const EXAM_CENTER = { id: "hsk-exam-center", examName: "Phòng thi HSK 3.0", level: "HSK 3.0", fileUrl: "/hsk-exam/index.html", center: true };
+// Phòng thi HSK 2.0 — đề thật HSK5 (H51xxx), cùng bộ máy với phòng 3.0 (public/hsk2-exam, dựng bằng tools/exam/make_hsk2_center.py)
+const EXAM_CENTER_2 = { id: "hsk2-exam-center", examName: "Phòng thi HSK 2.0", level: "HSK 2.0", fileUrl: "/hsk2-exam/index.html", center: true, dir: "hsk2-exam" };
 
 const HSK3_LEVELS = [
   "HSK 3.0 - Cấp độ 1",
@@ -520,7 +522,7 @@ export default function HomePage() {
           userName: user?.fullName || d.name || "Học viên ẩn danh",
           userEmail: user?.primaryEmailAddress?.emailAddress || d.email || "Không có",
           studentTypedName: d.name || "",
-          examId: activeHskExamView.center ? `hsk-exam/${d.examId || ""}` : activeHskExamView.id,
+          examId: activeHskExamView.center ? `${activeHskExamView.dir || "hsk-exam"}/${d.examId || ""}` : activeHskExamView.id,
           examName: activeHskExamView.center ? `HSK ${String(d.level || "").replace(/\D+/g, " ").trim().split(" ").pop() || ""} · ${d.exam || ""}` : activeHskExamView.examName,
           level: activeHskExamView.center ? (d.level || activeHskExamView.level) : activeHskExamView.level,
           status: "pending_teacher",
@@ -1459,8 +1461,8 @@ export default function HomePage() {
                   </ol>
                 </section>
               )}
-              <div role="tablist" aria-label="Loại đề" className="grid grid-cols-3 gap-1 p-1 rounded-[6px] bg-[#E4DAC4] md:max-w-md">
-                {[["hsk3", "HSK 3.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
+              <div role="tablist" aria-label="Loại đề" className="grid grid-cols-4 gap-1 p-1 rounded-[6px] bg-[#E4DAC4] md:max-w-lg">
+                {[["hsk3", "HSK 3.0"], ["hsk2", "HSK 2.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
                   <button key={k} role="tab" aria-selected={examTab === k} onClick={() => setExamTab(k)}
                     className={`h-10 rounded-[4px] text-sm font-serif-vn transition-colors ${examTab === k ? "bg-[#1C1A17] font-bold text-[#F3EEE2]" : "font-semibold text-[#4A4238]"}`}>{l}</button>
                 ))}
@@ -1477,6 +1479,18 @@ export default function HomePage() {
                         <p className="text-sm text-[#4A4238] mt-1 max-w-md">Giao diện như phòng thi thật trên máy. Vào phòng, điền thông tin thí sinh rồi chọn <b>cấp độ</b> và <b>đề thi</b>. Đeo tai nghe; phần nghe chỉ phát một lần.</p>
                       </div>
                       <button onClick={() => setActiveHskExamView(EXAM_CENTER)} className="tt-btn shrink-0">Vào phòng thi</button>
+                    </section>
+                  )}
+
+                  {examTab === "hsk2" && (
+                    <section className="tt-card px-5 py-8 md:py-10 flex flex-col sm:flex-row items-center gap-5">
+                      <span className="w-20 h-20 shrink-0 rounded-[6px] bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[46px] border border-[#C9A24E] shadow-[0_0_0_3px_#FBF8F1,0_0_0_4px_#C9A24E]" aria-hidden="true">真</span>
+                      <div className="flex-1 text-center sm:text-left">
+                        <div className="tt-eyebrow">Khảo Thí Điện · HSK（2.0）真题</div>
+                        <h2 className="font-serif-vn text-[20px] font-extrabold mt-1">Phòng thi HSK 2.0 · HSK 5</h2>
+                        <p className="text-sm text-[#4A4238] mt-1 max-w-md">Đề thi thật HSK 5 bản cũ (H51001 → H51333): 100 câu — nghe 45, đọc 45 phút, viết 40 phút. Chấm tự động phần nghe, đọc và câu sắp xếp; hai bài viết ngắn gửi giáo viên chấm.</p>
+                      </div>
+                      <button onClick={() => setActiveHskExamView(EXAM_CENTER_2)} className="tt-btn shrink-0">Vào phòng thi</button>
                     </section>
                   )}
 
