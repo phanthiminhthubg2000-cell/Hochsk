@@ -8,7 +8,8 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "public", "hsk2-exam")
 LET = "ABCD"
 # Đáp án câu ghép bị đọc lệch so với từ cho sẵn (đã soát tay)
-FIX_W = {(2, 97): ["我好容易才听懂她说的话。"]}
+FIX_W = {(2, 97): ["我好容易才听懂她说的话。"], (7, 96): ["市中心的房价远远高过农村。"]}
+FIX_WORDS = {(6, 91): ["和你", "开", "我", "个", "只不过", "玩笑"]}
 norm = lambda x: re.sub(r"[\s，。、？！?!,.；;：:\"“”（）()…·]", "", x or "")
 def clean(x):
     if isinstance(x, list): return [clean(i) for i in x]
@@ -34,6 +35,11 @@ def build(k, d):
         units.append({"sec": "L", "part": 1 if b <= 20 else 2, "label": f"{a}-{b}", "head": "第1-20题：请选出正确答案。" if b <= 20 else "第21-45题：请选出正确答案。", "qs": qs})
     for g in d["reading1"]:
         a, b = g["range"]; P = clean(g["passage"])
+        for n in range(a, b + 1):   # chỗ trống in thành số trơn
+            if "{%d}" % n not in "".join(P):
+                for i, t in enumerate(P):
+                    t2 = re.sub(r"(?<!\d)\s*%d\s*(?!\d)" % n, "{%d}" % n, t, count=1)
+                    if t2 != t: P[i] = t2; break
         miss = [n for n in range(a, b + 1) if "{%d}" % n not in "".join(P)]
         if miss: probs.append(f"{a}-{b}: thiếu chỗ trống {miss}")
         units.append({"sec": "R", "part": 1, "label": f"{a}-{b}", "head": "第46-60题：请选出正确答案。", "passage": P, "qs": [{"n": q["n"], "t": "c", "o": q4(q["n"], q["o"]), "a": A.get(q["n"], "")} for q in g["qs"]]})
@@ -46,8 +52,8 @@ def build(k, d):
     WA = {int(n): v for n, v in d.get("write_answers", {}).items()}
     wq = []
     for x in sorted(d["write1"], key=lambda x: x["n"]):
-        n = x["n"]; w = [clean(t) for t in x["w"] if clean(t)]
-        alts = [clean(s) for s in ([WA.get(n)] if isinstance(WA.get(n), str) else (WA.get(n) or []))]
+        n = x["n"]; w = FIX_WORDS.get((k, n)) or [clean(t) for t in x["w"] if clean(t)]
+        alts = [re.sub(r"[A-Za-z]+", "", clean(s)) for s in ([WA.get(n)] if isinstance(WA.get(n), str) else (WA.get(n) or []))]
         alts = FIX_W.get((k, n), alts)
         ok = [s for s in alts if Counter(norm(s)) == Counter(norm("".join(w)))]
         if not ok: probs.append(f"{n}: đáp án không khớp từ {alts} / {w}")
@@ -77,6 +83,7 @@ def build(k, d):
 
 for f in sorted(glob.glob(os.path.join(SRC, "moni*.json"))):
     k = int(re.search(r"(\d+)", os.path.basename(f)).group(1))
-    P, probs = build(k, json.load(open(f, encoding="utf-8")))
+    d = json.load(open(f, encoding="utf-8")); d = d[0] if isinstance(d, list) else d
+    P, probs = build(k, d)
     print(P["id"], "lỗi:", len(probs)); [print("   ", p) for p in probs[:15]]
     json.dump(P, open(os.path.join(OUT, "papers", P["id"] + ".json"), "w", encoding="utf-8"), ensure_ascii=False)
