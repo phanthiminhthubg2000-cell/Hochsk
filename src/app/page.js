@@ -389,7 +389,10 @@ export default function HomePage() {
       if (t && ["home", "learn", "practice", "exam", "play"].includes(t)) setActiveTab(t);
     } catch (_) {}
   }, []);
-  const [examTab, setExamTab] = useState("hsk3"); // hsk3 | hskk | test
+  const [examLv, setExamLv] = useState(null);     // Khảo Thí Điện: cấp đang xem (null = theo cảnh giới)
+  const [examSrc, setExamSrc] = useState("all");  // all | v3 | real | book | hskk | gv
+  const [papers3, setPapers3] = useState([]);     // /hsk-exam/papers.json
+  const [papers2, setPapers2] = useState([]);     // /hsk2-exam/papers.json
 
   // --- NGƯỜI HỌC ---
   const [streak, setStreak] = useState(0);
@@ -610,6 +613,10 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => { fetchHsk3Exams(); fetchLectures(); }, [fetchHsk3Exams, fetchLectures]);
+  useEffect(() => {
+    const get = (u, set) => fetch(u, { cache: "no-store" }).then((r) => (r.ok ? r.json() : [])).then((l) => set((l || []).filter((x) => x && !x.hidden))).catch(() => {});
+    get("/hsk-exam/papers.json", setPapers3); get("/hsk2-exam/papers.json", setPapers2);
+  }, []);
 
   // Bài học dở lần trước (lưu trên máy để mở nhanh khi chưa tải xong Firestore)
   useEffect(() => {
@@ -655,7 +662,8 @@ export default function HomePage() {
           });
           await grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) }));
           await grab("hsk3_submissions", "userId", (h, id) => ({
-            id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback,
+            id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback, examId: h.examId || "",
+            autoPct: (() => { const c = (h.listeningCorrect || 0) + (h.readingCorrect || 0) + (h.writingAutoCorrect || 0), t = (h.listeningTotal || 0) + (h.readingTotal || 0) + (h.writingAutoTotal || 0); return t ? Math.round((c / t) * 100) : null; })(),
             parts: [["Nghe", h.listeningCorrect, h.listeningTotal], ["Đọc", h.readingCorrect, h.readingTotal], ["Viết (tự chấm)", h.writingAutoCorrect, h.writingAutoTotal]].filter(x => x[2]),
             time: ms(h.gradedAt) || ms(h.submittedAt)
           }));
@@ -1461,76 +1469,94 @@ export default function HomePage() {
                   </ol>
                 </section>
               )}
-              <div role="tablist" aria-label="Loại đề" className="grid grid-cols-4 gap-1 p-1 rounded-[6px] bg-[#E4DAC4] md:max-w-lg">
-                {[["hsk3", "HSK 3.0"], ["hsk2", "HSK 2.0"], ["hskk", "HSKK"], ["test", "Đánh giá"]].map(([k, l]) => (
-                  <button key={k} role="tab" aria-selected={examTab === k} onClick={() => setExamTab(k)}
-                    className={`h-10 rounded-[4px] text-sm font-serif-vn transition-colors ${examTab === k ? "bg-[#1C1A17] font-bold text-[#F3EEE2]" : "font-semibold text-[#4A4238]"}`}>{l}</button>
-                ))}
-              </div>
-
               <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] items-start">
                 <div className="flex flex-col gap-5 min-w-0">
-                  {examTab === "hsk3" && (
-                    <section className="tt-card px-5 py-8 md:py-10 flex flex-col sm:flex-row items-center gap-5">
-                      <span className="w-20 h-20 shrink-0 rounded-[6px] bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[46px] border border-[#C9A24E] shadow-[0_0_0_3px_#FBF8F1,0_0_0_4px_#C9A24E]" aria-hidden="true">考</span>
-                      <div className="flex-1 text-center sm:text-left">
-                        <div className="tt-eyebrow">Khảo Thí Điện · 汉语水平模拟考试</div>
-                        <h2 className="font-serif-vn text-[20px] font-extrabold mt-1">Phòng thi HSK 3.0</h2>
-                        <p className="text-sm text-[#4A4238] mt-1 max-w-md">Giao diện như phòng thi thật trên máy. Vào phòng, điền thông tin thí sinh rồi chọn <b>cấp độ</b> và <b>đề thi</b>. Đeo tai nghe; phần nghe chỉ phát một lần.</p>
+              {(() => {
+                // ---------- KHẢO THÍ ĐIỆN: mọi đề gộp theo cấp độ, bấm là vào phòng thi thật ----------
+                const SRC = { v3: ["新", "Chuẩn 3.0"], real: ["真", "Đề thật 2.0"], book: ["书", "Sách luyện 2.0"], hskk: ["口", "Khẩu ngữ HSKK"], gv: ["师", "Giáo viên giao"] };
+                const att = {};
+                results.filter((r) => r.type === "hsk" && r.examId).forEach((r) => { const o = att[r.examId] || (att[r.examId] = { n: 0, best: null, pending: false }); o.n++; if (r.autoPct != null) o.best = Math.max(o.best ?? 0, r.autoPct); if (!r.graded) o.pending = true; });
+                const items = [
+                  ...papers3.map((p) => ({ key: `hsk-exam/${p.id}`, lv: +p.level, src: "v3", name: p.name, meta: "Nghe · Đọc · Viết", open: () => setActiveHskExamView({ ...EXAM_CENTER, examName: `HSK ${p.level} 3.0 · ${p.name}`, fileUrl: `/hsk-exam/index.html?level=${p.level}&paper=${encodeURIComponent(p.id)}` }) })),
+                  ...papers2.map((p) => ({ key: `hsk2-exam/${p.id}`, lv: +p.level, src: /^h5\d/.test(p.id) ? "real" : "book", name: p.name.replace(/^HSK五级/, ""), meta: "100 câu · 125 phút", open: () => setActiveHskExamView({ ...EXAM_CENTER_2, examName: `HSK ${p.level} 2.0 · ${p.name}`, fileUrl: `/hsk2-exam/index.html?level=${p.level}&paper=${encodeURIComponent(p.id)}` }) })),
+                  // đề lẻ static-* đã có trong phòng thi 3.0 → chỉ lấy đề giáo viên tải lên
+                  ...hsk3ExamsList.filter((e) => !String(e.id).startsWith("static-")).map((e) => ({ key: e.id, lv: +((String(e.level || "").match(/(\d)\s*$/) || [])[1] || 0), src: String(e.id).startsWith("static-") ? "v3" : "gv", name: e.examName, meta: e.level || "", open: () => setActiveHskExamView(e) })),
+                  ...hskkExams.map((e) => ({ key: "hskk:" + e.file, lv: +e.level, src: "hskk", name: e.name || e.label, meta: `${e.questions || "–"} câu · ${e.minutes || "–"} phút`, isNew: e.isNew, open: () => setActiveHskkExam(e) })),
+                ].filter((x) => x.lv >= 1 && x.lv <= 6);
+                const lvs = [1, 2, 3, 4, 5, 6];
+                const own = realm.provisional ? 0 : Math.min(6, Math.max(1, realm.idx));
+                const lv = examLv || (items.some((x) => x.lv === own) ? own : (items[0]?.lv || 1));
+                const inLv = items.filter((x) => x.lv === lv);
+                const srcs = Object.keys(SRC).filter((k) => inLv.some((x) => x.src === k));
+                const src = srcs.includes(examSrc) ? examSrc : "all";
+                const shown = inLv.filter((x) => src === "all" || x.src === src);
+                const done = inLv.filter((x) => att[x.key]);
+                const best = done.reduce((m, x) => Math.max(m, att[x.key].best ?? 0), 0);
+                const next = inLv.find((x) => x.src !== "hskk" && !att[x.key]);
+                return (
+                  <section className="flex flex-col gap-4" aria-label="Khảo Thí Điện">
+                    <div className="flex items-end justify-between gap-3 flex-wrap">
+                      <div>
+                        <div className="tt-eyebrow">Khảo Thí Điện · 考试殿</div>
+                        <h2 className="font-serif-vn text-[22px] font-extrabold">Kho đề thi theo cấp độ</h2>
                       </div>
-                      <button onClick={() => setActiveHskExamView(EXAM_CENTER)} className="tt-btn shrink-0">Vào phòng thi</button>
-                    </section>
-                  )}
-
-                  {examTab === "hsk2" && (
-                    <section className="tt-card px-5 py-8 md:py-10 flex flex-col sm:flex-row items-center gap-5">
-                      <span className="w-20 h-20 shrink-0 rounded-[6px] bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[46px] border border-[#C9A24E] shadow-[0_0_0_3px_#FBF8F1,0_0_0_4px_#C9A24E]" aria-hidden="true">真</span>
-                      <div className="flex-1 text-center sm:text-left">
-                        <div className="tt-eyebrow">Khảo Thí Điện · HSK（2.0）真题</div>
-                        <h2 className="font-serif-vn text-[20px] font-extrabold mt-1">Phòng thi HSK 2.0 · HSK 5</h2>
-                        <p className="text-sm text-[#4A4238] mt-1 max-w-md">Đề thi thật HSK 5 bản cũ (H51001 → H51333): 100 câu — nghe 45, đọc 45 phút, viết 40 phút. Chấm tự động phần nghe, đọc và câu sắp xếp; hai bài viết ngắn gửi giáo viên chấm.</p>
-                      </div>
-                      <button onClick={() => setActiveHskExamView(EXAM_CENTER_2)} className="tt-btn shrink-0">Vào phòng thi</button>
-                    </section>
-                  )}
-
-                  {examTab === "hskk" && (
-                    <>
-                      <div className="tt-card p-4 text-sm leading-relaxed">
-                        <b>Trước khi vào thi:</b> đeo tai nghe, ngồi nơi yên tĩnh và cho phép trình duyệt dùng micro. Giao diện như phòng thi thật: đề chạy liên tục, hết câu cuối <b>tự nộp bài cho giáo viên</b> — thoát giữa chừng sẽ mất bản ghi âm.
-                      </div>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {[...new Set(hskkExams.map(e => Number(e.level)))].sort((a, b) => a - b).map(lv => {
-                          const exams = hskkExams.filter(e => Number(e.level) === lv);
-                          const first = exams[0] || {};
-                          return (
-                            <section key={lv} className="tt-card p-4 flex flex-col gap-2">
-                              <div className="flex items-baseline justify-between"><h3 className="font-serif-vn font-extrabold text-lg">Thiên Ngôn Điện · HSKK {lv}</h3><span className="text-xs text-[#6B6253] inline-flex items-center gap-1"><Icon name="clock" className="w-3.5 h-3.5" />{first.minutes} phút</span></div>
-                              <p className="text-xs text-[#6B6253]">{first.parts}</p>
-                              {exams.map(ex => (
-                                <button key={ex.file} onClick={() => setActiveHskkExam(ex)} className="flex items-center gap-2 min-h-[44px] px-3 rounded-[4px] border border-[#D8CBAE] bg-[#F6F0E2] hover:border-[#9E2F22] text-left">
-                                  <span className="flex-1 min-w-0 truncate text-sm font-semibold">{ex.name || ex.label}</span>
-                                  {ex.isNew && <span className="text-[10px] font-bold text-white bg-[#9E2F22] px-1.5 py-0.5 rounded-[3px]">Mới</span>}
-                                  <span className="text-xs font-bold text-[#7A2218] shrink-0">Vào thi</span>
-                                </button>
-                              ))}
-                            </section>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
-
-                  {examTab === "test" && (
-                    <section className={`${card} p-6 flex flex-col sm:flex-row sm:items-center gap-5`}>
-                      <Frog mood="think" className="w-20 h-16 shrink-0" />
-                      <div className="flex-1">
-                        <h2 className="font-serif-vn text-xl font-extrabold">Vấn Đạo · thi đánh giá năng lực</h2>
-                        <p className="text-sm text-[#4A4238] mt-1">Làm một bài kiểm tra tổng hợp Nghe · Nói · Đọc · Viết. Giáo viên chấm và gợi ý cấp độ phù hợp cho bạn.</p>
-                      </div>
+                      <p className="text-sm text-[#4A4238]">{items.length} đề · bấm đề nào là vào phòng thi thật của đề đó</p>
+                    </div>
+                    <div role="tablist" aria-label="Cấp độ" className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                      {lvs.map((n) => {
+                        const c = items.filter((x) => x.lv === n).length; const on = n === lv;
+                        return (
+                          <button key={n} role="tab" aria-selected={on} disabled={!c} onClick={() => { setExamLv(n); setExamSrc("all"); }}
+                            className={`relative rounded-[6px] px-2 py-2.5 text-left border transition-colors disabled:opacity-40 ${on ? "bg-[#1C1A17] text-[#F3EEE2] border-[#1C1A17] shadow-[3px_3px_0_#9E2F22]" : "bg-[#FBF8F1] border-[#D8CBAE] hover:border-[#9E2F22]"}`}>
+                            <span className="block font-serif-vn font-extrabold text-[15px]">HSK {n}</span>
+                            <span className={`block text-[11px] ${on ? "text-[#CFC3A8]" : "text-[#6B6253]"}`}>{REALMS8[n]?.vn || ""} · {c} đề</span>
+                            {n === own && <span className={`absolute top-1.5 right-1.5 font-brush text-[13px] ${on ? "text-[#E6B656]" : "text-[#9E2F22]"}`} title="Cấp bạn đang tu" aria-label="cấp của bạn">我</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Lọc nguồn đề">
+                      {[["all", "Tất cả", inLv.length], ...srcs.map((k) => [k, SRC[k][1], inLv.filter((x) => x.src === k).length])].map(([k, l, c]) => (
+                        <button key={k} onClick={() => setExamSrc(k)} aria-pressed={src === k}
+                          className={`h-9 px-3 rounded-full text-sm font-semibold border ${src === k ? "bg-[#9E2F22] text-white border-[#9E2F22]" : "bg-[#FBF8F1] border-[#D8CBAE] text-[#4A4238] hover:border-[#9E2F22]"}`}>{l} <span className="opacity-70">{c}</span></button>
+                      ))}
+                      <span className="ml-auto text-sm text-[#4A4238]">{done.length ? <>Đã thi <b>{done.length}</b>/{inLv.length} đề HSK {lv} · cao nhất <b>{best}%</b></> : `Chưa thi đề HSK ${lv} nào`}</span>
+                    </div>
+                    {next && (
+                      <button onClick={next.open} className="tt-card px-4 py-3 flex items-center gap-3 text-left hover:border-[#9E2F22]">
+                        <span className="font-brush text-[26px] text-[#9E2F22]" aria-hidden="true">荐</span>
+                        <span className="flex-1 min-w-0 text-sm"><b>Đề nên thi tiếp:</b> {SRC[next.src][1]} · {next.name}</span>
+                        <span className="tt-btn shrink-0 !h-9 !px-4 text-sm">Vào thi</span>
+                      </button>
+                    )}
+                    <ul className="grid gap-3 sm:grid-cols-2">
+                      {shown.map((x) => {
+                        const a = att[x.key]; const [glyph, label] = SRC[x.src];
+                        return (
+                          <li key={x.key}>
+                            <button onClick={x.open} className="w-full h-full tt-card p-4 flex gap-3 text-left hover:-translate-y-0.5 hover:shadow-[4px_4px_0_rgba(158,47,34,.35)] transition">
+                              <span className={`w-12 h-12 shrink-0 rounded-[5px] grid place-items-center font-brush text-[26px] border ${x.src === "real" ? "bg-[#9E2F22] text-[#FBF3E4] border-[#7A2218]" : x.src === "hskk" ? "bg-[#2F6E5A] text-[#F3EEE2] border-[#1E4A3C]" : "bg-[#1C1A17] text-[#E6B656] border-[#C9A24E]"}`} aria-hidden="true">{glyph}</span>
+                              <span className="flex-1 min-w-0 flex flex-col gap-0.5">
+                                <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#7A2218]">{label}{x.isNew ? " · mới" : ""}</span>
+                                <span className="font-serif-vn font-extrabold text-[16px] leading-snug" lang="zh-CN">{x.name}</span>
+                                <span className="text-xs text-[#6B6253]">{x.meta}</span>
+                                <span className={`text-xs font-bold mt-1 ${a ? (a.pending ? "text-[#B36B00]" : "text-[#2F6E5A]") : "text-[#8C7F68]"}`}>{a ? `${a.pending ? "Đang chờ chấm viết" : "Đã thi"} · ${a.n} lần${a.best != null ? ` · tự chấm ${a.best}%` : ""}` : "Chưa thi"}</span>
+                              </span>
+                              <span className="self-center text-sm font-extrabold text-[#9E2F22] shrink-0">{a ? "Thi lại" : "Vào thi"} ›</span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    {shown.length === 0 && <p className="tt-card px-4 py-6 text-center text-sm text-[#6B6253]">Cấp này chưa có đề.</p>}
+                    <section className="tt-card p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                      <span className="font-brush text-[30px] text-[#2F6E5A]" aria-hidden="true">问道</span>
+                      <div className="flex-1"><b className="font-serif-vn">Vấn Đạo · thi đánh giá năng lực</b><p className="text-sm text-[#4A4238]">Bài tổng hợp Nghe · Nói · Đọc · Viết; giáo viên chấm và gợi ý cấp độ phù hợp.</p></div>
                       <Link href="/test" className="tt-btn shrink-0">Bắt đầu</Link>
                     </section>
-                  )}
+                  </section>
+                );
+              })()}
                 </div>
                 <ResultsCard limit={50} />
               </div>
