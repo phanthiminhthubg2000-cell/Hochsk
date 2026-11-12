@@ -1533,6 +1533,12 @@ export default function HomePage() {
                 <span className="text-[11px] text-[#E2C3AC]">{normKeys(r.d).length}/{r.t || "–"} bước đạt · {r.c || 0} câu đúng</span>
               </span>
             ); })()}
+            {(() => { const m = /\/lectures\/hsk6-\d\/LESSON_(\d+)\.html/.exec(selectedLecture.fileUrl || ""); return m ? (
+              <Link href={`/con-duong/hsk6-${m[1].padStart(2, "0")}`} title="Học bài này theo chuỗi ải kiểu trò chơi"
+                className="h-10 px-3 rounded-xl bg-[#9E2F22] hover:bg-[#7A2218] text-white text-sm font-bold inline-flex items-center gap-1.5 shrink-0">
+                <span className="font-brush font-normal text-[17px]" aria-hidden="true">关</span><span className="hidden sm:inline">Vào ải</span>
+              </Link>
+            ) : null; })()}
             {lessonsDone.includes(selectedLecture.id) ? (
               <span className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl bg-white/10 text-sm font-semibold shrink-0"><LotusMark className="w-5 h-5" /><span className="hidden sm:inline">Đã lĩnh ngộ</span></span>
             ) : (
