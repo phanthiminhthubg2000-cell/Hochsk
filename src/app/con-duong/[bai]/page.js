@@ -14,6 +14,8 @@ import { useTuVi } from "../../useTuVi";
 import { speakZh, stopSpeak, preloadAudio } from "../../amThanh";
 import { loadLesson, buildNodes, makeQuestions, tuViOf, norm, strip } from "../engine";
 
+const hl = (s, w) => { const i = w ? s.indexOf(w) : -1; return i < 0 ? s : <>{s.slice(0, i)}<b className="text-[#9E2F22]">{w}</b>{s.slice(i + w.length)}</>; };
+
 const KIND_LABEL = { vocab: "Từ vựng", grammar: "Ngữ pháp", text: "Bài khóa", bt: "Luyện tập", boss: "Thí luyện", write: "Ngộ đạo" };
 const OFFSET = [0, 56, 84, 56, 0, -56, -84, -56];
 const LABELS = ["甲", "乙", "丙", "丁"];
@@ -53,7 +55,7 @@ export default function ConDuongBai() {
   const open = (node, i) => {
     if (i > 0 && !prog[nodes[i - 1].key] && !prog[node.key]) { setToast("Qua ải trước để mở ải này."); setTimeout(() => setToast(""), 2200); return; }
     if (node.kind === "write") { setWriteNode(node); window.scrollTo({ top: 0 }); return; }
-    const qs = makeQuestions(L, node).map((q, id) => ({ ...q, id }));
+    const qs = makeQuestions(L, node, { intro: !prog[node.key] }).map((q, id) => ({ ...q, id }));
     if (!qs.length) { setToast("Ải này chưa có câu hỏi."); setTimeout(() => setToast(""), 2200); return; }
     setSess({ node, qs, queue: qs.map((q) => q.id), solved: new Set(), missed: new Set(), hearts: node.hearts || HEARTS, streak: 0, best: 0, firstTime: !prog[node.key], t0: Date.now() });
   };
@@ -141,23 +143,33 @@ function Session({ sess, setSess, onFinish, signedIn }) {
     const queue = checked?.ok ? rest : [...rest, head];
     if (sess.hearts <= 0) { setEnd({ failed: true }); return; }
     if (!queue.length) {
-      const firstTry = sess.qs.filter((x) => !sess.missed.has(x.id)).length;
-      const tv = tuViOf(sess.node, firstTry, total, sess.firstTime);
-      setEnd({ firstTry, tv, secs: Math.round((Date.now() - sess.t0) / 1000) });
+      const graded = sess.qs.filter((x) => x.k !== "card");
+      const firstTry = graded.filter((x) => !sess.missed.has(x.id)).length;
+      const tv = tuViOf(sess.node, firstTry, graded.length, sess.firstTime);
+      setEnd({ firstTry, graded: graded.length, tv, secs: Math.round((Date.now() - sess.t0) / 1000) });
       await onFinish(sess.node, tv);
       return;
     }
     setSess({ ...sess, queue, step: (sess.step || 0) + 1 });
   };
   const quit = () => { stopSpeak(); setSess(null); };
+  // thẻ học: đọc xong bấm tiếp, không chấm
+  const learn = () => { const [, ...rest] = sess.queue; const solved = new Set(sess.solved); solved.add(q.id); stopSpeak(); setSess({ ...sess, queue: rest, solved, step: (sess.step || 0) + 1 }); if (!rest.length) next2(solved); };
+  const next2 = async (solved) => {
+    const graded = sess.qs.filter((x) => x.k !== "card");
+    const firstTry = graded.filter((x) => !sess.missed.has(x.id)).length;
+    const tv = tuViOf(sess.node, firstTry, graded.length, sess.firstTime);
+    setEnd({ firstTry, graded: graded.length, tv, secs: Math.round((Date.now() - sess.t0) / 1000) });
+    await onFinish(sess.node, tv);
+  };
 
   // phím tắt: 1–4 chọn, Enter kiểm tra / tiếp tục
   const ref = useRef({});
-  ref.current = { q, checked, canCheck, check, next, end };
+  ref.current = { q, checked, canCheck, check, next, end, learn };
   useEffect(() => {
     const h = (e) => {
       const s = ref.current; if (s.end || e.target?.tagName === "TEXTAREA") return;
-      if (e.key === "Enter") { e.preventDefault(); if (s.checked) s.next(); else if (s.canCheck) s.check(); }
+      if (e.key === "Enter") { e.preventDefault(); if (s.q?.k === "card") s.learn(); else if (s.checked) s.next(); else if (s.canCheck) s.check(); }
       else if (s.q?.k === "choice" && !s.checked && /^[1-4]$/.test(e.key) && +e.key <= s.q.opts.length) setPicked(+e.key - 1);
     };
     window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
@@ -186,9 +198,10 @@ function Session({ sess, setSess, onFinish, signedIn }) {
             {retry && <span className="text-[11px] font-extrabold tracking-wider px-2 py-0.5 rounded-[3px] bg-[#9E2F22] text-white">LÀM LẠI CÂU SAI</span>}
             {sess.streak >= 3 && <span className="text-[11px] font-extrabold tracking-wider px-2 py-0.5 rounded-[3px] bg-[#1C1A17] text-[#E6B656]">{sess.streak} CÂU LIỀN</span>}
           </div>
-          <h2 className="font-serif-vn text-[20px] md:text-[22px] font-extrabold leading-snug">{q.ins}</h2>
+          {q.ins && <h2 className="font-serif-vn text-[20px] md:text-[22px] font-extrabold leading-snug">{q.ins}</h2>}
           {q.k === "choice" && <Choice q={q} picked={picked} setPicked={setPicked} checked={checked} />}
           {q.k === "tiles" && <Tiles q={q} picked={Array.isArray(picked) ? picked : []} setPicked={setPicked} checked={checked} />}
+          {q.k === "card" && <LearnCard q={q} />}
           {q.k === "match" && <Match key={`${q.id}-${sess.step || 0}`} q={q} onDone={(mist) => check(true) || (mist && setSess((s) => ({ ...s, missed: new Set([...s.missed, q.id]) })))} />}
         </div>
       </main>
@@ -202,7 +215,9 @@ function Session({ sess, setSess, onFinish, signedIn }) {
               {!q.why && q.k === "tiles" && checked.ok && q.full && <div className="text-sm mt-1" style={ZH} dangerouslySetInnerHTML={{ __html: q.full }} />}
             </div>
           ) : <div className="flex-1 text-sm text-[#6B6253] hidden md:block">{q.k === "choice" ? "Phím 1–4 để chọn · Enter để kiểm tra" : q.k === "tiles" ? "Chạm mảnh để xếp · chạm lại để bỏ" : ""}</div>}
-          {q.k !== "match" || checked ? (
+          {q.k === "card" ? (
+            <button onClick={learn} className="min-h-[52px] w-full md:w-auto md:min-w-[200px] md:ml-auto px-6 rounded-md font-serif-vn text-[17px] font-extrabold text-[#FBF3E4] bg-[#1C1A17] shadow-[0_4px_0_#9E2F22]">Đã hiểu · tiếp</button>
+          ) : q.k !== "match" || checked ? (
             <button onClick={checked ? next : () => check()} disabled={!checked && !canCheck}
               className={`h-13 min-h-[52px] md:min-w-[200px] px-6 rounded-md font-serif-vn text-[17px] font-extrabold text-[#FBF3E4] disabled:bg-[#B9AD97] disabled:shadow-none ${checked && !checked.ok ? "bg-[#9E2F22] shadow-[0_4px_0_#6A1D14]" : checked ? "bg-[#2F6E5A] shadow-[0_4px_0_#1E4A3C]" : "bg-[#1C1A17] shadow-[0_4px_0_#9E2F22]"}`}>
               {checked ? "Tiếp tục" : "Kiểm tra"}
@@ -211,6 +226,57 @@ function Session({ sess, setSess, onFinish, signedIn }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+// ---------------- thẻ học ----------------
+const Lb = ({ children }) => <div className="text-[11px] font-extrabold tracking-[0.12em] uppercase text-[#8C7F68]">{children}</div>;
+function LearnCard({ q }) {
+  useEffect(() => { if (q.kind === "word") { const t = setTimeout(() => speakZh(q.zh), 300); return () => clearTimeout(t); } }, [q]);
+  const box = "rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-4 flex flex-col gap-3";
+  if (q.kind === "word") return (
+    <article className={box} aria-label={`Thẻ từ ${q.zh}`}>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[11px] font-extrabold tracking-wider px-2 py-0.5 rounded-[3px] bg-[#E6B656]">TỪ MỚI</span>
+        {q.pos && <span className="text-xs font-bold px-2 py-0.5 rounded-[3px] bg-[#1C1A17] text-[#F3EEE2]">{q.pos}</span>}
+        {q.style && <span className="text-xs font-bold px-2 py-0.5 rounded-[3px] bg-[#2F6E5A] text-white">{q.style}</span>}
+        {!q.use && <span className="text-xs font-bold px-2 py-0.5 rounded-[3px] bg-[#E4DAC4] text-[#6B6253]">chỉ cần nhận biết</span>}
+      </div>
+      <div className="flex items-center gap-3"><span className="text-[48px] leading-none" style={ZH} lang="zh-CN">{q.zh}</span><SayBtn text={q.zh} /></div>
+      <div className="text-[17px]">{q.py}{q.hv && <span className="text-[#8C7F68]"> · {q.hv}</span>}</div>
+      <div className="text-[18px] font-bold">{q.vn}</div>
+      {q.def && <div><Lb>释义 · giải nghĩa tiếng Trung</Lb><p className="text-[17px] leading-relaxed" style={ZH} lang="zh-CN">{q.def}</p></div>}
+      {q.ex && <div><Lb>Ví dụ</Lb><div className="flex items-start gap-2"><p className="flex-1 text-[18px] leading-relaxed" style={ZH} lang="zh-CN">{hl(q.ex, q.zh)}</p><button onClick={() => speakZh(q.ex)} aria-label="Nghe câu ví dụ" className="text-[#9E2F22] p-1"><svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" /></svg></button></div><p className="text-[15px] text-[#4A4238]">{q.exVn}</p></div>}
+      {q.inText && <div><Lb>Trong bài khóa</Lb><p className="text-[16px]" style={ZH} lang="zh-CN">{hl(q.inText, q.zh)}</p></div>}
+      {q.col.length > 0 && <div><Lb>Kết hợp thường gặp</Lb><div className="flex flex-wrap gap-1.5 mt-1">{q.col.map((c) => <span key={c} className="px-2 py-1 rounded-[4px] bg-white border border-[#D8CBAE] text-[16px]" style={ZH} lang="zh-CN">{c}</span>)}</div></div>}
+      {q.note && <div className="rounded-[8px] bg-[#F3E3D2] border-l-4 border-[#9E2F22] px-3 py-2"><Lb>Phân biệt · lưu ý</Lb><p className="text-[15px] leading-relaxed mt-0.5" dangerouslySetInnerHTML={{ __html: q.note }} /></div>}
+    </article>
+  );
+  if (q.kind === "gram") return (
+    <article className={box} aria-label={`Ngữ pháp ${q.zh}`}>
+      <div className="flex items-center gap-2 flex-wrap"><span className="text-[11px] font-extrabold tracking-wider px-2 py-0.5 rounded-[3px] bg-[#9E2F22] text-white">CHIÊU THỨC MỚI</span>{q.tag && <span className="text-xs font-bold text-[#6B6253]">{q.tag}</span>}</div>
+      <div className="text-[34px] leading-tight" style={ZH} lang="zh-CN">{q.zh}</div>
+      {q.py && <div className="text-[16px] text-[#4A4238] -mt-2">{q.py}</div>}
+      <p className="text-[16px] leading-relaxed" dangerouslySetInnerHTML={{ __html: q.mean }} />
+      {q.forms.length > 0 && <div><Lb>Cấu trúc</Lb><ul className="flex flex-col gap-1 mt-1">{q.forms.map((f) => <li key={f} className="px-3 py-1.5 rounded-[4px] bg-[#1C1A17] text-[#F3EEE2] text-[16px]" style={ZH}>{f}</li>)}</ul></div>}
+      {q.ex.length > 0 && <div><Lb>Ví dụ</Lb><ul className="flex flex-col gap-2 mt-1">{q.ex.map(([z, v]) => <li key={z}><div className="flex items-start gap-2"><p className="flex-1 text-[17px] leading-relaxed" style={ZH} lang="zh-CN">{z}</p><button onClick={() => speakZh(z)} aria-label="Nghe câu" className="text-[#9E2F22] p-1"><svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" /></svg></button></div><p className="text-sm text-[#4A4238]">{v}</p></li>)}</ul></div>}
+      {q.tips.length > 0 && <div className="rounded-[8px] bg-[#F3E3D2] border-l-4 border-[#9E2F22] px-3 py-2"><Lb>Lưu ý</Lb><ul className="list-disc pl-5 text-[15px] leading-relaxed">{q.tips.map((t, i) => <li key={i} dangerouslySetInnerHTML={{ __html: t }} />)}</ul></div>}
+    </article>
+  );
+  return (
+    <article className={box} aria-label={`Phân biệt ${q.pair}`}>
+      <span className="self-start text-[11px] font-extrabold tracking-wider px-2 py-0.5 rounded-[3px] bg-[#2F6E5A] text-white">PHÂN BIỆT</span>
+      <div className="text-[30px] leading-tight" style={ZH} lang="zh-CN">{q.pair}</div>
+      {q.same.length > 0 && <div><Lb>Giống nhau</Lb><p className="text-[15px] leading-relaxed" dangerouslySetInnerHTML={{ __html: q.same[0] }} />{q.same[1] && <p className="text-[16px] mt-1" style={ZH} dangerouslySetInnerHTML={{ __html: q.same[1] }} />}</div>}
+      {q.diff.length > 0 && (
+        <div><Lb>Khác nhau</Lb>
+          <div className="overflow-x-auto mt-1"><table className="w-full text-[14px] border-collapse">
+            <thead><tr>{q.cols.slice(0, 2).map((c) => <th key={c} scope="col" className="text-left px-2 py-1.5 bg-[#1C1A17] text-[#F3EEE2] text-[17px] font-normal" style={ZH}>{c}</th>)}</tr></thead>
+            <tbody>{q.diff.map((r, i) => <tr key={i} className="align-top border-b border-[#E4DAC4]"><td className="px-2 py-2"><div dangerouslySetInnerHTML={{ __html: r[0] }} />{r[1] && <div className="mt-1 text-[15px]" style={ZH} dangerouslySetInnerHTML={{ __html: r[1] }} />}</td><td className="px-2 py-2" dangerouslySetInnerHTML={{ __html: r.slice(2).join("<br>") }} /></tr>)}</tbody>
+          </table></div>
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -324,7 +390,7 @@ function EndScreen({ end, sess, total, signedIn, onBack, onRetry }) {
       </div>
     </div>
   );
-  const acc = Math.round((end.firstTry / total) * 100);
+  const acc = Math.round((end.firstTry / Math.max(1, end.graded ?? total)) * 100);
   return (
     <div className="fixed inset-0 z-[60] bg-[#EFE7D6] text-[#1C1A17] grid place-items-center p-6">
       <div className="max-w-[440px] w-full text-center flex flex-col gap-5 items-center">
@@ -335,7 +401,7 @@ function EndScreen({ end, sess, total, signedIn, onBack, onRetry }) {
             <div key={k} className="rounded-[10px] border-2 p-3 bg-[#FBF8F1]" style={{ borderColor: c }}><div className="text-[11px] font-extrabold tracking-wider uppercase" style={{ color: c }}>{k}</div><div className="text-[24px] font-extrabold">{v}</div></div>
           ))}
         </div>
-        <p className="text-sm text-[#6B6253]">{Math.floor(end.secs / 60)} phút {end.secs % 60} giây · {total} câu{signedIn ? "" : " · đăng nhập để giữ tu vi"}</p>
+        <p className="text-sm text-[#6B6253]">{Math.floor(end.secs / 60)} phút {end.secs % 60} giây · {end.graded ?? total} câu{signedIn ? "" : " · đăng nhập để giữ tu vi"}</p>
         <button onClick={onBack} className="h-14 w-full rounded-md bg-[#1C1A17] text-[#F3EEE2] font-serif-vn text-[17px] font-extrabold shadow-[0_4px_0_#9E2F22]">Tiếp tục con đường</button>
       </div>
     </div>

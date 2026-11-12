@@ -71,7 +71,15 @@ export function buildNodes(L) {
       nodes.push({ key: `v${gi + 1}-${c + 1}`, kind: "vocab", zh: "领", vn: `Lĩnh ngộ ${gi + 1}${n > 1 ? "." + (c + 1) : ""}`, sub: `${ws.length} từ · ${strip(g.sub || g.name)}`, words: ws.map((v) => v[1]) });
     }
   });
-  if ((L.G || []).length) nodes.push({ key: "g", kind: "grammar", zh: "招", vn: "Chiêu thức", sub: `${L.G.length} điểm ngữ pháp · phân biệt ${strip(L.BX?.pair || "")}` });
+  // ngữ pháp: ≤3 điểm một ải; ải cuối kèm phần phân biệt từ
+  const G = L.G || [];
+  if (G.length) {
+    const n = Math.ceil(G.length / 3); const size = Math.ceil(G.length / n);
+    for (let c = 0; c < n; c++) {
+      const part = G.slice(c * size, (c + 1) * size); const last = c === n - 1;
+      nodes.push({ key: c ? `g${c + 1}` : "g", kind: "grammar", zh: "招", vn: `Chiêu thức${n > 1 ? " " + "I".repeat(c + 1).replace("III", "III") : ""}`, sub: part.map((g) => strip(g.zh)).join(" · ") + (last && L.BX?.pair ? ` · phân biệt ${strip(L.BX.pair)}` : ""), gs: [c * size, (c + 1) * size], bx: last });
+    }
+  }
   const T = L.T || [];
   if (T.length) {
     const h = Math.ceil(T.length / 2);
@@ -85,7 +93,15 @@ export function buildNodes(L) {
 }
 
 // ---------- câu hỏi theo ải ----------
-export function makeQuestions(L, node) {
+// Loại từ, phong cách (theo ký hiệu trong bài giảng)
+const POS = { "dt.": "danh từ", "đgt.": "động từ", "đt.": "động từ", "tt.": "tính từ", "phó.": "phó từ", "liên.": "liên từ", "giới.": "giới từ", "lượng.": "lượng từ", "trợ.": "trợ từ", "thán.": "thán từ", "ct.": "cụm từ", "cụm": "cụm từ", "cụm đgt.": "cụm động từ" };
+export const posName = (p) => String(p || "").split("/").map((x) => POS[x.trim()] || POS[x.trim() + "."] || x.trim()).filter(Boolean).join(" / ");
+export const STYLE = { "书": "văn viết", "口": "khẩu ngữ", "成": "thành ngữ", "方": "phương ngữ" };
+// thẻ từ: đủ thông tin như bài giảng (V = [stt, chữ, pinyin, loại, Hán Việt, nghĩa, cần dùng, phong cách, 释义, trong bài, ví dụ, dịch ví dụ, kết hợp[], ghi chú])
+const wordCard = (v) => ({ k: "card", kind: "word", zh: v[1], py: v[2], pos: posName(v[3]), hv: v[4], vn: strip(v[5]), use: v[6] !== 0, style: STYLE[v[7]] || "", def: strip(v[8]), inText: strip(v[9]), ex: strip(v[10]), exVn: strip(v[11]), col: (v[12] || []).map(strip), note: v[13] || "" });
+
+// opts.intro: lần đầu vào ải → có thẻ học (từ mới, ngữ pháp, phân biệt) trước câu hỏi
+export function makeQuestions(L, node, opts = {}) {
   const V = L.V || [];
   const allZh = V.map((v) => v[1]);
   const byZh = Object.fromEntries(V.map((v) => [v[1], v]));
@@ -106,41 +122,56 @@ export function makeQuestions(L, node) {
       kinds.push(() => choice({ ins: `Từ nào nghĩa là “${short(v[5])}”?`, word: w, zhOpts: true, why: `${w} · ${v[2]} — ${strip(v[5])}` }, w, near(w, allZh)));
       return kinds[(i + Math.floor(Math.random() * kinds.length)) % kinds.length]();
     });
+    // giải nghĩa tiếng Trung (释义) → chọn từ
+    const defs = ws.filter((v) => strip(v[8]).length >= 4).map((v) => choice({ ins: "Đọc giải nghĩa tiếng Trung, chọn từ phù hợp", sent: strip(v[8]).replace(new RegExp(v[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), "～"), word: v[1], zhOpts: true, why: `${v[1]} · ${v[2]} — ${strip(v[5])}` }, v[1], near(v[1], allZh)));
     const out = [];
-    news.forEach((q, i) => { out.push(q); if (i >= 1) out.push(hard[i - 1]); if (i === 3) out.push({ k: "match", ins: "Ghép từ với nghĩa", pairs: ws.slice(0, 4).map((v) => [v[1], short(v[5])]) }); });
-    out.push(hard[hard.length - 1]);
+    if (opts.intro) {
+      // thẻ từ i → câu luyện của từ i−1 (kiểu Duolingo: học mới xen ôn ngay)
+      ws.forEach((v, i) => { out.push(wordCard(v)); if (i >= 1) out.push(hard[i - 1]); if (i === 3) out.push({ k: "match", ins: "Ghép từ với nghĩa", pairs: ws.slice(0, 4).map((x) => [x[1], short(x[5])]) }); });
+      out.push(hard[hard.length - 1]);
+      out.push(...shuffle(defs).slice(0, 4));
+    } else {
+      news.forEach((q, i) => { out.push(q); if (i >= 1) out.push(hard[i - 1]); if (i === 3) out.push({ k: "match", ins: "Ghép từ với nghĩa", pairs: ws.slice(0, 4).map((v) => [v[1], short(v[5])]) }); });
+      out.push(hard[hard.length - 1]);
+      out.push(...shuffle(defs).slice(0, 3));
+    }
     if (ws.length > 4) out.push({ k: "match", ins: "Ghép từ với nghĩa", pairs: shuffle(ws).slice(0, 5).map((v) => [v[1], short(v[5])]) });
     return out.filter(Boolean);
   }
 
   if (node.kind === "grammar") {
-    const G = L.G || []; const out = [];
-    const pats = G.map((g) => strip(g.zh));
-    G.forEach((g) => {
+    const out = [];
+    const pats = (L.G || []).map((g) => strip(g.zh));
+    const [ga, gb] = node.gs || [0, (L.G || []).length];
+    (L.G || []).slice(ga, gb).forEach((g) => {
+      if (opts.intro) out.push({ k: "card", kind: "gram", zh: strip(g.zh), py: g.py || "", tag: strip(g.tag), mean: g.mean || "", forms: (g.forms || []).map(strip), ex: (g.ex || []).slice(0, 3).map((e) => [strip(e[0]), strip(e[1])]), tips: g.tips || [] });
+      const mine = [];
       const pat = strip(g.zh); const parts = pat.split(/……|…|\.\.\./).map((x) => x.trim()).filter(Boolean);
       const exs = shuffle((g.ex || []).map((e) => [strip(e[0]), strip(e[1])]));
       // điền cấu trúc vào câu
       const ex1 = exs.find(([z]) => parts.length && parts.every((p) => z.includes(p)));
-      if (ex1 && G.length > 1) {
+      if (ex1) {
         let s = ex1[0]; parts.forEach((p) => { s = s.replace(p, "＿＿"); });
-        out.push(choice({ ins: "Chọn cấu trúc điền vào chỗ trống", sent: s, zhOpts: true, why: `${ex1[0]} — ${ex1[1]}<br>${strip(g.mean)}` }, pat, shuffle(pats.filter((p) => p !== pat)).slice(0, 3)));
+        if (pats.length > 1) mine.push(choice({ ins: "Chọn cấu trúc điền vào chỗ trống", sent: s, zhOpts: true, why: `${ex1[0]} — ${ex1[1]}<br>${strip(g.mean)}` }, pat, shuffle(pats.filter((p) => p !== pat)).slice(0, 3)));
       }
       // xếp câu ví dụ theo nghĩa
       const vnOk = (x) => /[a-zà-ỹđ]{2,}/i.test(x);
       const ex2 = exs.find(([z, v]) => vnOk(v) && z !== ex1?.[0] && (segOf(z) || []).length >= 4 && (segOf(z) || []).length <= 18) || exs.find(([z, v]) => vnOk(v) && (segOf(z) || []).length >= 4);
-      if (ex2) out.push(tiles({ ins: "Xếp thành câu đúng nghĩa", vn: ex2[1], hint: pat, full: ex2[0] }, segOf(ex2[0]), segPool));
+      if (ex2) mine.push(tiles({ ins: "Xếp thành câu đúng nghĩa", vn: ex2[1], hint: pat, full: ex2[0] }, segOf(ex2[0]), segPool));
       // viết lại câu
       const pr = shuffle(g.practice?.items || []).find((it) => (segOf(it[1]) || []).length >= 4);
-      if (pr) out.push(tiles({ ins: `Viết lại câu, dùng “${pat}”`, src: strip(pr[0]), full: strip(pr[1]) }, segOf(pr[1]), segPool));
+      if (pr) mine.push(tiles({ ins: `Viết lại câu, dùng “${pat}”`, src: strip(pr[0]), full: strip(pr[1]) }, segOf(pr[1]), segPool));
+      out.push(...shuffle(mine.filter(Boolean)));
     });
-    const bx = L.BX;
+    const bx = node.bx === false ? null : L.BX;
+    if (bx && opts.intro) out.push({ k: "card", kind: "bx", pair: strip(bx.pair), cols: (bx.cols || strip(bx.pair).split(/\s*[—–-]\s*/)).map(strip), same: bx.same || [], diff: bx.diff || [] });
     if (bx?.task?.items?.length && bx.task.cols?.length) {
       shuffle(bx.task.items.filter((it) => Number.isInteger(it[1]) && it[1] < bx.task.cols.length)).slice(0, 4).forEach((it) => {
         const cols = bx.task.cols.map(strip);
         out.push({ k: "choice", ins: strip(bx.task.q) || `Phân biệt ${strip(bx.pair)}`, sent: strip(it[0]).replace(/_{2,}/g, "＿＿"), opts: cols, a: it[1], zhOpts: cols.every((c) => /[㐀-鿿]/.test(c)), why: it[2] || "" });
       });
     }
-    return shuffle(out.filter(Boolean)).slice(0, 14);
+    return opts.intro ? out.filter(Boolean) : shuffle(out.filter(Boolean)).slice(0, 14);
   }
 
   if (node.kind === "text") {
