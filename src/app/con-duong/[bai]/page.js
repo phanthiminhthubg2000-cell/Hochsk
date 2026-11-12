@@ -55,7 +55,7 @@ export default function ConDuongBai() {
   const open = (node, i) => {
     if (i > 0 && !prog[nodes[i - 1].key] && !prog[node.key]) { setToast("Qua ải trước để mở ải này."); setTimeout(() => setToast(""), 2200); return; }
     if (node.kind === "write") { setWriteNode(node); window.scrollTo({ top: 0 }); return; }
-    const qs = makeQuestions(L, node, { intro: !prog[node.key] }).map((q, id) => ({ ...q, id }));
+    const qs = makeQuestions(L, node, { intro: true }).map((q, id) => ({ ...q, id }));
     if (!qs.length) { setToast("Ải này chưa có câu hỏi."); setTimeout(() => setToast(""), 2200); return; }
     setSess({ node, qs, queue: qs.map((q) => q.id), solved: new Set(), missed: new Set(), hearts: node.hearts || HEARTS, streak: 0, best: 0, firstTime: !prog[node.key], t0: Date.now() });
   };
