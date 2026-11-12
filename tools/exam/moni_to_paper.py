@@ -7,6 +7,8 @@ SRC, PDF = sys.argv[1], sys.argv[2]
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "public", "hsk2-exam")
 LET = "ABCD"
+# Đáp án câu ghép bị đọc lệch so với từ cho sẵn (đã soát tay)
+FIX_W = {(2, 97): ["我好容易才听懂她说的话。"]}
 norm = lambda x: re.sub(r"[\s，。、？！?!,.；;：:\"“”（）()…·]", "", x or "")
 def clean(x):
     if isinstance(x, list): return [clean(i) for i in x]
@@ -46,6 +48,7 @@ def build(k, d):
     for x in sorted(d["write1"], key=lambda x: x["n"]):
         n = x["n"]; w = [clean(t) for t in x["w"] if clean(t)]
         alts = [clean(s) for s in ([WA.get(n)] if isinstance(WA.get(n), str) else (WA.get(n) or []))]
+        alts = FIX_W.get((k, n), alts)
         ok = [s for s in alts if Counter(norm(s)) == Counter(norm("".join(w)))]
         if not ok: probs.append(f"{n}: đáp án không khớp từ {alts} / {w}")
         wq.append({"n": n, "t": "b", "w": w, "a": ok or alts or [""]})
