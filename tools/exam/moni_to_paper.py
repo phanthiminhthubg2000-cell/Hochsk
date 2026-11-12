@@ -4,12 +4,14 @@
 import json, os, re, sys, subprocess, glob
 from collections import Counter
 SRC, PDF = sys.argv[1], sys.argv[2]
+BOOK = os.environ.get("BOOK", "moni")
+CFG = {"moni": ("moni5", "MONI5", "HSK五级模拟试题集 · 模拟试卷{k}"), "jj": ("jj5", "JJ5", "HSK五级精讲精练 · 模拟试卷{k}")}[BOOK]
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "public", "hsk2-exam")
 LET = "ABCD"
 # Đáp án câu ghép bị đọc lệch so với từ cho sẵn (đã soát tay)
-FIX_W = {(2, 97): ["我好容易才听懂她说的话。"], (7, 96): ["市中心的房价远远高过农村。"]}
-FIX_WORDS = {(6, 91): ["和你", "开", "我", "个", "只不过", "玩笑"]}
+FIX_W = {} if os.environ.get("BOOK", "moni") != "moni" else {(2, 97): ["我好容易才听懂她说的话。"], (7, 96): ["市中心的房价远远高过农村。"]}
+FIX_WORDS = {} if os.environ.get("BOOK", "moni") != "moni" else {(6, 91): ["和你", "开", "我", "个", "只不过", "玩笑"]}
 norm = lambda x: re.sub(r"[\s，。、？！?!,.；;：:\"“”（）()…·]", "", x or "")
 def clean(x):
     if isinstance(x, list): return [clean(i) for i in x]
@@ -59,14 +61,14 @@ def build(k, d):
         if not ok: probs.append(f"{n}: đáp án không khớp từ {alts} / {w}")
         wq.append({"n": n, "t": "b", "w": w, "a": ok or alts or [""]})
     w99 = "、".join(x for x in re.split(r"[\s、，,]+", d.get("q99", "")) if x)
-    pid = f"moni5-{k:02d}"
+    pid = f"{CFG[0]}-{k:02d}"
     units.append({"sec": "W", "part": 1, "label": "91-98", "head": "第91-98题：完成句子。", "ex": "发表　这篇论文　什么时候　是　的 → 这篇论文是什么时候发表的？", "qs": wq})
     units.append({"sec": "W", "part": 2, "label": "99", "head": "第99-100题：写短文。", "qs": [{"n": 99, "t": "w", "prompt": f"请结合下列词语（要全部使用），写一篇80字左右的短文。\n{w99}", "word": w99, "min": 80}]})
     units.append({"sec": "W", "part": 2, "label": "100", "head": "第99-100题：写短文。", "qs": [{"n": 100, "t": "w", "prompt": "请结合这张图片写一篇80字左右的短文。", "img": f"/hsk2-exam/assets/{pid}_100.jpg", "min": 80}]})
     # tranh câu 100: cắt từ trang scan theo khung Gemini trả về
     try:
         pg = int(d["q100"]["page"]); y0, x0, y1, x1 = d["q100"]["box"]
-        tmp = os.path.join(SRC, f"q100_{k}.png")
+        tmp = os.path.join(SRC, f"q100_{BOOK}{k}.png")
         subprocess.run(["pdftoppm", "-r", "200", "-f", str(pg), "-l", str(pg), "-png", "-singlefile", PDF, tmp[:-4]], check=True)
         W, H = map(int, subprocess.run(["identify", "-format", "%w %h", tmp], capture_output=True, text=True).stdout.split())
         pad = 8
@@ -77,11 +79,11 @@ def build(k, d):
         probs.append(f"tranh 100: {e}")
     nq = sum(len(u["qs"]) for u in units)
     if nq != 100: probs.append(f"tổng {nq} câu")
-    P = {"id": pid, "level": 5, "name": f"HSK五级模拟试题集 · 模拟试卷{k}", "audio": [f"/hsk2-exam/audio/MONI5_{k:02d}.mp3"], "dur": {"R": 45 * 60, "W": 40 * 60}, "units": units}
+    P = {"id": pid, "level": 5, "name": CFG[2].format(k=k), "audio": [f"/hsk2-exam/audio/{CFG[1]}_{k:02d}.mp3"], "dur": {"R": 45 * 60, "W": 40 * 60}, "units": units}
     if d.get("script"): P["script"] = d["script"].strip()
     return P, probs
 
-for f in sorted(glob.glob(os.path.join(SRC, "moni*.json"))):
+for f in sorted(glob.glob(os.path.join(SRC, f"{BOOK}[0-9]*.json"))):
     k = int(re.search(r"(\d+)", os.path.basename(f)).group(1))
     d = json.load(open(f, encoding="utf-8")); d = d[0] if isinstance(d, list) else d
     P, probs = build(k, d)
