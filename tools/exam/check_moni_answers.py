@@ -13,7 +13,7 @@ spec = importlib.util.spec_from_file_location("o", os.path.join(os.path.dirname(
 A = {1: (237, 243), 2: (242, 248), 3: (247, 253), 4: (252, 259), 5: (258, 264), 6: (263, 270), 7: (269, 276), 8: (275, 280), 9: (279, 286), 10: (285, 293)}
 c = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 for k in WANT:
-    d = json.load(open(os.path.join(SRC, f"moni{k:02d}.json"), encoding="utf-8"))
+    d = json.load(open(os.path.join(SRC, f"moni{k:02d}.json"), encoding="utf-8")); d = d[0] if isinstance(d, list) else d
     parts = []
     for p in range(*A[k]) if False else range(A[k][0], A[k][1] + 1):
         f = os.path.join(SRC, "tmp", f"p{p:03d}.jpg")

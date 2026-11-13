@@ -10,7 +10,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "public", "hsk2-exam")
 LET = "ABCD"
 # Đáp án câu ghép bị đọc lệch so với từ cho sẵn (đã soát tay)
-FIX_W = {} if os.environ.get("BOOK", "moni") != "moni" else {(2, 97): ["我好容易才听懂她说的话。"], (7, 96): ["市中心的房价远远高过农村。"]}
+FIX_W = {(4, 93): ["教室里的桌椅摆得整整齐齐。"]} if os.environ.get("BOOK", "moni") == "jj" else {(2, 97): ["我好容易才听懂她说的话。"], (7, 96): ["市中心的房价远远高过农村。"]}
 FIX_WORDS = {} if os.environ.get("BOOK", "moni") != "moni" else {(6, 91): ["和你", "开", "我", "个", "只不过", "玩笑"]}
 norm = lambda x: re.sub(r"[\s，。、？！?!,.；;：:\"“”（）()…·]", "", x or "")
 def clean(x):
