@@ -118,7 +118,7 @@ export function makeQuestions(L, node, opts = {}) {
       if (ex && ex.split(w).length === 2) kinds.push(() => choice({ ins: "Điền từ vào chỗ trống", sent: ex.replace(w, "＿＿"), word: w, zhOpts: true, why: `${ex} — ${strip(v[11])}` }, w, near(w, allZh)));
       const col = (v[12] || []).map(strip).find((c) => c.includes(w) && c !== w && c.split(w).length === 2);
       if (col) kinds.push(() => choice({ ins: "Hoàn thành cụm từ thường gặp", sent: col.replace(w, "＿＿"), word: w, zhOpts: true, why: (v[12] || []).map(strip).join(" · ") }, w, near(w, allZh)));
-      kinds.push(() => choice({ ins: "Nghe và chọn từ vừa đọc", say: w, word: w, zhOpts: true, why: `${w} · ${v[2]} — ${strip(v[5])}` }, w, near(w, allZh)));
+      kinds.push(() => choice({ ins: "Nghe và chọn từ vừa đọc", say: w, sayPy: v[2], word: w, zhOpts: true, why: `${w} · ${v[2]} — ${strip(v[5])}` }, w, near(w, allZh)));
       kinds.push(() => choice({ ins: `Từ nào nghĩa là “${short(v[5])}”?`, word: w, zhOpts: true, why: `${w} · ${v[2]} — ${strip(v[5])}` }, w, near(w, allZh)));
       return kinds[(i + Math.floor(Math.random() * kinds.length)) % kinds.length]();
     });

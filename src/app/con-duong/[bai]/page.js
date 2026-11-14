@@ -280,16 +280,18 @@ function LearnCard({ q }) {
   );
 }
 
-function SayBtn({ text, big }) {
+function SayBtn({ text, big, onFail }) {
+  const [busy, setBusy] = useState(false);
   return (
-    <button onClick={() => speakZh(text)} aria-label="Nghe lại" className={`${big ? "w-20 h-20" : "w-11 h-11"} rounded-full bg-[#9E2F22] text-white grid place-items-center shrink-0 shadow-[0_4px_0_#6A1D14] active:translate-y-0.5`}>
-      <svg viewBox="0 0 24 24" className={big ? "w-9 h-9" : "w-5 h-5"} fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" /></svg>
+    <button onClick={async () => { setBusy(true); const ok = await speakZh(text); setBusy(false); if (!ok) onFail?.(); }} aria-busy={busy} aria-label="Nghe lại" className={`${big ? "w-20 h-20" : "w-11 h-11"} rounded-full bg-[#9E2F22] text-white grid place-items-center shrink-0 shadow-[0_4px_0_#6A1D14] active:translate-y-0.5`}>
+      <svg viewBox="0 0 24 24" className={`${big ? "w-9 h-9" : "w-5 h-5"} ${busy ? "animate-pulse" : ""}`} fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" /></svg>
     </button>
   );
 }
 
 function Choice({ q, picked, setPicked, checked }) {
   const [showText, setShowText] = useState(false);
+  const [noSound, setNoSound] = useState(false);
   const [fold, setFold] = useState(!!q.fold);
   return (
     <>
@@ -301,7 +303,8 @@ function Choice({ q, picked, setPicked, checked }) {
       )}
       {q.say && !q.big && (
         <div className="flex items-center gap-4">
-          <SayBtn text={q.say} big />
+          <SayBtn text={q.say} big onFail={() => setNoSound(true)} />
+          {noSound && q.sayPy && <p className="text-sm text-[#7A2218]">Máy chưa phát được âm thanh — phiên âm: <b className="text-[18px] text-[#1C1A17]">{q.sayPy}</b></p>}
           {q.hideText && !q.passage && (showText ? <p className="text-[17px] leading-relaxed" style={ZH} lang="zh-CN">{q.say}</p> : <button onClick={() => setShowText(true)} className="text-sm font-semibold text-[#7A2218] underline underline-offset-2">Không nghe được? Hiện chữ</button>)}
         </div>
       )}
