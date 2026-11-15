@@ -90,7 +90,7 @@ export default function ArrangePage() {
   const ended = useRef(false);
 
   useEffect(() => {
-    fetch("/games/vocab.json", { cache: "force-cache" }).then((r) => r.json()).then((v) => {
+    fetch("/games/vocab.json?v=6", { cache: "force-cache" }).then((r) => r.json()).then((v) => {
       setVocab(v);
       const sl = v.findIndex((x) => x.id === LS.get("hg_arr_lv"));
       if (sl >= 0) setLv(sl);

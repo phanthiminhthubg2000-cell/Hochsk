@@ -283,7 +283,7 @@ function show(id){ ['sStart','sPlay','sEnd'].forEach(s=>$(s).classList.toggle('o
 const HINTS=3;
 // Thành ngữ có trong giáo trình (đọc từ kho từ vựng chung)
 const CUR=new Map();
-fetch('/games/vocab.json',{cache:'force-cache'}).then(r=>r.json()).then(V=>{V.forEach(L=>L.lessons.forEach(l=>l.w.forEach(w=>{if(/^[\u4e00-\u9fff]{4}$/.test(w[0])&&!CUR.has(w[0]))CUR.set(w[0],L.name+' · Bài '+l.n)})));
+fetch('/games/vocab.json?v=6',{cache:'force-cache'}).then(r=>r.json()).then(V=>{V.forEach(L=>L.lessons.forEach(l=>l.w.forEach(w=>{if(/^[\u4e00-\u9fff]{4}$/.test(w[0])&&!CUR.has(w[0]))CUR.set(w[0],L.name+' · Bài '+l.n)})));
   const n=ITEMS.concat(BITEMS).filter(x=>CUR.has(x.w)).length;$('curN').textContent=new Set(ITEMS.concat(BITEMS).filter(x=>CUR.has(x.w)).map(x=>x.w)).size;if(n)$('curBox').style.display='flex';}).catch(()=>{});
 function start(){
   let SRC=MODE==='bank'?BITEMS:ITEMS;

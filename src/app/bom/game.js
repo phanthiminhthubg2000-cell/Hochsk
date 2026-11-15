@@ -126,6 +126,6 @@ export const newCode = () => String(100000 + Math.floor(Math.random() * 900000))
 export const newPid = () => Math.random().toString(36).slice(2, 12);
 
 export async function loadVocab() {
-  const r = await fetch("/games/vocab.json", { cache: "force-cache" });
+  const r = await fetch("/games/vocab.json?v=6", { cache: "force-cache" });
   return r.json();
 }

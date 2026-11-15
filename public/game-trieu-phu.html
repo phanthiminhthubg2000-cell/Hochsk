@@ -455,6 +455,6 @@ renderSetup();
 })();
 </script>
 <script>(function(){function run(v){window.VOCAB=v;var s=document.createElement("script");s.textContent=document.getElementById("hgMain").textContent;document.body.appendChild(s)}
-fetch("/games/vocab.json",{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(run).catch(function(e){document.body.insertAdjacentHTML("afterbegin",'<div style="padding:16px;background:#FDE8E8;color:#8A1C1C;font:600 16px system-ui">Không tải được kho từ vựng ('+e.message+'). Kiểm tra mạng rồi tải lại trang.</div>')})})();</script>
+fetch("/games/vocab.json?v=6",{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(run).catch(function(e){document.body.insertAdjacentHTML("afterbegin",'<div style="padding:16px;background:#FDE8E8;color:#8A1C1C;font:600 16px system-ui">Không tải được kho từ vựng ('+e.message+'). Kiểm tra mạng rồi tải lại trang.</div>')})})();</script>
 </body>
 </html>
