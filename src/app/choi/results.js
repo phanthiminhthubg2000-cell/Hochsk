@@ -32,6 +32,7 @@ export function bankLevel(cfg) {
   if (id === "HSK4") return maxN > 10 ? "HSK4.2 3.0" : "HSK4.1 3.0";
   if (id === "HSK4v2") return maxN > 10 ? "HSK4.2 2.0" : "HSK4.1 2.0";
   if (id === "HSK5") return maxN > 18 ? "HSK5.2 2.0" : "HSK5.1 2.0";
+  if (id === "HSK6") return maxN > 20 ? "HSK6.2 2.0" : "HSK6.1 2.0";
   return cfg.level || "";
 }
 
