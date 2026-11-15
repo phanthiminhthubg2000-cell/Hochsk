@@ -22,7 +22,7 @@ export default function manifest() {
     shortcuts: [
       { name: "Luyện Đan · ôn từ", url: "/luyen-dan", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
       { name: "Khảo Thí Điện · thi thử", url: "/?tab=exam", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
-      { name: "Con đường HSK6", url: "/con-duong", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: "Con đường tu luyện", url: "/con-duong", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
     ],
   };
 }

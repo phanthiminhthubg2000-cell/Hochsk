@@ -1,6 +1,6 @@
 "use client";
 // ============================================================
-// CON ĐƯỜNG TU LUYỆN 修行之路 · một bài HSK6 thành chuỗi ải kiểu Duolingo
+// CON ĐƯỜNG TU LUYỆN 修行之路 · một bài giảng thành chuỗi ải kiểu Duolingo (mọi giáo trình)
 // Bản đồ ải → phiên học: linh lực (mạng), chuỗi đúng, câu sai hỏi lại cuối phiên, tu vi khi qua ải.
 // Tiến độ: localStorage cd_<bai> và users/{uid}.conDuong.<bai>.<ải> (Firestore)
 // ============================================================
@@ -12,7 +12,7 @@ import { db } from "../../../firebase";
 import GardenNav from "../../GardenNav";
 import { useTuVi } from "../../useTuVi";
 import { speakZh, stopSpeak, preloadAudio } from "../../amThanh";
-import { loadLesson, buildNodes, makeQuestions, tuViOf, norm, strip } from "../engine";
+import { loadLesson, buildNodes, makeQuestions, tuViOf, norm, strip, courseOf } from "../engine";
 
 const hl = (s, w) => { const i = w ? s.indexOf(w) : -1; return i < 0 ? s : <>{s.slice(0, i)}<b className="text-[#9E2F22]">{w}</b>{s.slice(i + w.length)}</>; };
 
@@ -72,7 +72,7 @@ export default function ConDuongBai() {
           <>
             <section className="rounded-[14px] bg-[#1C1A17] text-[#F3EEE2] p-5 flex flex-col gap-2 shadow-[4px_4px_0_#9E2F22]">
               <div className="flex items-center justify-between gap-2 text-xs font-bold tracking-[0.12em] text-[#CFC3A8]">
-                <Link href="/con-duong" className="hover:text-white">‹ HSK 6 · BÀI {L.num}</Link>
+                <Link href="/?tab=learn" className="hover:text-white">‹ {courseOf(L.id).label.toUpperCase()} · BÀI {L.num}</Link>
                 <span>{doneCount}/{nodes.length} ải</span>
               </div>
               <h1 className="text-[30px] leading-tight" style={ZH} lang="zh-CN">{L.title}</h1>
@@ -424,7 +424,8 @@ function WriteNode({ L, node, done, onClose, onDone, signedIn }) {
   const target = W.target || 300; const enough = n >= Math.round(target * 0.6);
   const ask = async () => {
     setAi({ s: "busy", msg: "" });
-    const prompt = `Chấm bài 缩写 HSK6 của học viên (đề: ${strip(W.task)}; yêu cầu khoảng ${target} chữ). Bài viết của học viên:\n${text}\n\nHãy nhận xét bằng tiếng Việt, ngắn gọn: 1) đủ ý chính chưa (so với bài mẫu bên dưới), 2) liệt kê tối đa 5 lỗi ngữ pháp/dùng từ kèm câu sửa, 3) chấm điểm /100 theo thang HSK6 phần viết. Bài mẫu: ${strip(W.model)}`;
+    const lv = courseOf(L.id).n || 6;
+    const prompt = `Chấm bài viết HSK${lv} của học viên (đề: ${strip(W.task)}; yêu cầu khoảng ${target} chữ). Bài viết của học viên:\n${text}\n\nHãy nhận xét bằng tiếng Việt, ngắn gọn: 1) đủ ý chính chưa (so với bài mẫu bên dưới), 2) liệt kê tối đa 5 lỗi ngữ pháp/dùng từ kèm câu sửa, 3) chấm điểm /100 theo thang HSK${lv} phần viết. Bài mẫu: ${strip(W.model)}`;
     try { const r = await fetch("/api/ask-ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) }); const j = await r.json(); setAi({ s: "done", msg: j.answer || "" }); }
     catch (_) { setAi({ s: "done", msg: "Sư phụ đang bận, thử lại sau nhé." }); }
   };
@@ -434,14 +435,14 @@ function WriteNode({ L, node, done, onClose, onDone, signedIn }) {
       <GardenNav active="home" title="Ngộ đạo" />
       <main className="max-w-[720px] mx-auto px-4 pt-5 pb-28 md:pb-16 flex flex-col gap-4">
         <button onClick={onClose} className="self-start text-sm font-bold text-[#7A2218] underline underline-offset-2">‹ Về con đường</button>
-        <div className="flex items-baseline gap-3"><span className="font-brush text-[46px] leading-none text-[#9E2F22]">悟道</span><h1 className="font-serif-vn text-[24px] font-extrabold">Ngộ đạo · viết tóm tắt</h1></div>
+        <div className="flex items-baseline gap-3"><span className="font-brush text-[46px] leading-none text-[#9E2F22]">悟道</span><h1 className="font-serif-vn text-[24px] font-extrabold">Ngộ đạo · bài viết</h1></div>
         <section className="rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-4 flex flex-col gap-3">
           <p className="text-[17px] leading-relaxed" style={ZH} lang="zh-CN">{strip(W.task)}</p>
           <ol className="grid gap-1.5 text-sm">{(W.steps || []).map((s, i) => <li key={i}><b>{i + 1}. {strip(s[0])}</b> — <span dangerouslySetInnerHTML={{ __html: s[1] }} /></li>)}</ol>
         </section>
         <label className="flex flex-col gap-1.5">
           <span className="flex justify-between text-sm font-bold"><span>Bài của bạn</span><span className={enough ? "text-[#2F6E5A]" : "text-[#6B6253]"}>{n}/{target} chữ</span></span>
-          <textarea value={text} onChange={(e) => setText(e.target.value)} rows={12} lang="zh-CN" placeholder="在这里写你的缩写……"
+          <textarea value={text} onChange={(e) => setText(e.target.value)} rows={12} lang="zh-CN" placeholder="在这里写你的作文……"
             className="rounded-[10px] border-2 border-[#CDBF9F] focus:border-[#1C1A17] outline-none bg-white p-3 text-[18px] leading-[1.8]" style={ZH} />
         </label>
         {(W.check || []).length > 0 && (

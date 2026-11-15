@@ -1,5 +1,5 @@
 // ============================================================
-// CON ĐƯỜNG TU LUYỆN 修行之路 — biến một bài giảng HSK6 thành chuỗi ải kiểu Duolingo
+// CON ĐƯỜNG TU LUYỆN 修行之路 — biến một bài giảng (mọi bộ: HSK1–6, 2.0 và 3.0) thành chuỗi ải kiểu Duolingo
 // Dữ liệu: public/data/con-duong/hsk6-XX.json (trích từ window.LESSON của bài giảng, xem tools/lessons/extract_hsk6.js)
 // Mỗi ải sinh câu hỏi ngẫu nhiên từ dữ liệu bài: chọn đáp án, ghép cặp, xếp mảnh chữ.
 // ============================================================
@@ -21,8 +21,15 @@ export async function loadLesson(id) {
   return cache[id];
 }
 export async function loadIndex() {
-  const r = await fetch("/data/con-duong/hsk6-index.json");
+  const r = await fetch("/data/con-duong/all-index.json");
   return r.ok ? r.json() : [];
+}
+// mã bài → giáo trình: hsk6-01 → HSK 6 · 2.0 ; hsk4v3-02 → HSK 4 · 3.0
+export function courseOf(id) {
+  const m = /^hsk(\d)(v2|v3)?-/.exec(id || "");
+  if (!m) return { n: 0, std: "", label: "" };
+  const std = m[2] === "v3" ? "3.0" : "2.0";
+  return { n: +m[1], std, label: `HSK ${m[1]} · ${std}`, key: `HSK${m[1]} ${std}` };
 }
 
 // câu hỏi chọn đáp án: đưa đáp án đúng vào cùng 3 phương án nhiễu rồi xáo
@@ -77,7 +84,8 @@ export function buildNodes(L) {
     const n = Math.ceil(G.length / 3); const size = Math.ceil(G.length / n);
     for (let c = 0; c < n; c++) {
       const part = G.slice(c * size, (c + 1) * size); const last = c === n - 1;
-      nodes.push({ key: c ? `g${c + 1}` : "g", kind: "grammar", zh: "招", vn: `Chiêu thức${n > 1 ? " " + "I".repeat(c + 1).replace("III", "III") : ""}`, sub: part.map((g) => strip(g.zh)).join(" · ") + (last && L.BX?.pair ? ` · phân biệt ${strip(L.BX.pair)}` : ""), gs: [c * size, (c + 1) * size], bx: last });
+      const bxs = [].concat(L.BX || []).filter((b) => b && b.pair);
+      nodes.push({ key: c ? `g${c + 1}` : "g", kind: "grammar", zh: "招", vn: `Chiêu thức${n > 1 ? " " + "I".repeat(c + 1) : ""}`, sub: part.map((g) => strip(g.zh)).join(" · ") + (last && bxs.length ? ` · phân biệt ${bxs.map((b) => strip(b.pair)).join(", ")}` : ""), gs: [c * size, (c + 1) * size], bx: last });
     }
   }
   const T = L.T || [];
@@ -86,9 +94,11 @@ export function buildNodes(L) {
     nodes.push({ key: "t1", kind: "text", zh: "读", vn: "Bài khóa I", sub: `Đoạn 1–${h}`, paras: [0, h] });
     if (T.length > 1) nodes.push({ key: "t2", kind: "text", zh: "悟", vn: "Bài khóa II", sub: `Đoạn ${h + 1}–${T.length} · bố cục`, paras: [h, T.length] });
   }
-  if (L.EX3 || L.EX2) nodes.push({ key: "bt", kind: "bt", zh: "练", vn: "Luyện tập", sub: "Điền từ · viết lại câu" });
-  if (L.HSK) nodes.push({ key: "boss", kind: "boss", zh: "试", vn: "Thí luyện", sub: "Đề HSK6 · chỉ 3 mạng", hearts: 3 });
-  if (L.W) nodes.push({ key: "w", kind: "write", zh: "道", vn: "Ngộ đạo", sub: `Viết tóm tắt ~${L.W.target || 300} chữ` });
+  // ngữ pháp không có điểm nào nhưng có bảng phân biệt → một ải riêng
+  if (!G.length && [].concat(L.BX || []).some((b) => b && b.pair)) nodes.push({ key: "g", kind: "grammar", zh: "辨", vn: "Phân biệt từ", sub: [].concat(L.BX).map((b) => strip(b.pair)).join(" · "), gs: [0, 0], bx: true });
+  if (L.EX3 || L.EX2 || (L.FILL || []).length || (L.ORDER || []).length) nodes.push({ key: "bt", kind: "bt", zh: "练", vn: "Luyện tập", sub: (L.ORDER || []).length ? "Điền từ · sắp xếp câu" : "Điền từ · viết lại câu" });
+  if (L.HSK || (L.HSKQ || []).length >= 4) nodes.push({ key: "boss", kind: "boss", zh: "试", vn: "Thí luyện", sub: "Dạng đề HSK · chỉ 3 mạng", hearts: 3 });
+  if (L.W) nodes.push({ key: "w", kind: "write", zh: "道", vn: "Ngộ đạo", sub: `${/缩写/.test(L.W.task || "") ? "Viết tóm tắt" : "Viết đoạn văn"} ~${L.W.target || 300} chữ` });
   return nodes;
 }
 
@@ -160,16 +170,19 @@ export function makeQuestions(L, node, opts = {}) {
       if (ex2) mine.push(tiles({ ins: "Xếp thành câu đúng nghĩa", vn: ex2[1], hint: pat, full: ex2[0] }, segOf(ex2[0]), segPool));
       // viết lại câu
       const pr = shuffle(g.practice?.items || []).find((it) => (segOf(it[1]) || []).length >= 4);
+      // bài tập nhanh có sẵn của điểm ngữ pháp
+      shuffle(g.drill || []).slice(0, 2).forEach((d) => { if (Array.isArray(d.o) && d.o[d.a] != null) mine.push({ k: "choice", ins: strip(d.q) || "Chọn đáp án đúng", sent: /<u>/.test(d.q) ? undefined : undefined, opts: d.o.map(strip), a: d.a, zhOpts: true, long: d.o.some((x) => strip(x).length > 8), why: d.why || "" }); });
       if (pr) mine.push(tiles({ ins: `Viết lại câu, dùng “${pat}”`, src: strip(pr[0]), full: strip(pr[1]) }, segOf(pr[1]), segPool));
       out.push(...shuffle(mine.filter(Boolean)));
     });
-    const bx = node.bx === false ? null : L.BX;
-    if (bx && opts.intro) out.push({ k: "card", kind: "bx", pair: strip(bx.pair), cols: (bx.cols || strip(bx.pair).split(/\s*[—–-]\s*/)).map(strip), same: bx.same || [], diff: bx.diff || [] });
+    for (const bx of node.bx === false ? [] : [].concat(L.BX || []).filter((b) => b && b.pair)) {
+    if (opts.intro) out.push({ k: "card", kind: "bx", pair: strip(bx.pair), cols: (bx.cols || strip(bx.pair).split(/\s*[—–-]\s*/)).map(strip), same: bx.same || [], diff: bx.diff || [] });
     if (bx?.task?.items?.length && bx.task.cols?.length) {
       shuffle(bx.task.items.filter((it) => Number.isInteger(it[1]) && it[1] < bx.task.cols.length)).slice(0, 4).forEach((it) => {
         const cols = bx.task.cols.map(strip);
         out.push({ k: "choice", ins: strip(bx.task.q) || `Phân biệt ${strip(bx.pair)}`, sent: strip(it[0]).replace(/_{2,}/g, "＿＿"), opts: cols, a: it[1], zhOpts: cols.every((c) => /[㐀-鿿]/.test(c)), why: it[2] || "" });
       });
+    }
     }
     return opts.intro ? out.filter(Boolean) : shuffle(out.filter(Boolean)).slice(0, 14);
   }
@@ -190,6 +203,8 @@ export function makeQuestions(L, node, opts = {}) {
         out.push(choice({ ins: `Đoạn ${i + 1} · điền từ còn thiếu`, sent: s.replace(w, "＿＿"), zhOpts: true, word: w, why: byZh[w] ? `${w} · ${byZh[w][2]} — ${strip(byZh[w][5])}` : "" }, w, near(w, allZh)));
       }
     }
+    // câu hỏi đọc hiểu có sẵn trong bài giảng (kể cả đúng/sai)
+    for (let i = a; i < b; i++) (T[i].qs || []).forEach((q) => { if (Array.isArray(q.o) && q.o[q.a] != null) out.push({ k: "choice", ins: `Bài khóa ${i + 1} · ${strip(q.q)}`, passage: strip(T[i].zh), fold: true, opts: q.o.map(strip), a: q.a, zhOpts: q.o.some((x) => /[\u3400-\u9fff]/.test(x)) }); });
     if (node.key === "t2" && (L.outline || []).length >= 3) {
       out.push({ k: "tiles", ins: "Xếp diễn biến bài khóa theo đúng thứ tự", vn: L.outline.map((o) => o.tag).join(" → "), ans: L.outline.map((o) => strip(o.zh)).join(""), tiles: shuffle(L.outline.map((o) => strip(o.zh))), full: L.outline.map((o) => `${o.tag} · ${strip(o.zh)}`).join("<br>"), big: true });
     }
@@ -215,7 +230,31 @@ export function makeQuestions(L, node, opts = {}) {
       const complete = L.EX2.type === "complete";
       out.push(tiles(complete ? { ins: `Hoàn thành câu, dùng “${strip(it[1])}”`, src: strip(it[0]), full: strip(it[2]) } : { ins: `Viết lại câu, dùng “${strip(it[1])}”`, src: strip(it[0]), full: strip(it[2]) }, sg, segPool, 12));
     });
+    (L.FILL || []).forEach((f) => {
+      const o = (f.opts || []).map(strip); if (!o.includes(strip(f.ans))) return;
+      const wrong = shuffle(o.filter((x) => x !== strip(f.ans))).slice(0, 3);
+      const q = choice({ ins: f.ins || "Chọn từ thích hợp điền vào chỗ trống", sent: f.html ? strip(f.sent.replace(/<u>([A-D])<\/u>/g, "［$1］")) : strip(f.sent), zhOpts: true, long: o.some((x) => x.length > 8), word: /[\u3400-\u9fff]/.test(f.ans) && f.ans.length <= 4 ? f.ans : undefined, why: f.why || "" }, strip(f.ans), wrong);
+      if (q && !q.sent) delete q.sent;
+      out.push(q);
+    });
+    (L.ORDER || []).forEach((o) => {
+      const tk = (o.tokens || []).map(strip).filter(Boolean); if (tk.length < 3) return;
+      const ans = strip([].concat(o.ans || tk.join(""))[0]);
+      // giữ thứ tự đáp án: mảnh ghép theo câu đúng
+      const ordered = []; let rest = ans.replace(/[，。！？、,.!?；：“”]/g, "");
+      const pool = [...tk];
+      while (rest && pool.length) { const i = pool.findIndex((t) => rest.startsWith(t.replace(/[，。！？、,.!?；：“”]/g, ""))); if (i < 0) break; const t = pool.splice(i, 1)[0]; ordered.push(t); rest = rest.slice(t.replace(/[，。！？、,.!?；：“”]/g, "").length); }
+      const toks = ordered.length === tk.length ? ordered : tk;
+      out.push({ k: "tiles", ins: o.vn ? "Xếp thành câu đúng nghĩa" : "Sắp xếp thành câu hoàn chỉnh", vn: strip(o.vn || ""), ans: toks.join(""), tiles: shuffle(toks), full: ans });
+    });
     return shuffle(out.filter(Boolean)).slice(0, 14);
+  }
+
+  if (node.kind === "boss" && (L.HSKQ || []).length) {
+    return shuffle(L.HSKQ).slice(0, 12).map((q) => {
+      const o = (q.o || []).map(strip); if (o[q.a] == null) return null;
+      return { k: "choice", ins: strip(q.ins) || "Chọn đáp án đúng", say: q.say ? strip(q.say) : undefined, hideText: !!q.say, passage: q.passage ? strip(q.passage) : undefined, fold: !!q.fold, sent: q.sent ? strip(q.sent) : undefined, opts: o, a: q.a, zhOpts: o.some((x) => /[\u3400-\u9fff]/.test(x)), long: o.some((x) => x.length > 10), why: strip(q.why || "") };
+    }).filter(Boolean);
   }
 
   if (node.kind === "boss") {
