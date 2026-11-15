@@ -125,7 +125,8 @@ function Session({ sess, setSess, onFinish, signedIn }) {
   const total = sess.qs.length;
 
   useEffect(() => { setPicked(q?.k === "tiles" ? [] : null); setChecked(null); }, [q?.id, sess.step]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (q?.say && !checked) { const t = setTimeout(() => speakZh(q.say), 350); return () => { clearTimeout(t); stopSpeak(); }; } }, [q?.id, sess.step]); // eslint-disable-line react-hooks/exhaustive-deps
+  // không tự phát âm thanh: chỉ phát khi bấm nút loa; đổi câu thì dừng tiếng đang phát
+  useEffect(() => () => stopSpeak(), [q?.id, sess.step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const canCheck = q && !checked && (q.k === "choice" ? typeof picked === "number" : q.k === "tiles" ? Array.isArray(picked) && picked.length > 0 : false);
   const check = (forceOk) => {
@@ -136,7 +137,6 @@ function Session({ sess, setSess, onFinish, signedIn }) {
     if (ok) { solved.add(q.id); streak += 1; } else { missed.add(q.id); hearts -= 1; streak = 0; }
     setChecked({ ok });
     setSess({ ...sess, missed, solved, hearts, streak, best: Math.max(sess.best, streak) });
-    if (!ok && q.word) speakZh(q.word);
   };
   const next = async () => {
     const [head, ...rest] = sess.queue;
@@ -232,7 +232,6 @@ function Session({ sess, setSess, onFinish, signedIn }) {
 // ---------------- thẻ học ----------------
 const Lb = ({ children }) => <div className="text-[11px] font-extrabold tracking-[0.12em] uppercase text-[#8C7F68]">{children}</div>;
 function LearnCard({ q }) {
-  useEffect(() => { if (q.kind === "word") { const t = setTimeout(() => speakZh(q.zh), 300); return () => clearTimeout(t); } }, [q]);
   const box = "rounded-[14px] bg-[#FBF8F1] border border-[#D8CBAE] p-4 flex flex-col gap-3";
   if (q.kind === "word") return (
     <article className={box} aria-label={`Thẻ từ ${q.zh}`}>
@@ -319,7 +318,7 @@ function Choice({ q, picked, setPicked, checked }) {
         {q.opts.map((o, i) => {
           const on = picked === i; const right = checked && i === q.a; const wrong = checked && on && i !== q.a;
           return (
-            <button key={i} role="radio" aria-checked={on} disabled={!!checked} onClick={() => { setPicked(i); if (q.zhOpts && o.length <= 4) speakZh(o); }}
+            <button key={i} role="radio" aria-checked={on} disabled={!!checked} onClick={() => setPicked(i)}
               className={`min-h-[56px] flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-left border-2 transition-colors shadow-[0_3px_0_rgba(0,0,0,.08)] ${right ? "border-[#2F6E5A] bg-[#DCE9DF]" : wrong ? "border-[#9E2F22] bg-[#F3DDD6]" : on ? "border-[#1C1A17] bg-[#F3E3D2]" : "border-[#D8CBAE] bg-white hover:border-[#8C7F68]"}`}>
               <span className={`w-7 h-7 rounded-[4px] grid place-items-center text-[13px] font-extrabold shrink-0 border ${on ? "bg-[#1C1A17] text-white border-[#1C1A17]" : "border-[#CDBF9F] text-[#6B6253]"}`} aria-hidden="true">{i + 1}</span>
               <span className={q.zhOpts ? "text-[19px] leading-snug" : "text-[16px] leading-snug"} style={q.zhOpts ? ZH : undefined} lang={q.zhOpts ? "zh-CN" : undefined}>{o}</span>
@@ -366,7 +365,6 @@ function Match({ q, onDone }) {
   const [bad, setBad] = useState(null);
   const [mist, setMist] = useState(0);
   const tap = (side, v) => {
-    if (side === "l") speakZh(v);
     if (!sel || sel.side === side) { setSel({ side, v }); return; }
     const z = side === "l" ? v : sel.v; const m = side === "r" ? v : sel.v;
     if (ans[z] === m) { const n = [...ok, z]; setOk(n); setSel(null); if (n.length === q.pairs.length) setTimeout(() => onDone(mist > 0), 250); }
