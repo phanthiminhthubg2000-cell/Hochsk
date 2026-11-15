@@ -1086,7 +1086,7 @@ export default function HomePage() {
 
   // Màn chào cho khách chưa đăng nhập: slogan + nút đo linh căn
   const Splash = () => (
-    <section className="relative overflow-hidden rounded-[6px] border border-[#D8CBAE] bg-[#F5EEDF] px-5 py-7 md:px-10 md:py-10 grid gap-6 md:grid-cols-[1fr_auto] items-center">
+    <section className="relative overflow-hidden rounded-[6px] border border-[#D8CBAE] bg-[#F5EEDF] px-5 py-7 md:px-10 md:py-10 grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto] items-center">
       <div className="flex flex-col gap-4 order-2 md:order-1">
         <div className="flex items-center gap-3"><Seal className="w-12 h-12 text-[22px] tt-stamp" rotate={6} /><span className="font-brush text-[34px] leading-none">{BRAND.zh}</span></div>
         <h1 className="font-serif-vn text-[26px] md:text-[34px] font-extrabold leading-tight">{BRAND.vn}</h1>
@@ -1168,7 +1168,7 @@ export default function HomePage() {
   const ResultsCard = ({ limit = 3 }) => {
     const pending = results.filter(r => !r.graded).length;
     return (
-      <section className={`${card} p-5 flex flex-col gap-2`}>
+      <section className={`${card} p-5 flex flex-col gap-2 min-w-0`}>
         <div className="flex items-baseline justify-between gap-2"><h3 className="tt-card-title"><span className="zh" aria-hidden="true">批阅</span>Kết quả được chấm</h3>
           <span className="text-xs text-[#6B6253]">{newResults.length > 0 && <b className="text-[#C2410C]">{newResults.length} mới · </b>}{pending > 0 ? `${pending} chờ chấm` : results.length || ""}</span></div>
         {results.length === 0 ? (
@@ -1233,13 +1233,13 @@ export default function HomePage() {
                     ))}
                   </nav>
                 </div>
-                <div className="grid gap-5 md:gap-6 lg:grid-cols-[1fr_1fr_1.15fr] items-stretch">
+                <div className="grid grid-cols-1 gap-5 md:gap-6 lg:grid-cols-[1fr_1fr_1.15fr] items-stretch">
                   <PondCard />
                   <SuPhuCard />
                   <ContinueCard />
                 </div>
               </div>
-              <div className="grid gap-5 md:gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 md:gap-6 md:grid-cols-2">
                 <LinhCanCard />
                 <MissionsCard />
                 <StreakCard />
@@ -1264,7 +1264,7 @@ export default function HomePage() {
               </label>
 
               {q ? (
-                <div className="grid gap-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
                   <section className={`${card} p-5 flex flex-col gap-2`}>
                     <h2 className="text-[17px] font-bold">Bài học</h2>
                     {lessonHits.length === 0 ? <p className="text-sm text-[#6B6253]">Không có bài nào khớp.</p> : lessonHits.map(l => (
@@ -1414,7 +1414,7 @@ export default function HomePage() {
                   <Link href={weakest.href} className="tt-btn hidden sm:inline-flex shrink-0">Vào bí cảnh</Link>
                 </div>
               )}
-              <section aria-label="Đan phòng và ma vực" className="grid gap-4 md:grid-cols-3">
+              <section aria-label="Đan phòng và ma vực" className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {[
                   { href: "/luyen-dan", img: "/tt/luyendan.jpg", zh: "炼丹房", vn: "Luyện Đan Phòng", sub: ldStat?.due ? `${ldStat.due} từ đến hạn ôn` : "Ôn từ vựng ngắt quãng, luyện thành đan", pos: "50% 55%" },
                   { href: "/tam-ma", img: null, zh: "心魔洞", vn: "Tâm Ma Động", sub: ldStat?.tamMa ? `${ldStat.tamMa} tâm ma đang ẩn nấp` : "Trảm những từ hay sai", pos: "" },
@@ -1434,7 +1434,7 @@ export default function HomePage() {
               </section>
               <section aria-label="Ngũ hành bí cảnh" className="flex flex-col gap-3">
                 <div className="flex items-baseline gap-2"><span className="font-brush text-[26px] text-[#2F6E5A]">五行秘境</span><h2 className="font-serif-vn text-[18px] font-extrabold">Ngũ hành bí cảnh</h2><span className="text-sm text-[#6B6253]">mỗi bí cảnh nuôi một hệ linh căn</span></div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
                   {skills.map((s) => {
                     const hot = s.key === weakest?.key; const e = elementOf(s.el);
                     return (
@@ -1464,7 +1464,7 @@ export default function HomePage() {
             <div className="flex flex-col gap-5">
               <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">江湖</span>Giang hồ</h1>
               <p className="text-[15px] text-[#4A4238] -mt-2">Luận võ với đồng song, leo Thiên Bảng, hoặc mở một trận để cả lớp cùng tranh tài.</p>
-              <div className="grid gap-4 md:gap-5 lg:grid-cols-[1.2fr_1fr] items-start">
+              <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-[1.2fr_1fr] items-start">
                 <Link href="/luan-vo" className="group relative overflow-hidden rounded-[6px] bg-[#121318] text-[#EDE8DC] p-6 flex flex-col gap-3 min-h-[220px] hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,.5)] transition-shadow">
                   <svg viewBox="0 0 120 120" className="absolute -right-4 -bottom-4 w-40 h-40 opacity-20" aria-hidden="true"><path d="M20 100 L95 25 M95 25 l-14 2 M95 25 l-2 14 M100 100 L25 25 M25 25 l14 2 M25 25 l2 14" stroke="#E6B656" strokeWidth="6" strokeLinecap="round" fill="none" /></svg>
                   <div className="flex items-baseline gap-3"><span className="font-brush text-[44px] leading-none text-[#E6B656]" aria-hidden="true">论武</span><h2 className="font-serif-vn text-[24px] font-extrabold">Luận võ</h2></div>
@@ -1473,7 +1473,7 @@ export default function HomePage() {
                 </Link>
                 <ThienBang n={5} me={userId} compact tabs />
               </div>
-              <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {GAMES.map(g => (
                   <a key={g.key} href={g.href} target="_blank" rel="noopener"
                     className="group tt-card overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col">
@@ -1548,7 +1548,7 @@ export default function HomePage() {
                   </ol>
                 </section>
               )}
-              <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] items-start">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.6fr_1fr] items-start">
                 <div className="flex flex-col gap-5 min-w-0">
               {(() => {
                 // ---------- KHẢO THÍ ĐIỆN: mọi đề gộp theo cấp độ, bấm là vào phòng thi thật ----------
@@ -1608,7 +1608,7 @@ export default function HomePage() {
                         <span className="tt-btn shrink-0 !h-9 !px-4 text-sm">Vào thi</span>
                       </button>
                     )}
-                    <ul className="grid gap-3 sm:grid-cols-2">
+                    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {shown.map((x) => {
                         const a = att[x.key]; const [glyph, label] = SRC[x.src];
                         return (
