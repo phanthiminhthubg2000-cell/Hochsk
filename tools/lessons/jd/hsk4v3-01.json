@@ -1,0 +1,494 @@
+{
+"1": [
+{
+"line": 0,
+"s": "你们好，欢迎来到中国留学！请把护照、签证和入学通知书给我。",
+"vn": "Chào các bạn, chào mừng các bạn đến Trung Quốc du học! Vui lòng đưa hộ chiếu, visa và giấy báo nhập học cho tôi.",
+"ch": [
+{
+"t": "请把护照、签证和入学通知书给我",
+"py": "qǐng bǎ hùzhào, qiānzhèng hé rùxué tōngzhīshū gěi wǒ",
+"vn": "vui lòng đưa hộ chiếu, visa và giấy báo nhập học cho tôi",
+"frame": "请把 + A + 给 + B",
+"note": "Cấu trúc 把 dùng để nhấn mạnh hành động tác động lên đồ vật. A là đồ vật, B là người nhận.",
+"ex": [
+[
+"请把这份材料给我。",
+"Vui lòng đưa tài liệu này cho tôi."
+],
+[
+"请把你的名字写给我。",
+"Vui lòng viết tên của bạn cho tôi."
+]
+],
+"try": "Nói: “Vui lòng đưa hộ chiếu cho tôi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "好的。这是我们的证件和材料。",
+"vn": "Vâng ạ. Đây là giấy tờ và tài liệu của chúng tôi.",
+"ch": []
+},
+{
+"line": 2,
+"s": "（几分钟后。）",
+"vn": "(Vài phút sau.)",
+"ch": []
+},
+{
+"line": 3,
+"s": "办好了，这是你们的学生证，下周一开始上课。先试听两周，然后在网上选课。",
+"vn": "Làm xong rồi, đây là thẻ sinh viên của các bạn, tuần sau bắt đầu lên lớp. Trước tiên học thử hai tuần, sau đó lên mạng chọn môn.",
+"ch": [
+{
+"t": "先试听两周，然后在网上选课",
+"py": "xiān shìtīng liǎng zhōu, ránhòu zài wǎngshàng xuǎnkè",
+"vn": "trước tiên học thử hai tuần, sau đó lên mạng chọn môn",
+"frame": "先 + V1, 然后 + V2",
+"note": "Cấu trúc chỉ trình tự thời gian: làm gì trước, sau đó làm gì tiếp theo.",
+"ex": [
+[
+"先做作业，然后看电视。",
+"Làm bài tập trước, sau đó xem tivi."
+],
+[
+"先吃饭，然后去图书馆。",
+"Ăn cơm trước, sau đó đi thư viện."
+]
+],
+"try": "Nói: “Trước tiên đi đăng ký, sau đó nhận thẻ sinh viên.”"
+}
+]
+},
+{
+"line": 4,
+"s": "谢谢老师。",
+"vn": "Cảm ơn thầy/cô ạ.",
+"ch": []
+},
+{
+"line": 5,
+"s": "不客气，你们以后有任何问题都可以来找我。",
+"vn": "Không có gì, sau này các bạn có bất kỳ vấn đề gì đều có thể đến tìm tôi.",
+"ch": [
+{
+"t": "有任何问题都可以来找我",
+"py": "yǒu rènhé wèntí dōu kěyǐ lái zhǎo wǒ",
+"vn": "có bất kỳ vấn đề gì đều có thể đến tìm tôi",
+"frame": "有任何 + N + 都 + V",
+"note": "任何 (bất kỳ) đi với 都 (đều) để nhấn mạnh sự bao quát, không ngoại trừ trường hợp nào.",
+"ex": [
+[
+"我有任何想法都会告诉他。",
+"Tôi có bất kỳ suy nghĩ gì đều sẽ nói với anh ấy."
+],
+[
+"这里有任何变化请通知我。",
+"Ở đây có bất kỳ thay đổi gì vui lòng báo tôi."
+]
+],
+"try": "Nói: “Có bất kỳ khó khăn gì đều có thể nói với tôi.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "你看，咱们的校园真大！有图书馆、体育馆、超市，还有好几个食堂。",
+"vn": "Bạn xem, khuôn viên trường mình rộng thật! Có thư viện, nhà thi đấu, siêu thị, lại còn có mấy cái nhà ăn nữa.",
+"ch": []
+},
+{
+"line": 1,
+"s": "是啊，我觉得学校就像一座小城市，什么都有，方便极了。",
+"vn": "Đúng vậy, mình thấy trường học giống như một thành phố nhỏ, cái gì cũng có, tiện cực kỳ.",
+"ch": [
+{
+"t": "方便极了",
+"py": "fāngbiàn jí le",
+"vn": "tiện cực kỳ",
+"frame": "……极了",
+"note": "Cấu trúc nhấn mạnh mức độ cao nhất, tương đương với 'rất rất'. Dùng sau tính từ.",
+"ex": [
+[
+"这个学期课程多，忙极了。",
+"Học kỳ này nhiều môn, bận cực kỳ."
+],
+[
+"这件衣服漂亮极了。",
+"Chiếc áo này đẹp cực kỳ."
+]
+],
+"try": "Nói: 'Món ăn này ngon cực kỳ.'"
+}
+]
+},
+{
+"line": 2,
+"s": "刚才老师说，咱们可以申请奖学金，你了解过吗？",
+"vn": "Vừa nãy thầy giáo nói, chúng ta có thể xin học bổng, bạn đã tìm hiểu qua chưa?",
+"ch": [
+{
+"t": "申请奖学金",
+"py": "shēnqǐng jiǎngxuéjīn",
+"vn": "xin học bổng",
+"frame": "申请 + mục tiêu",
+"note": "Dùng cho việc nộp đơn xin cái gì đó chính thức (học bổng, visa, việc làm).",
+"ex": [
+[
+"我打算申请去中国留学。",
+"Tôi dự định nộp đơn đi du học Trung Quốc."
+],
+[
+"他正在申请这份工作。",
+"Anh ấy đang nộp đơn cho công việc này."
+]
+],
+"try": "Nói: 'Tôi muốn xin học bổng của trường.'"
+}
+]
+},
+{
+"line": 3,
+"s": "我听说过一点儿，好像成绩好、表现好的学生都有机会获得奖学金。",
+"vn": "Mình có nghe qua một chút, hình như những sinh viên có thành tích tốt, biểu hiện tốt đều có cơ hội nhận được học bổng.",
+"ch": [
+{
+"t": "都有机会获得",
+"py": "dōu yǒu jīhuì huòdé",
+"vn": "đều có cơ hội nhận được",
+"frame": "……都有机会 + V",
+"note": "Cấu trúc dùng để diễn tả khả năng xảy ra của một sự việc tích cực.",
+"ex": [
+[
+"努力学习的人都有机会成功。",
+"Người nỗ lực học tập đều có cơ hội thành công."
+],
+[
+"大家都有机会参加这次比赛。",
+"Mọi người đều có cơ hội tham gia cuộc thi này."
+]
+],
+"try": "Nói: 'Mọi người đều có cơ hội nhận được quà.'"
+}
+]
+},
+{
+"line": 4,
+"s": "那太好了，要是申请到奖学金，就能减轻不少经济压力。",
+"vn": "Vậy thì tốt quá, nếu xin được học bổng thì có thể giảm bớt không ít áp lực kinh tế.",
+"ch": [
+{
+"t": "要是申请到奖学金，就能减轻不少经济压力",
+"py": "yàoshi shēnqǐng dào jiǎngxuéjīn, jiù néng jiǎnqīng bùshǎo jīngjì yālì",
+"vn": "nếu xin được học bổng, thì có thể giảm bớt không ít áp lực kinh tế",
+"frame": "要是 + A, 就(能) + B",
+"note": "Cấu trúc giả thiết: Nếu có A thì sẽ/có thể có B. '申请到' (xin được) nhấn mạnh kết quả thành công.",
+"ex": [
+[
+"要是明天不下雨，我们就去爬山。",
+"Nếu mai không mưa, chúng ta sẽ đi leo núi."
+],
+[
+"要是多练习，就能提高口语水平。",
+"Nếu luyện tập nhiều, thì có thể nâng cao trình độ nói."
+]
+],
+"try": "Nói: 'Nếu mai có thời gian, mình sẽ đi thư viện.'"
+}
+]
+},
+{
+"line": 5,
+"s": "没错，我们一起加油吧！",
+"vn": "Đúng vậy, chúng ta cùng cố gắng nhé!",
+"ch": [
+{
+"t": "一起加油吧",
+"py": "yìqǐ jiāyóu ba",
+"vn": "cùng cố gắng nhé",
+"frame": "一起 + V + 吧",
+"note": "Dùng để rủ rê, khích lệ đối phương cùng làm gì đó.",
+"ex": [
+[
+"我们一起去吃饭吧。",
+"Chúng ta cùng đi ăn cơm đi."
+],
+[
+"我们一起复习考试吧。",
+"Chúng ta cùng ôn thi đi."
+]
+],
+"try": "Nói: 'Chúng ta cùng cố gắng học tiếng Trung nhé!'"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "随着中国的发展，越来越多的外国学生来到中国的大学学习。",
+"vn": "Cùng với sự phát triển của Trung Quốc, ngày càng có nhiều sinh viên nước ngoài đến các trường đại học Trung Quốc để học tập.",
+"ch": [
+{
+"t": "随着中国的发展",
+"py": "suízhe Zhōngguó de fāzhǎn",
+"vn": "cùng với sự phát triển của Trung Quốc",
+"frame": "随着 + danh từ/cụm danh từ, ...",
+"note": "Dùng để chỉ sự thay đổi đi kèm với một sự kiện hoặc xu hướng nào đó. Thường đứng đầu câu.",
+"ex": [
+[
+"随着年龄的增长，我越来越懂事了。",
+"Cùng với sự lớn lên của tuổi tác, tôi ngày càng hiểu chuyện hơn."
+],
+[
+"随着科技的发展，我们的生活越来越方便。",
+"Cùng với sự phát triển của khoa học kỹ thuật, cuộc sống của chúng ta ngày càng thuận tiện."
+]
+],
+"try": "Nói: “Cùng với sự phát triển của internet, việc học tiếng Trung trở nên dễ dàng hơn.”"
+},
+{
+"t": "越来越多的",
+"py": "yuè lái yuè duō de",
+"vn": "ngày càng nhiều",
+"frame": "越来越 + tính từ/động từ tâm lý",
+"note": "Diễn tả mức độ tăng dần theo thời gian. Lưu ý: không dùng với các động từ chỉ hành động cụ thể.",
+"ex": [
+[
+"现在学汉语的人越来越多了。",
+"Hiện nay người học tiếng Trung ngày càng nhiều."
+],
+[
+"天气越来越冷了。",
+"Thời tiết ngày càng lạnh rồi."
+]
+],
+"try": "Nói: “Công việc của tôi ngày càng bận rộn.”"
+}
+]
+},
+{
+"line": 0,
+"s": "他们可以先上一年的中文课程，然后根据自己的兴趣和需要选择专业。",
+"vn": "Họ có thể học trước một năm khóa tiếng Trung, sau đó dựa vào sở thích và nhu cầu của bản thân để chọn chuyên ngành.",
+"ch": [
+{
+"t": "根据自己的兴趣和需要",
+"py": "gēnjù zìjǐ de xìngqù hé xūyào",
+"vn": "dựa vào sở thích và nhu cầu của bản thân",
+"frame": "根据 + căn cứ/nguồn tin + làm gì",
+"note": "Dùng để chỉ cơ sở hoặc căn cứ để đưa ra quyết định hoặc hành động.",
+"ex": [
+[
+"根据天气预报，明天有雨。",
+"Dựa theo dự báo thời tiết, ngày mai có mưa."
+],
+[
+"请根据你的实际情况回答问题。",
+"Vui lòng trả lời câu hỏi dựa theo tình hình thực tế của bạn."
+]
+],
+"try": "Nói: “Dựa vào năng lực của bản thân, tôi đã chọn trường đại học này.”"
+}
+]
+},
+{
+"line": 0,
+"s": "除了读本科课程，他们还可以申请读硕士研究生或者博士研究生。",
+"vn": "Ngoài việc học các khóa đại học, họ còn có thể đăng ký học thạc sĩ hoặc tiến sĩ.",
+"ch": [
+{
+"t": "除了读本科课程，他们还可以申请",
+"py": "chúle dú běnkē kèchéng, tāmen hái kěyǐ shēnqǐng",
+"vn": "ngoài việc học đại học, họ còn có thể đăng ký",
+"frame": "除了 A，还 B",
+"note": "Cấu trúc “Ngoài A ra, còn có B”. Lưu ý dùng thêm “还” hoặc “也” ở vế sau.",
+"ex": [
+[
+"除了汉语，我还想学英语。",
+"Ngoài tiếng Trung, tôi còn muốn học tiếng Anh."
+],
+[
+"除了看书，他还喜欢运动。",
+"Ngoài việc đọc sách, anh ấy còn thích vận động."
+]
+],
+"try": "Nói: “Ngoài việc đi làm, tôi còn phải học thêm tiếng Trung.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在大学里，外国学生可以和中国学生一起学习、做研究、参加校园活动。",
+"vn": "Ở trường đại học, sinh viên nước ngoài có thể cùng sinh viên Trung Quốc học tập, làm nghiên cứu, tham gia các hoạt động trong trường.",
+"ch": []
+},
+{
+"line": 1,
+"s": "通过这些交流，外国学生能更快地适应中国的大学生活。",
+"vn": "Thông qua những sự giao lưu này, sinh viên nước ngoài có thể thích nghi nhanh hơn với cuộc sống đại học ở Trung Quốc.",
+"ch": [
+{
+"t": "通过这些交流",
+"py": "tōngguò zhèxiē jiāoliú",
+"vn": "thông qua những sự giao lưu này",
+"frame": "通过 + phương thức/công cụ + làm gì",
+"note": "Chỉ phương tiện hoặc con đường để đạt được mục đích.",
+"ex": [
+[
+"通过努力学习，我通过了HSK4级考试。",
+"Thông qua việc học tập chăm chỉ, tôi đã đỗ kỳ thi HSK4."
+],
+[
+"通过看电影，可以提高听力。",
+"Thông qua việc xem phim, có thể nâng cao kỹ năng nghe."
+]
+],
+"try": "Nói: “Thông qua việc nói chuyện với người bản ngữ, tiếng Trung của tôi tiến bộ rất nhanh.”"
+},
+{
+"t": "更快地适应",
+"py": "gèng kuài de shìyìng",
+"vn": "thích nghi nhanh hơn",
+"frame": "适应 + môi trường/hoàn cảnh",
+"note": "Dùng để nói về việc làm quen và điều chỉnh bản thân với môi trường mới.",
+"ex": [
+[
+"我很快适应了这里的生活。",
+"Tôi đã nhanh chóng thích nghi với cuộc sống ở đây."
+],
+[
+"他还没适应这份新工作。",
+"Anh ấy vẫn chưa thích nghi với công việc mới này."
+]
+],
+"try": "Nói: “Tôi cần thời gian để thích nghi với khí hậu ở đây.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "很多外国学生来中国学习以前，就已经想好了自己的发展方向。有人对经济感兴趣，希望将来在国际公司工作；",
+"vn": "Nhiều du học sinh trước khi đến Trung Quốc học tập đã suy nghĩ kỹ về hướng phát triển của bản thân. Có người hứng thú với kinh tế, hy vọng tương lai làm việc tại công ty quốc tế;",
+"ch": [
+{
+"t": "对经济感兴趣",
+"py": "duì jīngjì gǎn xìngqù",
+"vn": "hứng thú với kinh tế",
+"frame": "对 + đối tượng + 感兴趣",
+"note": "Dùng để diễn tả sự yêu thích, quan tâm tới một lĩnh vực hoặc sự vật nào đó.",
+"ex": [
+[
+"我对中国文化很感兴趣。",
+"Tôi rất hứng thú với văn hóa Trung Quốc."
+],
+[
+"他对他现在的专业很感兴趣。",
+"Anh ấy rất hứng thú với chuyên ngành hiện tại của mình."
+]
+],
+"try": "Nói: “Tôi rất hứng thú với việc học tiếng Trung.”"
+}
+]
+},
+{
+"line": 0,
+"s": "有人喜欢学医，打算回国后当一名医生；还有人对教育有热情，想要成为一名教师。",
+"vn": "có người thích học y, dự định sau khi về nước sẽ làm bác sĩ; lại có người có nhiệt huyết với giáo dục, muốn trở thành giáo viên.",
+"ch": [
+{
+"t": "对教育有热情",
+"py": "duì jiàoyù yǒu rèqíng",
+"vn": "có nhiệt huyết với giáo dục",
+"frame": "对 + lĩnh vực/công việc + 有热情",
+"note": "Cụm từ thể hiện sự tận tâm, đam mê đối với một công việc hoặc lĩnh vực cụ thể.",
+"ex": [
+[
+"她对这份工作很有热情。",
+"Cô ấy rất có nhiệt huyết với công việc này."
+],
+[
+"老师对教学工作非常有热情。",
+"Thầy giáo rất có nhiệt huyết với công việc giảng dạy."
+]
+],
+"try": "Nói: “Anh ấy rất có nhiệt huyết với việc kinh doanh.”"
+}
+]
+},
+{
+"line": 1,
+"s": "陈天中想选择跟经济有关的专业，希望通过学习，了解更多国际贸易方面的知识。",
+"vn": "Trần Thiên Trung muốn chọn chuyên ngành liên quan đến kinh tế, hy vọng thông qua học tập, hiểu biết thêm kiến thức về thương mại quốc tế.",
+"ch": [
+{
+"t": "跟经济有关的专业",
+"py": "gēn jīngjì yǒuguān de zhuānyè",
+"vn": "chuyên ngành liên quan đến kinh tế",
+"frame": "跟 + A + 有关(的) + B",
+"note": "Dùng để chỉ mối liên hệ giữa hai sự vật. Có thể dùng “和” thay cho “跟”.",
+"ex": [
+[
+"这跟我的计划有关。",
+"Việc này có liên quan đến kế hoạch của tôi."
+],
+[
+"我想找跟电脑有关的工作。",
+"Tôi muốn tìm công việc liên quan đến máy tính."
+]
+],
+"try": "Nói: “Tôi muốn đọc sách liên quan đến lịch sử.”"
+}
+]
+},
+{
+"line": 1,
+"s": "安妮以后想做一名中文老师，所以要选择国际中文教育专业。对他们来说，来到中国留学，一方面是为了学习语言和知识，另一方面也是为将来的工作和生活做准备。",
+"vn": "Annie sau này muốn làm giáo viên tiếng Trung, nên muốn chọn chuyên ngành Giáo dục Hán ngữ quốc tế. Đối với họ mà nói, đến Trung Quốc du học, một mặt là để học ngôn ngữ và kiến thức, mặt khác cũng là để chuẩn bị cho công việc và cuộc sống tương lai.",
+"ch": [
+{
+"t": "对他们来说",
+"py": "duì tāmen lái shuō",
+"vn": "đối với họ mà nói",
+"frame": "对 + ai + 来说",
+"note": "Dùng để đưa ra quan điểm hoặc đánh giá từ góc nhìn của một đối tượng cụ thể.",
+"ex": [
+[
+"对学生来说，考试很重要。",
+"Đối với học sinh mà nói, thi cử rất quan trọng."
+],
+[
+"对初学者来说，汉字很难。",
+"Đối với người mới bắt đầu mà nói, chữ Hán rất khó."
+]
+],
+"try": "Nói: “Đối với tôi mà nói, học tiếng Trung rất thú vị.”"
+},
+{
+"t": "一方面是为了……，另一方面也是……",
+"py": "yì fāngmiàn shì wèile..., lìng yī fāngmiàn yě shì...",
+"vn": "một mặt là để..., mặt khác cũng là...",
+"frame": "一方面 + V/N, 另一方面 + V/N",
+"note": "Cấu trúc dùng để liệt kê hai mục đích hoặc hai khía cạnh của cùng một sự việc.",
+"ex": [
+[
+"一方面为了省钱，另一方面也是为了锻炼身体，我每天骑车上班。",
+"Một mặt để tiết kiệm tiền, mặt khác cũng để rèn luyện sức khỏe, tôi đạp xe đi làm mỗi ngày."
+],
+[
+"出国留学，一方面是为了开阔眼界，另一方面也是为了学习先进的技术。",
+"Du học nước ngoài, một mặt để mở mang tầm mắt, mặt khác cũng là để học kỹ thuật tiên tiến."
+]
+],
+"try": "Nói: “Tôi học tiếng Trung, một mặt là vì công việc, mặt khác cũng vì sở thích.”"
+}
+]
+}
+]
+}

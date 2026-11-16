@@ -1,0 +1,1157 @@
+{
+"1": [
+{
+"line": 0,
+"s": "最近天气越来越凉快了，风一刮，草地上就会有一层厚厚的黄叶，看来秋天已经到了。",
+"vn": "Dạo này thời tiết càng lúc càng mát mẻ rồi, gió vừa thổi là trên bãi cỏ sẽ có một lớp lá vàng dày, xem ra mùa thu đã đến rồi.",
+"ch": [
+{
+"t": "越来越凉快",
+"py": "yuèláiyuè liángkuai",
+"vn": "càng ngày càng mát mẻ",
+"frame": "越来越 + tính từ",
+"note": "Biểu thị mức độ thay đổi theo thời gian. Từ '凉快' (mát mẻ) dùng nhiều cho thời tiết thu dễ chịu.",
+"ex": [
+[
+"最近天气越来越热了。",
+"Dạo này thời tiết càng ngày càng nóng."
+],
+[
+"汉语越来越好学了。",
+"Tiếng Trung càng ngày càng dễ học."
+]
+],
+"try": "Nói: “Công việc càng ngày càng bận rồi.”"
+},
+{
+"t": "看来",
+"py": "kànlái",
+"vn": "xem ra, có vẻ như",
+"frame": "看来 + sự việc",
+"note": "Dùng ở đầu mệnh đề để đưa ra nhận định, phỏng đoán dựa trên tình hình thực tế.",
+"ex": [
+[
+"看来今天不会下雨了。",
+"Xem ra hôm nay không mưa đâu."
+],
+[
+"看来他今天不能来上课了。",
+"Xem ra hôm nay cậu ấy không đến lớp được rồi."
+]
+],
+"try": "Nói: “Xem ra kỳ thi này rất khó.”"
+}
+]
+},
+{
+"line": 1,
+"s": "这几天香山特别热闹，随着气温的降低，那里许多植物的叶子都由绿变黄或者变红，吸引了很多游客参观，咱们今天也去看看吧。",
+"vn": "Mấy ngày nay Hương Sơn đặc biệt náo nhiệt, theo sự giảm xuống của nhiệt độ, lá của nhiều thực vật ở đó đều từ xanh chuyển thành vàng hoặc chuyển thành đỏ, thu hút rất nhiều du khách đến tham quan, hôm nay chúng ta cũng đi xem thử nhé.",
+"ch": [
+{
+"t": "由绿变黄或者变红",
+"py": "yóu lǜ biàn huáng huòzhě biàn hóng",
+"vn": "từ xanh chuyển vàng hoặc chuyển đỏ",
+"frame": "由 A 变 B",
+"note": "Chỉ sự thay đổi trạng thái từ màu này/chất này sang màu khác/chất khác.",
+"ex": [
+[
+"天空由阴转晴了。",
+"Bầu trời từ âm u chuyển sang quang đãng."
+],
+[
+"这里的环境由差变好了。",
+"Môi trường ở đây từ kém chuyển thành tốt."
+]
+],
+"try": "Nói: “Tâm trạng của tôi từ buồn chuyển thành vui.”"
+},
+{
+"t": "吸引了很多游客参观",
+"py": "xīyǐn le hěn duō yóukè cānguān",
+"vn": "thu hút rất nhiều du khách tham quan",
+"frame": "吸引 + ai + làm gì",
+"note": "Dùng khi nói về việc lôi cuốn, tạo sự chú ý cho người khác đến xem hoặc tham gia.",
+"ex": [
+[
+"这家餐厅吸引了很多顾客。",
+"Nhà hàng này thu hút rất nhiều khách hàng."
+],
+[
+"这个电影吸引了大量年轻观众。",
+"Bộ phim này thu hút đông đảo khán giả trẻ."
+]
+],
+"try": "Nói: “Thành phố này thu hút rất nhiều bạn trẻ đến làm việc.”"
+}
+]
+},
+{
+"line": 2,
+"s": "你看天上的云，今天肯定有大雨。再说，香山上看红叶的人太多了。咱们改天去长城吧，广播里说那里也有不少专门看红叶的好地方。",
+"vn": "Cậu nhìn mây trên trời kìa, hôm nay chắc chắn có mưa lớn. Hơn nữa, người ngắm lá đỏ ở Hương Sơn đông quá. Hôm khác chúng ta đi Vạn Lý Trường Thành đi, trong phát thanh nói ở đó cũng có không ít nơi tuyệt vời chuyên để ngắm lá đỏ.",
+"ch": [
+{
+"t": "再说",
+"py": "zàishuō",
+"vn": "hơn nữa, vả lại",
+"frame": "……，再说，……",
+"note": "Dùng để bổ sung lý do, nguyên nhân ở vế sau để tăng sức thuyết phục cho ý kiến trước.",
+"ex": [
+[
+"今天太晚了，再说我很累，明天再去吧。",
+"Hôm nay muộn quá rồi, hơn nữa tớ rất mệt, để mai hãy đi nhé."
+],
+[
+"这家店的菜不好吃，再说太贵了。",
+"Quán này đồ ăn không ngon, hơn nữa lại quá đắt."
+]
+],
+"try": "Nói: “Hôm nay tôi không có thời gian, hơn nữa tôi không muốn đi.”"
+},
+{
+"t": "有不少",
+"py": "yǒu bùshǎo",
+"vn": "có không ít, có rất nhiều",
+"frame": "有 + 不少 + danh từ",
+"note": "Biểu thị số lượng nhiều, tương đương với 很多 nhưng tự nhiên hơn trong văn nói.",
+"ex": [
+[
+"图书馆里有不少好书。",
+"Trong thư viện có không ít sách hay."
+],
+[
+"班里有不少同学会说汉语。",
+"Trong lớp có không ít bạn học biết nói tiếng Trung."
+]
+],
+"try": "Nói: “Trong công ty có không ít nhân viên giỏi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "真可惜，我还想多照点儿香山的照片呢。去长城倒是一个好主意，那我们明天去吧。",
+"vn": "Tiếc thật, tớ còn muốn chụp thêm ít ảnh của Hương Sơn cơ. Đi Trường Thành ngược lại là một ý hay đấy, vậy chúng ta đi vào ngày mai nhé.",
+"ch": [
+{
+"t": "倒是一个好主意",
+"py": "dào shì yí gè hǎo zhǔyi",
+"vn": "ngược lại là một ý hay đấy",
+"frame": "……倒是一个好主意",
+"note": "Dùng '倒' để chuyển ý nhẹ nhàng, thừa nhận một gợi ý bất ngờ là tốt hoặc hợp lý.",
+"ex": [
+[
+"周末在家休息倒是一个好主意。",
+"Cuối tuần ở nhà nghỉ ngơi ngược lại là một ý hay."
+],
+[
+"先吃饭再逛街倒是一个好主意。",
+"Ăn cơm trước rồi đi dạo phố ngược lại là một ý hay."
+]
+],
+"try": "Nói: “Không đi du lịch nữa ở nhà tự học tiếng Trung ngược lại là một ý hay.”"
+}
+]
+},
+{
+"line": 4,
+"s": "明天恐怕也不行，明天是我爸的生日。",
+"vn": "Ngày mai e rằng cũng không được, ngày mai là sinh nhật bố tớ.",
+"ch": [
+{
+"t": "恐怕也不行",
+"py": "kǒngpà yě bù xíng",
+"vn": "e rằng cũng không được đâu",
+"frame": "恐怕 + không thể / không được",
+"note": "Dùng '恐怕' để phỏng đoán một kết quả không như ý một cách lịch sự, uyển chuyển.",
+"ex": [
+[
+"今天有雨，恐怕不能去爬山了。",
+"Hôm nay có mưa, e rằng không thể đi leo núi được."
+],
+[
+"这份文件太难了，我恐怕做不完。",
+"Tài liệu này khó quá, tớ e rằng làm không xong."
+]
+],
+"try": "Nói: “Ngày mai có cuộc họp, e rằng tôi không đi được.”"
+}
+]
+},
+{
+"line": 5,
+"s": "没关系，那我们再约时间。",
+"vn": "Không sao, vậy chúng ta hẹn lại thời gian nhé.",
+"ch": []
+}
+],
+"2": [
+{
+"line": 0,
+"s": "你的这只大黑狗毛真漂亮，而且这么聪明，每次见了都想抱一抱它。",
+"vn": "Con chó mực to này của cậu lông đẹp quá, lại còn thông minh thế này, lần nào gặp cũng muốn ôm nó một cái.",
+"ch": [
+{
+"t": "每次见了都想抱一抱它",
+"py": "měicì jiàn le dōu xiǎng bào yī bào tā",
+"vn": "mỗi lần gặp đều muốn ôm nó một cái",
+"frame": "每次……都想 + V",
+"note": "Lặp động từ (抱一抱) thể hiện hành động nhẹ nhàng, muốn làm thử.",
+"ex": [
+[
+"每次见到这个孩子都想笑一笑。",
+"Mỗi lần nhìn thấy đứa trẻ này đều muốn cười một cái."
+],
+[
+"每次去那家店都想尝一尝。",
+"Mỗi lần đến cửa hàng đó đều muốn nếm thử một chút."
+]
+],
+"try": "Nói: “Mỗi lần gặp thầy giáo đều muốn chào một câu.”"
+}
+]
+},
+{
+"line": 1,
+"s": "狗是很聪明的动物，只要稍微花点儿时间教教它，它就能学会很多东西。",
+"vn": "Chó là loài động vật rất thông minh, chỉ cần tốn chút ít thời gian dạy nó là nó có thể học được rất nhiều thứ.",
+"ch": [
+{
+"t": "只要稍微花点儿时间教教它，它就能学会很多东西",
+"py": "zhǐyào shāowēi huā diǎnr shíjiān jiào jiao tā, tā jiù néng xuéhuì hěn duō dōngxī",
+"vn": "chỉ cần hơi tốn chút thời gian dạy nó, nó liền có thể học được rất nhiều thứ",
+"frame": "只要稍微 + V + , 就能 + V",
+"note": "Biểu thị điều kiện dễ dàng để đạt được kết quả.",
+"ex": [
+[
+"只要稍微练习一下，就能考过。",
+"Chỉ cần luyện tập một chút là có thể thi đậu."
+],
+[
+"只要稍微注意，就不会犯错。",
+"Chỉ cần chú ý một chút là sẽ không mắc lỗi."
+]
+],
+"try": "Nói: “Chỉ cần học chăm chỉ một chút là có thể nói được tiếng Trung.”"
+}
+]
+},
+{
+"line": 2,
+"s": "听你这么一说，我现在也想养一只狗了。每次你让它干什么，它就像能听懂你的话一样去做。你教它是不是用了什么特别的方法？",
+"vn": "Nghe cậu nói vậy, bây giờ tôi cũng muốn nuôi một con chó rồi. Mỗi lần cậu bảo nó làm gì, nó đều làm giống như có thể hiểu được lời cậu vậy. Cậu dạy nó có phải đã dùng phương pháp đặc biệt nào không?",
+"ch": [
+{
+"t": "听你这么一说，我现在也想养一只狗了",
+"py": "tīng nǐ zhème yī shuō, wǒ xiànzài yě xiǎng yǎng yī zhǐ gǒu le",
+"vn": "nghe cậu nói thế, bây giờ tôi cũng muốn nuôi một con chó rồi",
+"frame": "听……这么一说，……",
+"note": "Dùng khi nghe người khác nói xong thì bản thân nảy sinh cảm xúc hoặc ý định mới.",
+"ex": [
+[
+"听你这么一说，我也想去旅游了。",
+"Nghe bạn nói thế, tôi cũng muốn đi du lịch rồi."
+],
+[
+"听老师这么一说，我明白了。",
+"Nghe thầy giáo nói thế, tôi hiểu rồi."
+]
+],
+"try": "Nói: “Nghe bạn giới thiệu thế, tôi cũng muốn mua cuốn sách này rồi.”"
+},
+{
+"t": "就像能听懂你的话一样",
+"py": "jiù xiàng néng tīng dǒng nǐ de huà yīyàng",
+"vn": "giống như có thể nghe hiểu lời của cậu vậy",
+"frame": "就像……一样",
+"note": "Dùng để so sánh sự vật, sự việc này giống với sự vật, sự việc khác.",
+"ex": [
+[
+"这里的天气就像春天一样。",
+"Thời tiết ở đây giống như mùa xuân vậy."
+],
+[
+"他高兴得就像个孩子一样。",
+"Anh ấy vui mừng giống như một đứa trẻ vậy."
+]
+],
+"try": "Nói: “Cô ấy nói tiếng Trung trôi chảy giống như người Trung Quốc vậy.”"
+}
+]
+},
+{
+"line": 3,
+"s": "要让它完成一些任务，只教一次是不够的，应该耐心地一遍一遍地教给它，使它熟悉，然后它就会严格按照你的要求做了。",
+"vn": "Muốn nó hoàn thành một số nhiệm vụ, chỉ dạy một lần là không đủ, nên kiên nhẫn dạy nó từng lượt từng lượt một, khiến nó quen thuộc, rồi nó sẽ làm theo đúng yêu cầu của cậu.",
+"ch": [
+{
+"t": "只教一次是不够的",
+"py": "zhǐ jiào yī cì shì bùgòu de",
+"vn": "chỉ dạy một lần là không đủ",
+"frame": "只 + V + 是不够的",
+"note": "Nhấn mạnh mức độ chưa đủ để đạt yêu cầu.",
+"ex": [
+[
+"只背生词是不够的，还要多练习。",
+"Chỉ học thuộc từ mới là chưa đủ, còn phải luyện tập nhiều."
+],
+[
+"只看一遍书是不够的。",
+"Chỉ đọc sách một lần là không đủ."
+]
+],
+"try": "Nói: “Chỉ làm bài tập ở lớp là chưa đủ.”"
+},
+{
+"t": "严格按照你的要求做了",
+"py": "yángé ànzhào nǐ de yāoqiú zuò le",
+"vn": "làm theo đúng nghiêm ngặt yêu cầu của cậu",
+"frame": "严格按照 +……+ 做",
+"note": "Biểu thị tuân thủ quy tắc, yêu cầu một cách nghiêm túc.",
+"ex": [
+[
+"我们要严格按照规定完成任务。",
+"Chúng ta phải hoàn thành nhiệm vụ theo đúng quy định."
+],
+[
+"请严格按照老师的要求写作业。",
+"Hãy viết bài tập theo đúng yêu cầu của thầy cô."
+]
+],
+"try": "Nói: “Nhân viên mới phải làm việc theo đúng yêu cầu.”"
+}
+]
+},
+{
+"line": 4,
+"s": "看来没有想的那么容易。",
+"vn": "Xem ra không dễ như mình nghĩ.",
+"ch": [
+{
+"t": "看来没有想的那么容易",
+"py": "kànlái méiyǒu xiǎng de nàme róngyì",
+"vn": "xem ra không dễ như đã nghĩ",
+"frame": "看来没有 +……+ 那么容易",
+"note": "Đưa ra đánh giá, nhận định sau khi đã biết thực tế.",
+"ex": [
+[
+"看来做饭没有想的那么容易。",
+"Xem ra nấu cơm không dễ như đã nghĩ."
+],
+[
+"学开车看来没有想的那么容易。",
+"Xem ra học lái xe không dễ như đã nghĩ."
+]
+],
+"try": "Nói: “Xem ra kỳ thi HSK4 không dễ như đã nghĩ.”"
+}
+]
+},
+{
+"line": 5,
+"s": "狗是我们的好朋友，它能听懂人的话，明白人的心情。在你心里难受的时候，它会一直陪着你。",
+"vn": "Chó là người bạn tốt của chúng ta, nó có thể nghe hiểu lời con người, thấu hiểu tâm trạng con người. Những lúc trong lòng cậu khó chịu, nó sẽ luôn ở bên cạnh cậu.",
+"ch": [
+{
+"t": "在你心里难受的时候",
+"py": "zài nǐ xīnli nánshòu de shíhòu",
+"vn": "vào lúc trong lòng cậu khó chịu",
+"note": "Trong lòng buồn bực, khó chịu, không vui.",
+"frame": "在 +……+ 的时候",
+"ex": [
+[
+"在我心里难受的时候，朋友安慰了我。",
+"Vào lúc tôi buồn, bạn bè đã an ủi tôi."
+],
+[
+"考试没考好时心里会很难受。",
+"Lúc thi không tốt trong lòng sẽ rất khó chịu."
+]
+],
+"try": "Nói: “Vào lúc trong lòng bạn bè khó chịu, chúng ta nên an ủi họ.”"
+},
+{
+"t": "会一直陪着你",
+"py": "huì yīzhí péizhe nǐ",
+"vn": "sẽ luôn ở bên cạnh cậu",
+"frame": "一直陪着 + ai",
+"note": "Đồng hành, ở cạnh ai đó không rời.",
+"ex": [
+[
+"父母一直陪着我长大。",
+"Bố mẹ vẫn luôn ở bên tôi lớn lên."
+],
+[
+"谢谢你一直陪着我学习。",
+"Cảm ơn bạn đã luôn ở bên cạnh tôi học tập."
+]
+],
+"try": "Nói: “Mẹ luôn ở bên cạnh tôi lúc tôi ốm.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "上个月我去了趟北京动物园，那里约有500种动物，听导游说北京动物园是亚洲最大的动物园之一。",
+"vn": "Tháng trước tôi đã đi một chuyến sở thú Bắc Kinh, ở đó có khoảng 500 loài động vật, nghe hướng dẫn viên nói sở thú Bắc Kinh là một trong những sở thú lớn nhất châu Á.",
+"ch": [
+{
+"t": "去了趟",
+"py": "qù le tàng",
+"vn": "đi một chuyến",
+"frame": "V + 趟 + địa điểm",
+"note": "趟 là lượng từ chỉ số chuyến đi, dùng khi ghé qua đâu đó.",
+"ex": [
+[
+"上个周末我去了一趟超市。",
+"Cuối tuần trước tôi đi một chuyến siêu thị."
+],
+[
+"放假时我想去一趟上海。",
+"Lúc nghỉ lễ tôi muốn đi một chuyến Thượng Hải."
+]
+],
+"try": "Nói: “Tuần này tôi phải đi một chuyến ngân hàng.”"
+},
+{
+"t": "是……之一",
+"py": "shì …… zhī yī",
+"vn": "là một trong những……",
+"frame": "…… 是 …… 之一",
+"note": "Cụm cố định nêu tên một thành phần trong nhóm.",
+"ex": [
+[
+"汉语是我最喜欢的科目之一。",
+"Tiếng Trung là một trong những môn học yêu thích nhất của tôi."
+],
+[
+"他是我最好的朋友之一。",
+"Cậu ấy là một trong những người bạn tốt nhất của tôi."
+]
+],
+"try": "Nói: “Hà Nội là một trong những thành phố lớn của Việt Nam.”"
+}
+]
+},
+{
+"line": 1,
+"s": "去年放暑假的时候，我也去过一次，我在那儿看了马、熊猫、老虎等动物。我特别喜欢熊猫，可惜它们当时大多在睡觉。",
+"vn": "Hồi nghỉ hè năm ngoái, tôi cũng từng đi một lần, tôi đã xem ngựa, gấu trúc, hổ và các động vật khác ở đó. Tôi đặc biệt thích gấu trúc, đáng tiếc là lúc đó đa số chúng đang ngủ.",
+"ch": [
+{
+"t": "放暑假的时候",
+"py": "fàng shǔjià de shíhou",
+"vn": "lúc nghỉ hè",
+"frame": "放暑假的时候，……",
+"note": "Thời điểm nghỉ hè rất hay dùng trong các bài kể chuyện quá khứ.",
+"ex": [
+[
+"放暑假的时候，我想去旅游。",
+"Lúc nghỉ hè, tôi muốn đi du lịch."
+],
+[
+"放暑假的时候，哥哥去外地实习了。",
+"Lúc nghỉ hè, anh trai đi nơi khác thực tập."
+]
+],
+"try": "Nói: “Lúc nghỉ hè, chúng tôi về quê thăm ông bà.”"
+},
+{
+"t": "可惜",
+"py": "kěxī",
+"vn": "đáng tiếc",
+"frame": "可惜 + sự việc",
+"note": "Dùng để biểu thị sự tiếc nuối cho một việc không như ý.",
+"ex": [
+[
+"这场比赛输了，真可惜。",
+"Trận đấu này thua rồi, thật đáng tiếc."
+],
+[
+"今天下雨，可惜不能去爬山了。",
+"Hôm nay trời mưa, đáng tiếc không thể đi leo núi được."
+]
+],
+"try": "Nói: “Đáng tiếc là tôi không mua được vé máy bay rẻ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我去的那天正赶上六一儿童节，许多父母带着孩子去动物园。入口处排队的人很多，动物园里热闹极了。熊猫们也变得特别活泼，我还给它们照了不少照片呢。",
+"vn": "Ngày tôi đi đúng vào dịp Quốc tế Thiếu nhi 1/6, rất nhiều bố mẹ dẫn con cái đến sở thú. Chỗ cửa vào người xếp hàng rất đông, trong sở thú cực kỳ náo nhiệt. Mấy chú gấu trúc cũng trở nên đặc biệt hoạt bát, tôi còn chụp cho chúng không ít ảnh đấy.",
+"ch": [
+{
+"t": "正赶上",
+"py": "zhèng gǎnshàng",
+"vn": "đúng dịp / vừa khéo gặp",
+"frame": "正赶上 + sự kiện/thời gian",
+"note": "Chỉ sự trùng hợp về thời gian hoặc sự kiện.",
+"ex": [
+[
+"我去上海时，正赶上下大雨。",
+"Tôi đến Thượng Hải thì đúng lúc gặp trận mưa to."
+],
+[
+"今天去买书，正赶上书店打折。",
+"Hôm nay đi mua sách, vừa khéo gặp hiệu sách giảm giá."
+]
+],
+"try": "Nói: “Lúc tôi đến sân bay, đúng lúc gặp chuyến bay bị hoãn.”"
+},
+{
+"t": "入口处排队的人很多",
+"py": "rùkǒu chù páiduì de rén hěn duō",
+"vn": "chỗ cửa vào người xếp hàng rất đông",
+"frame": "……处 + V + 的人很多",
+"note": "处 chỉ địa điểm hoặc khu vực.",
+"ex": [
+[
+"出口处等车的人很多。",
+"Chỗ cửa ra người đợi xe rất đông."
+],
+[
+"报名处排队的人很多。",
+"Chỗ đăng ký người xếp hàng rất đông."
+]
+],
+"try": "Nói: “Chỗ thu ngân người xếp hàng rất nhiều.”"
+}
+]
+},
+{
+"line": 3,
+"s": "大熊猫身子胖胖的，样子可爱极了。",
+"vn": "Gấu trúc lớn thân hình mập mạp, dáng vẻ đáng yêu vô cùng.",
+"ch": [
+{
+"t": "样子可爱极了",
+"py": "yàngzi kě'ài jí le",
+"vn": "dáng vẻ đáng yêu vô cùng",
+"frame": "样子 + tính từ + 极了",
+"note": "Cách miêu tả ngoại hình hoặc biểu cảm dễ thương.",
+"ex": [
+[
+"这只小狗的样子可爱极了。",
+"Dáng vẻ của chú chó nhỏ này đáng yêu vô cùng."
+],
+[
+"这个娃娃的样子可爱极了。",
+"Dáng vẻ của con búp bê này đáng yêu vô cùng."
+]
+],
+"try": "Nói: “Dáng vẻ của đứa trẻ này đáng yêu vô cùng.”"
+}
+]
+},
+{
+"line": 4,
+"s": "不过，它们数量不多，现在全世界一共才有一千多只吧。",
+"vn": "Thế nhưng, số lượng của chúng không nhiều, bây giờ toàn thế giới tổng cộng mới chỉ có hơn một nghìn con thôi nhỉ.",
+"ch": [
+{
+"t": "一共才",
+"py": "yīgòng cái",
+"vn": "tổng cộng mới chỉ",
+"frame": "一共才 + số lượng",
+"note": "Nhấn mạnh số lượng quá ít hoặc thấp hơn mong đợi.",
+"ex": [
+[
+"班里一共才二十个学生。",
+"Cả lớp tổng cộng mới có 20 học sinh."
+],
+[
+"这次考试一共才对了五个题。",
+"Lần kiểm tra này tổng cộng mới đúng 5 câu."
+]
+],
+"try": "Nói: “Tháng này tôi tổng cộng mới tiêu có một nghìn tệ.”"
+}
+]
+},
+{
+"line": 5,
+"s": "以前只有中国有大熊猫，为了表示友好，从1957年开始，中国把大熊猫作为礼物送给其他一些国家。现在，很多国家的人们在本国都能看到大熊猫了。",
+"vn": "Trước đây chỉ Trung Quốc có gấu trúc lớn, để bày tỏ sự hữu nghị, bắt đầu từ năm 1957, Trung Quốc đã lấy gấu trúc lớn làm quà tặng gửi cho một số quốc gia khác. Bây giờ, người dân rất nhiều nước đều có thể nhìn thấy gấu trúc lớn ở ngay nước mình rồi.",
+"ch": [
+{
+"t": "把……作为礼物送给",
+"py": "bǎ …… zuòwéi lǐwù sòng gěi",
+"vn": "lấy…… làm quà tặng gửi cho",
+"frame": "把 A 作为礼物送给 B",
+"note": "Cấu trúc dùng khi đem vật gì làm quà biếu tặng.",
+"ex": [
+[
+"我把这本书作为礼物送给朋友。",
+"Tôi lấy cuốn sách này làm quà tặng cho bạn."
+],
+[
+"他把越南茶叶作为礼物送给客户。",
+"Anh ấy lấy trà Việt Nam làm quà tặng cho khách hàng."
+]
+],
+"try": "Nói: “Tôi lấy bức tranh này làm quà tặng cho thầy giáo.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "不仅社会上的人与人之间有竞争，森林里的各种植物之间也有竞争，这一点儿也不奇怪。",
+"vn": "Không chỉ giữa người với người trong xã hội có sự cạnh tranh, giữa các loại thực vật trong rừng cũng có cạnh tranh, điều này hoàn toàn không có gì kỳ lạ.",
+"ch": [
+{
+"t": "这一点儿也不奇怪",
+"py": "zhè yīdiǎnr yě bù qǐguài",
+"vn": "điều này hoàn toàn không có gì lạ",
+"frame": "……，这一点儿也不奇怪",
+"note": "Một chút cũng không lạ (一点儿也不), dùng để kết luận một hiện tượng là hiển nhiên.",
+"ex": [
+[
+"他每天都努力练习，这次考试得了第一名，这一点儿也不奇怪。",
+"Cậu ấy ngày nào cũng chăm chỉ luyện tập, lần thi này được hạng nhất, điều này hoàn toàn không có gì lạ."
+],
+[
+"学了三年汉语就能跟中国人聊天，这一点儿也不奇怪。",
+"Học tiếng Trung ba năm mà đã có thể trò chuyện với người Trung Quốc, điều này hoàn toàn không có gì lạ."
+]
+],
+"try": "Nói: “Hôm nay trời mưa to, đường tắc, điều này hoàn toàn không có gì lạ.”"
+}
+]
+},
+{
+"line": 0,
+"s": "植物会为了阳光、空气和水而竞争。",
+"vn": "Thực vật cạnh tranh vì ánh sáng, không khí và nước.",
+"ch": [
+{
+"t": "为了阳光、空气和水而竞争",
+"py": "wèile yángguāng, kōngqì hé shuǐ ér jìngzhēng",
+"vn": "vì ánh sáng, không khí và nước mà cạnh tranh",
+"frame": "为了……而……",
+"note": "为了 + mục đích + 而 + hành động, cấu trúc trang trọng thể hiện sự vì mục tiêu gì đó mà làm việc gì.",
+"ex": [
+[
+"我们为了梦想而努力学习。",
+"Chúng ta vì ước mơ mà nỗ lực học tập."
+],
+[
+"年轻人为了工作而离开家乡。",
+"Thanh niên vì công việc mà rời xa quê hương."
+]
+],
+"try": "Nói: “Chúng tôi vì thi đỗ HSK4 mà ôn tập chăm chỉ.”"
+}
+]
+},
+{
+"line": 0,
+"s": "一些高大的植物往往能获得更多的阳光、空气和水，而剩下的一些比较低矮的植物就只能长在这些高大植物的下面。",
+"vn": "Một số loài cây cao lớn thường có thể nhận được nhiều ánh sáng, không khí và nước hơn, trong khi một số loài cây thấp hơn còn lại chỉ có thể mọc ở dưới những cây cao lớn này.",
+"ch": [
+{
+"t": "往往能获得",
+"py": "wǎngwǎng néng huòdé",
+"vn": "thường có thể thu được / có được",
+"frame": "……往往能获得……",
+"note": "往往 chỉ tính quy luật thường xảy ra, 获得 đi với thành quả, cơ hội.",
+"ex": [
+[
+"努力的人往往能获得成功。",
+"Người nỗ lực thường có thể đạt được thành công."
+],
+[
+"经常复习的学生往往能获得好成绩。",
+"Học sinh thường xuyên ôn tập thường có thể đạt được kết quả tốt."
+]
+],
+"try": "Nói: “Nghe nhiều nói nhiều thường có thể đạt được tiến bộ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "由于气候条件不同，世界各地植物叶子的样子也很不相同。",
+"vn": "Do điều kiện khí hậu khác nhau, hình dáng lá cây ở khắp nơi trên thế giới cũng rất khác nhau.",
+"ch": [
+{
+"t": "由于气候条件不同",
+"py": "yóuyú qìhòu tiáojiàn bùtóng",
+"vn": "do điều kiện khí hậu khác nhau",
+"frame": "由于 + nguyên nhân, ……",
+"note": "由于 chỉ nguyên nhân, thường đứng ở đầu vế câu để giải thích lý do.",
+"ex": [
+[
+"由于工作很忙，他没有去旅游。",
+"Do công việc rất bận, anh ấy không đi du lịch."
+],
+[
+"由于下雨，运动会取消了。",
+"Do trời mưa, hội thao đã bị hủy rồi."
+]
+],
+"try": "Nói: “Do hôm qua thức khuya, hôm nay tôi rất buồn ngủ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在暖和、水分比较多的地方，叶子往往长得又大又厚；",
+"vn": "Ở những nơi ấm áp, lượng nước tương đối nhiều, lá cây thường mọc vừa to vừa dày;",
+"ch": [
+{
+"t": "长得又大又厚",
+"py": "zhǎng de yòu dà yòu hòu",
+"vn": "mọc vừa to vừa dày",
+"frame": "又 + tính từ 1 + 又 + tính từ 2",
+"note": "Dùng để miêu tả hai đặc điểm cùng tồn tại trên một sự vật.",
+"ex": [
+[
+"这家餐厅的菜又便宜又好吃。",
+"Món ăn của quán này vừa rẻ vừa ngon."
+],
+[
+"我的房间又干净又明亮。",
+"Phòng của tôi vừa sạch sẽ vừa sáng sủa."
+]
+],
+"try": "Nói: “Cửa hàng này vừa to vừa đẹp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在阳光特别厉害、水分少的地方，叶子就会长得又细又长。",
+"vn": "Ở những nơi ánh nắng đặc biệt gắt, ít nước, lá cây sẽ mọc vừa nhỏ vừa dài.",
+"ch": [
+{
+"t": "水分少的地方",
+"py": "shuǐfèn shǎo de dìfang",
+"vn": "nơi ít nước",
+"frame": "……的地方",
+"note": "Dùng cụm danh từ chỉ địa điểm, vị trí.",
+"ex": [
+[
+"人少的地方比较安静。",
+"Nơi ít người thì tương đối yên tĩnh."
+],
+[
+"空气新鲜的地方对身体好。",
+"Nơi không khí trong lành tốt cho cơ thể."
+]
+],
+"try": "Nói: “Nơi này là nơi tôi lớn lên.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "地球上大约71%的地方是蓝色的海洋，在美丽的海底世界里，生活着各种各样的植物和动物。",
+"vn": "Khoảng 71% nơi trên trái đất là đại dương màu xanh, trong thế giới đáy biển xinh đẹp, sinh sống đủ loại thực vật và động vật.",
+"ch": [
+{
+"t": "生活着各种各样的植物和动物",
+"py": "shēnghuó zhe gèzhǒnggèyàng de zhíwù hé dòngwù",
+"vn": "sinh sống đủ loại thực vật và động vật",
+"frame": "……上/里，生活着 + A",
+"note": "Cấu trúc tồn hiện: đặt địa điểm lên đầu câu rồi dùng zhe để chỉ sự tồn tại, rất hay dùng khi miêu tả thiên nhiên.",
+"ex": [
+[
+"在森林里生活着很多可爱的动物。",
+"Trong rừng sinh sống rất nhiều động vật đáng yêu."
+],
+[
+"这个美丽的村子里生活着热情的人们。",
+"Trong ngôi làng xinh đẹp này sinh sống những con người nhiệt tình."
+]
+],
+"try": "Nói: “Ở thành phố lớn sinh sống rất nhiều người.”"
+}
+]
+},
+{
+"line": 0,
+"s": "我们小时候都听过美人鱼的故事，其实真正的海底世界比故事里写的更美。",
+"vn": "Hồi nhỏ chúng ta đều từng nghe câu chuyện về nàng tiên cá, thực ra thế giới đáy biển thực sự còn đẹp hơn trong câu chuyện viết.",
+"ch": [
+{
+"t": "比故事里写的更美",
+"py": "bǐ gùshi lǐ xiě de gèng měi",
+"vn": "đẹp hơn những gì trong câu chuyện viết",
+"frame": "A 比 B + V + 得 + 更 + Tính từ",
+"note": "Dùng cấu trúc so sánh hơn kết hợp với trợ từ 的 để nhấn mạnh vế sau.",
+"ex": [
+[
+"今天的汉语课比昨天更有意思。",
+"Tiết tiếng Trung hôm nay thú vị hơn hôm qua."
+],
+[
+"这件衣服比那件好看得多。",
+"Bộ quần áo này đẹp hơn bộ kia nhiều."
+]
+],
+"try": "Nói: “Thời tiết hôm nay đẹp hơn hôm qua.”"
+}
+]
+},
+{
+"line": 1,
+"s": "科学研究发现，海洋底部看上去非常安静，然而却不是一点儿声音也没有，海底的动物们一直在“说话”，只不过人的耳朵是听不到的。",
+"vn": "Nghiên cứu khoa học phát hiện, đáy đại dương nhìn có vẻ rất yên tĩnh, thế nhưng không phải hoàn toàn không có chút âm thanh nào, các loài động vật dưới đáy biển vẫn luôn \"nói chuyện\", chỉ là tai con người không thể nghe thấy mà thôi.",
+"ch": [
+{
+"t": "一点儿声音也没有",
+"py": "yìdiǎnr shēngyīn yě méiyǒu",
+"vn": "không có chút âm thanh nào",
+"frame": "一点儿 + Danh từ + 也/都 + 不/没",
+"note": "Dùng để nhấn mạnh sự phủ định hoàn toàn. Chú ý không viết sai chữ Hán.",
+"ex": [
+[
+"房间里一点儿声音也没有，大家都在认真学习。",
+"Trong phòng không có chút âm thanh nào, mọi người đều đang chăm chỉ học tập."
+],
+[
+"我今天一点儿时间也没有。",
+"Hôm nay tôi không có chút thời gian nào."
+]
+],
+"try": "Nói: “Trong túi tôi không có chút tiền nào.”"
+},
+{
+"t": "只不过",
+"py": "zhǐbuguò",
+"vn": "chỉ là",
+"frame": "……，只不过 + sự thật/lý do",
+"note": "Dùng để chuyển ý nhẹ nhàng, bổ sung nguyên nhân hoặc giới hạn ở vế sau.",
+"ex": [
+[
+"这件衣服不贵，只不过颜色不好看。",
+"Bộ quần áo này không đắt, chỉ là màu không đẹp."
+],
+[
+"我不是不想去，只不过今天太忙了。",
+"Tôi không phải không muốn đi, chỉ là hôm nay bận quá."
+]
+],
+"try": "Nói: “Tôi biết làm câu này, chỉ là viết sai chữ Hán.”"
+}
+]
+},
+{
+"line": 1,
+"s": "另外，",
+"vn": "Ngoài ra,",
+"ch": []
+},
+{
+"line": 1,
+"s": "就算在几公里深的海底也仍然能看到东西，许多鱼会发出各种颜色的亮光，像一个个排列起来的灯，美极了，就像在梦里一样。",
+"vn": "cho dù ở đáy biển sâu mấy cây số thì vẫn có thể nhìn thấy đồ vật, rất nhiều loài cá có thể phát ra ánh sáng đủ màu sắc, giống như từng chiếc đèn được xếp ngay ngắn, đẹp vô cùng, giống như đang ở trong giấc mơ vậy.",
+"ch": [
+{
+"t": "就算……也仍然……",
+"py": "jiùsuàn …… yě réngrán ……",
+"vn": "cho dù … thì vẫn …",
+"frame": "就算 + điều kiện, 主语 + 仍然 + hành động",
+"note": "Biểu thị sự nhượng bộ, dù hoàn cảnh khó khăn thế nào thì kết quả vẫn không đổi.",
+"ex": [
+[
+"就算工作再忙，他也仍然坚持锻炼身体。",
+"Cho dù công việc có bận thế nào, anh ấy vẫn kiên trì rèn luyện sức khỏe."
+],
+[
+"就算遇到困难，我们也仍然要保持信心。",
+"Cho dù gặp khó khăn, chúng ta vẫn phải duy trì lòng tin."
+]
+],
+"try": "Nói: “Cho dù mưa to, chúng ta vẫn đến lớp học.”"
+},
+{
+"t": "像……一样",
+"py": "xiàng …… yíyàng",
+"vn": "giống như …",
+"frame": "A 像 B 一样 + Tính từ/Động từ",
+"note": "Cấu trúc so sánh ví von quen thuộc trong tiếng Trung, giúp câu văn sinh động hơn.",
+"ex": [
+[
+"时间就像流水一样，一去不复返。",
+"Thời gian giống như nước chảy, một đi không trở lại."
+],
+[
+"他跑得像风一样快。",
+"Cậu ấy chạy nhanh như gió."
+]
+],
+"try": "Nói: “Mặt cô ấy đỏ như táo vậy.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "大熊猫是中国国家一级保护动物。它的身体只有黑色和白色两种颜色，它有着圆圆的脸，大大的黑眼圈，胖胖的身体，非常可爱。",
+"vn": "Gấu trúc lớn là động vật bảo vệ cấp một quốc gia của Trung Quốc. Cơ thể của chúng chỉ có hai màu đen và trắng, chúng có khuôn mặt tròn, quầng thâm mắt to, cơ thể mập mạp, rất đáng yêu.",
+"ch": [
+{
+"t": "有着圆圆的脸",
+"py": "yǒuzhe yuánuyuán de liǎn",
+"vn": "có khuôn mặt tròn",
+"frame": "有着 + đặc điểm ngoại hình",
+"note": "Dùng 着 để nhấn mạnh trạng thái sở hữu đặc điểm bên ngoài, tự nhiên hơn là dùng 有.",
+"ex": [
+[
+"我的同桌有着一头长发。",
+"Bạn cùng bàn của tôi có một mái tóc dài."
+],
+[
+"那个小男孩有着大大的眼睛。",
+"Cậu bé đó có đôi mắt to."
+]
+],
+"try": "Nói: “Giáo viên tiếng Trung của chúng tôi có một nụ cười rất tươi.”"
+},
+{
+"t": "非常可爱",
+"py": "fēicháng kě'ài",
+"vn": "rất đáng yêu",
+"frame": "……非常可爱",
+"note": "Cấu trúc mô tả tính chất, mức độ cao với 非常 kết hợp tính từ.",
+"ex": [
+[
+"这只小猫非常可爱。",
+"Con mèo nhỏ này rất đáng yêu."
+],
+[
+"妹妹送的礼物非常可爱。",
+"Món quà em gái tặng rất đáng yêu."
+]
+],
+"try": "Nói: “Bức ảnh chụp gia đình bạn trông rất đáng yêu.”"
+}
+]
+},
+{
+"line": 0,
+"s": "大熊猫已经在地球上生活了至少800万年，人们叫它“活化石”和“中国国宝”。",
+"vn": "Gấu trúc lớn đã sinh sống trên Trái Đất ít nhất 8 triệu năm, mọi người gọi chúng là \"hóa thạch sống\" và \"quốc bảo Trung Quốc\".",
+"ch": [
+{
+"t": "在地球上生活了至少800万年",
+"py": "zài dìqiú shàng shēnghuó le zhìshǎo bā bǎi wàn nián",
+"vn": "đã sống trên Trái Đất ít nhất 8 triệu năm",
+"frame": "在……上生活了 + khoảng thời gian",
+"note": "Cấu trúc chỉ thời gian tồn tại, hành động kéo dài với 了.",
+"ex": [
+[
+"人类在地球上生活了很多年。",
+"Con người đã sống trên Trái Đất rất nhiều năm."
+],
+[
+"这种动物在这个地方生活了多年。",
+"Loài động vật này đã sống ở nơi này nhiều năm."
+]
+],
+"try": "Nói: “Chúng tôi đã sống ở thành phố này hơn 5 năm.”"
+},
+{
+"t": "叫它",
+"py": "jiào tā",
+"vn": "gọi nó",
+"frame": "叫 + ai/vật + tên/danh hiệu",
+"note": "Dùng để gọi tên hoặc đặt biệt danh cho đối tượng.",
+"ex": [
+[
+"大家叫他小王。",
+"Mọi người gọi anh ấy là Tiểu Vương."
+],
+[
+"老师叫这个名字。",
+"Thầy giáo gọi tên này."
+]
+],
+"try": "Nói: “Mọi người gọi anh ấy là chuyên gia máy tính.”"
+}
+]
+},
+{
+"line": 1,
+"s": "大熊猫最开始是吃肉的，经过进化，现在它们的食物99%是竹子了。",
+"vn": "Gấu trúc lớn ban đầu ăn thịt, qua tiến hóa, hiện nay thức ăn của chúng 99% là trúc.",
+"ch": [
+{
+"t": "最开始是",
+"py": "zuì kāishǐ shì",
+"vn": "ban đầu là",
+"frame": "最开始是 + danh từ/hoạt động",
+"note": "Dùng để chỉ trạng thái hoặc bản chất lúc khởi đầu trước khi có sự thay đổi.",
+"ex": [
+[
+"最开始这里是一个小村子。",
+"Ban đầu nơi này là một ngôi làng nhỏ."
+],
+[
+"最开始我以为汉语很难。",
+"Ban đầu tôi tưởng tiếng Trung rất khó."
+]
+],
+"try": "Nói: “Ban đầu công việc này không dễ chút nào.”"
+},
+{
+"t": "现在它们的食物99%是竹子了",
+"py": "xiànzài tāmen de shíwù jiǔshíjiǔ bǎifēnzhī shì zhúzi le",
+"vn": "hiện nay thức ăn của chúng 99% là trúc rồi",
+"frame": "现在 + A + % + là + B",
+"note": "Dùng để chỉ tỉ lệ thành phần cấu thành trong hiện tại.",
+"ex": [
+[
+"现在我的时间大部分是学习汉语。",
+"Hiện nay thời gian của tôi phần lớn là học tiếng Trung."
+],
+[
+"现在办公室里的人80%是新人。",
+"Hiện nay 80% người trong văn phòng là người mới."
+]
+],
+"try": "Nói: “Bây giờ lớp học của chúng tôi 100% là học sinh chăm chỉ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "野外大熊猫现在主要生活在中国四川、陕西和甘肃的山区，一般能活到18～20岁；圈养的大熊猫可以超过30岁。",
+"vn": "Gấu trúc lớn ngoài tự nhiên hiện nay chủ yếu sống ở vùng núi Tứ Xuyên, Thiểm Tây và Cam Túc của Trung Quốc, thông thường có thể sống đến 18-20 tuổi; gấu trúc được nuôi nhốt có thể vượt quá 30 tuổi.",
+"ch": [
+{
+"t": "主要生活在",
+"py": "zhǔyào shēnghuó zài",
+"vn": "chủ yếu sống ở",
+"frame": "主要 + V + 在 + địa điểm",
+"note": "Chỉ địa bàn hoạt động hoặc sinh sống chính của người hoặc vật.",
+"ex": [
+[
+"我的家人主要生活在南方。",
+"Gia đình tôi chủ yếu sống ở miền Nam."
+],
+[
+"留学生主要住在学校附近。",
+"Lưu học sinh chủ yếu sống gần trường."
+]
+],
+"try": "Nói: “Nhân viên công ty chúng tôi chủ yếu làm việc ở văn phòng.”"
+},
+{
+"t": "一般能活到",
+"py": "yìbān néng huó dào",
+"vn": "thông thường có thể sống đến",
+"frame": "一般能活到 + độ tuổi/thời gian",
+"note": "Chỉ tuổi thọ hoặc giới hạn thời gian thông thường của một loài hoặc cá thể.",
+"ex": [
+[
+"这种树一般能活到一百年。",
+"Loại cây này thông thường có thể sống đến một trăm năm."
+],
+[
+"人一般能活到八十岁左右。",
+"Con người thông thường có thể sống đến khoảng tám mươi tuổi."
+]
+],
+"try": "Nói: “Con chó nhỏ nhà tôi thông thường có thể sống đến mười lăm tuổi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "大熊猫每天有一半的时间用来吃东西，剩下的一半时间多数是在睡觉。",
+"vn": "Gấu trúc lớn mỗi ngày có một nửa thời gian dùng để ăn đồ ăn, một nửa thời gian còn lại phần lớn là đang ngủ.",
+"ch": [
+{
+"t": "有一半的时间用来吃东西",
+"py": "yǒu yībàn de shíjiān yòng lái chī dōngxī",
+"vn": "có một nửa thời gian dùng để ăn đồ ăn",
+"frame": "有 + thời gian + 用来 + V",
+"note": "Cấu trúc chỉ mục đích sử dụng một khoảng thời gian cụ thể.",
+"ex": [
+[
+"我每天有两个小时用来运动。",
+"Tôi mỗi ngày có hai tiếng dùng để tập thể dục."
+],
+[
+"周末我有很多时间用来陪家人。",
+"Cuối tuần tôi có rất nhiều thời gian dùng để ở bên gia đình."
+]
+],
+"try": "Nói: “Mỗi ngày tôi có một tiếng dùng để học từ vựng.”"
+},
+{
+"t": "剩下的一半时间",
+"py": "shèngxià de yībàn shíjiān",
+"vn": "một nửa thời gian còn lại",
+"frame": "剩下的一半 + danh từ",
+"note": "Chỉ phần thời gian hoặc sự vật còn lại sau khi đã chia đôi.",
+"ex": [
+[
+"剩下的一半钱我要存起来。",
+"Một nửa số tiền còn lại tôi muốn cất đi."
+],
+[
+"剩下的一半汉字我一会儿写。",
+"Một nửa chữ Hán còn lại lát nữa tôi viết."
+]
+],
+"try": "Nói: “Một nửa công việc còn lại để chiều nay làm.”"
+}
+]
+},
+{
+"line": 2,
+"s": "在野外，大熊猫在每两次吃东西的中间睡2～4个小时，即使在睡觉的时候，大熊猫看起来也很可爱。",
+"vn": "Ở ngoài tự nhiên, gấu trúc lớn ở giữa mỗi hai lần ăn ngủ từ 2 đến 4 tiếng, cho dù là lúc đang ngủ, gấu trúc lớn trông vẫn rất đáng yêu.",
+"ch": [
+{
+"t": "在每两次吃东西的中间",
+"py": "zài měi liǎng cì chī dōngxī de zhōngjiān",
+"vn": "ở giữa mỗi hai lần ăn đồ ăn",
+"frame": "在每两次 + V + 的中间",
+"note": "Chỉ khoảng thời gian hoặc không gian xen giữa hai lần hành động.",
+"ex": [
+[
+"在每两次上课的中间我要休息。",
+"Ở giữa mỗi hai tiết học tôi phải nghỉ ngơi."
+],
+[
+"在每两次考试的中间时间很短。",
+"Ở giữa mỗi hai kỳ thi thời gian rất ngắn."
+]
+],
+"try": "Nói: “Ở giữa mỗi hai lần họp tôi cần uống một cốc nước.”"
+},
+{
+"t": "即使在睡觉的时候",
+"py": "jíshǐ zài shuìjiào de shíhou",
+"vn": "cho dù là lúc đang ngủ",
+"frame": "即使在 + tình huống + 的时候",
+"note": "Nhấn mạnh hoàn cảnh giả định hoặc thực tế dù khắc nghiệt hay đặc biệt vẫn có kết quả không đổi.",
+"ex": [
+[
+"即使在工作的时候也要注意身体。",
+"Cho dù là lúc làm việc cũng phải chú ý sức khỏe."
+],
+[
+"即使在考试的时候不要紧张。",
+"Cho dù là lúc thi cử cũng đừng căng thẳng."
+]
+],
+"try": "Nói: “Cho dù là lúc đi du lịch tôi cũng phải học tiếng Trung.”"
+}
+]
+}
+]
+}

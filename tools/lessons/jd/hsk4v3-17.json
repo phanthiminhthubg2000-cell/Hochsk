@@ -1,0 +1,642 @@
+{
+"1": [
+{
+"line": 0,
+"s": "下班了！同乐，我今天正好要路过你们家那边，用不用我开车送你？",
+"vn": "Tan làm rồi! Đồng Lạc, hôm nay tôi tiện đường đi qua phía nhà bạn, có cần tôi lái xe đưa bạn đi không?",
+"ch": [
+{
+"t": "用不用我开车送你",
+"py": "yòng bù yòng wǒ kāichē sòng nǐ",
+"vn": "có cần tôi lái xe đưa bạn đi không",
+"frame": "用不用 + làm gì",
+"note": "Cách hỏi lịch sự khi muốn giúp đỡ ai đó, dùng thay cho 'có cần... không'.",
+"ex": [
+[
+"用不用我帮你拿行李？",
+"Có cần tôi giúp bạn xách hành lý không?"
+],
+[
+"用不用我帮你复习功课？",
+"Có cần tôi giúp bạn ôn bài không?"
+]
+],
+"try": "Nói: 'Có cần tôi giúp bạn làm việc này không?'"
+}
+]
+},
+{
+"line": 1,
+"s": "谢谢一雪姐，不过您走您的吧，我一会儿还要去一趟健身房。",
+"vn": "Cảm ơn chị Nhất Tuyết, nhưng chị cứ đi đi, lát nữa tôi còn phải đi đến phòng gym một chuyến.",
+"ch": [
+{
+"t": "您走您的吧",
+"py": "nín zǒu nín de ba",
+"vn": "chị cứ đi đi",
+"frame": "V + của ai + 吧",
+"note": "Cấu trúc 'Bạn cứ làm việc của bạn đi', thể hiện sự thoải mái, không muốn làm phiền người khác.",
+"ex": [
+[
+"你吃你的吧，不用管我。",
+"Bạn cứ ăn đi, không cần bận tâm đến tôi."
+],
+[
+"你们聊你们的吧，我先走了。",
+"Các bạn cứ nói chuyện đi, tôi đi trước đây."
+]
+],
+"try": "Nói: 'Mọi người cứ làm việc của mình đi, tôi tự làm được.'"
+}
+]
+},
+{
+"line": 2,
+"s": "去健身房？你什么时候开始健身的？",
+"vn": "Đi phòng gym á? Bạn bắt đầu tập gym từ khi nào vậy?",
+"ch": []
+},
+{
+"line": 3,
+"s": "我上个星期发现单位旁边新开了一家健身房。我最近体重增加了不少，正好想运动一下，就进去看了看。",
+"vn": "Tuần trước tôi phát hiện cạnh cơ quan mới mở một phòng gym. Dạo này cân nặng của tôi tăng lên không ít, tiện thể muốn vận động một chút nên đã vào xem thử.",
+"ch": [
+{
+"t": "体重增加了不少",
+"py": "tǐzhòng zēngjiā le bù shǎo",
+"vn": "cân nặng tăng lên không ít",
+"frame": "……增加了不少",
+"note": "Cấu trúc diễn tả sự thay đổi về số lượng đáng kể. '不少' mang nghĩa là 'rất nhiều'.",
+"ex": [
+[
+"最近工作量增加了不少。",
+"Dạo này khối lượng công việc tăng lên không ít."
+],
+[
+"这个月的开支增加了不少。",
+"Chi tiêu tháng này tăng lên không ít."
+]
+],
+"try": "Nói: 'Dạo này số lượng từ mới tôi học tăng lên không ít.'"
+}
+]
+},
+{
+"line": 4,
+"s": "感觉怎么样？",
+"vn": "Cảm thấy thế nào?",
+"ch": []
+},
+{
+"line": 5,
+"s": "挺不错的。当时正好有打折活动，我就办了一张会员卡。",
+"vn": "Khá là tốt. Lúc đó vừa hay có chương trình giảm giá, nên tôi đã làm một thẻ hội viên.",
+"ch": [
+{
+"t": "挺不错的",
+"py": "tǐng búcuò de",
+"vn": "khá là tốt",
+"frame": "挺 + Adj + 的",
+"note": "Cấu trúc nhấn mạnh mức độ, dùng để khen ngợi hoặc nhận xét về sự vật, sự việc.",
+"ex": [
+[
+"这家饭馆的菜挺不错的。",
+"Món ăn ở quán này khá là ngon."
+],
+[
+"这个主意挺不错的。",
+"Ý tưởng này khá là hay."
+]
+],
+"try": "Nói: 'Bộ phim này khá là hay.'"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "同乐，你晚上不吃饭就去健身，不会饿吗？",
+"vn": "Đồng Lạc, tối nay bạn không ăn cơm mà đã đi tập thể hình, không sợ đói sao?",
+"ch": [
+{
+"t": "不吃饭就去健身",
+"py": "bù chīfàn jiù qù jiànshēn",
+"vn": "không ăn cơm đã đi tập thể hình",
+"frame": "不 + V1 就 + V2",
+"note": "Biểu thị hành động thứ hai diễn ra ngay mà không làm hành động thứ nhất, rất hay dùng khi trách móc hoặc hỏi.",
+"ex": [
+[
+"他还没复习就去睡觉了。",
+"Cậu ấy chưa ôn tập đã đi ngủ rồi."
+],
+[
+"下班不回家就去买衣服。",
+"Tan làm chưa về nhà đã đi mua quần áo."
+]
+],
+"try": "Nói: “Hôm nay chưa ăn sáng đã đi học.”"
+}
+]
+},
+{
+"line": 1,
+"s": "我带了饼干、酸奶和果汁，一会儿吃完了再去。",
+"vn": "Tôi mang theo bánh quy, sữa chua và nước ép, lát nữa ăn xong rồi đi.",
+"ch": [
+{
+"t": "吃完了再去",
+"py": "chī wán le zài qù",
+"vn": "ăn xong rồi mới đi",
+"frame": "V-wán le zài + V2",
+"note": "Dùng “再” để chỉ hành động sau diễn ra khi hành động trước đã hoàn thành hoàn toàn.",
+"ex": [
+[
+"做完作业再去玩儿。",
+"Làm xong bài tập rồi hãy đi chơi."
+],
+[
+"洗完澡再睡觉。",
+"Tắm xong rồi hãy đi ngủ."
+]
+],
+"try": "Nói: “Nấu cơm xong rồi hãy ăn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "那你为什么不在家附近找健身房？吃完晚饭，休息一下再去，不是更好吗？",
+"vn": "Vậy sao bạn không tìm phòng tập ở gần nhà? Ăn cơm tối xong, nghỉ ngơi một lúc rồi đi, chẳng phải tốt hơn sao?",
+"ch": [
+{
+"t": "休息一下再去",
+"py": "xiūxi yíxià zài qù",
+"vn": "nghỉ ngơi một lúc rồi đi",
+"frame": "休息一下 + V",
+"note": "Dùng “一下” sau động từ để chỉ thời gian ngắn, làm cho câu nói nhẹ nhàng hơn.",
+"ex": [
+[
+"你坐一下再走。",
+"Cậu ngồi một lát rồi hẵng đi."
+],
+[
+"看书累了，休息一下再学。",
+"Đọc sách mệt rồi, nghỉ một chút rồi học tiếp."
+]
+],
+"try": "Nói: “Tan làm về nhà nghỉ ngơi một lát rồi nấu cơm.”"
+}
+]
+},
+{
+"line": 3,
+"s": "离我家最近的健身房也要坐两站公交车，一来一回得半个小时，太浪费时间了。",
+"vn": "Phòng tập gần nhà tôi nhất cũng phải đi hai trạm xe buýt, đi về mất nửa tiếng, quá lãng phí thời gian.",
+"ch": [
+{
+"t": "离我家最近的",
+"py": "lí wǒ jiā zuì jìn de",
+"vn": "gần nhà tôi nhất",
+"frame": "离 + A + zuì + tính từ + de",
+"note": "Dùng để so sánh khoảng cách hoặc vị trí trong không gian rất tự nhiên.",
+"ex": [
+[
+"离学校最近的超市很大。",
+"Siêu thị gần trường học nhất rất lớn."
+],
+[
+"离公司最近的饭馆很好吃。",
+"Quán cơm gần công ty nhất rất ngon."
+]
+],
+"try": "Nói: “Bệnh viện gần nhà tôi nhất ở đâu?”"
+},
+{
+"t": "太浪费时间了",
+"py": "tài làngfèi shíjiān le",
+"vn": "quá lãng phí thời gian",
+"frame": "太 + làngfèi shíjiān + le",
+"note": "Dùng “浪费” cho thời gian, tiền bạc hoặc tình cảm trong đời sống hàng ngày.",
+"ex": [
+[
+"这样玩游戏太浪费时间了。",
+"Chơi trò chơi kiểu này quá lãng phí thời gian."
+],
+[
+"买很多不用的东西太浪费钱了。",
+"Mua nhiều đồ không dùng quá lãng phí tiền."
+]
+],
+"try": "Nói: “Đợi xe buýt quá lãng phí thời gian.”"
+}
+]
+},
+{
+"line": 4,
+"s": "确实。那这家健身房的教练怎么样？",
+"vn": "Quả thật. Thế huấn luyện viên của phòng tập này thế nào?",
+"ch": []
+},
+{
+"line": 5,
+"s": "教练很热情，也非常专业，动作讲得很清楚。",
+"vn": "Huấn luyện viên rất nhiệt tình, cũng rất chuyên nghiệp, động tác giảng giải rất rõ ràng.",
+"ch": [
+{
+"t": "动作讲得很清楚",
+"py": "dòngzuò jiǎng de hěn qīngchǔ",
+"vn": "động tác giảng rất rõ ràng",
+"frame": "V + de + hěn qīngchǔ",
+"note": "Bổ ngữ trình độ với “得” dùng để đánh giá cách thức thực hiện hành động.",
+"ex": [
+[
+"老师汉字写得很清楚。",
+"Thầy giáo viết chữ Hán rất rõ ràng."
+],
+[
+"路线说得很清楚。",
+"Nói lộ trình rất rõ ràng."
+]
+],
+"try": "Nói: “Giáo viên giải thích ngữ pháp rất rõ ràng.”"
+}
+]
+},
+{
+"line": 6,
+"s": "听你这么一说，我也想试试了。我现在都是在家看着视频练，动作不一定标准。",
+"vn": "Nghe bạn nói vậy, tôi cũng muốn thử rồi. Bây giờ tôi toàn ở nhà xem video để tập, động tác chưa chắc đã chuẩn.",
+"ch": [
+{
+"t": "听你这么一说",
+"py": "tīng nǐ zhème yì shuō",
+"vn": "nghe bạn nói vậy",
+"frame": "听 + ai + zhème yì shuō",
+"note": "Cụm cửa miệng phản hồi lại ý kiến của người khác trước khi đưa ra quyết định của mình.",
+"ex": [
+[
+"听你这么一说，我也想去了。",
+"Nghe bạn nói thế, tôi cũng muốn đi rồi."
+],
+[
+"听你这么一说，我知道了。",
+"Nghe bạn nói thế, tôi hiểu rồi."
+]
+],
+"try": "Nói: “Nghe bạn nói thế, tôi cũng muốn mua.”"
+},
+{
+"t": "动作不一定标准",
+"py": "dòngzuò bù yídìng biāozhǔn",
+"vn": "động tác chưa chắc đã chuẩn",
+"frame": "……不一定 + tính từ/động từ",
+"note": "“不一定” thể hiện phỏng đoán có khả năng xảy ra nhưng không chắc chắn.",
+"ex": [
+[
+"贵的东西不一定好。",
+"Đồ đắt chưa chắc đã tốt."
+],
+[
+"明天不一定会下雨。",
+"Ngày mai chưa chắc đã mưa."
+]
+],
+"try": "Nói: “Học tiếng Trung tự học chưa chắc đã chuẩn.”"
+}
+]
+},
+{
+"line": 7,
+"s": "好啊，那您也来吧。锻炼要科学，否则容易受伤。",
+"vn": "Được chứ, thế bạn cũng đến đi. Rèn luyện phải khoa học, nếu không rất dễ bị thương.",
+"ch": [
+{
+"t": "锻炼要科学",
+"py": "duànliàn yào kēxué",
+"vn": "rèn luyện phải khoa học",
+"frame": "……要 + khoa học/hợp lý",
+"note": "Dùng “要” đưa ra lời khuyên hoặc yêu cầu nguyên tắc phải tuân thủ.",
+"ex": [
+[
+"学习要认真。",
+"Học tập phải nghiêm túc."
+],
+[
+"工作要努力。",
+"Làm việc phải nỗ lực."
+]
+],
+"try": "Nói: “Ăn uống phải khoa học.”"
+},
+{
+"t": "否则容易受伤",
+"py": "fǒuzé róngyì shōushāng",
+"vn": "nếu không rất dễ bị thương",
+"frame": "fǒuzé + dễ + V",
+"note": "“否则” nghĩa là “nếu không thì”, dùng để nêu hậu quả xấu phía sau.",
+"ex": [
+[
+"快点走，否则容易迟到。",
+"Đi nhanh lên, nếu không rất dễ đi muộn."
+],
+[
+"好好复习，否则容易考不好。",
+"Ôn tập cho tốt, nếu không rất dễ thi không tốt."
+]
+],
+"try": "Nói: “Ăn ít thôi, nếu không rất dễ đói.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "有人爱在操场跑步，有人喜欢通过打球锻炼身体，还有一部分人愿意去健身房健身，杨同乐就是其中之一。",
+"vn": "Có người thích chạy bộ ở sân vận động, có người thích rèn luyện sức khỏe qua việc chơi bóng, lại có một bộ phận người muốn đến phòng gym tập luyện, Dương Đồng Lạc chính là một trong số đó.",
+"ch": [
+{
+"t": "通过打球锻炼身体",
+"py": "tōngguò dǎqiú duànliàn shēntǐ",
+"vn": "thông qua việc chơi bóng để rèn luyện sức khỏe",
+"frame": "通过 + phương thức + V",
+"note": "Dùng để diễn tả cách thức đạt được mục đích, rất phổ biến trong văn viết và nói trang trọng.",
+"ex": [
+[
+"我通过看电影学习汉语。",
+"Tôi học tiếng Trung thông qua việc xem phim."
+],
+[
+"他通过努力工作获得了成功。",
+"Anh ấy thông qua làm việc chăm chỉ mà đạt được thành công."
+]
+],
+"try": "Nói: “Tôi thông qua việc đọc sách để mở rộng kiến thức.”"
+},
+{
+"t": "就是其中之一",
+"py": "jiùshì qízhōng zhī yī",
+"vn": "chính là một trong số đó",
+"frame": "……是其中之一",
+"note": "Dùng để chỉ một cá nhân thuộc về một nhóm đối tượng đã nhắc đến trước đó.",
+"ex": [
+[
+"他是我们班最聪明的学生之一。",
+"Anh ấy là một trong những học sinh thông minh nhất lớp chúng tôi."
+],
+[
+"这是我最喜欢的电影之一。",
+"Đây là một trong những bộ phim tôi thích nhất."
+]
+],
+"try": "Nói: “Hà Nội là một trong những thành phố tôi yêu thích nhất.”"
+}
+]
+},
+{
+"line": 1,
+"s": "杨同乐认为健身房火起来是因为它有很多好处——环境好、设备全，可以锻炼全身。另外，健身房里一般还有专业教练，能帮助大家把动作做准确，练习的效果也更好。",
+"vn": "Dương Đồng Lạc cho rằng phòng gym trở nên phổ biến là vì nó có nhiều lợi ích - môi trường tốt, thiết bị đầy đủ, có thể rèn luyện toàn thân. Ngoài ra, trong phòng gym thường còn có huấn luyện viên chuyên nghiệp, có thể giúp mọi người thực hiện động tác chính xác, hiệu quả tập luyện cũng tốt hơn.",
+"ch": [
+{
+"t": "火起来",
+"py": "huǒ qǐlái",
+"vn": "trở nên hot/phổ biến",
+"frame": "……火起来了",
+"note": "Dùng để chỉ một trào lưu, một sản phẩm hay một địa điểm đang được ưa chuộng.",
+"ex": [
+[
+"最近这个奶茶店火起来了。",
+"Gần đây tiệm trà sữa này trở nên rất hot."
+],
+[
+"这种学习方法在学生中火起来了。",
+"Phương pháp học này đã trở nên phổ biến trong giới học sinh."
+]
+],
+"try": "Nói: “Gần đây, du lịch Đà Lạt rất hot.”"
+},
+{
+"t": "帮助大家把动作做准确",
+"py": "bāngzhù dàjiā bǎ dòngzuò zuò zhǔnquè",
+"vn": "giúp mọi người làm động tác chính xác",
+"frame": "把 + đối tượng + V + kết quả",
+"note": "Cấu trúc chữ 把 dùng để nhấn mạnh sự thay đổi hoặc kết quả tác động lên đối tượng.",
+"ex": [
+[
+"请把作业写清楚。",
+"Hãy viết bài tập cho rõ ràng."
+],
+[
+"老师帮我把句子改正确了。",
+"Thầy giáo giúp tôi sửa câu cho đúng rồi."
+]
+],
+"try": "Nói: “Hãy giúp tôi dọn dẹp phòng cho sạch sẽ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "仅仅经过一个月左右的锻炼，杨同乐就感觉自己的身体比以前更健康了。教练也表扬他取得了很大的进步，并鼓励他坚持下去，还说随着身体越来越好，人看起来也会更帅。",
+"vn": "Chỉ sau khoảng một tháng tập luyện, Dương Đồng Lạc đã cảm thấy cơ thể mình khỏe mạnh hơn trước. Huấn luyện viên cũng khen ngợi anh ấy đã đạt được tiến bộ lớn, đồng thời khuyến khích anh ấy kiên trì tiếp, còn nói rằng cùng với việc cơ thể ngày càng tốt hơn, người trông cũng sẽ đẹp trai hơn.",
+"ch": [
+{
+"t": "仅仅经过",
+"py": "jǐnjǐn jīngguò",
+"vn": "chỉ mới trải qua",
+"frame": "仅仅 + thời gian/số lượng",
+"note": "Dùng để nhấn mạnh khoảng thời gian hoặc số lượng rất ít ỏi.",
+"ex": [
+[
+"仅仅用了两天，他就学会了。",
+"Chỉ mất hai ngày, anh ấy đã học được rồi."
+],
+[
+"这里仅仅有五个人。",
+"Ở đây chỉ có vỏn vẹn năm người."
+]
+],
+"try": "Nói: “Chỉ mới học ba tháng, tôi đã có thể giao tiếp cơ bản.”"
+},
+{
+"t": "鼓励他坚持下去",
+"py": "gǔlì tā jiānchí xiàqù",
+"vn": "khuyến khích anh ấy kiên trì tiếp",
+"frame": "鼓励 + ai + V + 下去",
+"note": "V + 下去 biểu thị hành động đang diễn ra và tiếp tục kéo dài trong tương lai.",
+"ex": [
+[
+"老师鼓励我继续学习下去。",
+"Thầy giáo khuyến khích tôi tiếp tục học tiếp."
+],
+[
+"不管多累，都要坚持下去。",
+"Dù mệt thế nào cũng phải kiên trì đến cùng."
+]
+],
+"try": "Nói: “Mẹ khuyến khích tôi kiên trì học tiếng Trung.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "中国乒乓球队非常有名，常在各项比赛中赢得第一名，被叫作“梦之队”。",
+"vn": "Đội tuyển bóng bàn Trung Quốc rất nổi tiếng, thường giành giải nhất trong các cuộc thi, được gọi là \"đội bóng trong mơ\".",
+"ch": [
+{
+"t": "被叫作",
+"py": "bèi jiàozuò",
+"vn": "được gọi là",
+"frame": "A 被叫作 B",
+"note": "Dùng để giới thiệu biệt danh hoặc tên gọi khác của một đối tượng.",
+"ex": [
+[
+"这首歌被叫作“友谊之歌”。",
+"Bài hát này được gọi là \"bài ca tình bạn\"."
+],
+[
+"他被叫作“运动达人”。",
+"Anh ấy được gọi là \"cao thủ thể thao\"."
+]
+],
+"try": "Nói: \"Thành phố này được gọi là thành phố của hoa.\""
+}
+]
+},
+{
+"line": 0,
+"s": "为了不断提高自己的水平，队员们每天都要进行严格的训练。",
+"vn": "Để không ngừng nâng cao trình độ của bản thân, các vận động viên mỗi ngày đều phải tiến hành tập luyện nghiêm ngặt.",
+"ch": [
+{
+"t": "不断提高",
+"py": "búduàn tígāo",
+"vn": "không ngừng nâng cao",
+"frame": "不断 + V",
+"note": "Dùng khi muốn nhấn mạnh một hành động diễn ra liên tục, không dừng lại.",
+"ex": [
+[
+"我们需要不断学习新知识。",
+"Chúng ta cần không ngừng học kiến thức mới."
+],
+[
+"他不断提高自己的汉语水平。",
+"Anh ấy không ngừng nâng cao trình độ tiếng Trung của mình."
+]
+],
+"try": "Nói: \"Tôi cần không ngừng cải thiện kỹ năng làm việc.\""
+}
+]
+},
+{
+"line": 0,
+"s": "正因为这样，球队才能在比赛中取得更好的成绩，获得更多球迷的喜爱。",
+"vn": "Chính vì vậy, đội bóng mới có thể đạt được thành tích tốt hơn trong các trận đấu, nhận được sự yêu mến của nhiều người hâm mộ hơn.",
+"ch": [
+{
+"t": "正因为这样",
+"py": "zhèng yīnwèi zhèyàng",
+"vn": "chính vì vậy",
+"frame": "正因为这样，……",
+"note": "Dùng để nhấn mạnh nguyên nhân dẫn đến kết quả vừa nêu ở câu trước.",
+"ex": [
+[
+"正因为这样，他才成功了。",
+"Chính vì vậy, anh ấy mới thành công."
+],
+[
+"正因为这样，我才决定去留学。",
+"Chính vì vậy, tôi mới quyết định đi du học."
+]
+],
+"try": "Nói: \"Chính vì vậy, tôi mới học tiếng Trung mỗi ngày.\""
+}
+]
+},
+{
+"line": 0,
+"s": "许多年轻的乒乓球运动员都有一个梦想，那就是进入国家队，参加世界大赛，为球队赢下比赛。",
+"vn": "Nhiều vận động viên bóng bàn trẻ đều có một ước mơ, đó chính là vào đội tuyển quốc gia, tham gia các giải đấu thế giới, giành chiến thắng cho đội.",
+"ch": []
+},
+{
+"line": 1,
+"s": "在中国，除了专业运动员，喜欢打乒乓球的普通人也特别多。",
+"vn": "Ở Trung Quốc, ngoài vận động viên chuyên nghiệp, người bình thường thích chơi bóng bàn cũng đặc biệt nhiều.",
+"ch": [
+{
+"t": "除了……，……也……",
+"py": "chúle..., ...yě...",
+"vn": "ngoài... ra, ...cũng...",
+"frame": "除了 A，B 也 C",
+"note": "Cấu trúc dùng để mở rộng phạm vi, ngoài đối tượng A thì B cũng có đặc điểm C.",
+"ex": [
+[
+"除了老师，学生也参加了活动。",
+"Ngoài giáo viên, học sinh cũng tham gia hoạt động."
+],
+[
+"除了汉语，他也会说英语。",
+"Ngoài tiếng Trung, anh ấy cũng biết nói tiếng Anh."
+]
+],
+"try": "Nói: \"Ngoài cuối tuần, tôi cũng thích chơi thể thao vào buổi tối.\""
+}
+]
+},
+{
+"line": 1,
+"s": "连一些年龄比较大的老人都坚持打球，年轻人更是把它作为一种日常锻炼的方式。",
+"vn": "Ngay cả những người già lớn tuổi cũng kiên trì chơi bóng, người trẻ lại càng coi nó như một cách rèn luyện hàng ngày.",
+"ch": [
+{
+"t": "连……都……",
+"py": "lián... dōu...",
+"vn": "ngay cả... cũng...",
+"frame": "连 A 都 V",
+"note": "Dùng để nhấn mạnh mức độ, ngay cả đối tượng khó nhất/ít ngờ tới nhất cũng thực hiện hành động đó.",
+"ex": [
+[
+"连小孩子都知道这件事。",
+"Ngay cả trẻ con cũng biết việc này."
+],
+[
+"连老师都觉得很难。",
+"Ngay cả giáo viên cũng thấy khó."
+]
+],
+"try": "Nói: \"Ngay cả bài tập khó này tôi cũng làm được.\""
+}
+]
+},
+{
+"line": 1,
+"s": "可以说，乒乓球是中国人生活中最常见的运动之一。",
+"vn": "Có thể nói, bóng bàn là một trong những môn thể thao phổ biến nhất trong cuộc sống của người Trung Quốc.",
+"ch": [
+{
+"t": "最……之一",
+"py": "zuì... zhī yī",
+"vn": "một trong những... nhất",
+"frame": "最 + adj + 的 + N + 之一",
+"note": "Dùng để chỉ một phần trong tập hợp những thứ có cùng đặc điểm nổi bật nhất.",
+"ex": [
+[
+"这是我最喜欢的书之一。",
+"Đây là một trong những cuốn sách tôi thích nhất."
+],
+[
+"他是我们班最聪明的学生之一。",
+"Cậu ấy là một trong những học sinh thông minh nhất lớp tôi."
+]
+],
+"try": "Nói: \"Hà Nội là một trong những thành phố tôi yêu nhất.\""
+}
+]
+}
+]
+}

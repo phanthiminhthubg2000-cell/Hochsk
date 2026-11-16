@@ -1,0 +1,525 @@
+{
+"1": [
+{
+"line": 0,
+"s": "李文，期中考试后就再也没见过你了，你这段时间在忙什么呢？",
+"vn": "Lý Văn, sau kỳ thi giữa kỳ thì không thấy cậu đâu nữa, dạo này cậu bận gì thế?",
+"ch": [
+{
+"t": "再也没见过你",
+"py": "zài yě méi jiànguò nǐ",
+"vn": "không còn gặp lại cậu nữa",
+"frame": "再也没 + V + 过 + đối tượng",
+"note": "Dùng để nhấn mạnh việc từ một thời điểm trong quá khứ đến nay không còn thực hiện hành động đó nữa.",
+"ex": [
+[
+"自从毕业后，我们就再也没见过面了。",
+"Từ sau khi tốt nghiệp, chúng tôi không còn gặp lại nhau nữa."
+],
+[
+"他搬家了，我再也没见过他。",
+"Anh ấy chuyển nhà rồi, tôi không còn gặp lại anh ấy nữa."
+]
+],
+"try": "Nói: \"Từ khi nghỉ việc, tôi không còn gặp lại sếp cũ nữa.\""
+}
+]
+},
+{
+"line": 1,
+"s": "我最近去一家医药公司应聘了，他们正在招聘实习生。",
+"vn": "Dạo này mình đi ứng tuyển vào một công ty dược phẩm, họ đang tuyển thực tập sinh.",
+"ch": []
+},
+{
+"line": 2,
+"s": "你这么早就考虑实习了？",
+"vn": "Cậu cân nhắc đi thực tập sớm vậy sao?",
+"ch": [
+{
+"t": "考虑",
+"py": "kǎolǜ",
+"vn": "cân nhắc/suy nghĩ về việc gì",
+"frame": "考虑 + V/N",
+"note": "Dùng khi cần suy nghĩ kỹ trước khi đưa ra quyết định hoặc hành động.",
+"ex": [
+[
+"我正在考虑要不要去中国留学。",
+"Tôi đang cân nhắc xem có nên đi du học Trung Quốc không."
+],
+[
+"请你好好考虑一下我的建议。",
+"Hãy cân nhắc kỹ lời đề nghị của tôi."
+]
+],
+"try": "Nói: \"Tôi đang cân nhắc xem cuối tuần có nên đi du lịch không.\""
+}
+]
+},
+{
+"line": 3,
+"s": "现在很多单位在招聘毕业生时，都很重视有没有实习经历，所以我想提前去锻炼一下，积累一些经验。",
+"vn": "Bây giờ nhiều đơn vị khi tuyển dụng sinh viên tốt nghiệp đều rất coi trọng việc có kinh nghiệm thực tập hay không, nên mình muốn đi rèn luyện trước để tích lũy chút kinh nghiệm.",
+"ch": [
+{
+"t": "很重视",
+"py": "hěn zhòngshì",
+"vn": "rất coi trọng",
+"frame": "很重视 + N/V",
+"note": "Dùng để diễn tả thái độ đánh giá cao tầm quan trọng của một vấn đề.",
+"ex": [
+[
+"老师很重视学生的出勤率。",
+"Thầy giáo rất coi trọng tỷ lệ chuyên cần của học sinh."
+],
+[
+"公司很重视这次合作。",
+"Công ty rất coi trọng lần hợp tác này."
+]
+],
+"try": "Nói: \"Bố mẹ tôi rất coi trọng việc học tiếng Trung của tôi.\""
+}
+]
+},
+{
+"line": 4,
+"s": "那现在有结果了吗？",
+"vn": "Vậy bây giờ có kết quả chưa?",
+"ch": []
+},
+{
+"line": 5,
+"s": "我还在等消息，希望能有好结果。",
+"vn": "Mình vẫn đang đợi tin, hy vọng sẽ có kết quả tốt.",
+"ch": [
+{
+"t": "等消息",
+"py": "děng xiāoxi",
+"vn": "đợi tin/đợi kết quả",
+"frame": "在等 + N (kết quả/thông báo)",
+"note": "Dùng trong ngữ cảnh chờ đợi một phản hồi chính thức từ ai đó.",
+"ex": [
+[
+"面试后，我一直在等消息。",
+"Sau khi phỏng vấn, tôi vẫn luôn đợi tin."
+],
+[
+"别着急，我们都在等消息呢。",
+"Đừng vội, chúng tôi đều đang đợi tin đây."
+]
+],
+"try": "Nói: \"Tôi đang đợi tin từ trường về kết quả thi HSK.\""
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "李文，你是怎么应聘的？",
+"vn": "Lý Văn, cậu ứng tuyển thế nào vậy?",
+"ch": []
+},
+{
+"line": 1,
+"s": "我先在网上报名，填写个人信息，然后等公司通知我去参加笔试。",
+"vn": "Tớ đăng ký trên mạng trước, điền thông tin cá nhân, sau đó đợi công ty báo đi thi viết.",
+"ch": [
+{
+"t": "等公司通知我去参加笔试",
+"py": "děng gōngsī tōngzhī wǒ qù cānjiā bǐshì",
+"vn": "đợi công ty báo tôi đi thi viết",
+"frame": "等 + ai + làm gì",
+"note": "Cấu trúc diễn tả sự chờ đợi một hành động cụ thể từ người khác.",
+"ex": [
+[
+"我等老师通知我考试时间。",
+"Tôi đợi thầy giáo báo thời gian thi."
+],
+[
+"大家都在等经理通知开会。",
+"Mọi người đều đang đợi giám đốc báo họp."
+]
+],
+"try": "Nói: “Tôi đang đợi bạn báo địa điểm ăn tối.”"
+}
+]
+},
+{
+"line": 2,
+"s": "笔试都考些什么？",
+"vn": "Thi viết thường thi những gì thế?",
+"ch": []
+},
+{
+"line": 3,
+"s": "主要是一些专业知识。考完没多久，他们就让我去面试了。",
+"vn": "Chủ yếu là một số kiến thức chuyên môn. Thi xong không lâu, họ đã gọi tớ đi phỏng vấn rồi.",
+"ch": [
+{
+"t": "考完没多久",
+"py": "kǎowán méi duōjiǔ",
+"vn": "thi xong không lâu",
+"frame": "V + 完 + 没多久",
+"note": "Cụm từ chỉ thời gian ngắn ngủi sau khi một việc kết thúc.",
+"ex": [
+[
+"下课没多久，他就走了。",
+"Tan học không lâu, cậu ấy đã đi rồi."
+],
+[
+"吃完饭没多久，我们又饿了。",
+"Ăn cơm xong không lâu, chúng tôi lại đói rồi."
+]
+],
+"try": "Nói: “Sau khi làm xong bài tập không lâu, tôi đã đi ngủ.”"
+}
+]
+},
+{
+"line": 4,
+"s": "看来你笔试答得不错，那你面试得怎么样？",
+"vn": "Xem ra cậu làm bài thi viết tốt nhỉ, thế phỏng vấn thế nào?",
+"ch": [
+{
+"t": "看来",
+"py": "kànlái",
+"vn": "xem ra",
+"frame": "看来 + mệnh đề",
+"note": "Dùng để đưa ra nhận xét, suy đoán dựa trên những gì đã thấy.",
+"ex": [
+[
+"看来他今天不来了。",
+"Xem ra hôm nay cậu ấy không đến rồi."
+],
+[
+"看来你很喜欢这份工作。",
+"Xem ra cậu rất thích công việc này."
+]
+],
+"try": "Nói: “Xem ra hôm nay trời sắp mưa rồi.”"
+}
+]
+},
+{
+"line": 5,
+"s": "那天是由部门负责人来面试的，我有点儿紧张。他让我介绍了自己的学习经历、兴趣爱好和对工作的想法。",
+"vn": "Hôm đó là do người phụ trách bộ phận phỏng vấn, tớ hơi căng thẳng. Ông ấy bảo tớ giới thiệu quá trình học tập, sở thích và suy nghĩ về công việc.",
+"ch": [
+{
+"t": "是由部门负责人来面试的",
+"py": "shì yóu bùmén fùzérén lái miànshì de",
+"vn": "là do người phụ trách bộ phận phỏng vấn",
+"frame": "是 + 由 + ai + làm gì",
+"note": "Cấu trúc nhấn mạnh đối tượng thực hiện hành động (thường là người có trách nhiệm).",
+"ex": [
+[
+"这件事是由老师决定的。",
+"Việc này là do thầy giáo quyết định."
+],
+[
+"今天的工作是由我负责的。",
+"Công việc hôm nay là do tôi phụ trách."
+]
+],
+"try": "Nói: “Dự án này là do giám đốc phụ trách.”"
+}
+]
+},
+{
+"line": 6,
+"s": "听起来挺正式的。",
+"vn": "Nghe có vẻ khá trang trọng nhỉ.",
+"ch": []
+},
+{
+"line": 7,
+"s": "是啊，我觉得这次经历很有用。不论结果怎么样，对我以后找工作肯定有帮助。",
+"vn": "Đúng vậy, tớ thấy trải nghiệm lần này rất hữu ích. Bất kể kết quả thế nào, chắc chắn sẽ giúp ích cho việc tìm việc sau này của tớ.",
+"ch": [
+{
+"t": "不论结果怎么样",
+"py": "búlùn jiéguǒ zěnmeyàng",
+"vn": "bất kể kết quả thế nào",
+"frame": "不论 + A / B / C, ……",
+"note": "Dùng để chỉ dù trong hoàn cảnh nào thì kết quả cũng không thay đổi.",
+"ex": [
+[
+"不论天气怎么样，我都要去跑步。",
+"Bất kể thời tiết thế nào, tôi cũng phải đi chạy bộ."
+],
+[
+"不论忙不忙，都要多喝水。",
+"Bất kể bận hay không, cũng phải uống nhiều nước."
+]
+],
+"try": "Nói: “Bất kể khó khăn thế nào, tôi cũng sẽ học tốt tiếng Trung.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "一天下午，李文突然收到一条短信，说他通过了面试，让他下周一到公司实习。",
+"vn": "Một buổi chiều, Lý Văn đột nhiên nhận được một tin nhắn, nói rằng anh ấy đã vượt qua phỏng vấn, bảo anh ấy thứ Hai tuần sau đến công ty thực tập.",
+"ch": [
+{
+"t": "通过了面试",
+"py": "tōngguò le miànshì",
+"vn": "vượt qua phỏng vấn",
+"frame": "通过了 + sự kiện/kỳ thi",
+"note": "Dùng để diễn tả việc đạt kết quả tốt trong các kỳ thi hoặc phỏng vấn.",
+"ex": [
+[
+"我终于通过了HSK4级考试。",
+"Tôi cuối cùng đã vượt qua kỳ thi HSK4."
+],
+[
+"他通过了这次面试。",
+"Anh ấy đã vượt qua lần phỏng vấn này."
+]
+],
+"try": "Nói: “Tôi đã vượt qua kỳ thi lái xe rồi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "李文看到信息后，激动得把手机扔到床上，在屋子里跳了起来。",
+"vn": "Sau khi xem tin nhắn, Lý Văn phấn khích đến mức ném điện thoại lên giường, nhảy cẫng lên trong phòng.",
+"ch": [
+{
+"t": "激动得",
+"py": "jīdòng de",
+"vn": "phấn khích đến mức",
+"frame": "V/Adj + 得 + kết quả",
+"note": "Cấu trúc bổ ngữ trạng thái, dùng để nhấn mạnh mức độ của hành động hoặc cảm xúc.",
+"ex": [
+[
+"他高兴得跳了起来。",
+"Anh ấy vui đến mức nhảy cẫng lên."
+],
+[
+"我忙得没时间吃饭。",
+"Tôi bận đến mức không có thời gian ăn cơm."
+]
+],
+"try": "Nói: “Tôi mệt đến mức không muốn đi làm.”"
+}
+]
+},
+{
+"line": 0,
+"s": "之后的几天，李文忙着做各种准备。为了给大家留个好印象，他去理发店把头发理了理，又去商店买了一身正式的衣服，还打算在镜子前把自我介绍练一练。",
+"vn": "Những ngày sau đó, Lý Văn bận rộn chuẩn bị mọi thứ. Để để lại ấn tượng tốt cho mọi người, anh ấy đến tiệm cắt tóc tỉa lại tóc, lại đến cửa hàng mua một bộ quần áo chỉn chu, còn định đứng trước gương luyện tập giới thiệu bản thân.",
+"ch": [
+{
+"t": "给大家留个好印象",
+"py": "gěi dàjiā liú gè hǎo yìnxiàng",
+"vn": "để lại ấn tượng tốt cho mọi người",
+"frame": "给 + đối tượng + 留下/留 + (adj) + 印象",
+"note": "Cụm từ cố định rất hay dùng trong công việc và giao tiếp xã hội.",
+"ex": [
+[
+"第一次见面，要给对方留下好印象。",
+"Lần đầu gặp mặt, phải để lại ấn tượng tốt cho đối phương."
+],
+[
+"他想给老板留下好印象。",
+"Anh ấy muốn để lại ấn tượng tốt cho sếp."
+]
+],
+"try": "Nói: “Tôi muốn để lại ấn tượng tốt cho giáo viên.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在他看来，这次实习是一个新的开始。他希望不仅能够运用专业知识完成任务，还能够积累更多经验，为将来找工作打下基础。",
+"vn": "Trong mắt anh ấy, lần thực tập này là một khởi đầu mới. Anh ấy hy vọng không chỉ có thể vận dụng kiến thức chuyên môn hoàn thành nhiệm vụ, mà còn có thể tích lũy thêm kinh nghiệm, đặt nền móng cho việc tìm việc sau này.",
+"ch": [
+{
+"t": "在他看来",
+"py": "zài tā kàn lái",
+"vn": "theo quan điểm của anh ấy",
+"frame": "在 + người + 看来",
+"note": "Dùng để nêu lên ý kiến cá nhân hoặc cách nhìn nhận của một người về vấn đề nào đó.",
+"ex": [
+[
+"在我看来，学汉语很有意思。",
+"Theo tôi thấy, học tiếng Trung rất thú vị."
+],
+[
+"在老师看来，这是最好的办法。",
+"Theo thầy giáo, đây là cách tốt nhất."
+]
+],
+"try": "Nói: “Theo tôi thấy, công việc này rất phù hợp với mình.”"
+},
+{
+"t": "为将来……打下基础",
+"py": "wèi jiānglái ... dǎ xià jīchǔ",
+"vn": "đặt nền móng cho tương lai...",
+"frame": "为 + mục tiêu + 打下基础",
+"note": "Cụm từ dùng trong học tập và công việc để nói về sự chuẩn bị lâu dài.",
+"ex": [
+[
+"现在努力学习，是为了将来打下基础。",
+"Bây giờ nỗ lực học tập là để đặt nền móng cho tương lai."
+],
+[
+"这次实习为我以后工作打下了基础。",
+"Lần thực tập này đã đặt nền móng cho công việc của tôi sau này."
+]
+],
+"try": "Nói: “Học tốt HSK4 là để đặt nền móng cho việc đi du học.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "在中国，很多大学生在毕业前都会去实习。",
+"vn": "Ở Trung Quốc, nhiều sinh viên đại học trước khi tốt nghiệp đều đi thực tập.",
+"ch": []
+},
+{
+"line": 0,
+"s": "实习的地方有公司、工厂，也有学校和医院。学生们通过实习，可以积累工作经验，熟悉工作内容和单位的管理规定，提前了解并适应社会。",
+"vn": "Nơi thực tập có công ty, nhà máy, cũng có trường học và bệnh viện. Thông qua thực tập, sinh viên có thể tích lũy kinh nghiệm làm việc, làm quen với nội dung công việc và quy định quản lý của đơn vị, hiểu trước và thích nghi với xã hội.",
+"ch": [
+{
+"t": "积累工作经验",
+"py": "jīlěi gōngzuò jīngyàn",
+"vn": "tích lũy kinh nghiệm làm việc",
+"frame": "积累 + danh từ (kinh nghiệm/kiến thức)",
+"note": "Dùng cho những thứ cần thời gian dài mới có được. Thường dùng với 经验 (kinh nghiệm) hoặc 知识 (kiến thức).",
+"ex": [
+[
+"多看书可以积累知识。",
+"Đọc nhiều sách có thể tích lũy kiến thức."
+],
+[
+"他想在实习中积累工作经验。",
+"Cậu ấy muốn tích lũy kinh nghiệm làm việc trong lúc thực tập."
+]
+],
+"try": "Nói: “Tôi muốn đi làm thêm để tích lũy kinh nghiệm.”"
+},
+{
+"t": "提前了解并适应社会",
+"py": "tíqián liǎojiě bìng shìyìng shèhuì",
+"vn": "hiểu trước và thích nghi với xã hội",
+"frame": "提前 + V",
+"note": "提前 diễn tả hành động xảy ra sớm hơn kế hoạch hoặc thời điểm thông thường.",
+"ex": [
+[
+"我们应该提前准备考试。",
+"Chúng ta nên chuẩn bị thi sớm."
+],
+[
+"他提前买好了去北京的机票。",
+"Anh ấy đã mua sẵn vé máy bay đi Bắc Kinh từ sớm."
+]
+],
+"try": "Nói: “Tôi muốn đến sớm để chuẩn bị phòng họp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在实习中，学生常常会发现，课堂上学到的知识和实际工作并不完全一样。",
+"vn": "Trong lúc thực tập, sinh viên thường phát hiện ra rằng kiến thức học trên lớp và công việc thực tế không hoàn toàn giống nhau.",
+"ch": [
+{
+"t": "并不完全一样",
+"py": "bìng bù wánquán yīyàng",
+"vn": "không hoàn toàn giống nhau",
+"frame": "并不 + tính từ",
+"note": "并不 dùng để nhấn mạnh sự phủ định, mang sắc thái khẳng định mạnh mẽ hơn là chỉ dùng 不.",
+"ex": [
+[
+"这件事并不容易。",
+"Việc này không hề dễ dàng chút nào."
+],
+[
+"他并不想去旅游。",
+"Anh ấy hoàn toàn không muốn đi du lịch."
+]
+],
+"try": "Nói: “Kết quả này không hoàn toàn giống với dự đoán của tôi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "例如：有些事情，在课本上学不如自己做一遍，因为只有在做的时候，才会发现有很多细节需要注意；",
+"vn": "Ví dụ: Có những việc, học trên sách giáo khoa không bằng tự mình làm một lần, vì chỉ khi làm mới phát hiện ra có nhiều chi tiết cần chú ý;",
+"ch": [
+{
+"t": "学不如自己做一遍",
+"py": "xué bùrú zìjǐ zuò yībiàn",
+"vn": "học không bằng tự mình làm một lần",
+"frame": "A 不如 B",
+"note": "Cấu trúc so sánh: A không bằng B. Nhấn mạnh B tốt hơn hoặc hiệu quả hơn A.",
+"ex": [
+[
+"看地图不如问路人。",
+"Xem bản đồ không bằng hỏi người đi đường."
+],
+[
+"在家休息不如出去走走。",
+"Ở nhà nghỉ ngơi không bằng ra ngoài đi dạo."
+]
+],
+"try": "Nói: “Học lý thuyết không bằng thực hành.”"
+}
+]
+},
+{
+"line": 1,
+"s": "还有一些问题，在书上找不到答案，只能通过日常工作慢慢理解。在这样的过程中，学生能够对学到的知识有更好的认识，也更清楚自己的职业发展方向。",
+"vn": "còn có một số vấn đề, trong sách không tìm thấy đáp án, chỉ có thể thông qua công việc hàng ngày để hiểu dần dần. Trong quá trình như vậy, sinh viên có thể có nhận thức tốt hơn về kiến thức đã học, cũng hiểu rõ hơn về phương hướng phát triển nghề nghiệp của bản thân.",
+"ch": [
+{
+"t": "只能通过",
+"py": "zhǐnéng tōngguò",
+"vn": "chỉ có thể thông qua",
+"frame": "只能通过 + phương thức + để + đạt được kết quả",
+"note": "Dùng để chỉ ra cách duy nhất để giải quyết vấn đề.",
+"ex": [
+[
+"只能通过努力学习才能考过HSK4。",
+"Chỉ có thể thông qua việc học tập chăm chỉ mới đỗ được HSK4."
+],
+[
+"只能通过多练习才能提高口语。",
+"Chỉ có thể thông qua luyện tập nhiều mới nâng cao được khẩu ngữ."
+]
+],
+"try": "Nói: “Chỉ có thể thông qua làm việc mới hiểu được quy định của công ty.”"
+},
+{
+"t": "对学到的知识有更好的认识",
+"py": "duì xuédào de zhīshì yǒu gèng hǎo de rènshi",
+"vn": "có nhận thức tốt hơn về kiến thức đã học",
+"frame": "对 + đối tượng + có + nhận thức/ấn tượng + (tốt/sâu sắc)",
+"note": "Cấu trúc dùng để diễn tả sự thay đổi trong tư duy hoặc cảm nhận về một vấn đề.",
+"ex": [
+[
+"我对中国文化有了更好的认识。",
+"Tôi đã có nhận thức tốt hơn về văn hóa Trung Quốc."
+],
+[
+"通过这次比赛，我对自己的能力有了新的认识。",
+"Thông qua cuộc thi này, tôi đã có nhận thức mới về năng lực của bản thân."
+]
+],
+"try": "Nói: “Tôi có nhận thức tốt hơn về tầm quan trọng của việc học tiếng Trung.”"
+}
+]
+}
+]
+}

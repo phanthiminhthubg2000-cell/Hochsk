@@ -1,0 +1,594 @@
+{
+"1": [
+{
+"line": 0,
+"s": "你看，这个小伙子从广州去哈尔滨出差，没想到哈尔滨的气温降到了零下二十几度，把他冻坏了。",
+"vn": "Bạn xem, chàng trai này đi công tác từ Quảng Châu đến Cáp Nhĩ Tân, không ngờ nhiệt độ ở Cáp Nhĩ Tân giảm xuống âm hai mươi mấy độ, làm cậu ấy lạnh cóng cả người.",
+"ch": [
+{
+"t": "没想到",
+"py": "méi xiǎngdào",
+"vn": "không ngờ",
+"frame": "没想到 + sự việc",
+"note": "Dùng để diễn tả một sự việc nằm ngoài dự đoán của bản thân.",
+"ex": [
+[
+"没想到今天会加班。",
+"Không ngờ hôm nay lại phải tăng ca."
+],
+[
+"没想到他汉语说得这么流利。",
+"Không ngờ cậu ấy nói tiếng Trung trôi chảy như vậy."
+]
+],
+"try": "Nói: “Không ngờ bài thi HSK4 khó như vậy.”"
+},
+{
+"t": "把他冻坏了",
+"py": "bǎ tā dòng huài le",
+"vn": "làm cậu ấy lạnh cóng/lạnh phát ốm",
+"frame": "把 + đối tượng + V + 坏了",
+"note": "Cấu trúc 把 dùng để nhấn mạnh kết quả của hành động lên đối tượng, 坏了 ở đây nghĩa là rất tệ/rất nặng.",
+"ex": [
+[
+"天气太热，把他热坏了。",
+"Thời tiết nóng quá, làm cậu ấy nóng phát ốm."
+],
+[
+"这双鞋太小，把脚磨坏了。",
+"Đôi giày này chật quá, làm chân bị trầy xước hết rồi."
+]
+],
+"try": "Nói: “Công việc quá nhiều làm tôi mệt phát ốm.”"
+}
+]
+},
+{
+"line": 1,
+"s": "他一定后悔自己穿少了吧？",
+"vn": "Cậu ấy chắc hẳn là hối hận vì đã mặc ít đồ rồi nhỉ?",
+"ch": [
+{
+"t": "后悔自己穿少了",
+"py": "hòuhuǐ zìjǐ chuān shǎo le",
+"vn": "hối hận vì mặc ít đồ",
+"frame": "后悔 + V/cụm V",
+"note": "Sau 后悔 có thể là động từ hoặc một mệnh đề chỉ sự việc đã xảy ra.",
+"ex": [
+[
+"我后悔没早点学汉语。",
+"Tôi hối hận vì đã không học tiếng Trung sớm hơn."
+],
+[
+"他后悔没听父母的话。",
+"Cậu ấy hối hận vì đã không nghe lời bố mẹ."
+]
+],
+"try": "Nói: “Tôi hối hận vì đã không ôn thi kỹ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "是啊，这就叫南方不懂北方的冷。",
+"vn": "Đúng vậy, đây chính là cái gọi là người miền Nam không hiểu cái lạnh của miền Bắc.",
+"ch": []
+},
+{
+"line": 3,
+"s": "就是呢，冬天北方和南方的温度差别还是很大的。",
+"vn": "Đúng thế, nhiệt độ giữa miền Bắc và miền Nam vào mùa đông quả thực chênh lệch rất lớn.",
+"ch": []
+},
+{
+"line": 4,
+"s": "所以冬天来北方，尤其是东北，一定要提前查好目的地的天气，看看下不下雪，气温怎么样。",
+"vn": "Cho nên mùa đông đến miền Bắc, nhất là vùng Đông Bắc, nhất định phải kiểm tra trước thời tiết nơi đến, xem có tuyết rơi không, nhiệt độ thế nào.",
+"ch": [
+{
+"t": "一定要提前查好",
+"py": "yídìng yào tíqián chá hǎo",
+"vn": "nhất định phải kiểm tra kỹ từ trước",
+"frame": "一定要 + 提前 + V + 好",
+"note": "V+好 biểu thị hành động đã làm xong và đạt kết quả tốt/chuẩn bị sẵn sàng.",
+"ex": [
+[
+"一定要提前准备好行李。",
+"Nhất định phải chuẩn bị sẵn hành lý từ trước."
+],
+[
+"一定要提前买好票。",
+"Nhất định phải mua sẵn vé từ trước."
+]
+],
+"try": "Nói: “Nhất định phải chuẩn bị sẵn bài tập từ trước.”"
+}
+]
+},
+{
+"line": 5,
+"s": "对。更重要的是，说什么也得穿上厚一点儿的衣服。",
+"vn": "Đúng vậy. Quan trọng hơn nữa là, dù thế nào cũng phải mặc quần áo dày hơn một chút.",
+"ch": [
+{
+"t": "更重要的是",
+"py": "gèng zhòngyào de shì",
+"vn": "quan trọng hơn là",
+"frame": "更重要的是 + mệnh đề",
+"note": "Dùng để nhấn mạnh ý chính hoặc ý bổ sung quan trọng hơn những điều đã nói trước đó.",
+"ex": [
+[
+"工作很累，但更重要的是要保持健康。",
+"Công việc rất mệt, nhưng quan trọng hơn là phải giữ gìn sức khỏe."
+],
+[
+"钱很重要，但更重要的是快乐。",
+"Tiền rất quan trọng, nhưng quan trọng hơn là sự vui vẻ."
+]
+],
+"try": "Nói: “Học tiếng Trung cần chăm chỉ, nhưng quan trọng hơn là phải thực hành nhiều.”"
+},
+{
+"t": "说什么也得",
+"py": "shuō shénme yě děi",
+"vn": "dù thế nào cũng phải",
+"frame": "说什么也得 + V",
+"note": "Cụm từ nhấn mạnh quyết tâm hoặc sự cần thiết phải làm gì đó bất chấp khó khăn.",
+"ex": [
+[
+"明天考试，说什么也得复习好。",
+"Mai thi rồi, dù thế nào cũng phải ôn tập kỹ."
+],
+[
+"这事儿很重要，说什么也得去一趟。",
+"Việc này rất quan trọng, dù thế nào cũng phải đi một chuyến."
+]
+],
+"try": "Nói: “Dù thế nào cũng phải hoàn thành công việc hôm nay.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "寒假你们打算做什么呢？",
+"vn": "Kỳ nghỉ đông các bạn dự định làm gì?",
+"ch": [
+{
+"t": "打算做什么",
+"py": "dǎsuàn zuò shénme",
+"vn": "dự định làm gì",
+"frame": "打算 + V / làm gì",
+"note": "Dùng để hỏi hoặc trình bày kế hoạch tương lai. Có thể thay V bằng các động từ khác.",
+"ex": [
+[
+"周末你打算做什么？",
+"Cuối tuần bạn dự định làm gì?"
+],
+[
+"毕业后你打算做什么？",
+"Sau khi tốt nghiệp bạn dự định làm gì?"
+]
+],
+"try": "Nói: “Tết này bạn dự định đi đâu?”"
+}
+]
+},
+{
+"line": 1,
+"s": "我们刚刚还说呢，家月春节时要去广州，我计划去哈尔滨。",
+"vn": "Chúng tôi vừa mới nói xong, Gia Nguyệt Tết này sẽ đi Quảng Châu, tôi thì dự định đi Cáp Nhĩ Tân.",
+"ch": [
+{
+"t": "刚刚还说呢",
+"py": "gānggāng hái shuō ne",
+"vn": "vừa mới nói xong",
+"frame": "刚刚还 + V + 呢",
+"note": "Dùng để nhấn mạnh một hành động vừa mới xảy ra hoặc đang dang dở.",
+"ex": [
+[
+"我们刚刚还在讨论这个问题呢。",
+"Chúng tôi vừa mới thảo luận vấn đề này xong."
+],
+[
+"他刚刚还在办公室呢。",
+"Anh ấy vừa mới ở văn phòng xong."
+]
+],
+"try": "Nói: “Chúng tôi vừa mới nhắc đến bạn xong.”"
+}
+]
+},
+{
+"line": 2,
+"s": "那时候广州暖和，但哈尔滨特别冷，气温一般都低于零下十摄氏度甚至零下二十摄氏度，这么低的温度你受不了吧？",
+"vn": "Lúc đó Quảng Châu ấm áp, nhưng Cáp Nhĩ Tân đặc biệt lạnh, nhiệt độ thường dưới âm 10 độ C, thậm chí âm 20 độ C, nhiệt độ thấp thế này bạn chịu không nổi đâu nhỉ?",
+"ch": [
+{
+"t": "受不了吧",
+"py": "shòubùliǎo ba",
+"vn": "chịu không nổi đâu nhỉ",
+"frame": "……受不了吧？",
+"note": "Dùng để phỏng đoán hoặc hỏi ý kiến người khác về khả năng chịu đựng một điều gì đó.",
+"ex": [
+[
+"这么辣的菜，你受不了吧？",
+"Món cay thế này, bạn chịu không nổi đâu nhỉ?"
+],
+[
+"每天工作十小时，你受不了吧？",
+"Mỗi ngày làm 10 tiếng, bạn chịu không nổi đâu nhỉ?"
+]
+],
+"try": "Nói: “Tiếng ồn thế này, bạn chịu không nổi đâu nhỉ?”"
+}
+]
+},
+{
+"line": 3,
+"s": "没问题，受得了，我有的是厚衣服。我去哈尔滨主要是想看雪，听说春节时那里会举办很多活动。",
+"vn": "Không vấn đề gì, chịu được, tôi có đầy quần áo dày. Tôi đi Cáp Nhĩ Tân chủ yếu là muốn ngắm tuyết, nghe nói Tết ở đó sẽ tổ chức rất nhiều hoạt động.",
+"ch": [
+{
+"t": "有的是",
+"py": "yǒude shì",
+"vn": "có đầy / có rất nhiều",
+"frame": "有的是 + N (số lượng lớn)",
+"note": "Nhấn mạnh số lượng rất nhiều, vượt quá nhu cầu cần thiết.",
+"ex": [
+[
+"别担心，我有的是时间。",
+"Đừng lo, tôi có đầy thời gian."
+],
+[
+"图书馆里有的是书。",
+"Trong thư viện có đầy sách."
+]
+],
+"try": "Nói: “Trong siêu thị có đầy trái cây.”"
+}
+]
+},
+{
+"line": 4,
+"s": "我想在广州过年，那里冬天比较暖和。而且我喜欢看花，听说广州的鲜花市场很有名，里面有各种植物。",
+"vn": "Tôi muốn đón Tết ở Quảng Châu, mùa đông ở đó khá ấm áp. Hơn nữa tôi thích ngắm hoa, nghe nói chợ hoa ở Quảng Châu rất nổi tiếng, bên trong có đủ loại cây cối.",
+"ch": [
+{
+"t": "而且",
+"py": "érqiě",
+"vn": "hơn nữa / lại còn",
+"frame": "……，而且……",
+"note": "Dùng để bổ sung thêm thông tin, ý nghĩa tương đương “hơn nữa”.",
+"ex": [
+[
+"他很聪明，而且很努力。",
+"Anh ấy rất thông minh, hơn nữa còn rất nỗ lực."
+],
+[
+"这件衣服很漂亮，而且很便宜。",
+"Bộ quần áo này rất đẹp, hơn nữa còn rất rẻ."
+]
+],
+"try": "Nói: “Tiếng Trung rất thú vị, hơn nữa còn rất hữu ích.”"
+}
+]
+},
+{
+"line": 5,
+"s": "真不错！听你们这么一说，我也想外出旅游了。",
+"vn": "Hay quá! Nghe các bạn nói vậy, tôi cũng muốn đi du lịch rồi.",
+"ch": [
+{
+"t": "听你们这么一说",
+"py": "tīng nǐmen zhème yī shuō",
+"vn": "nghe các bạn nói vậy",
+"frame": "听 + ai + 这么一说",
+"note": "Cụm từ dùng để dẫn dắt cảm xúc hoặc quyết định sau khi nghe người khác kể chuyện.",
+"ex": [
+[
+"听老师这么一说，我明白了。",
+"Nghe thầy giáo nói vậy, tôi hiểu rồi."
+],
+[
+"听他这么一说，大家都笑了。",
+"Nghe anh ấy nói vậy, mọi người đều cười."
+]
+],
+"try": "Nói: “Nghe bạn nói vậy, tôi cũng muốn học tiếng Trung.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "广州和哈尔滨，一个在南方，一个在北方，两个城市之间的距离有三千多公里，气候也大不相同。",
+"vn": "Quảng Châu và Cáp Nhĩ Tân, một ở phía Nam, một ở phía Bắc, khoảng cách giữa hai thành phố này hơn 3000 km, khí hậu cũng rất khác biệt.",
+"ch": [
+{
+"t": "大不相同",
+"py": "dà bù xiāngtóng",
+"vn": "rất khác biệt",
+"frame": "A 和 B 大不相同",
+"note": "Dùng để nhấn mạnh sự khác biệt lớn giữa hai đối tượng. Không cần dịch từng chữ.",
+"ex": [
+[
+"南方和北方的饮食习惯大不相同。",
+"Thói quen ăn uống của miền Nam và miền Bắc rất khác biệt."
+],
+[
+"这两年的生活方式大不相同。",
+"Lối sống của hai năm nay rất khác biệt."
+]
+],
+"try": "Nói: “Tính cách của hai anh em họ rất khác biệt.”"
+}
+]
+},
+{
+"line": 0,
+"s": "广州基本上没有冬天，而哈尔滨的冬天一般会从十月开始，到第二年的三四月才结束。",
+"vn": "Quảng Châu cơ bản là không có mùa đông, còn mùa đông ở Cáp Nhĩ Tân thường bắt đầu từ tháng 10, đến tháng 3, tháng 4 năm sau mới kết thúc.",
+"ch": [
+{
+"t": "从十月开始，到第二年的三四月才结束",
+"py": "cóng shíyuè kāishǐ, dào dì èr nián de sān sì yuè cái jiéshù",
+"vn": "bắt đầu từ tháng 10, đến tháng 3, 4 năm sau mới kết thúc",
+"frame": "从……开始，到……才结束",
+"note": "Cấu trúc chỉ khoảng thời gian kéo dài, dùng “才” để nhấn mạnh sự muộn màng hoặc kéo dài của sự việc.",
+"ex": [
+[
+"会议从两点开始，到五点才结束。",
+"Cuộc họp bắt đầu từ 2 giờ, đến 5 giờ mới kết thúc."
+],
+[
+"他从早上开始工作，到晚上才结束。",
+"Anh ấy bắt đầu làm việc từ sáng, đến tối mới xong."
+]
+],
+"try": "Nói: “Khóa học bắt đầu từ tháng 9, đến tháng 1 năm sau mới kết thúc.”"
+}
+]
+},
+{
+"line": 0,
+"s": "广州四季开满鲜花，所以又叫“花城”；哈尔滨冬天冰雪多，所以也叫“冰城”。",
+"vn": "Quảng Châu bốn mùa hoa nở rộ, nên còn được gọi là \"Thành phố hoa\"; Cáp Nhĩ Tân mùa đông nhiều băng tuyết, nên cũng được gọi là \"Thành phố băng\".",
+"ch": []
+},
+{
+"line": 1,
+"s": "此外，两地的方言也不一样。哈尔滨方言和普通话听起来比较像，而广州方言和普通话差别较大。",
+"vn": "Ngoài ra, phương ngôn của hai nơi cũng không giống nhau. Phương ngôn Cáp Nhĩ Tân nghe khá giống tiếng phổ thông, còn phương ngôn Quảng Châu và tiếng phổ thông có sự khác biệt khá lớn.",
+"ch": [
+{
+"t": "此外",
+"py": "cǐwài",
+"vn": "ngoài ra",
+"frame": "此外，……",
+"note": "Dùng để bổ sung thêm ý kiến hoặc thông tin mới. Đứng đầu câu.",
+"ex": [
+[
+"此外，我还想买一本词典。",
+"Ngoài ra, tôi còn muốn mua một cuốn từ điển."
+],
+[
+"此外，他还会说法语。",
+"Ngoài ra, anh ấy còn biết nói tiếng Pháp."
+]
+],
+"try": "Nói: “Ngoài ra, tôi còn phải làm bài tập về nhà.”"
+}
+]
+},
+{
+"line": 1,
+"s": "如果广州人和哈尔滨人都只使用自己的方言，那么交流就很困难，甚至还可能引起误会。",
+"vn": "Nếu người Quảng Châu và người Cáp Nhĩ Tân đều chỉ sử dụng phương ngôn của mình, thì việc giao tiếp sẽ rất khó khăn, thậm chí còn có thể gây ra hiểu lầm.",
+"ch": [
+{
+"t": "如果……那么……",
+"py": "rúguǒ... nàme...",
+"vn": "nếu... thì...",
+"frame": "如果 A，那么 B",
+"note": "Cấu trúc giả thiết - kết quả. “那么” có thể lược bỏ trong văn nói, nhưng dùng để nhấn mạnh kết quả.",
+"ex": [
+[
+"如果明天不下雨，那么我们就去爬山。",
+"Nếu mai không mưa, thì chúng ta đi leo núi."
+],
+[
+"如果他不努力，那么很难通过考试。",
+"Nếu anh ấy không nỗ lực, thì khó mà đỗ kỳ thi."
+]
+],
+"try": "Nói: “Nếu bạn không học từ mới, thì sẽ khó hiểu bài.”"
+}
+]
+},
+{
+"line": 1,
+"s": "其实，中国很多地方都有自己的方言，所以，为了顺利交流，中国人从小都要学习普通话。",
+"vn": "Thực ra, rất nhiều nơi ở Trung Quốc đều có phương ngôn riêng, vì vậy, để giao tiếp thuận lợi, người Trung Quốc từ nhỏ đều phải học tiếng phổ thông.",
+"ch": [
+{
+"t": "为了顺利交流",
+"py": "wèile shùnlì jiāoliú",
+"vn": "để giao tiếp thuận lợi",
+"frame": "为了 + mục đích, ……",
+"note": "Cấu trúc chỉ mục đích. “为了” đứng đầu câu hoặc sau chủ ngữ.",
+"ex": [
+[
+"为了学好汉语，我每天都练习。",
+"Để học tốt tiếng Trung, ngày nào tôi cũng luyện tập."
+],
+[
+"为了身体健康，他开始跑步了。",
+"Để sức khỏe tốt, anh ấy bắt đầu chạy bộ."
+]
+],
+"try": "Nói: “Để thi đỗ HSK4, tôi phải học chăm chỉ hơn.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "亲爱的同学们：",
+"vn": "Các bạn học sinh thân mến:",
+"ch": []
+},
+{
+"line": 1,
+"s": "今年的“世界环境日”，我们再次开展“绿色生活”活动，希望同学们做到：",
+"vn": "Ngày Môi trường Thế giới năm nay, chúng tôi lại tổ chức hoạt động \"Sống xanh\", hy vọng các bạn học sinh có thể thực hiện:",
+"ch": [
+{
+"t": "再次开展",
+"py": "zàicì kāizhǎn",
+"vn": "lại tổ chức/triển khai một lần nữa",
+"frame": "再次 + V",
+"note": "Dùng để diễn tả một hành động lặp lại, mang tính trang trọng hơn '又'.",
+"ex": [
+[
+"学校再次开展了汉语比赛。",
+"Nhà trường lại tổ chức cuộc thi tiếng Trung một lần nữa."
+],
+[
+"我们决定再次开展这个项目。",
+"Chúng tôi quyết định triển khai lại dự án này."
+]
+],
+"try": "Nói: \"Công ty lại tổ chức cuộc họp một lần nữa.\""
+}
+]
+},
+{
+"line": 2,
+"s": "一、绿色出行。绿色一小步，环保一大步。根据距离选择绿色交通方式。距离短时可以走路或者骑自行车，距离长时多乘坐公交车或者地铁。",
+"vn": "Một, đi lại xanh. Một bước nhỏ xanh, một bước lớn bảo vệ môi trường. Dựa vào khoảng cách để chọn phương thức giao thông xanh. Khi khoảng cách ngắn có thể đi bộ hoặc đi xe đạp, khi khoảng cách xa nên đi xe buýt hoặc tàu điện ngầm.",
+"ch": [
+{
+"t": "根据距离选择",
+"py": "gēnjù jùlí xuǎnzé",
+"vn": "dựa vào khoảng cách để chọn",
+"frame": "根据 + N + V",
+"note": "Dùng để chỉ căn cứ để đưa ra quyết định hoặc hành động.",
+"ex": [
+[
+"根据天气选择衣服。",
+"Dựa vào thời tiết để chọn quần áo."
+],
+[
+"根据能力选择工作。",
+"Dựa vào năng lực để chọn công việc."
+]
+],
+"try": "Nói: \"Dựa vào thời gian để chọn phương pháp học tập.\""
+},
+{
+"t": "距离短时",
+"py": "jùlí duǎn shí",
+"vn": "khi khoảng cách ngắn",
+"frame": "……时",
+"note": "Dùng để chỉ thời điểm hoặc tình huống xảy ra sự việc.",
+"ex": [
+[
+"心情不好时，我会听音乐。",
+"Khi tâm trạng không tốt, tôi sẽ nghe nhạc."
+],
+[
+"遇到困难时，要勇敢面对。",
+"Khi gặp khó khăn, phải dũng cảm đối mặt."
+]
+],
+"try": "Nói: \"Khi đi du lịch, tôi thích chụp ảnh.\""
+}
+]
+},
+{
+"line": 3,
+"s": "二、拒绝浪费。节约资源，坚持一水多用、人走灯关、餐餐都“光盘”。",
+"vn": "Hai, từ chối lãng phí. Tiết kiệm tài nguyên, kiên trì một nước nhiều công dụng, người đi đèn tắt, bữa nào cũng \"sạch đĩa\".",
+"ch": [
+{
+"t": "拒绝浪费",
+"py": "jùjué làngfèi",
+"vn": "từ chối lãng phí",
+"frame": "拒绝 + V/N",
+"note": "Dùng để bày tỏ thái độ không chấp nhận hoặc không thực hiện điều gì đó.",
+"ex": [
+[
+"我们要拒绝不健康的食物。",
+"Chúng ta phải từ chối thực phẩm không lành mạnh."
+],
+[
+"他拒绝了我的邀请。",
+"Anh ấy đã từ chối lời mời của tôi."
+]
+],
+"try": "Nói: \"Chúng ta nên từ chối việc lãng phí thời gian.\""
+}
+]
+},
+{
+"line": 4,
+"s": "三、垃圾分类。积极参加校园、小区环保活动，学习垃圾分类知识，从小事做起，做好垃圾分类。",
+"vn": "Ba, phân loại rác. Tích cực tham gia các hoạt động bảo vệ môi trường ở trường học, khu dân cư, học kiến thức phân loại rác, bắt đầu từ việc nhỏ, làm tốt việc phân loại rác.",
+"ch": [
+{
+"t": "从小事做起",
+"py": "cóng xiǎoshì zuò qǐ",
+"vn": "bắt đầu từ việc nhỏ",
+"frame": "从 + N + 做起",
+"note": "Cụm từ cố định dùng để khuyên nhủ nên bắt đầu từ những điều đơn giản nhất.",
+"ex": [
+[
+"学好汉语要从简单的词语做起。",
+"Học tốt tiếng Trung phải bắt đầu từ những từ đơn giản."
+],
+[
+"保护环境要从自己做起。",
+"Bảo vệ môi trường phải bắt đầu từ chính mình."
+]
+],
+"try": "Nói: \"Thành công phải bắt đầu từ những việc nhỏ.\""
+}
+]
+},
+{
+"line": 5,
+"s": "保护环境是每一个人的责任。同学们，让我们共同努力，让绿色生活成为我们的日常习惯！",
+"vn": "Bảo vệ môi trường là trách nhiệm của mỗi người. Các bạn học sinh, hãy cùng nhau nỗ lực, để cuộc sống xanh trở thành thói quen hàng ngày của chúng ta!",
+"ch": [
+{
+"t": "成为我们的日常习惯",
+"py": "chéngwéi wǒmen de rìcháng xíguàn",
+"vn": "trở thành thói quen hàng ngày của chúng ta",
+"frame": "成为 + N",
+"note": "Dùng để chỉ sự biến đổi hoặc phát triển thành một trạng thái mới.",
+"ex": [
+[
+"他成为了一名老师。",
+"Anh ấy đã trở thành một giáo viên."
+],
+[
+"运动成为了我的爱好。",
+"Thể thao đã trở thành sở thích của tôi."
+]
+],
+"try": "Nói: \"Việc đọc sách đã trở thành thói quen hàng ngày của tôi.\""
+}
+]
+},
+{
+"line": 6,
+"s": "校学生会　2026年6月5日",
+"vn": "Hội học sinh trường, ngày 5 tháng 6 năm 2026",
+"ch": []
+}
+]
+}

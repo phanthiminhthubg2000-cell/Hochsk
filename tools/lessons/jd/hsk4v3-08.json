@@ -1,0 +1,517 @@
+{
+"1": [
+{
+"line": 0,
+"s": "家月，最近学习太紧张了，咱们明天出去放松放松吧。",
+"vn": "Gia Nguyệt, gần đây việc học căng thẳng quá, mai chúng mình ra ngoài thư giãn chút đi.",
+"ch": [
+{
+"t": "放松放松",
+"py": "fàngsōng fàngsōng",
+"vn": "thư giãn chút",
+"frame": "V + V (lặp lại)",
+"note": "Lặp lại động từ để chỉ hành động diễn ra trong thời gian ngắn hoặc mang tính chất nhẹ nhàng, thoải mái.",
+"ex": [
+[
+"周末我想在家休息休息。",
+"Cuối tuần tôi muốn ở nhà nghỉ ngơi chút."
+],
+[
+"你先坐下喝杯茶，聊聊天吧。",
+"Bạn ngồi xuống uống chén trà, trò chuyện chút đi."
+]
+],
+"try": "Nói: “Sau khi làm bài tập xong, tôi muốn nghe nhạc chút.”"
+}
+]
+},
+{
+"line": 1,
+"s": "呀，正好我也想出去呢。咱们去哪儿好呢？",
+"vn": "À, đúng lúc tôi cũng đang muốn ra ngoài đây. Chúng mình đi đâu thì tốt nhỉ?",
+"ch": [
+{
+"t": "正好",
+"py": "zhènghǎo",
+"vn": "đúng lúc, vừa hay",
+"frame": "正好 + chủ ngữ + V",
+"note": "Dùng để diễn tả sự trùng hợp về thời gian hoặc ý định.",
+"ex": [
+[
+"我正想买书，正好书店打折。",
+"Tôi đang định mua sách, đúng lúc hiệu sách giảm giá."
+],
+[
+"他要走的时候，正好下雨了。",
+"Khi anh ấy định đi thì đúng lúc trời mưa."
+]
+],
+"try": "Nói: “Tôi đang đói, đúng lúc bạn mang cơm đến.”"
+}
+]
+},
+{
+"line": 2,
+"s": "不管去哪儿，能放松的地方都行。",
+"vn": "Dù đi đâu, cứ nơi nào có thể thư giãn là được.",
+"ch": [
+{
+"t": "不管……都……",
+"py": "bùguǎn... dōu...",
+"vn": "bất kể... đều...",
+"frame": "不管 + câu hỏi/từ nghi vấn + chủ ngữ + 都 + V/Adj",
+"note": "Diễn tả kết quả không thay đổi dù điều kiện có thế nào đi nữa.",
+"ex": [
+[
+"不管工作多忙，我都要学汉语。",
+"Bất kể công việc bận thế nào, tôi đều phải học tiếng Trung."
+],
+[
+"不管谁问，你都不要告诉他。",
+"Bất kể ai hỏi, bạn đều đừng nói cho anh ta."
+]
+],
+"try": "Nói: “Bất kể thời tiết thế nào, chúng tôi đều đi làm.”"
+}
+]
+},
+{
+"line": 3,
+"s": "郊区怎么样？",
+"vn": "Vùng ngoại ô thì sao?",
+"ch": []
+},
+{
+"line": 4,
+"s": "天中说，下周王老师要带咱们去郊区游玩呢。",
+"vn": "Thiên Trung bảo, tuần sau thầy Vương sẽ dẫn chúng mình đi ngoại ô chơi đấy.",
+"ch": []
+},
+{
+"line": 5,
+"s": "是吗？那咱们明天去爬长城吧，不是说“不到长城非好汉”吗？",
+"vn": "Thế à? Vậy mai chúng mình đi leo Vạn Lý Trường Thành đi, chẳng phải người ta nói “không đến Trường Thành không phải hảo hán” sao?",
+"ch": []
+},
+{
+"line": 6,
+"s": "好主意！不过明天是个大晴天，外出记得戴帽子。",
+"vn": "Ý hay đấy! Nhưng mai là ngày nắng to, ra ngoài nhớ đội mũ nhé.",
+"ch": [
+{
+"t": "好主意",
+"py": "hǎo zhǔyì",
+"vn": "ý hay",
+"frame": "……是好主意",
+"note": "Cụm từ dùng để tán thành ý kiến của người khác.",
+"ex": [
+[
+"我们一起去图书馆复习吧，这是个好主意。",
+"Chúng mình cùng đến thư viện ôn tập đi, đây là một ý hay."
+],
+[
+"他建议明天早起跑步，我觉得是个好主意。",
+"Anh ấy gợi ý mai dậy sớm chạy bộ, tôi thấy đó là một ý hay."
+]
+],
+"try": "Nói: “Chúng ta tổ chức tiệc sinh nhật ở nhà đi, ý hay đấy!”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "同乐哥，你们平时工作忙吗？",
+"vn": "Anh Đồng Lạc, bình thường công việc của các anh có bận không?",
+"ch": []
+},
+{
+"line": 1,
+"s": "挺忙的。以前我总觉得年轻时要多学多干，所以参加了公司里的很多项目，经常加班、熬夜，身体也亮起了红灯。",
+"vn": "Rất bận. Trước đây tôi luôn nghĩ lúc còn trẻ phải học nhiều làm nhiều, nên đã tham gia rất nhiều dự án của công ty, thường xuyên tăng ca, thức đêm, cơ thể cũng đã báo động đỏ rồi.",
+"ch": [
+{
+"t": "年轻时要多学多干",
+"py": "niánqīng shí yào duō xué duō gàn",
+"vn": "lúc trẻ phải học nhiều làm nhiều",
+"frame": "……时要多 + V + 多 + V",
+"note": "Cấu trúc nhấn mạnh việc tích cực thực hiện hành động trong một giai đoạn nhất định.",
+"ex": [
+[
+"大学时要多看书多练习。",
+"Lúc đại học phải đọc nhiều sách, luyện tập nhiều."
+],
+[
+"工作时要多听多问。",
+"Khi đi làm phải nghe nhiều, hỏi nhiều."
+]
+],
+"try": "Nói: “Lúc học tiếng Trung phải nghe nhiều, nói nhiều.”"
+}
+]
+},
+{
+"line": 2,
+"s": "还是别给自己太大压力，否则，失去健康就不值得了。",
+"vn": "Tốt nhất đừng tạo cho mình quá nhiều áp lực, nếu không, mất đi sức khỏe thì không đáng đâu.",
+"ch": [
+{
+"t": "别给自己太大压力",
+"py": "bié gěi zìjǐ tài dà yālì",
+"vn": "đừng tạo cho bản thân quá nhiều áp lực",
+"frame": "给 + A + 压力",
+"note": "Dùng để diễn tả việc ai đó gây áp lực cho chính mình hoặc người khác.",
+"ex": [
+[
+"考试前别给自己太大压力。",
+"Trước kỳ thi đừng tạo cho mình quá nhiều áp lực."
+],
+[
+"老板总是给我很大压力。",
+"Sếp luôn tạo cho tôi rất nhiều áp lực."
+]
+],
+"try": "Nói: “Đừng tạo áp lực cho nhân viên mới.”"
+},
+{
+"t": "否则，失去健康就不值得了",
+"py": "fǒuzé, shīqù jiànkāng jiù bù zhídé le",
+"vn": "nếu không, mất đi sức khỏe thì không đáng",
+"frame": "否则 + hậu quả",
+"note": "Dùng để cảnh báo hậu quả nếu không làm theo lời khuyên trước đó.",
+"ex": [
+[
+"必须好好复习，否则考试会不及格。",
+"Phải ôn tập kỹ, nếu không thi sẽ không đạt."
+],
+[
+"快点儿走，否则赶不上火车了。",
+"Đi nhanh lên, nếu không sẽ lỡ tàu đấy."
+]
+],
+"try": "Nói: “Phải chú ý ăn uống, nếu không sẽ bị ốm.”"
+}
+]
+},
+{
+"line": 3,
+"s": "是啊，后来我就不接那么多项目了。我发现暂停下来、好好休息之后，我能把工作做得更快更好。",
+"vn": "Đúng vậy, sau đó tôi không nhận nhiều dự án như thế nữa. Tôi phát hiện ra sau khi tạm dừng lại, nghỉ ngơi tử tế, tôi có thể làm việc nhanh hơn và tốt hơn.",
+"ch": [
+{
+"t": "能把工作做得更快更好",
+"py": "néng bǎ gōngzuò zuò de gèng kuài gèng hǎo",
+"vn": "có thể làm công việc nhanh hơn tốt hơn",
+"frame": "把 + O + V + 得 + bổ ngữ trình độ",
+"note": "Cấu trúc 把 dùng để nhấn mạnh sự thay đổi hoặc kết quả tác động lên đối tượng.",
+"ex": [
+[
+"我能把汉语说得更好。",
+"Tôi có thể nói tiếng Trung tốt hơn."
+],
+[
+"请把房间打扫得干净一点儿。",
+"Hãy dọn phòng sạch một chút."
+]
+],
+"try": "Nói: “Tôi có thể làm bài tập nhanh hơn.”"
+}
+]
+},
+{
+"line": 4,
+"s": "对，该工作时就工作，该放松时就要放松。",
+"vn": "Đúng, lúc làm việc thì làm, lúc thư giãn thì phải thư giãn.",
+"ch": [
+{
+"t": "该工作时就工作，该放松时就要放松",
+"py": "gāi gōngzuò shí jiù gōngzuò, gāi fàngsōng shí jiù yào fàngsōng",
+"vn": "đến lúc làm thì làm, đến lúc nghỉ thì phải nghỉ",
+"frame": "该 + V + 时就 + V",
+"note": "Cấu trúc cân bằng cuộc sống, thể hiện sự rạch ròi trong hành động.",
+"ex": [
+[
+"该学习时就学习，该玩儿时就玩儿。",
+"Đến lúc học thì học, đến lúc chơi thì chơi."
+],
+[
+"该吃饭时就吃饭，别总是工作。",
+"Đến lúc ăn thì ăn, đừng lúc nào cũng làm việc."
+]
+],
+"try": "Nói: “Đến lúc ngủ thì phải ngủ.”"
+}
+]
+},
+{
+"line": 5,
+"s": "是的，现在我周末常来郊区，在好山好水好风景中放松自己。",
+"vn": "Đúng vậy, bây giờ cuối tuần tôi thường đến vùng ngoại ô, thư giãn bản thân giữa núi non sông nước và phong cảnh đẹp.",
+"ch": []
+}
+],
+"3": [
+{
+"line": 0,
+"s": "以前杨同乐总觉得自己年轻，就应该多学多干、积累经验。",
+"vn": "Trước đây Dương Đồng Lạc luôn cảm thấy mình còn trẻ, nên phải học nhiều làm nhiều, tích lũy kinh nghiệm.",
+"ch": []
+},
+{
+"line": 0,
+"s": "很多年轻人和他想法一样。但是，由于工作紧张，他们经常加班、熬夜，休息不够，结果工作效率下降，健康也受到了影响。",
+"vn": "Nhiều người trẻ có suy nghĩ giống anh ấy. Nhưng do công việc căng thẳng, họ thường xuyên tăng ca, thức khuya, nghỉ ngơi không đủ, kết quả là hiệu suất công việc giảm sút, sức khỏe cũng bị ảnh hưởng.",
+"ch": [
+{
+"t": "工作效率下降",
+"py": "gōngzuò xiàolǜ xiàjiàng",
+"vn": "hiệu suất công việc giảm sút",
+"frame": "……效率下降",
+"note": "Dùng để diễn tả tình trạng năng suất làm việc hoặc học tập đi xuống do nguyên nhân nào đó.",
+"ex": [
+[
+"因为太累，我的学习效率下降了。",
+"Vì quá mệt, hiệu suất học tập của tôi giảm sút."
+],
+[
+"如果不休息，工作效率会下降。",
+"Nếu không nghỉ ngơi, hiệu suất công việc sẽ giảm."
+]
+],
+"try": "Nói: \"Dạo này tôi thức khuya nhiều nên hiệu suất làm việc giảm sút.\""
+}
+]
+},
+{
+"line": 1,
+"s": "现在越来越多的人认识到，跟一直加班相比，休息好了再工作，效率更高。",
+"vn": "Hiện nay ngày càng nhiều người nhận ra rằng, so với việc cứ tăng ca mãi, nghỉ ngơi đầy đủ rồi mới làm việc thì hiệu suất cao hơn.",
+"ch": [
+{
+"t": "跟一直加班相比",
+"py": "gēn yìzhí jiābān xiāngbǐ",
+"vn": "so với việc cứ tăng ca mãi",
+"frame": "跟 A 相比，B ……",
+"note": "Cấu trúc so sánh hai sự vật/sự việc. Đặt cụm này ở đầu câu để làm rõ đối tượng so sánh.",
+"ex": [
+[
+"跟以前相比，现在的交通方便多了。",
+"So với trước đây, giao thông hiện nay thuận tiện hơn nhiều."
+],
+[
+"跟大城市相比，我更喜欢小城市。",
+"So với thành phố lớn, tôi thích thành phố nhỏ hơn."
+]
+],
+"try": "Nói: \"So với việc tự học, học với giáo viên hiệu quả hơn.\""
+}
+]
+},
+{
+"line": 1,
+"s": "因此，很多人开始做出改变，提醒自己减轻压力、多多放松。",
+"vn": "Vì vậy, nhiều người bắt đầu thay đổi, nhắc nhở bản thân giảm bớt áp lực, thư giãn nhiều hơn.",
+"ch": [
+{
+"t": "提醒自己",
+"py": "tíxǐng zìjǐ",
+"vn": "nhắc nhở bản thân",
+"frame": "提醒自己 + V",
+"note": "Dùng khi muốn tự nhắc nhở bản thân thực hiện một thói quen tốt hoặc tránh sai lầm.",
+"ex": [
+[
+"我要提醒自己多喝水。",
+"Tôi phải nhắc nhở bản thân uống nhiều nước."
+],
+[
+"考试前，我提醒自己不要紧张。",
+"Trước khi thi, tôi nhắc nhở bản thân đừng căng thẳng."
+]
+],
+"try": "Nói: \"Mỗi ngày tôi đều nhắc nhở bản thân phải học từ mới.\""
+}
+]
+},
+{
+"line": 1,
+"s": "比如，杨同乐周末时或者与朋友们去郊区游玩，在大自然美丽的景色中好好放松自己；或者就在家里安安静静地看看书。",
+"vn": "Ví dụ, cuối tuần Dương Đồng Lạc hoặc là cùng bạn bè đi chơi ở ngoại ô, thư giãn bản thân giữa cảnh sắc thiên nhiên tươi đẹp; hoặc là cứ ở nhà yên tĩnh đọc sách.",
+"ch": [
+{
+"t": "在大自然美丽的景色中",
+"py": "zài dàzìrán měilì de jǐngsè zhōng",
+"vn": "giữa cảnh sắc thiên nhiên tươi đẹp",
+"frame": "在……中",
+"note": "Cấu trúc này dùng để chỉ một trạng thái hoặc môi trường bao quanh, dịch là \"trong/giữa\".",
+"ex": [
+[
+"我们在快乐的气氛中结束了聚会。",
+"Chúng tôi kết thúc buổi tiệc trong bầu không khí vui vẻ."
+],
+[
+"在老师的帮助下，我进步了。",
+"Trong sự giúp đỡ của thầy giáo, tôi đã tiến bộ."
+]
+],
+"try": "Nói: \"Tôi thích đọc sách trong không gian yên tĩnh.\""
+}
+]
+},
+{
+"line": 1,
+"s": "休息好了，再回去上班时，心情愉快，工作效率也更高。",
+"vn": "Nghỉ ngơi tốt rồi, khi quay lại làm việc, tâm trạng vui vẻ, hiệu suất công việc cũng cao hơn.",
+"ch": []
+}
+],
+"4": [
+{
+"line": 0,
+"s": "一到周末，很多人都喜欢外出游玩。你一般去哪里呢？",
+"vn": "Cứ đến cuối tuần, rất nhiều người đều thích ra ngoài đi chơi. Bạn thường đi đâu thế?",
+"ch": [
+{
+"t": "一到周末",
+"py": "yī dào zhōumò",
+"vn": "hễ đến cuối tuần",
+"frame": "一到 + thời gian, ……",
+"note": "Cấu trúc chỉ thói quen, hễ cứ đến thời gian nào đó là sẽ có hành động xảy ra.",
+"ex": [
+[
+"一到考试，学生们就很紧张。",
+"Hễ đến kỳ thi, học sinh đều rất căng thẳng."
+],
+[
+"一到晚上，街上就有很多行人。",
+"Hễ đến tối, trên đường liền có rất nhiều người qua lại."
+]
+],
+"try": "Nói: “Hễ đến mùa hè, chúng tôi đều đi du lịch.”"
+},
+{
+"t": "都喜欢外出游玩",
+"py": "dōu xǐhuān wàichū yóuwán",
+"vn": "đều thích ra ngoài đi chơi",
+"frame": "都喜欢 + hành động",
+"note": "Diễn tả sở thích chung của mọi người.",
+"ex": [
+[
+"大家都很喜欢外出旅游。",
+"Mọi người đều rất thích đi du lịch bên ngoài."
+],
+[
+"年轻人很喜欢外出运动。",
+"Người trẻ rất thích ra ngoài vận động."
+]
+],
+"try": "Nói: “Hôm nay trời đẹp, mọi người đều thích ra ngoài tản bộ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "我生活在中国的首都——北京。在北京，周末的时候，有人会在市区公园走走，看看眼前的美景；有人喜欢去参观长城、故宫等有名的景点，放松心情的同时，也能了解历史文化。北京交通很方便，所以我和家人更爱乘坐公交车去郊区，偶尔也会自己开车。郊区有山有水，还有很多农家乐，吃、玩、住都十分方便。",
+"vn": "Tôi sống ở thủ đô của Trung Quốc – Bắc Kinh. Ở Bắc Kinh, những lúc cuối tuần, có người sẽ đi dạo trong công viên nội thành, ngắm cảnh đẹp trước mắt; có người thích đi tham quan Vạn Lý Trường Thành, Cố Cung và các điểm du lịch nổi tiếng khác, vừa thư giãn tâm tình vừa có thể tìm hiểu lịch sử văn hóa. Giao thông Bắc Kinh rất thuận tiện, thế nên tôi và người nhà càng thích đi xe buýt đến vùng ngoại ô, thỉnh thoảng cũng tự lái xe. Ngoại ô có núi có nước, lại có rất nhiều khu du lịch nhà nông, ăn uống, vui chơi, ở lại đều vô cùng tiện lợi.",
+"ch": [
+{
+"t": "放松心情的同时",
+"py": "fàngsōng xīnqíng de tóngshí",
+"vn": "trong lúc thư giãn tâm tình",
+"frame": "……的同时",
+"note": "Chỉ hai việc diễn ra cùng một lúc. Lưu ý chữ 的 đi kèm khi nối vào danh từ hoặc cụm động từ.",
+"ex": [
+[
+"学习汉语的同时，也能了解中国文化。",
+"Trong lúc học tiếng Trung, cũng có thể hiểu về văn hóa Trung Quốc."
+],
+[
+"工作的同时，别忘了照顾身体。",
+"Trong lúc làm việc, đừng quên chăm sóc cơ thể."
+]
+],
+"try": "Nói: “Trong lúc nghe nhạc, cũng có thể học từ mới.”"
+},
+{
+"t": "更爱乘坐公交车",
+"py": "gèng ài chéngzuò gōngjiāochē",
+"vn": "càng thích đi xe buýt",
+"frame": "更爱 + hành động",
+"note": "Thể hiện mức độ yêu thích cao hơn so với lựa chọn khác.",
+"ex": [
+[
+"我更爱喝绿茶。",
+"Tôi càng thích uống trà xanh hơn."
+],
+[
+"周末我更爱在家看书。",
+"Cuối tuần tôi càng thích ở nhà đọc sách hơn."
+]
+],
+"try": "Nói: “Tôi càng thích tự lái xe đi làm.”"
+},
+{
+"t": "吃、玩、住都十分方便",
+"py": "chī, wán, zhù dōu shífēn fāngbiàn",
+"vn": "ăn, chơi, ở đều vô cùng tiện lợi",
+"frame": "A、B、C 都十分方便",
+"note": "Dùng để khen cơ sở vật chất hoặc địa điểm nào đó rất hoàn thiện.",
+"ex": [
+[
+"这里的交通、购物都十分方便。",
+"Giao thông, mua sắm ở đây đều vô cùng tiện lợi."
+],
+[
+"学校附近的吃、住都十分方便。",
+"Chỗ ăn, chỗ ở gần trường đều vô cùng tiện lợi."
+]
+],
+"try": "Nói: “Khách sạn này ăn, ở đều vô cùng tiện lợi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "在我看来，不管去哪里玩，实际上都是为了放松。也可以说，只要能放松，去哪儿都合适。",
+"vn": "Theo tôi thấy, bất kể đi đâu chơi, thực ra đều là để thư giãn. Cũng có thể nói, chỉ cần có thể thư giãn, đi đâu cũng thích hợp.",
+"ch": [
+{
+"t": "不管去哪里玩",
+"py": "bùguǎn qù nǎlǐ wán",
+"vn": "bất kể đi đâu chơi",
+"frame": "不管 + từ để hỏi (哪里/怎么/谁) + 都……",
+"note": "Chỉ điều kiện không thay đổi dù hoàn cảnh thế nào.",
+"ex": [
+[
+"不管去哪儿，我都跟你去。",
+"Bất kể đi đâu, tôi cũng đi cùng bạn."
+],
+[
+"不管怎么做，都要认真。",
+"Bất kể làm thế nào, đều phải nghiêm túc."
+]
+],
+"try": "Nói: “Bất kể mua cái gì, cũng phải chọn đồ tốt.”"
+},
+{
+"t": "只要能放松",
+"py": "zhǐyào néng fàngsōng",
+"vn": "chỉ cần có thể thư giãn",
+"frame": "只要 + điều kiện，就/都……",
+"note": "Biểu thị điều kiện đủ để đạt kết quả phía sau.",
+"ex": [
+[
+"只要努力，就能考上大学。",
+"Chỉ cần nỗ lực, liền có thể đậu đại học."
+],
+[
+"只要多说，汉语就会进步。",
+"Chỉ cần nói nhiều, tiếng Trung sẽ tiến bộ."
+]
+],
+"try": "Nói: “Chỉ cần trời không mưa, chúng ta liền đi chơi.”"
+}
+]
+}
+]
+}

@@ -1,0 +1,593 @@
+{
+"1": [
+{
+"line": 0,
+"s": "爸爸、妈妈，快看，熊和老虎都在这儿呢！",
+"vn": "Bố, mẹ, nhìn nhanh kìa, gấu và hổ đều ở đây này!",
+"ch": []
+},
+{
+"line": 1,
+"s": "小明，注意安全，不要一直大喊！",
+"vn": "Tiểu Minh, chú ý an toàn, đừng có hét lớn mãi!",
+"ch": [
+{
+"t": "注意安全",
+"py": "zhùyì ānquán",
+"vn": "chú ý an toàn",
+"frame": "要 / 请 + 注意安全",
+"note": "Cụm từ cố định dùng để nhắc nhở người khác trước khi đi xa hoặc làm việc gì đó.",
+"ex": [
+[
+"出门在外，一定要注意安全。",
+"Đi ra ngoài, nhất định phải chú ý an toàn."
+],
+[
+"过马路时请注意安全。",
+"Khi sang đường xin hãy chú ý an toàn."
+]
+],
+"try": "Nói: “Đi du lịch phải chú ý an toàn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "你们看，那个叫东北虎，是国家一级保护动物。那边树林里还有很多动物呢。",
+"vn": "Mọi người nhìn xem, con kia gọi là hổ Đông Bắc, là động vật được bảo vệ cấp quốc gia. Trong rừng bên kia còn có rất nhiều động vật đấy.",
+"ch": []
+},
+{
+"line": 3,
+"s": "咱们都能看到吧？",
+"vn": "Chúng ta đều nhìn thấy chứ?",
+"ch": []
+},
+{
+"line": 4,
+"s": "对。景区的车每到一个动物区都会停一会儿，让人们能近距离看看这些动物。",
+"vn": "Đúng vậy. Xe của khu du lịch mỗi khi đến một khu động vật đều sẽ dừng lại một lát, để mọi người có thể nhìn gần những con vật này.",
+"ch": [
+{
+"t": "每到……都会……",
+"py": "měi dào... dōu huì...",
+"vn": "mỗi khi đến... đều sẽ...",
+"frame": "每到 + thời gian/địa điểm + 都会 + hành động",
+"note": "Cấu trúc diễn tả thói quen hoặc quy luật lặp đi lặp lại.",
+"ex": [
+[
+"每到周末，我都会去图书馆学习。",
+"Mỗi khi đến cuối tuần, tôi đều sẽ đi thư viện học."
+],
+[
+"每到考试，他都会很紧张。",
+"Mỗi khi đến kỳ thi, cậu ấy đều sẽ rất căng thẳng."
+]
+],
+"try": "Nói: “Mỗi khi đến Tết, tôi đều sẽ về quê.”"
+}
+]
+},
+{
+"line": 5,
+"s": "真不错，这景区真大、真美！我知道北京野生动物园很大，可怎么也没想到这么大！",
+"vn": "Thật tuyệt, khu du lịch này thật lớn, thật đẹp! Tôi biết vườn thú hoang dã Bắc Kinh rất lớn, nhưng thật không ngờ lại lớn đến thế!",
+"ch": [
+{
+"t": "怎么也没想到",
+"py": "zěnme yě méi xiǎngdào",
+"vn": "thật không ngờ / không thể ngờ được",
+"frame": "怎么也没想到 + mệnh đề",
+"note": "Nhấn mạnh sự ngạc nhiên tột độ, dùng khi kết quả khác xa với dự đoán ban đầu.",
+"ex": [
+[
+"怎么也没想到，今天会迟到。",
+"Thật không ngờ, hôm nay lại đi muộn."
+],
+[
+"怎么也没想到，这份工作这么难。",
+"Thật không ngờ, công việc này lại khó đến vậy."
+]
+],
+"try": "Nói: “Thật không ngờ bài thi này lại khó như vậy.”"
+}
+]
+},
+{
+"line": 6,
+"s": "这里有几千只动物呢，能不大吗？现在是节假日，人多。小明，一会儿千万别跑丢了，我可不是开玩笑呢。",
+"vn": "Ở đây có mấy nghìn con vật đấy, sao mà không lớn được? Bây giờ là ngày lễ, người đông. Tiểu Minh, lát nữa nhất định đừng chạy lạc đấy, mẹ không đùa đâu.",
+"ch": [
+{
+"t": "千万别",
+"py": "qiānwàn bié",
+"vn": "nhất định đừng / tuyệt đối đừng",
+"frame": "千万别 + hành động",
+"note": "Dùng để khuyên bảo hoặc cảnh báo mạnh mẽ, mang sắc thái nghiêm túc.",
+"ex": [
+[
+"明天考试，千万别迟到。",
+"Ngày mai thi, tuyệt đối đừng đi muộn."
+],
+[
+"这件事情千万别告诉别人。",
+"Chuyện này nhất định đừng nói cho người khác."
+]
+],
+"try": "Nói: “Đi đường nhất định đừng dùng điện thoại.”"
+},
+{
+"t": "不是开玩笑",
+"py": "bú shì kāiwánxiào",
+"vn": "không phải nói đùa",
+"frame": "我可不是开玩笑 (呢)",
+"note": "Dùng để khẳng định sự nghiêm túc của lời nói, thường đặt ở cuối câu hoặc đầu câu.",
+"ex": [
+[
+"我可不是开玩笑，这事儿很严重。",
+"Tôi không đùa đâu, việc này rất nghiêm trọng."
+],
+[
+"你一定要认真学习，我不是开玩笑。",
+"Bạn phải học hành nghiêm túc, tôi không nói đùa đâu."
+]
+],
+"try": "Nói: “Tôi nói thật đấy, không phải đùa đâu.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "来，大家快吃月饼，这儿还有葡萄、西瓜。",
+"vn": "Nào, mọi người ăn bánh trung thu đi, ở đây còn có nho, dưa hấu nữa.",
+"ch": []
+},
+{
+"line": 1,
+"s": "这是今年的新茶，你们也尝尝。",
+"vn": "Đây là trà mới năm nay, các bạn cũng nếm thử xem.",
+"ch": []
+},
+{
+"line": 2,
+"s": "好的。这茶闻着真香！",
+"vn": "Được ạ. Trà này ngửi thơm thật đấy!",
+"ch": [
+{
+"t": "闻着真香",
+"py": "wénzhe zhēn xiāng",
+"vn": "ngửi thấy thật thơm",
+"frame": "V + 着 + 真 + Adj",
+"note": "Cấu trúc dùng để miêu tả cảm nhận qua giác quan (ngửi, nhìn, nghe).",
+"ex": [
+[
+"这道菜看着真漂亮。",
+"Món ăn này nhìn thật đẹp mắt."
+],
+[
+"这首歌听着真舒服。",
+"Bài hát này nghe thật dễ chịu."
+]
+],
+"try": "Nói: \"Cái bánh này ăn thấy thật ngon.\""
+}
+]
+},
+{
+"line": 3,
+"s": "我还是第一次在中国过中秋节呢。",
+"vn": "Đây là lần đầu tiên tôi đón Tết Trung thu ở Trung Quốc đấy.",
+"ch": [
+{
+"t": "还是第一次",
+"py": "háishì dì yī cì",
+"vn": "vẫn là lần đầu tiên",
+"frame": "还是第一次 + V",
+"note": "Dùng để nhấn mạnh trải nghiệm lần đầu của bản thân.",
+"ex": [
+[
+"我还是第一次来中国旅游。",
+"Tôi là lần đầu tiên đến Trung Quốc du lịch."
+],
+[
+"这还是我第一次参加HSK考试。",
+"Đây là lần đầu tiên tôi tham gia thi HSK."
+]
+],
+"try": "Nói: \"Đây là lần đầu tiên tôi ăn món ăn này.\""
+}
+]
+},
+{
+"line": 4,
+"s": "我在加拿大时和中国朋友一起过过中秋节。我记得那天，外面的街道、剧院有很多演出活动。",
+"vn": "Khi ở Canada, tôi đã từng đón Trung thu cùng bạn người Trung Quốc. Tôi nhớ ngày đó, đường phố và nhà hát bên ngoài có rất nhiều hoạt động biểu diễn.",
+"ch": []
+},
+{
+"line": 5,
+"s": "在中国，每年中秋节都会举办很多活动，而且这几年一年比一年热闹。对了，家月，今天是李文爷爷的生日，李文来不了了，你就多吃一块月饼吧。",
+"vn": "Ở Trung Quốc, mỗi năm Tết Trung thu đều tổ chức rất nhiều hoạt động, hơn nữa mấy năm nay năm sau lại náo nhiệt hơn năm trước. Đúng rồi, Gia Nguyệt, hôm nay là sinh nhật ông nội của Lý Văn, Lý Văn không đến được, cháu ăn thêm một miếng bánh trung thu đi.",
+"ch": [
+{
+"t": "一年比一年热闹",
+"py": "yì nián bǐ yì nián rènao",
+"vn": "năm sau náo nhiệt hơn năm trước",
+"frame": "A + 比 + A + Adj",
+"note": "Cấu trúc so sánh sự tăng tiến theo thời gian.",
+"ex": [
+[
+"他的汉语水平一年比一年高。",
+"Trình độ tiếng Trung của anh ấy năm sau cao hơn năm trước."
+],
+[
+"这里的变化一年比一年大。",
+"Sự thay đổi ở đây năm sau lớn hơn năm trước."
+]
+],
+"try": "Nói: \"Công việc của tôi năm sau bận hơn năm trước.\""
+}
+]
+},
+{
+"line": 6,
+"s": "谢谢，那我就不客气了。",
+"vn": "Cảm ơn, vậy tôi không khách sáo nữa.",
+"ch": [
+{
+"t": "那我就不客气了",
+"py": "nà wǒ jiù bú kèqì le",
+"vn": "vậy tôi không khách sáo nữa",
+"frame": "那我就 + V",
+"note": "Dùng khi chấp nhận lời mời hoặc quà tặng một cách thoải mái.",
+"ex": [
+[
+"既然你这么热情，那我就不客气了。",
+"Vì bạn nhiệt tình như vậy, vậy tôi không khách sáo nữa."
+],
+[
+"那我就不客气地收下这份礼物了。",
+"Vậy tôi xin phép không khách sáo mà nhận món quà này."
+]
+],
+"try": "Nói: \"Bạn mời ăn cơm, vậy tôi không khách sáo nữa.\""
+}
+]
+},
+{
+"line": 7,
+"s": "中秋节和生日赶在了一块儿，真巧、真好！中秋节多陪陪家人也是应该的。",
+"vn": "Tết Trung thu và sinh nhật trùng vào một ngày, thật khéo, thật tốt! Tết Trung thu dành thời gian ở bên gia đình nhiều hơn cũng là điều nên làm.",
+"ch": [
+{
+"t": "赶在了一块儿",
+"py": "gǎn zài le yíkuàir",
+"vn": "trùng vào một lúc/ngày",
+"frame": "A 和 B 赶在了一块儿",
+"note": "Dùng khi hai sự kiện xảy ra cùng một thời điểm một cách tình cờ.",
+"ex": [
+[
+"考试和面试赶在了一块儿，我太忙了。",
+"Thi cử và phỏng vấn trùng vào một ngày, tôi bận quá."
+],
+[
+"我们的假期赶在了一块儿。",
+"Kỳ nghỉ của chúng tôi trùng vào một dịp."
+]
+],
+"try": "Nói: \"Sinh nhật tôi và ngày lễ trùng vào một ngày.\""
+},
+{
+"t": "多陪陪家人",
+"py": "duō péipei jiārén",
+"vn": "dành thời gian ở bên gia đình nhiều hơn",
+"frame": "多 + V + V",
+"note": "Lặp lại động từ để chỉ việc làm thêm, làm nhiều hơn.",
+"ex": [
+[
+"你应该多看看书。",
+"Bạn nên đọc sách nhiều hơn."
+],
+[
+"周末多休息休息。",
+"Cuối tuần nghỉ ngơi nhiều chút."
+]
+],
+"try": "Nói: \"Sau khi tan làm nên tập thể dục nhiều hơn.\""
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "中秋节时中国人一般都会回家过节。但是有些人由于工作需要，不能回家，只能一个人留在工作的地方过节。",
+"vn": "Vào dịp Tết Trung thu, người Trung Quốc thường sẽ về nhà đón lễ. Nhưng có một số người vì công việc, không thể về nhà, chỉ đành ở lại nơi làm việc một mình đón lễ.",
+"ch": [
+{
+"t": "由于工作需要",
+"py": "yóuyú gōngzuò xūyào",
+"vn": "do nhu cầu công việc",
+"frame": "由于 + lý do + (mà) + kết quả",
+"note": "Dùng để giải thích nguyên nhân khách quan, trang trọng hơn '因为'.",
+"ex": [
+[
+"由于天气原因，飞机晚点了。",
+"Do nguyên nhân thời tiết, máy bay bị hoãn."
+],
+[
+"由于身体不好，他没去参加聚会。",
+"Do sức khỏe không tốt, anh ấy không đi dự tiệc."
+]
+],
+"try": "Nói: 'Do nhu cầu học tập, tôi phải đến Trung Quốc.'"
+}
+]
+},
+{
+"line": 0,
+"s": "周力就是这些人之中的一位。他是一名铁路工作人员，今年中秋假期，要负责铁路安全检查。",
+"vn": "Chu Lực chính là một trong số những người đó. Anh ấy là nhân viên đường sắt, kỳ nghỉ Trung thu năm nay phải chịu trách nhiệm kiểm tra an toàn đường sắt.",
+"ch": [
+{
+"t": "这些人之中的一位",
+"py": "zhèxiē rén zhī zhōng de yí wèi",
+"vn": "một trong số những người này",
+"frame": "……之中的一位",
+"note": "Cấu trúc dùng để chỉ một cá nhân thuộc một nhóm đối tượng nào đó.",
+"ex": [
+[
+"他是我们班之中的一位好学生。",
+"Cậu ấy là một trong những học sinh giỏi của lớp chúng tôi."
+],
+[
+"她是参赛者之中的一位。",
+"Cô ấy là một trong số những người tham gia thi đấu."
+]
+],
+"try": "Nói: 'Cô ấy là một trong số những nhân viên ưu tú của công ty.'"
+}
+]
+},
+{
+"line": 1,
+"s": "周力的父母知道儿子这次不能回家后，就决定来一次“反向团圆”。早上五点左右他们就坐上了高铁，大约七点就来到了儿子工作的城市。",
+"vn": "Bố mẹ Chu Lực sau khi biết con trai lần này không thể về nhà, liền quyết định thực hiện một cuộc 'đoàn viên ngược'. Khoảng năm giờ sáng họ đã lên tàu cao tốc, khoảng bảy giờ đã đến thành phố nơi con trai làm việc.",
+"ch": [
+{
+"t": "五点左右",
+"py": "wǔ diǎn zuǒyòu",
+"vn": "khoảng 5 giờ",
+"frame": "Thời gian/Số lượng + 左右",
+"note": "Đặt sau số lượng hoặc thời gian để chỉ sự ước chừng.",
+"ex": [
+[
+"我大约十点左右到家。",
+"Tôi khoảng 10 giờ sẽ về đến nhà."
+],
+[
+"这件衣服一百块左右。",
+"Cái áo này khoảng 100 tệ."
+]
+],
+"try": "Nói: 'Tôi làm bài tập khoảng 2 tiếng đồng hồ.'"
+}
+]
+},
+{
+"line": 1,
+"s": "在儿子家，他们做了一桌儿子爱吃的饭菜，有烤肉、烤鱼、饺子等等，还有西红柿鸡蛋汤。周力下班回家，看到一桌子饭菜和突然出现的父母，他感觉特别幸福。",
+"vn": "Tại nhà con trai, họ làm một bàn cơm con trai thích ăn, có thịt nướng, cá nướng, sủi cảo vân vân, còn có canh cà chua trứng. Chu Lực tan làm về nhà, nhìn thấy một bàn cơm và bố mẹ đột nhiên xuất hiện, anh ấy cảm thấy vô cùng hạnh phúc.",
+"ch": [
+{
+"t": "一桌子饭菜",
+"py": "yì zhuōzi fàncài",
+"vn": "một bàn cơm",
+"frame": "一 + Lượng từ + Danh từ",
+"note": "Dùng để chỉ một lượng lớn hoặc đầy ắp thứ gì đó trên bàn.",
+"ex": [
+[
+"妈妈做了一桌子好吃的菜。",
+"Mẹ làm một bàn đầy món ngon."
+],
+[
+"桌子上放着一桌子书。",
+"Trên bàn bày đầy một bàn sách."
+]
+],
+"try": "Nói: 'Tết đến, nhà tôi có một bàn đầy trái cây.'"
+}
+]
+},
+{
+"line": 2,
+"s": "这个中秋节，地点变了，但爱没变。",
+"vn": "Tết Trung thu này, địa điểm đã thay đổi, nhưng tình yêu thì không đổi.",
+"ch": []
+}
+],
+"4": [
+{
+"line": 0,
+"s": "中国有很多节日，比如春节、元宵节、端午节、中秋节等。",
+"vn": "Trung Quốc có rất nhiều ngày lễ, ví dụ như Tết Nguyên Đán, Tết Nguyên Tiêu, Tết Đoan Ngọ, Tết Trung Thu v.v.",
+"ch": []
+},
+{
+"line": 1,
+"s": "作为一年里最重要的传统节日，春节对中国人来说有着特别的意义。",
+"vn": "Là ngày lễ truyền thống quan trọng nhất trong năm, Tết Nguyên Đán đối với người Trung Quốc mang ý nghĩa đặc biệt.",
+"ch": [
+{
+"t": "对……来说",
+"py": "duì …… lái shuō",
+"vn": "đối với ai mà nói",
+"frame": "对 + ai + 来说",
+"note": "Dùng để nêu rõ quan điểm hoặc góc nhìn của một người/nhóm người về một vấn đề.",
+"ex": [
+[
+"对我来说，学汉语非常重要。",
+"Đối với tôi mà nói, học tiếng Trung rất quan trọng."
+],
+[
+"对年轻人来说，手机是必不可少的。",
+"Đối với giới trẻ mà nói, điện thoại là thứ không thể thiếu."
+]
+],
+"try": "Nói: “Đối với học sinh mà nói, làm bài tập là việc rất bình thường.”"
+},
+{
+"t": "有着特别的意义",
+"py": "yǒuzhe tèbié de yìyì",
+"vn": "mang ý nghĩa đặc biệt",
+"frame": "……有着特别的意义",
+"note": "Dùng “有着” thay cho “有” để tăng tính trang trọng khi viết hoặc nói về giá trị tinh thần.",
+"ex": [
+[
+"这场比赛对我们有着特别的意义。",
+"Trận đấu này mang ý nghĩa đặc biệt đối với chúng tôi."
+],
+[
+"这个老房子对她有着特别的意义。",
+"Căn nhà cũ này mang ý nghĩa đặc biệt đối với cô ấy."
+]
+],
+"try": "Nói: “Ngày tốt nghiệp có ý nghĩa đặc biệt đối với tôi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "春节到来时，人们不管在哪里，都想回家过年。",
+"vn": "Khi Tết đến, mọi người dù ở đâu đi nữa cũng đều muốn về nhà ăn Tết.",
+"ch": [
+{
+"t": "不管在哪里，都想回家过年",
+"py": "bùguǎn zài nǎlǐ, dōu xiǎng huí jiā guònián",
+"vn": "bất kể ở đâu đều muốn về nhà ăn Tết",
+"frame": "不管 + từ để hỏi, ……都……",
+"note": "Biểu thị điều kiện thay đổi nhưng kết quả không đổi; rất hay dùng trong văn nói và viết.",
+"ex": [
+[
+"不管遇到什么困难，我们都要坚持下去。",
+"Bất kể gặp khó khăn gì, chúng ta cũng phải kiên trì tiếp."
+],
+[
+"不管去哪儿旅游，我都会带上相机。",
+"Bất kể đi đâu du lịch, tôi cũng sẽ mang theo máy ảnh."
+]
+],
+"try": "Nói: “Bất kể bận thế nào, tôi cũng phải đi học.”"
+}
+]
+},
+{
+"line": 1,
+"s": "春节前也最忙，既要收拾房子、打扫卫生，又要准备各种美食。",
+"vn": "Trước Tết cũng là lúc bận rộn nhất, vừa phải thu dọn nhà cửa, quét dọn vệ sinh, lại vừa phải chuẩn bị các loại món ngon.",
+"ch": [
+{
+"t": "既要收拾房子，又要准备各种美食",
+"py": "jì yào shōushi fángzi, yòu yào zhǔnbèi gèzhǒng měishí",
+"vn": "vừa phải dọn nhà, vừa phải chuẩn bị món ngon",
+"frame": "既要……，又要……",
+"note": "Dùng để chỉ hai hành động hoặc trạng thái diễn ra đồng thời, không thể thiếu cái nào.",
+"ex": [
+[
+"我既要上班，又要照顾孩子。",
+"Tôi vừa phải đi làm, vừa phải chăm sóc con cái."
+],
+[
+"学习外语既要多听，又要多说。",
+"Học ngoại ngữ vừa phải nghe nhiều, vừa phải nói nhiều."
+]
+],
+"try": "Nói: “Hôm nay tôi vừa phải nấu cơm, lại vừa phải làm bài tập.”"
+}
+]
+},
+{
+"line": 1,
+"s": "除夕这天晚上，一家人一边吃年夜饭，一边看春晚。",
+"vn": "Đêm Giao thừa, cả nhà vừa ăn bữa cơm đoàn viên vừa xem chương trình Xuân vãn.",
+"ch": [
+{
+"t": "一边吃年夜饭，一边看春晚",
+"py": "yībiān chī niányèfàn, yībiān kàn chūnwǎn",
+"vn": "vừa ăn cơm tất niên vừa xem xuân vãn",
+"frame": "一边 + V1，一边 + V2",
+"note": "Chỉ hai hành động xảy ra cùng một lúc trong một khoảng thời gian.",
+"ex": [
+[
+"她喜欢一边听音乐一边喝咖啡。",
+"Cô ấy thích vừa nghe nhạc vừa uống cà phê."
+],
+[
+"同学们一边走一边聊天。",
+"Các bạn học vừa đi vừa trò chuyện."
+]
+],
+"try": "Nói: “Tôi thích vừa ăn hoa quả vừa xem tivi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "零点一到，大家互相祝新年快乐，到处都是幸福的笑声。",
+"vn": "Khoảnh khắc số không giờ đến, mọi người chúc nhau năm mới vui vẻ, khắp nơi đều là tiếng cười hạnh phúc.",
+"ch": []
+},
+{
+"line": 2,
+"s": "每当回忆起童年，我最美好的记忆很多也发生在过年时。",
+"vn": "Mỗi khi hồi tưởng về tuổi thơ, rất nhiều ký ức đẹp nhất của tôi cũng diễn ra vào dịp Tết.",
+"ch": [
+{
+"t": "每当回忆起童年",
+"py": "měidāng huíyì qǐ tóngnián",
+"vn": "mỗi khi nhớ về tuổi thơ",
+"frame": "每当……时，……",
+"note": "Biểu thị cứ mỗi lần thời điểm hoặc sự việc đó lặp lại thì sẽ có cảm xúc hoặc kết quả tương ứng.",
+"ex": [
+[
+"每当听到这首歌，我就想起我的大学老师。",
+"Mỗi khi nghe bài hát này, tôi lại nhớ đến thầy giáo đại học của mình."
+],
+[
+"每当遇到问题，他总是先自己思考。",
+"Mỗi khi gặp vấn đề, anh ấy luôn tự suy nghĩ trước."
+]
+],
+"try": "Nói: “Mỗi khi nhìn thấy bức ảnh này, tôi lại nhớ đến chuyến du lịch đó.”"
+}
+]
+},
+{
+"line": 2,
+"s": "虽然现在已人到中年，离开了家，但是春节仍然是我最喜欢的节日，过年时也更想父母、兄弟姐妹。",
+"vn": "Mặc dù hiện nay đã bước vào tuổi trung niên, rời xa gia đình, nhưng Tết vẫn là ngày lễ tôi yêu thích nhất, vào dịp Tết lại càng nhớ bố mẹ, anh chị em hơn.",
+"ch": [
+{
+"t": "虽然现在已人到中年，但是春节仍然是我最喜欢的节日",
+"py": "suīrán xiànzài yǐ rén dào zhōngnián, dànshì chūnjié réngrán shì wǒ zuì xǐhuan de jiérì",
+"vn": "dù nay đã trung niên nhưng Tết vẫn là ngày lễ thích nhất",
+"frame": "虽然……，但是 + vẫn……",
+"note": "Biểu thị sự nhượng bộ ở vế đầu và kết quả thực tế ở vế sau, “仍然” nhấn mạnh trạng thái trước sau như một.",
+"ex": [
+[
+"虽然工作很累，但是他仍然坚持学习。",
+"Mặc dù công việc rất mệt, nhưng anh ấy vẫn kiên trì học tập."
+],
+[
+"虽然天气不好，但是我们仍然去了公园。",
+"Mặc dù thời tiết không tốt, nhưng chúng tôi vẫn đi công viên."
+]
+],
+"try": "Nói: “Mặc dù đã qua nhiều năm, nhưng tôi vẫn nhớ rõ người bạn đó.”"
+}
+]
+}
+]
+}

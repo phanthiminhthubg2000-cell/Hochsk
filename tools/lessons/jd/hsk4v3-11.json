@@ -1,0 +1,520 @@
+{
+"1": [
+{
+"line": 0,
+"s": "这里的老年人真不少。",
+"vn": "Người cao tuổi ở đây thực sự không ít.",
+"ch": []
+},
+{
+"line": 1,
+"s": "嗯，住在附近的老年人都会来这儿，有的散步，有的唱歌、跳舞，还有的打太极拳。",
+"vn": "Ừ, người cao tuổi sống ở gần đây đều sẽ đến đây, người thì đi dạo, người thì hát múa, còn có người tập thái cực quyền.",
+"ch": [
+{
+"t": "有的散步，有的唱歌、跳舞，还有的打太极拳",
+"py": "yǒude sànbù, yǒude chànggē, tiàowǔ, háiyǒu de dǎ tàijíquán",
+"vn": "có người đi dạo, có người hát múa, lại có người tập thái cực quyền",
+"frame": "有的……，有的……，还有的……",
+"note": "Dùng để liệt kê các hoạt động khác nhau của một nhóm người hoặc vật trong cùng một bối cảnh.",
+"ex": [
+[
+"图书馆里，有的在看书，有的在写作业，还有的在查资料。",
+"Trong thư viện, người thì đọc sách, người thì làm bài tập, người thì tra tài liệu."
+],
+[
+"公园里，有的在跑步，有的在踢球，还有的在聊天。",
+"Trong công viên, người thì chạy bộ, người thì đá bóng, người thì trò chuyện."
+]
+],
+"try": "Nói: \"Trong lớp, người thì đang nghe giảng, người thì đang ghi chép, người thì đang ngủ gật.\""
+}
+]
+},
+{
+"line": 2,
+"s": "他们的生活真丰富，让人羡慕。",
+"vn": "Cuộc sống của họ thật phong phú, khiến người ta ngưỡng mộ.",
+"ch": [
+{
+"t": "让人羡慕",
+"py": "ràng rén xiànmù",
+"vn": "khiến người ta ngưỡng mộ",
+"frame": "……让人羡慕",
+"note": "Dùng để diễn tả một trạng thái hoặc thành tựu khiến người khác cảm thấy ghen tị hoặc ngưỡng mộ.",
+"ex": [
+[
+"她有这么好的工作，真让人羡慕。",
+"Cô ấy có công việc tốt như vậy, thật khiến người ta ngưỡng mộ."
+],
+[
+"他们一家人去旅游，真让人羡慕。",
+"Gia đình họ đi du lịch, thật khiến người ta ngưỡng mộ."
+]
+],
+"try": "Nói: \"Anh ấy nói tiếng Trung lưu loát như vậy, thật khiến người ta ngưỡng mộ.\""
+}
+]
+},
+{
+"line": 3,
+"s": "是的。有些人即使年龄大了，也坚持去老年班学习。",
+"vn": "Đúng vậy. Có những người dù tuổi đã cao, vẫn kiên trì đến lớp học cho người cao tuổi để học tập.",
+"ch": [
+{
+"t": "即使年龄大了，也坚持去老年班学习",
+"py": "jíshǐ niánlíng dà le, yě jiānchí qù lǎoniánbān xuéxí",
+"vn": "dù tuổi đã cao, vẫn kiên trì đến lớp học người già học tập",
+"frame": "即使……也……",
+"note": "Cấu trúc nhượng bộ: \"Cho dù... thì vẫn...\". Nhấn mạnh sự quyết tâm bất chấp khó khăn.",
+"ex": [
+[
+"即使工作很忙，我也要坚持锻炼身体。",
+"Dù công việc rất bận, tôi vẫn phải kiên trì rèn luyện sức khỏe."
+],
+[
+"即使下雨，他也要去学校。",
+"Dù trời mưa, cậu ấy vẫn phải đến trường."
+]
+],
+"try": "Nói: \"Dù tiếng Trung khó, tôi vẫn sẽ kiên trì học.\""
+}
+]
+},
+{
+"line": 4,
+"s": "真是活到老学到老啊。",
+"vn": "Thật đúng là học đến già, sống đến già.",
+"ch": []
+},
+{
+"line": 5,
+"s": "对，我爷爷就每周都去老年班学电脑。他总说，老年人也要继续学习，“你看，我都七八十岁了，还上网和网友们聊天儿呢，生活一点儿都不无聊。”",
+"vn": "Đúng, ông tôi cứ mỗi tuần đều đến lớp học người già để học máy tính. Ông luôn nói, người già cũng phải tiếp tục học tập, \"Con xem, ông đã bảy tám mươi tuổi rồi, còn lên mạng trò chuyện với bạn bè qua mạng đây này, cuộc sống chẳng hề nhàm chán chút nào.\"",
+"ch": [
+{
+"t": "生活一点儿都不无聊",
+"py": "shēnghuó yìdiǎnr dōu bù wúliáo",
+"vn": "cuộc sống không hề nhàm chán",
+"frame": "一点儿都不 + tính từ",
+"note": "Cấu trúc nhấn mạnh phủ định: \"không hề... chút nào\".",
+"ex": [
+[
+"这本小说一点儿都不无聊。",
+"Cuốn tiểu thuyết này không hề nhàm chán chút nào."
+],
+[
+"今天的工作一点儿都不累。",
+"Công việc hôm nay không hề mệt chút nào."
+]
+],
+"try": "Nói: \"Bộ phim này không hề nhàm chán chút nào.\""
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "家月，我们今天的课是在数字教室上的，感觉挺不一样的。",
+"vn": "Gia Nguyệt, tiết học hôm nay của chúng ta diễn ra ở phòng học kỹ thuật số, cảm giác khá là khác biệt.",
+"ch": [
+{
+"t": "是在……上的",
+"py": "shì zài... shàng de",
+"vn": "là diễn ra ở đâu đó",
+"frame": "……是在 [địa điểm] 上的",
+"note": "Cấu trúc nhấn mạnh thời gian hoặc địa điểm xảy ra sự việc, dùng “是...的” để khẳng định.",
+"ex": [
+[
+"我们的会议是在线上开的。",
+"Cuộc họp của chúng ta là tổ chức trực tuyến."
+],
+[
+"这次考试是在图书馆考的。",
+"Kỳ thi lần này là thi ở thư viện."
+]
+],
+"try": "Nói: “Buổi phỏng vấn của tôi là diễn ra ở công ty này.”"
+}
+]
+},
+{
+"line": 1,
+"s": "是的，数字教室可以拍照点名，教授在线上点名，不用像线下那样一个个叫名字，特别节约时间。",
+"vn": "Đúng vậy, phòng học kỹ thuật số có thể chụp ảnh điểm danh, giáo sư điểm danh trực tuyến, không cần phải gọi tên từng người như học offline, cực kỳ tiết kiệm thời gian.",
+"ch": [
+{
+"t": "不用像线下那样",
+"py": "búyòng xiàng xiànxià nàyàng",
+"vn": "không cần phải giống như offline",
+"frame": "不用像 [A] 那样 + V",
+"note": "Dùng để so sánh cách làm việc hiện tại với cách truyền thống (A).",
+"ex": [
+[
+"不用像以前那样每天去公司。",
+"Không cần phải giống như trước đây, ngày nào cũng đến công ty."
+],
+[
+"不用像别人那样担心考试。",
+"Không cần phải lo lắng thi cử giống như người khác."
+]
+],
+"try": "Nói: “Bây giờ tôi không cần phải giống như trước đây, ngày nào cũng viết nhật ký bằng tay.”"
+}
+]
+},
+{
+"line": 2,
+"s": "最方便的是，课上没听明白时，课后还能在学校网站上找到视频记录看。",
+"vn": "Tiện nhất là, lúc trên lớp nghe không hiểu, sau giờ học còn có thể tìm thấy video ghi hình trên trang web của trường để xem lại.",
+"ch": [
+{
+"t": "最方便的是",
+"py": "zuì fāngbiàn de shì",
+"vn": "điều tiện lợi nhất là",
+"frame": "最方便的是 + [việc gì đó]",
+"note": "Dùng để nêu bật điểm ưu việt nhất của một vấn đề.",
+"ex": [
+[
+"最方便的是可以用手机支付。",
+"Tiện nhất là có thể dùng điện thoại thanh toán."
+],
+[
+"最方便的是宿舍离学校很近。",
+"Tiện nhất là ký túc xá rất gần trường."
+]
+],
+"try": "Nói: “Tiện nhất là có thể học tiếng Trung qua app.”"
+}
+]
+},
+{
+"line": 3,
+"s": "对，上课我都不用着急记笔记了。",
+"vn": "Đúng vậy, đi học tôi cũng không cần phải vội vàng ghi chép nữa.",
+"ch": []
+},
+{
+"line": 4,
+"s": "不仅数字教室很方便，现在网上到处是学习资料，想查什么都能查到，自学也更方便了。",
+"vn": "Không chỉ phòng học kỹ thuật số rất tiện, bây giờ trên mạng đâu đâu cũng là tài liệu học tập, muốn tra cái gì cũng tra được, tự học cũng tiện hơn nhiều.",
+"ch": [
+{
+"t": "不仅……，……也……",
+"py": "bùjǐn..., ...yě...",
+"vn": "không những..., mà còn...",
+"frame": "不仅 [A]，[B] 也 [C]",
+"note": "Cấu trúc tăng tiến, dùng để liệt kê hai ưu điểm hoặc sự việc cùng lúc.",
+"ex": [
+[
+"不仅他会说汉语，他弟弟也会。",
+"Không những anh ấy biết nói tiếng Trung, em trai anh ấy cũng biết."
+],
+[
+"不仅这儿环境好，菜也很好吃。",
+"Không những ở đây môi trường tốt, đồ ăn cũng rất ngon."
+]
+],
+"try": "Nói: “Không những giáo viên dạy hay, tài liệu cũng rất phong phú.”"
+}
+]
+},
+{
+"line": 5,
+"s": "是的，只要有手机或电脑，我就是不在教室，也可以学习中文，和同学一起练口语。",
+"vn": "Đúng vậy, chỉ cần có điện thoại hoặc máy tính, ngay cả khi tôi không ở trong lớp, cũng có thể học tiếng Trung, cùng bạn học luyện khẩu ngữ.",
+"ch": [
+{
+"t": "只要……，……也……",
+"py": "zhǐyào..., ...yě...",
+"vn": "chỉ cần..., thì cũng...",
+"frame": "只要 [A]，(我) 也 [B]",
+"note": "Dùng để chỉ điều kiện cần, chỉ cần thỏa mãn A thì B sẽ xảy ra.",
+"ex": [
+[
+"只要有时间，我也想去旅游。",
+"Chỉ cần có thời gian, tôi cũng muốn đi du lịch."
+],
+[
+"只要努力，你也一定能成功。",
+"Chỉ cần nỗ lực, bạn cũng nhất định thành công."
+]
+],
+"try": "Nói: “Chỉ cần có internet, tôi cũng có thể học bài.”"
+}
+]
+},
+{
+"line": 6,
+"s": "科技真是让获取知识变得简单多了。",
+"vn": "Công nghệ thực sự đã làm cho việc tiếp thu kiến thức trở nên đơn giản hơn nhiều.",
+"ch": [
+{
+"t": "让……变得……",
+"py": "ràng... biànde...",
+"vn": "khiến cho... trở nên...",
+"frame": "让 [A] 变得 [B]",
+"note": "Dùng để diễn tả sự thay đổi trạng thái của đối tượng A thành B nhờ vào tác nhân nào đó.",
+"ex": [
+[
+"运动让身体变得更健康。",
+"Vận động làm cho cơ thể trở nên khỏe mạnh hơn."
+],
+[
+"老师的话让我变得更有信心。",
+"Lời của thầy giáo làm tôi trở nên tự tin hơn."
+]
+],
+"try": "Nói: “Học tiếng Trung làm cho cuộc sống của tôi trở nên thú vị hơn.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "今天星期六，我们去了一雪姐姐家。姐姐家的两个孩子很有礼貌，我们一进门，就马上和我们打招呼。",
+"vn": "Hôm nay là thứ Bảy, chúng tôi đến nhà chị Tuyết. Hai đứa trẻ nhà chị ấy rất lễ phép, chúng tôi vừa vào cửa đã lập tức chào hỏi chúng tôi.",
+"ch": [
+{
+"t": "一进门，就马上",
+"py": "yī jìnmén, jiù mǎshàng",
+"vn": "vừa vào cửa đã lập tức",
+"frame": "一 + V + 就 + V",
+"note": "Cấu trúc diễn tả hai hành động xảy ra nối tiếp nhau rất nhanh. Dùng để nhấn mạnh sự nhanh chóng.",
+"ex": [
+[
+"我一到家，就马上洗澡。",
+"Tôi vừa về đến nhà là lập tức đi tắm."
+],
+[
+"他一看到我，就马上打招呼。",
+"Anh ấy vừa thấy tôi là lập tức chào hỏi."
+]
+],
+"try": "Nói: \"Vừa nhận được thông báo, tôi lập tức đi làm.\""
+}
+]
+},
+{
+"line": 1,
+"s": "在姐姐家，我们也聊到了孩子的教育。姐姐说，以前他们和很多家长一样，觉得孩子上个好大学，人生才是成功的。所以，他们只关心孩子的分数，结果孩子压力特别大，每天都很不开心。",
+"vn": "Tại nhà chị ấy, chúng tôi cũng trò chuyện về việc giáo dục con cái. Chị ấy nói, trước đây họ cũng giống như nhiều phụ huynh khác, cho rằng con cái phải vào đại học tốt thì cuộc đời mới thành công. Vì vậy, họ chỉ quan tâm đến điểm số của con, kết quả là con cái chịu áp lực rất lớn, mỗi ngày đều không vui vẻ.",
+"ch": [
+{
+"t": "和很多家长一样",
+"py": "hé hěnduō jiāzhǎng yīyàng",
+"vn": "giống như nhiều phụ huynh",
+"frame": "A 和 B 一样",
+"note": "Cấu trúc so sánh ngang bằng. Có thể thêm tính từ hoặc động từ phía sau để làm rõ nội dung so sánh.",
+"ex": [
+[
+"我的想法和你一样。",
+"Suy nghĩ của tôi giống của bạn."
+],
+[
+"他跟老师一样严格。",
+"Anh ấy nghiêm khắc giống như thầy giáo."
+]
+],
+"try": "Nói: \"Sở thích của tôi giống bạn tôi.\""
+}
+]
+},
+{
+"line": 1,
+"s": "后来，他们认识到，教育的目的不是让孩子考高分，而是帮助孩子养成好习惯。于是，他们做出改变，每天都给孩子留出时间外出锻炼身体，或者看些自己感兴趣的书。",
+"vn": "Sau đó, họ nhận ra rằng, mục đích của giáo dục không phải là để con cái đạt điểm cao, mà là giúp con hình thành thói quen tốt. Thế là họ thay đổi, mỗi ngày đều dành thời gian cho con ra ngoài tập thể dục, hoặc đọc những cuốn sách mà con quan tâm.",
+"ch": [
+{
+"t": "不是让孩子考高分，而是帮助孩子养成好习惯",
+"py": "bùshì ràng háizi kǎo gāofēn, érshì bāngzhù háizi yǎngchéng hǎo xíguàn",
+"vn": "không phải là để con đạt điểm cao, mà là giúp con hình thành thói quen tốt",
+"frame": "不是 A，而是 B",
+"note": "Phủ định A để khẳng định B. Dùng để đính chính hoặc nhấn mạnh ý đúng.",
+"ex": [
+[
+"学习不是为了考试，而是为了应用。",
+"Học tập không phải để thi cử, mà là để ứng dụng."
+],
+[
+"我不是不想去，而是太忙了。",
+"Tôi không phải không muốn đi, mà là quá bận."
+]
+],
+"try": "Nói: \"Học tiếng Trung không phải để lấy bằng, mà là để giao tiếp.\""
+},
+{
+"t": "给孩子留出时间",
+"py": "gěi háizi liúchū shíjiān",
+"vn": "dành ra thời gian cho con",
+"frame": "给 + đối tượng + 留出 + thời gian/tiền bạc",
+"note": "留出 mang nghĩa là chừa lại, dành riêng ra một phần cho mục đích cụ thể.",
+"ex": [
+[
+"每天要给自己留出休息时间。",
+"Mỗi ngày phải dành ra thời gian nghỉ ngơi cho bản thân."
+],
+[
+"老板给员工留出讨论的空间。",
+"Sếp dành ra không gian cho nhân viên thảo luận."
+]
+],
+"try": "Nói: \"Tôi muốn dành ra thời gian để học tiếng Trung.\""
+}
+]
+},
+{
+"line": 2,
+"s": "我觉得他们的做法真棒。",
+"vn": "Tôi thấy cách làm của họ thật tuyệt.",
+"ch": [
+{
+"t": "做法真棒",
+"py": "zuòfǎ zhēn bàng",
+"vn": "cách làm thật tuyệt",
+"frame": "……的做法真棒",
+"note": "Cách khen ngợi hành động hoặc phương pháp của ai đó rất hiệu quả và tích cực.",
+"ex": [
+[
+"你这个建议真棒！",
+"Gợi ý này của bạn thật tuyệt!"
+],
+[
+"老师的教学做法真棒。",
+"Cách dạy của thầy giáo thật tuyệt."
+]
+],
+"try": "Nói: \"Cách học của bạn thật tuyệt.\""
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "“学而不厌”是两千多年前中国教育家孔子说过的话，意思是人要一直坚持学习，就是说，学习是人一生的事情，要活到老学到老。",
+"vn": "“Học không biết chán” là câu nói của nhà giáo dục Trung Quốc Khổng Tử hơn 2000 năm trước, nghĩa là con người phải luôn kiên trì học tập, nói cách khác, học tập là việc của cả đời người, phải sống đến già học đến già.",
+"ch": [
+{
+"t": "就是说",
+"py": "jiùshì shuō",
+"vn": "nói cách khác / nghĩa là",
+"frame": "A，就是说，B",
+"note": "Dùng để giải thích rõ hơn hoặc diễn đạt lại ý vừa nói ở vế trước.",
+"ex": [
+[
+"他明天要去出差，就是说他不来上课了。",
+"Ngày mai anh ấy đi công tác, nghĩa là anh ấy không đến lớp nữa."
+],
+[
+"这个项目很急，就是说我们今晚得加班。",
+"Dự án này rất gấp, nói cách khác là tối nay chúng ta phải tăng ca."
+]
+],
+"try": "Nói: “Tôi không hiểu câu này, nghĩa là bạn có thể giải thích lại không?”"
+}
+]
+},
+{
+"line": 0,
+"s": "在世界快速变化的今天，“学而不厌”变得更加重要。",
+"vn": "Trong thế giới thay đổi nhanh chóng ngày nay, “học không biết chán” trở nên quan trọng hơn.",
+"ch": []
+},
+{
+"line": 1,
+"s": "我有一位很优秀的律师朋友，他一直在学习新的法律知识。他说，这不仅是律师的要求和责任，也是提高自己能力的重要方法。",
+"vn": "Tôi có một người bạn luật sư rất ưu tú, anh ấy vẫn luôn học kiến thức pháp luật mới. Anh ấy nói, đây không chỉ là yêu cầu và trách nhiệm của luật sư, mà còn là phương pháp quan trọng để nâng cao năng lực bản thân.",
+"ch": [
+{
+"t": "不仅是……也是……",
+"py": "bùjǐn shì... yě shì...",
+"vn": "không chỉ là... mà còn là...",
+"frame": "A 不仅是 B，也是 C",
+"note": "Cấu trúc dùng để nhấn mạnh hai khía cạnh của cùng một sự vật/sự việc.",
+"ex": [
+[
+"学汉语不仅是我的爱好，也是我的工作需要。",
+"Học tiếng Trung không chỉ là sở thích mà còn là nhu cầu công việc của tôi."
+],
+[
+"运动不仅是保持健康的方法，也是减压的好办法。",
+"Vận động không chỉ là cách giữ gìn sức khỏe mà còn là cách giảm stress tốt."
+]
+],
+"try": "Nói: “Học HSK4 không chỉ là để thi, mà còn là để giao tiếp tốt hơn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "同时我也认为，人就是不再工作了，坚持学习仍很重要。",
+"vn": "Đồng thời tôi cũng cho rằng, con người dù không còn làm việc nữa, kiên trì học tập vẫn rất quan trọng.",
+"ch": [
+{
+"t": "人就是……仍……",
+"py": "rén jiùshì... réng...",
+"vn": "con người dù... vẫn...",
+"frame": "人就是 + V/Adj, 仍 + V/Adj",
+"note": "Dùng để nhấn mạnh sự việc dù trong hoàn cảnh nào thì kết quả vẫn không đổi.",
+"ex": [
+[
+"人就是很忙，仍要抽出时间锻炼身体。",
+"Con người dù bận rộn đến đâu, vẫn phải dành thời gian tập thể dục."
+],
+[
+"人就是年纪大了，仍可以学习新东西。",
+"Con người dù lớn tuổi rồi, vẫn có thể học những điều mới."
+]
+],
+"try": "Nói: “Dù đã tốt nghiệp, tôi vẫn phải tiếp tục học tiếng Trung.”"
+}
+]
+},
+{
+"line": 2,
+"s": "就像我爷爷，虽然七十多岁了，每天还准时去老年大学上课，学习做网页、弹钢琴。他说，重新当一回学生，生活更有意思了，也感觉自己变年轻了。",
+"vn": "Giống như ông tôi, mặc dù đã hơn 70 tuổi, mỗi ngày vẫn đúng giờ đến trường đại học người cao tuổi đi học, học làm trang web, chơi đàn piano. Ông nói, được làm học sinh một lần nữa, cuộc sống thú vị hơn nhiều, cũng cảm thấy bản thân trẻ ra.",
+"ch": [
+{
+"t": "准时去……",
+"py": "zhǔnshí qù...",
+"vn": "đúng giờ đi...",
+"frame": "准时 + V",
+"note": "Nhấn mạnh việc thực hiện hành động đúng thời gian đã định.",
+"ex": [
+[
+"我们要准时参加面试。",
+"Chúng ta phải tham gia phỏng vấn đúng giờ."
+],
+[
+"他每天都准时去公司上班。",
+"Anh ấy mỗi ngày đều đi làm đúng giờ."
+]
+],
+"try": "Nói: “Bạn phải đến lớp đúng giờ nhé.”"
+},
+{
+"t": "重新当一回学生",
+"py": "chóngxīn dāng yī huí xuésheng",
+"vn": "làm học sinh một lần nữa",
+"frame": "重新 + V + 一回",
+"note": "重新 biểu thị làm lại một việc gì đó từ đầu.",
+"ex": [
+[
+"我想重新写一遍这份报告。",
+"Tôi muốn viết lại báo cáo này một lần nữa."
+],
+[
+"我们重新认识一下吧。",
+"Chúng ta làm quen lại từ đầu nhé."
+]
+],
+"try": "Nói: “Tôi muốn học lại tiếng Trung từ đầu.”"
+}
+]
+}
+]
+}

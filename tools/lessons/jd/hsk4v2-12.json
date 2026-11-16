@@ -1,0 +1,1030 @@
+{
+"1": [
+{
+"line": 0,
+"s": "听说这次生意你到现在还没谈成。",
+"vn": "Nghe nói lần làm ăn này cậu đến giờ vẫn chưa đàm phán thành công.",
+"ch": [
+{
+"t": "到现在还没",
+"py": "dào xiànzài hái méi",
+"vn": "đến tận bây giờ vẫn chưa",
+"frame": "到 + thời gian + 还没 + V",
+"note": "Dùng khi một việc đáng lẽ phải xong từ lâu nhưng đến nay vẫn chưa xảy ra.",
+"ex": [
+[
+"作业多得我到现在还没写完。",
+"Bài tập nhiều đến mức tôi đến tận bây giờ vẫn chưa viết xong."
+],
+[
+"大家都到了，他到现在还没来。",
+"Mọi người đến hết rồi, cậu ấy đến tận bây giờ vẫn chưa đến."
+]
+],
+"try": "Nói: “Hôm qua tôi đặt cơm, đến tận bây giờ vẫn chưa giao.”"
+}
+]
+},
+{
+"line": 1,
+"s": "按我以前的经验，早应该谈成了，这次我也不知道哪儿出了问题。",
+"vn": "Theo kinh nghiệm trước đây của tôi, lẽ ra đã đàm phán thành công từ lâu rồi, lần này tôi cũng không biết đã xảy ra vấn đề ở đâu nữa.",
+"ch": [
+{
+"t": "按我以前的经验",
+"py": "àn wǒ yǐqián de jīngyàn",
+"vn": "theo kinh nghiệm trước đây của tôi",
+"frame": "按 + ... + 的经验",
+"note": "Dùng để nêu căn cứ hoặc dự đoán dựa trên những gì đã trải qua.",
+"ex": [
+[
+"按我以前的经验，这个考试不难。",
+"Theo kinh nghiệm trước đây của tôi, kỳ thi này không khó."
+],
+[
+"按老师的经验，大家都能考试合格。",
+"Theo kinh nghiệm của thầy giáo, mọi người đều có thể thi đỗ."
+]
+],
+"try": "Nói: “Theo kinh nghiệm trước đây của tôi, làm món này rất nhanh.”"
+},
+{
+"t": "早应该",
+"py": "zǎo yīnggāi",
+"vn": "lẽ ra ... từ lâu rồi",
+"frame": "早应该 + V +了",
+"note": "Biểu thị sự việc đáng ra phải hoàn thành sớm hơn thực tế.",
+"ex": [
+[
+"你早应该去医院看看了。",
+"Cậu lẽ ra nên đi bệnh viện khám từ lâu rồi."
+],
+[
+"这份文件早应该打印出来了。",
+"Tài liệu này lẽ ra nên in ra từ lâu rồi."
+]
+],
+"try": "Nói: “Lẽ ra tôi phải nộp bài tập từ lâu rồi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "有句话叫“规定和经验是死的，人是活的”。当“规定”和“经验”不能解决问题时，建议你改变一下自己的态度和想法。",
+"vn": "Có câu nói là \"Quy định và kinh nghiệm là chết, con người là sống\". Khi \"quy định\" và \"kinh nghiệm\" không thể giải quyết vấn đề, khuyên cậu nên thay đổi thái độ và suy nghĩ của mình một chút.",
+"ch": [
+{
+"t": "改变一下自己的态度和想法",
+"py": "gǎibiàn yíxià zìjǐ de tàidù hé xiǎngfǎ",
+"vn": "thay đổi thái độ và suy nghĩ của bản thân một chút",
+"frame": "改变一下 + danh từ",
+"note": "Thêm 一下 sau động từ giúp ngữ khí nhẹ nhàng hơn, mang ý khuyên bảo.",
+"ex": [
+[
+"你应该改变一下自己的学习方法。",
+"Cậu nên thay đổi phương pháp học tập của bản thân một chút."
+],
+[
+"经理建议我改变一下工作计划。",
+"Giám đốc khuyên tôi thay đổi kế hoạch công việc một chút."
+]
+],
+"try": "Nói: “Thầy giáo khuyên tôi thay đổi cách nhìn nhận vấn đề một chút.”"
+}
+]
+},
+{
+"line": 3,
+"s": "很多时候，我都习惯根据过去的经验做事，可惜，经验不是全部都是对的。",
+"vn": "Rất nhiều lúc, tôi đều quen dựa theo kinh nghiệm trước đây để làm việc, đáng tiếc là kinh nghiệm không phải lúc nào cũng đúng hoàn toàn.",
+"ch": [
+{
+"t": "习惯根据",
+"py": "xíguàn gēnjù",
+"vn": "quen dựa theo",
+"frame": "习惯根据 + căn cứ + V",
+"note": "Chỉ thói quen hành động dựa trên một cơ sở nào đó.",
+"ex": [
+[
+"我习惯根据天气情况决定去哪儿玩。",
+"Tôi quen dựa theo tình hình thời tiết để quyết định đi đâu chơi."
+],
+[
+"大家习惯根据说明书使用电器。",
+"Mọi người quen dựa theo sách hướng dẫn để sử dụng đồ điện."
+]
+],
+"try": "Nói: “Tôi quen dựa theo thói quen cũ để làm việc.”"
+},
+{
+"t": "不是全部都是对的",
+"py": "bú shì quánbù dōu shì duì de",
+"vn": "không phải tất cả đều đúng",
+"frame": "不是全部都 + V",
+"note": "Dùng để phủ định bộ phận, không cào bằng mọi thứ là đúng.",
+"ex": [
+[
+"网上的消息不是全部都是真的。",
+"Thông tin trên mạng không phải tất cả đều là thật."
+],
+[
+"老师说的话不是全部都记住了。",
+"Lời thầy nói không phải tất cả đều nhớ hết."
+]
+],
+"try": "Nói: “Ý kiến của mọi người không phải tất cả đều đúng.”"
+}
+]
+},
+{
+"line": 4,
+"s": "遇到不能解决的问题时，我们应该试着走走以前从来没走过的路，也许这样就能找到解决问题的方法了。",
+"vn": "Khi gặp những vấn đề không thể giải quyết, chúng ta nên thử đi những con đường trước đây chưa từng đi, có lẽ như thế sẽ tìm được phương pháp giải quyết vấn đề.",
+"ch": [
+{
+"t": "试着走走",
+"py": "shìzhe zǒuzǒu",
+"vn": "thử đi xem sao",
+"frame": "试着 + V + V",
+"note": "Lặp lại động từ để chỉ hành động thử nghiệm ngắn gọn, mang tính trải nghiệm.",
+"ex": [
+[
+"遇到困难时，我们要试着做做看。",
+"Khi gặp khó khăn, chúng ta phải thử làm xem sao."
+],
+[
+"这道题不会，我试着想想看。",
+"Câu hỏi này không biết làm, tôi thử suy nghĩ xem sao."
+]
+],
+"try": "Nói: “Món này lạ quá, tôi thử ăn xem sao.”"
+},
+{
+"t": "也许这样就能",
+"py": "yěxǔ zhèyàng jiù néng",
+"vn": "có lẽ như vậy là có thể",
+"frame": "也许这样就能 + V",
+"note": "Dùng khi phỏng đoán một phương hướng có khả năng thành công.",
+"ex": [
+[
+"也许这样就能省下不少钱。",
+"Có lẽ như thế là có thể tiết kiệm được không ít tiền."
+],
+[
+"也许这样就能更快完成任务。",
+"Có lẽ như thế là có thể hoàn thành nhiệm vụ nhanh hơn."
+]
+],
+"try": "Nói: “Có lẽ như thế là có thể tìm được chìa khóa.”"
+}
+]
+},
+{
+"line": 5,
+"s": "好，我再跟同事商量商量，希望能及时发现问题，并且准确地找到解决问题的方法。",
+"vn": "Được, tôi sẽ bàn bạc lại với đồng nghiệp, hy vọng có thể kịp thời phát hiện vấn đề, đồng thời tìm ra chính xác phương pháp giải quyết vấn đề.",
+"ch": [
+{
+"t": "再跟同事商量商量",
+"py": "zài gēn tóngshì shāngliang shāngliang",
+"vn": "bàn bạc lại với đồng nghiệp một chút",
+"frame": "再跟 + ai + V + V",
+"note": "Lặp lại động từ song tiết để chỉ việc thảo luận, bàn bạc kỹ hơn.",
+"ex": [
+[
+"我想再跟家人商量商量。",
+"Tôi muốn bàn bạc lại với người nhà một chút."
+],
+[
+"你先别决定，再跟老板商量商量。",
+"Cậu đừng vội quyết định, hãy bàn bạc lại với sếp một chút."
+]
+],
+"try": "Nói: “Tôi cần bàn bạc lại với bạn cùng phòng một chút.”"
+},
+{
+"t": "希望能及时发现问题",
+"py": "xīwàng néng jíshí fāxiàn wèntí",
+"vn": "hy vọng có thể kịp thời phát hiện vấn đề",
+"frame": "希望能及时 + V",
+"note": "Biểu thị mong muốn thực hiện việc gì đó đúng lúc, không bị muộn.",
+"ex": [
+[
+"希望能及时收到回信。",
+"Hy vọng có thể kịp thời nhận được thư hồi âm."
+],
+[
+"希望能及时把作业交上去。",
+"Hy vọng có thể kịp thời nộp bài tập lên."
+]
+],
+"try": "Nói: “Hy vọng có thể kịp thời giải quyết khó khăn.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "妈，您看我刚买的裤子，洗完以后颜色怎么变得这么难看呢？",
+"vn": "Mẹ ơi, mẹ xem cái quần con mới mua này, sao sau khi giặt màu sắc lại biến thành khó nhìn thế này?",
+"ch": [
+{
+"t": "刚买的裤子",
+"py": "gāng mǎi de kùzi",
+"vn": "cái quần mới mua",
+"frame": "刚买的 + danh từ",
+"note": "Dùng 刚 để chỉ hành động vừa mới xảy ra, thêm 的 để nối với danh từ phía sau.",
+"ex": [
+[
+"我喜欢刚买的书。",
+"Tôi thích cuốn sách mới mua."
+],
+[
+"这是我刚买的电脑。",
+"Đây là máy tính tôi mới mua."
+]
+],
+"try": "Nói: “Điện thoại tôi mới mua rất đẹp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "看来是掉颜色了，你洗的时候在水里加点儿盐就不会这样了。",
+"vn": "Xem ra là bị phai màu rồi, lúc con giặt cho thêm chút muối vào nước thì sẽ không bị thế này nữa.",
+"ch": [
+{
+"t": "掉颜色了",
+"py": "diào yánsè le",
+"vn": "phai màu rồi",
+"frame": "……掉颜色了",
+"note": "Cụm từ cố định chỉ đồ vật bị bay màu, phai màu khi giặt hoặc sử dụng lâu.",
+"ex": [
+[
+"这件衣服洗的时候掉颜色了。",
+"Chiếc áo này lúc giặt bị phai màu rồi."
+],
+[
+"红色的鞋子容易掉颜色。",
+"Giày màu đỏ rất dễ phai màu."
+]
+],
+"try": "Nói: “Cái áo này mới giặt đã phai màu rồi.”"
+},
+{
+"t": "在水里加点儿盐",
+"py": "zài shuǐ lǐ jiā diǎnr yán",
+"vn": "cho chút muối vào trong nước",
+"frame": "在 + địa điểm + 加点儿 + đồ vật",
+"note": "Cấu trúc cho thêm cái gì vào đâu, 加点儿 rất hay dùng trong nấu ăn và đời sống.",
+"ex": [
+[
+"做汤时在锅里加点儿盐。",
+"Lúc nấu canh cho thêm chút muối vào nồi."
+],
+[
+"他在咖啡里加点儿糖。",
+"Anh ấy cho thêm chút đường vào cà phê."
+]
+],
+"try": "Nói: “Lúc uống trà sữa cho thêm chút đá.”"
+}
+]
+},
+{
+"line": 2,
+"s": "放盐？！盐不是用来做饭的吗？难道它还能让衣服不掉颜色？",
+"vn": "Cho muối á?! Muối chẳng phải dùng để nấu ăn sao? Lẽ nào nó còn có thể làm quần áo không bị phai màu?",
+"ch": [
+{
+"t": "用来做饭的",
+"py": "yòng lái zuò fàn de",
+"vn": "dùng để nấu cơm",
+"frame": "……用来 + động từ + 的",
+"note": "Dùng để diễn tả mục đích sử dụng của một đồ vật gì đó.",
+"ex": [
+[
+"这台电脑是用来学习的。",
+"Cái máy tính này dùng để học tập."
+],
+[
+"手机是用来跟朋友联系的。",
+"Điện thoại dùng để liên lạc với bạn bè."
+]
+],
+"try": "Nói: “Cuốn từ điển này dùng để học tiếng Trung.”"
+}
+]
+},
+{
+"line": 3,
+"s": "当然。有些衣服第一次洗的时候会掉颜色，其实，有很多方法可以解决这个问题。在水里加勺盐再洗是最简单的方法。用盐水来洗新衣服，这样穿得再久、洗的次数再多，衣服也不容易掉颜色。",
+"vn": "Đương nhiên rồi. Có một số quần áo giặt lần đầu tiên sẽ bị phai màu, thực ra, có rất nhiều phương pháp có thể giải quyết vấn đề này. Cho một thìa muối vào nước rồi giặt là phương pháp đơn giản nhất. Dùng nước muối để giặt quần áo mới, như vậy dù mặc bao lâu đi nữa, giặt bao nhiêu lần đi nữa, quần áo cũng không dễ bị phai màu.",
+"ch": [
+{
+"t": "有很多方法可以解决这个问题",
+"py": "yǒu hěn duō fāngfǎ kěyǐ jiějué zhè gè wèntí",
+"vn": "có rất nhiều phương pháp có thể giải quyết vấn đề này",
+"frame": "有 + số lượng + 方法可以解决 + vấn đề",
+"note": "Cụm câu phản xạ nhanh khi bàn về việc tìm hướng giải quyết khó khăn.",
+"ex": [
+[
+"老师有很多方法可以帮我们提高成绩。",
+"Thầy giáo có rất nhiều phương pháp giúp chúng ta nâng cao thành tích."
+],
+[
+"遇到困难时，有很多方法可以解决。",
+"Gặp khó khăn có rất nhiều cách giải quyết."
+]
+],
+"try": "Nói: “Học tiếng Trung có rất nhiều phương pháp có thể giải quyết vấn đề nhớ từ mới.”"
+},
+{
+"t": "穿得再久、洗的次数再多",
+"py": "chuān de zài jiǔ, xǐ de cìshù zài duō",
+"vn": "mặc bao lâu đi nữa, số lần giặt nhiều thế nào đi nữa",
+"frame": "……得再 + tính từ / 次数再 + tính từ",
+"note": "Dùng cấu trúc 再 ... để chỉ mức độ giả định dù có cao đến đâu thì kết quả vẫn thế.",
+"ex": [
+[
+"工作再忙也要注意身体。",
+"Công việc bận đến mấy cũng phải chú ý sức khỏe."
+],
+[
+"汉字写得再多也要经常复习。",
+"Chữ Hán viết nhiều đến mấy cũng phải thường xuyên ôn tập."
+]
+],
+"try": "Nói: “Dù bài thi khó đến mấy cũng phải hoàn thành.”"
+}
+]
+},
+{
+"line": 4,
+"s": "我第一次听说盐有保护衣服颜色的作用，生活中还真有不少课本上无法学到的知识。",
+"vn": "Con lần đầu nghe nói muối có tác dụng bảo vệ màu sắc quần áo, trong cuộc sống quả thực có không ít kiến thức không thể học được trên sách vở.",
+"ch": [
+{
+"t": "课本上无法学到的知识",
+"py": "kèběn shàng wúfǎ xué dào de zhīshì",
+"vn": "kiến thức mà trên sách vở không thể học được",
+"frame": "……上无法学到的 + danh từ",
+"note": "Dùng 无法 để chỉ sự bất lực, không thể thực hiện được trong hoàn cảnh cụ thể.",
+"ex": [
+[
+"这是书本上无法学到的经验。",
+"Đây là kinh nghiệm mà sách vở không thể học được."
+],
+[
+"有些问题无法在网上找到答案。",
+"Có những vấn đề không thể tìm thấy đáp án trên mạng."
+]
+],
+"try": "Nói: “Đây là kỹ năng mà trường học không thể học được.”"
+}
+]
+},
+{
+"line": 5,
+"s": "实际上，很多问题的答案都可以从生活中找到。但这需要你用眼睛去发现，用心去总结。",
+"vn": "Thực ra, đáp án của rất nhiều vấn đề đều có thể tìm thấy từ trong cuộc sống. Chỉ là điều này cần con dùng đôi mắt để phát hiện, dùng trái tim để tổng kết.",
+"ch": [
+{
+"t": "从生活中找到",
+"py": "cóng shēnghuó zhōng zhǎodào",
+"vn": "tìm thấy từ trong cuộc sống",
+"frame": "从 + nơi chốn/lĩnh vực + 找到",
+"note": "Cách diễn đạt việc tìm ra câu trả lời hoặc nguồn cảm hứng từ một môi trường nào đó.",
+"ex": [
+[
+"我们可以从书本中找到乐趣。",
+"Chúng ta có thể tìm thấy niềm vui từ sách vở."
+],
+[
+"灵感往往可以从日常生活中找到。",
+"Cảm hứng thường có thể tìm thấy từ cuộc sống hàng ngày."
+]
+],
+"try": "Nói: “Nhiều niềm vui có thể tìm thấy từ công việc.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "王教授，今天听完您的这节课，我终于明白为什么您的课那么受学生欢迎了。",
+"vn": "Giáo sư Vương, hôm nay nghe xong tiết học này của ngài, tôi cuối cùng đã hiểu vì sao lớp học của ngài lại được học sinh chào đón như vậy.",
+"ch": [
+{
+"t": "受学生欢迎",
+"py": "shòu xuéshēng huānyíng",
+"vn": "được học sinh hoan nghênh",
+"frame": "……受 + ai đó + 欢迎",
+"note": "Cấu trúc 受……欢迎 dùng rất phổ biến trong công sở và trường học để chỉ sự yêu mến.",
+"ex": [
+[
+"这个新老师很受学生欢迎。",
+"Giáo viên mới này rất được học sinh hoan nghênh."
+],
+[
+"这家饭馆的菜很受客人欢迎。",
+"Món ăn của quán này rất được khách hàng ưa chuộng."
+]
+],
+"try": "Nói: “Cuốn sách này rất được giới trẻ chào đón.”"
+}
+]
+},
+{
+"line": 1,
+"s": "谢谢！您能详细谈谈对我的课的看法吗？",
+"vn": "Cảm ơn! Ngài có thể nói chi tiết về cách nhìn đối với lớp học của tôi không?",
+"ch": [
+{
+"t": "详细谈谈",
+"py": "xiángxì tántán",
+"vn": "nói một cách chi tiết",
+"frame": "详细 + V",
+"note": "Phó từ 详细 đứng trước động từ thể hiện việc làm rõ ngọn ngành, chi tiết.",
+"ex": [
+[
+"请您详细解释一下这个计划。",
+"Xin ngài giải thích chi tiết về kế hoạch này."
+],
+[
+"经理详细介绍了新工作。",
+"Giám đốc giới thiệu chi tiết về công việc mới."
+]
+],
+"try": "Nói: “Xin bạn hãy nói chi tiết về yêu cầu của công việc.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我发现您对学生特别了解，而且总是能用最简单的方法把复杂的问题解释清楚，让每个学生都能听懂，这一点真是值得我们好好儿学习。",
+"vn": "Tôi phát hiện ngài rất hiểu học sinh, hơn nữa luôn có thể dùng phương pháp đơn giản nhất để giải thích rõ vấn đề phức tạp, khiến mọi học sinh đều nghe hiểu, điểm này thực sự rất đáng để chúng ta học tập thật tốt.",
+"ch": [
+{
+"t": "用最简单的方法",
+"py": "yòng zuì jiǎndān de fāngfǎ",
+"vn": "dùng phương pháp đơn giản nhất",
+"frame": "用 + phương pháp + V",
+"note": "Cấu trúc dùng phương pháp gì để làm việc gì, rất hay gặp khi bàn về cách giải quyết.",
+"ex": [
+[
+"我们应该用正确的方法学汉语。",
+"Chúng ta nên dùng phương pháp đúng để học tiếng Trung."
+],
+[
+"老师用简单的方法教语法。",
+"Thầy giáo dùng phương pháp đơn giản để dạy ngữ pháp."
+]
+],
+"try": "Nói: “Tôi muốn dùng phương pháp nhanh nhất để giải quyết vấn đề.”"
+},
+{
+"t": "把复杂的问题解释清楚",
+"py": "bǎ fùzá de wèntí jiěshì qīngchǔ",
+"vn": "giải thích rõ vấn đề phức tạp",
+"frame": "把 + tân ngữ + V + kết quả",
+"note": "Dùng câu chữ 把 để nhấn mạnh kết quả tác động lên sự vật, ở đây là giải thích rõ ràng.",
+"ex": [
+[
+"请把这个难题解释清楚。",
+"Xin hãy giải thích rõ bài toán khó này."
+],
+[
+"老师把语法讲清楚了。",
+"Thầy giáo giảng rõ ngữ pháp rồi."
+]
+],
+"try": "Nói: “Bạn có thể giải thích rõ kế hoạch này không?”"
+}
+]
+},
+{
+"line": 3,
+"s": "哪里哪里，这只是因为我对每个学生的能力水平比较了解。",
+"vn": "Đâu có đâu có, đây chỉ là vì tôi khá hiểu năng lực trình độ của từng học sinh.",
+"ch": []
+},
+{
+"line": 4,
+"s": "那您认为对于老师来说，什么是最难做到的？",
+"vn": "Vậy ngài cho rằng đối với giáo viên mà nói, điều gì là khó làm được nhất?",
+"ch": [
+{
+"t": "对于老师来说",
+"py": "duìyú lǎoshī lái shuō",
+"vn": "đối với giáo viên mà nói",
+"frame": "对于 + đối tượng + 来说",
+"note": "Khung câu dùng khi nêu quan điểm, góc nhìn từ một người hoặc nhóm người cụ thể.",
+"ex": [
+[
+"对于年轻人来说，时间非常宝贵。",
+"Đối với người trẻ mà nói, thời gian rất quý giá."
+],
+[
+"对于我们来说，考试不太难。",
+"Đối với chúng tôi mà nói, kỳ thi không quá khó."
+]
+],
+"try": "Nói: “Đối với nhân viên mới mà nói, điều này không dễ.”"
+}
+]
+},
+{
+"line": 5,
+"s": "世界上没有完全相同的叶子，同样地，世界上也没有完全一样的人。所以，在教育学生时，要根据学生的特点选择不同的方法，我想这应该是最不容易做到的。",
+"vn": "Trên thế giới không có chiếc lá nào hoàn toàn giống nhau, tương tự như vậy, trên thế giới cũng không có người nào hoàn toàn giống nhau. Cho nên, khi giáo dục học sinh, phải căn cứ vào đặc điểm của học sinh để chọn phương pháp khác nhau, tôi nghĩ đây hẳn là điều khó làm được nhất.",
+"ch": [
+{
+"t": "根据学生的特点",
+"py": "gēnjù xuéshēng de tèdiǎn",
+"vn": "căn cứ vào đặc điểm của học sinh",
+"frame": "根据 + danh từ + V",
+"note": "Cụm từ chỉ căn cứ, cơ sở để thực hiện hành động phía sau.",
+"ex": [
+[
+"根据大家的兴趣选择课程。",
+"Căn cứ vào sở thích của mọi người để chọn khóa học."
+],
+[
+"公司根据表现决定奖奖金。",
+"Công ty căn cứ vào biểu hiện để quyết định tiền thưởng."
+]
+],
+"try": "Nói: “Căn cứ vào năng lực của bạn để sắp xếp công việc.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "人人都会使用语言，但是怎么用语言把话说好却是一门艺术。",
+"vn": "Ai cũng biết sử dụng ngôn ngữ, nhưng làm thế nào để dùng ngôn ngữ nói chuyện cho hay lại là một nghệ thuật.",
+"ch": [
+{
+"t": "把话说好",
+"py": "bǎ huà shuō hǎo",
+"vn": "nói chuyện cho hay/khéo",
+"frame": "把 + N + V + bổ ngữ kết quả",
+"note": "Cấu trúc chữ 把 dùng để nhấn mạnh kết quả của hành động lên đối tượng. Ở đây là làm cho lời nói trở nên tốt đẹp.",
+"ex": [
+[
+"我们要把汉语学好。",
+"Chúng ta phải học tiếng Trung thật tốt."
+],
+[
+"请把这件事做好。",
+"Hãy làm tốt việc này."
+]
+],
+"try": "Nói: “Tôi muốn nói tiếng Trung thật lưu loát.”"
+}
+]
+},
+{
+"line": 0,
+"s": "看一个人怎么说话，往往可以比较准确地判断出他是一个什么样的人。",
+"vn": "Nhìn cách một người nói chuyện, thường có thể phán đoán khá chính xác họ là người như thế nào.",
+"ch": [
+{
+"t": "判断出",
+"py": "pànduàn chū",
+"vn": "phán đoán ra",
+"frame": "V + 出",
+"note": "Bổ ngữ xu hướng 出 biểu thị kết quả của việc suy nghĩ hoặc quan sát đã đạt được kết quả rõ ràng.",
+"ex": [
+[
+"我一眼就看出了他的想法。",
+"Tôi nhìn cái là đoán ra ngay suy nghĩ của anh ấy."
+],
+[
+"听了他的话，我听出了他在生气。",
+"Nghe lời anh ấy, tôi nhận ra anh ấy đang giận."
+]
+],
+"try": "Nói: “Tôi đã đoán ra đáp án của câu hỏi này.”"
+}
+]
+},
+{
+"line": 1,
+"s": "有的人心里怎么想，嘴上就怎么说，即使是别人的缺点，他也会直接说出来，这样的人虽然很诚实，但是可能会引起别人的误会；",
+"vn": "Có người nghĩ trong lòng thế nào thì nói ra thế ấy, ngay cả khi đó là khuyết điểm của người khác, họ cũng nói thẳng ra, người như vậy tuy rất thành thật nhưng có thể gây ra hiểu lầm cho người khác.",
+"ch": [
+{
+"t": "心里怎么想，嘴上就怎么说",
+"py": "xīnlǐ zěnme xiǎng, zuǐshàng jiù zěnme shuō",
+"vn": "nghĩ sao nói vậy",
+"frame": "怎么 + V1, 就怎么 + V2",
+"note": "Cấu trúc diễn tả sự đồng nhất giữa suy nghĩ và hành động, dùng để miêu tả tính cách thẳng thắn.",
+"ex": [
+[
+"老师希望我们怎么想就怎么说。",
+"Thầy giáo hy vọng chúng ta nghĩ sao nói vậy."
+],
+[
+"不管别人怎么做，我都要按自己的想法做。",
+"Dù người khác làm thế nào, tôi vẫn làm theo cách của mình."
+]
+],
+"try": "Nói: “Bạn ấy là người nghĩ sao nói vậy.”"
+},
+{
+"t": "引起别人的误会",
+"py": "yǐnqǐ biérén de wùhuì",
+"vn": "gây ra hiểu lầm cho người khác",
+"frame": "引起 + N (vấn đề/sự chú ý)",
+"note": "引起 thường đi với các danh từ tiêu cực hoặc mang tính chất sự kiện (误会, 注意, 兴趣).",
+"ex": [
+[
+"他的话引起了大家的注意。",
+"Lời của anh ấy thu hút sự chú ý của mọi người."
+],
+[
+"这种行为容易引起误会。",
+"Hành vi này dễ gây hiểu lầm."
+]
+],
+"try": "Nói: “Việc đến muộn sẽ gây ra hiểu lầm.”"
+}
+]
+},
+{
+"line": 2,
+"s": "有的人虽然也看到了别人的缺点，但却不会直接指出来，而是通过别的方法来提醒，让他认识到自己的缺点，这样的人会让人觉得更友好。",
+"vn": "Có người tuy cũng thấy khuyết điểm của người khác, nhưng lại không chỉ ra trực tiếp, mà thông qua cách khác để nhắc nhở, khiến họ nhận ra khuyết điểm của bản thân, người như vậy sẽ khiến người khác cảm thấy thân thiện hơn.",
+"ch": [
+{
+"t": "不会直接指出来",
+"py": "bú huì zhíjiē zhǐ chūlái",
+"vn": "sẽ không chỉ ra trực tiếp",
+"frame": "V + 指出来",
+"note": "指出来 nhấn mạnh hành động chỉ rõ một vấn đề gì đó ra bên ngoài.",
+"ex": [
+[
+"请帮我指出文章里的错误。",
+"Hãy giúp tôi chỉ ra lỗi sai trong bài văn."
+],
+[
+"他指出了我的不足。",
+"Anh ấy đã chỉ ra những điểm thiếu sót của tôi."
+]
+],
+"try": "Nói: “Thầy giáo đã chỉ ra lỗi sai trong bài thi của tôi.”"
+},
+{
+"t": "通过别的方法",
+"py": "tōngguò bié de fāngfǎ",
+"vn": "thông qua cách khác",
+"frame": "通过 + N + 来 + V",
+"note": "Cấu trúc chỉ phương thức thực hiện hành động để đạt được mục đích.",
+"ex": [
+[
+"通过努力学习，我通过了HSK4级考试。",
+"Thông qua việc học tập chăm chỉ, tôi đã đỗ HSK4."
+],
+[
+"我们可以通过上网来查资料。",
+"Chúng ta có thể thông qua việc lên mạng để tra tài liệu."
+]
+],
+"try": "Nói: “Tôi thông qua việc xem phim để học tiếng Trung.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "无论做什么事情，都要注意方法，学习尤其是这样。",
+"vn": "Bất kể làm việc gì, đều phải chú ý phương pháp, việc học đặc biệt là như vậy.",
+"ch": [
+{
+"t": "无论做什么事情，都要注意方法",
+"py": "wúcùn zuò shénme shìqíng, dōu yào zhùyì fāngfǎ",
+"vn": "dù làm việc gì đi nữa, cũng đều phải chú ý phương pháp",
+"frame": "无论 + câu hỏi + 都 + V",
+"note": "无论 biểu thị điều kiện không thay đổi. Dùng rất nhiều khi khuyên bảo người khác.",
+"ex": [
+[
+"无论遇到什么困难，都要坚持下去。",
+"Dù gặp khó khăn gì cũng phải kiên trì tiếp."
+],
+[
+"无论去哪儿旅游，都要提前订票。",
+"Dù đi du lịch đâu cũng phải đặt vé trước."
+]
+],
+"try": "Nói: “Bất kể làm bài tập gì, cũng đều phải cẩn thận.”"
+}
+]
+},
+{
+"line": 0,
+"s": "使用正确的方法，我们做起事来能“事半功倍”，也就是说，能节约时间，用较少的力气，取得更好的效果。",
+"vn": "Sử dụng phương pháp chính xác, chúng ta làm việc sẽ có thể \"được một mà lợi hai\", nghĩa là có thể tiết kiệm thời gian, dùng ít sức lực hơn mà đạt được hiệu quả tốt hơn.",
+"ch": [
+{
+"t": "做起事来",
+"py": "zuò qǐ shì lái",
+"vn": "khi làm việc / lúc bắt đầu làm việc",
+"frame": "V + 起 + tân ngữ + 来",
+"note": "Cấu trúc nhấn mạnh việc bắt đầu thực hiện hành động nào đó.",
+"ex": [
+[
+"学起汉语来，我觉得很有意思。",
+"Khi học tiếng Trung, tôi cảm thấy rất thú vị."
+],
+[
+"说起这个事，他就生气。",
+"Nhắc đến chuyện này là anh ấy lại tức giận."
+]
+],
+"try": "Nói: “Làm việc nhà lên là thấy mệt mỏi.”"
+},
+{
+"t": "也就是说",
+"py": "yě jiù shì shuō",
+"vn": "nói cách khác là / nghĩa là",
+"frame": "……，也就是说，……",
+"note": "Dùng để giải thích hoặc làm rõ hơn cho ý vừa nói trước đó.",
+"ex": [
+[
+"他明天不来上班了，也就是说他辞职了。",
+"Ngày mai anh ấy không đi làm nữa, nghĩa là anh ấy nghỉ việc rồi."
+],
+[
+"我们下周考试，也就是说只有五天复习了。",
+"Chúng ta tuần sau thi, nghĩa là chỉ có năm ngày để ôn tập thôi."
+]
+],
+"try": "Nói: “Tiền lương tháng này tăng rồi, nghĩa là chúng ta có thể đi du lịch.”"
+}
+]
+},
+{
+"line": 1,
+"s": "相反，如果方法不对，可能花五倍甚至十倍的时间都不能完成任务，结果变成了“事倍功半”。",
+"vn": "Ngược lại, nếu phương pháp không đúng, có thể mất gấp năm thậm chí gấp mười lần thời gian cũng không thể hoàn thành nhiệm vụ, kết quả biến thành \"được ít công mà hỏng nhiều\".",
+"ch": [
+{
+"t": "花五倍甚至十倍的时间",
+"py": "huā wǔ bèi shènzhì shí bèi de shíjiān",
+"vn": "mất gấp năm thậm chí gấp mười lần thời gian",
+"frame": "花 + khoảng thời gian / số lượng",
+"note": "Dùng 花 khi tiêu tốn thời gian, tiền bạc hoặc sức lực cho việc gì đó.",
+"ex": [
+[
+"我花了两个小时写作业。",
+"Tôi mất hai tiếng đồng hồ viết bài tập."
+],
+[
+"买这个手机花了很多钱。",
+"Mua chiếc điện thoại này tốn rất nhiều tiền."
+]
+],
+"try": "Nói: “Mất ba ngày để hoàn thành báo cáo này.”"
+}
+]
+},
+{
+"line": 2,
+"s": "有一点需要提醒大家，别人的方法也许很有效，但是并不一定适合自己。",
+"vn": "Có một điểm cần nhắc nhở mọi người, phương pháp của người khác có lẽ rất hiệu quả, nhưng chưa chắc đã phù hợp với bản thân.",
+"ch": [
+{
+"t": "并不一定",
+"py": "bìng bú yídìng",
+"vn": "chưa chắc đã / không nhất thiết phải",
+"frame": "并不一定 + V / tính từ",
+"note": "Biểu thị sự phủ định mềm mỏng, không tuyệt đối hóa vấn đề.",
+"ex": [
+[
+"贵的东西并不一定好。",
+"Đồ đắt tiền chưa chắc đã tốt."
+],
+[
+"他没来上课并不一定是因为生病。",
+"Cậu ấy không đến lớp chưa chắc đã là vì bị ốm."
+]
+],
+"try": "Nói: “Sách đắt tiền chưa chắc đã phù hợp với bạn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "因此，我们应该在听取别人意见的同时，仔细考虑一下，再根据不同的情况选择不同的方法，这样才能达到最好的效果。",
+"vn": "Do đó, chúng ta nên trong lúc lắng nghe ý kiến của người khác, suy nghĩ cẩn thận một chút, rồi dựa vào những tình huống khác nhau mà chọn lựa phương pháp khác nhau, như vậy mới có thể đạt được hiệu quả tốt nhất.",
+"ch": [
+{
+"t": "根据不同的情况",
+"py": "gēnjù bùtóng de qíngkuàng",
+"vn": "dựa theo tình huống khác nhau",
+"frame": "根据 + danh từ / tình huống",
+"note": "Dùng để chỉ cơ sở hoặc căn cứ để đưa ra hành động, quyết định.",
+"ex": [
+[
+"根据天气预报，明天会下雨。",
+"Dựa theo dự báo thời tiết, ngày mai trời sẽ mưa."
+],
+[
+"根据公司的规定，迟到要扣钱。",
+"Dựa theo quy định của công ty, đi muộn sẽ bị trừ tiền."
+]
+],
+"try": "Nói: “Dựa theo tình hình thực tế để làm bài tập.”"
+},
+{
+"t": "才能达到最好的效果",
+"py": "cái néng dádào zuì hǎo de xiàoguǒ",
+"vn": "mới có thể đạt được hiệu quả tốt nhất",
+"frame": "先 A，才能达到……",
+"note": "Biểu thị điều kiện cần thiết để đạt được mục tiêu mong muốn.",
+"ex": [
+[
+"只有努力学习，才能达到最好的成绩。",
+"Chỉ có nỗ lực học tập, mới có thể đạt được thành tích tốt nhất."
+],
+[
+"只有多锻炼，才能达到健康的效果。",
+"Chỉ có vận động nhiều, mới có thể đạt được hiệu quả khỏe mạnh."
+]
+],
+"try": "Nói: “Chỉ có nói nhiều, mới có thể đạt được hiệu quả học tiếng Trung tốt nhất.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "孔子（公元前551—公元前479）是中国古代著名的教育家和思想家。",
+"vn": "Khổng Tử (551 TCN - 479 TCN) là nhà giáo dục và nhà tư tưởng nổi tiếng của Trung Quốc cổ đại.",
+"ch": []
+},
+{
+"line": 0,
+"s": "他教育学生的思想和方法，对中国的教育产生了深远的影响，“因材施教”就是其中一个方面。",
+"vn": "Tư tưởng và phương pháp giáo dục học sinh của ông đã tạo ra ảnh hưởng sâu sắc đối với nền giáo dục Trung Quốc, \"dạy học theo năng lực\" chính là một trong những phương diện đó.",
+"ch": [
+{
+"t": "对中国的教育产生了深远的影响",
+"py": "duì zhōngguó de jiàoyù chǎnshēng le shēnyuǎn de yǐngxiǎng",
+"vn": "tạo ra ảnh hưởng sâu sắc đối với giáo dục Trung Quốc",
+"frame": "对……产生了深远的影响",
+"note": "Dùng để nói về việc gì đó hoặc ai đó để lại tác động rất lớn, lâu dài. Rất hay gặp trong các bài văn văn hóa, lịch sử.",
+"ex": [
+[
+"这位老老师对我的影响很深远。",
+"Thầy giáo già này có ảnh hưởng rất sâu sắc đối với tôi."
+],
+[
+"互联网对我们的生活产生了深远的影响。",
+"Internet đã tạo ra ảnh hưởng sâu sắc đối với cuộc sống của chúng ta."
+]
+],
+"try": "Nói: “Chuyến du lịch đó đã tạo ra ảnh hưởng sâu sắc đối với tôi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "孔子有两个学生，一个叫子路，一个叫冉有。",
+"vn": "Khổng Tử có hai người học trò, một người tên là Tử Lộ, một người tên là Nhiễm Hữu.",
+"ch": []
+},
+{
+"line": 1,
+"s": "这两个学生分别问了孔子同样的问题——“如果听到一种正确的意见，可以马上去做吗？”，但是孔子对这同一个问题的回答却不同。",
+"vn": "Hai người học trò này lần lượt hỏi Khổng Tử cùng một câu hỏi —— \"Nếu nghe được một ý kiến đúng đắn, có thể lập tức đi làm luôn không?\", thế nhưng câu trả lời của Khổng Tử đối với cùng một câu hỏi này lại khác nhau.",
+"ch": [
+{
+"t": "如果听到一种正确的意见",
+"py": "rúguǒ tīngdào yì zhǒng zhèngquè de yìjiàn",
+"vn": "nếu nghe được một ý kiến đúng đắn",
+"frame": "如果 + V + ……意见",
+"note": "Khung câu điều kiện giả định, dùng khi muốn bàn về một tình huống cụ thể.",
+"ex": [
+[
+"如果听到大家的意见，我们要认真听。",
+"Nếu nghe được ý kiến của mọi người, chúng ta phải nghe cho cẩn thận."
+],
+[
+"如果听到这个消息，请告诉我。",
+"Nếu nghe được tin này, hãy báo cho tôi."
+]
+],
+"try": "Nói: “Nếu nghe được ý kiến hay, bạn nên ghi lại.”"
+}
+]
+},
+{
+"line": 1,
+"s": "子路做事情考虑得不够仔细，所以孔子让他跟父亲、哥哥再商量一下；",
+"vn": "Tử Lộ làm việc suy xét không đủ chu đáo, cho nên Khổng Tử bảo cậu ấy bàn bạc lại với bố và anh trai;",
+"ch": [
+{
+"t": "让他跟父亲、哥哥再商量一下",
+"py": "ràng tā gēn fùqīn, gēge zài shāngliang yíxià",
+"vn": "bảo cậu ấy bàn bạc lại với bố và anh trai",
+"frame": "让 + ai + 跟 + ai + 再商量一下",
+"note": "Khung diễn đạt việc khuyên ai đó nên thảo luận lại với người nhà trước khi quyết định việc gì.",
+"ex": [
+[
+"妈妈让我跟朋友再商量一下。",
+"Mẹ bảo tôi bàn bạc lại với bạn bè."
+],
+[
+"老师让我跟家长再商量一下这件事情。",
+"Thầy giáo bảo tôi bàn bạc lại với phụ huynh về việc này."
+]
+],
+"try": "Nói: “Công ty bảo tôi bàn bạc lại với đồng nghiệp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "冉有做事常常犹豫，所以孔子鼓励他应该马上去做。",
+"vn": "Nhiễm Hữu làm việc thường hay do dự, cho nên Khổng Tử khuyến khích cậu ấy nên lập tức đi làm luôn.",
+"ch": [
+{
+"t": "鼓励他应该马上去做",
+"py": "gǔlì tā yīnggāi mǎshàng qù zuò",
+"vn": "khuyến khích cậu ấy nên lập tức đi làm",
+"frame": "鼓励 + ai + 应该 + V",
+"note": "Dùng khi muốn động viên, khích lệ ai đó hành động ngay thay vì chần chừ.",
+"ex": [
+[
+"经理鼓励我们应该马上试一试。",
+"Giám đốc khuyến khích chúng tôi nên thử ngay lập tức."
+],
+[
+"老师鼓励大家应该马上开始复习。",
+"Thầy giáo khuyến khích mọi người nên bắt đầu ôn tập ngay."
+]
+],
+"try": "Nói: “Mẹ khuyến khích tôi nên đi nấu cơm ngay.”"
+}
+]
+},
+{
+"line": 2,
+"s": "孔子的故事告诉我们一个道理，老师应该根据学生的特点和能力，选择不同的教育方法，因材施教，",
+"vn": "Câu chuyện của Khổng Tử nói cho chúng ta biết một đạo lý, thầy giáo nên căn cứ vào đặc điểm và năng lực của học sinh, lựa chọn các phương pháp giáo dục khác nhau, dạy học theo năng lực,",
+"ch": [
+{
+"t": "根据学生的特点和能力",
+"py": "gēnjù xuéshēng de tèdiǎn hé nénglì",
+"vn": "căn cứ vào đặc điểm và năng lực của học sinh",
+"frame": "根据 + danh từ + 选择",
+"note": "Cụm chỉ căn cứ, cơ sở để đưa ra lựa chọn hoặc hành động phù hợp.",
+"ex": [
+[
+"我们根据自己的兴趣选择工作。",
+"Chúng ta căn cứ vào sở thích của bản thân để chọn công việc."
+],
+[
+"老师根据每个人的情况选择练习。",
+"Thầy giáo căn cứ vào tình hình của mỗi người để chọn bài tập."
+]
+],
+"try": "Nói: “Tôi căn cứ vào thời gian để chọn phương án du lịch.”"
+}
+]
+},
+{
+"line": 2,
+"s": "这样才能使学生发挥长处，弥补不足。",
+"vn": "như vậy mới có thể khiến học sinh phát huy sở trường, bù đắp sở đoản.",
+"ch": [
+{
+"t": "这样才能使学生发挥长处",
+"py": "zhèyàng cái néng shǐ xuéshēng fāhuī chángchù",
+"vn": "như vậy mới có thể khiến học sinh phát huy sở trường",
+"frame": "这样才能使 + ai + V",
+"note": "Cấu trúc chỉ điều kiện kết quả, rất hữu ích khi viết đoạn văn nghị luận hoặc nêu bài học.",
+"ex": [
+[
+"这样才能使大家进步。",
+"Như vậy mới có thể khiến mọi người tiến bộ."
+],
+[
+"这样才能使工作顺利完成。",
+"Như vậy mới có thể khiến công việc hoàn thành thuận lợi."
+]
+],
+"try": "Nói: “Như vậy mới có thể giúp tôi phát huy sở trường của mình.”"
+}
+]
+}
+]
+}

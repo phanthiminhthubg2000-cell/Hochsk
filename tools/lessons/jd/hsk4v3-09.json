@@ -1,0 +1,524 @@
+{
+"1": [
+{
+"line": 0,
+"s": "家月，给你的，祝你生日快乐！",
+"vn": "Gia Nguyệt, cái này cho cậu, chúc cậu sinh nhật vui vẻ!",
+"ch": []
+},
+{
+"line": 1,
+"s": "啊，好漂亮的花！还有巧克力！你怎么知道我喜欢这个巧克力？",
+"vn": "A, hoa đẹp quá! Còn có cả sô-cô-la nữa! Sao cậu biết mình thích loại sô-cô-la này?",
+"ch": []
+},
+{
+"line": 2,
+"s": "上次咱们去超市，看你拿起来看了看又放下了，我就记住了。",
+"vn": "Lần trước chúng mình đi siêu thị, thấy cậu cầm lên xem rồi lại đặt xuống, mình đã ghi nhớ rồi.",
+"ch": []
+},
+{
+"line": 3,
+"s": "好感动！我不说你也懂我在想什么，你真是细心又浪漫。其实刚认识不久，你的幽默与耐心就很吸引我，不过我当时也只把你当普通朋友。如果你没有一直找我聊天儿，我们可能就错过了。",
+"vn": "Cảm động quá! Mình không nói mà cậu cũng hiểu mình đang nghĩ gì, cậu thật sự vừa chu đáo lại vừa lãng mạn. Thực ra lúc mới quen, sự hài hước và kiên nhẫn của cậu đã rất thu hút mình, nhưng lúc đó mình cũng chỉ coi cậu là bạn bình thường. Nếu cậu không liên tục nhắn tin trò chuyện với mình, có lẽ chúng ta đã bỏ lỡ nhau rồi.",
+"ch": [
+{
+"t": "我不说你也懂",
+"py": "wǒ bù shuō nǐ yě dǒng",
+"vn": "mình không nói mà cậu cũng hiểu",
+"frame": "我不说，你也懂……",
+"note": "Dùng để khen ngợi sự ăn ý giữa hai người, không cần nói ra đối phương cũng biết.",
+"ex": [
+[
+"我不说，你也懂我想要什么。",
+"Mình không nói, cậu cũng hiểu mình muốn gì."
+],
+[
+"我不说，老师也懂我的意思。",
+"Mình không nói, thầy cũng hiểu ý mình."
+]
+],
+"try": "Nói: “Chúng ta là bạn thân, mình không nói cậu cũng hiểu mình đang buồn.”"
+},
+{
+"t": "就很吸引我",
+"py": "jiù hěn xīyǐn wǒ",
+"vn": "đã rất thu hút mình",
+"frame": "……很吸引我",
+"note": "Dùng để diễn tả một đặc điểm hoặc tính cách của ai đó khiến bạn chú ý.",
+"ex": [
+[
+"他的幽默感很吸引我。",
+"Khiếu hài hước của anh ấy rất thu hút mình."
+],
+[
+"这个工作的薪水很吸引我。",
+"Mức lương của công việc này rất thu hút mình."
+]
+],
+"try": "Nói: “Cách dạy của giáo viên này rất thu hút tôi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "我终于遇见了对的人，哪能错过呢？",
+"vn": "Mình cuối cùng cũng gặp được đúng người rồi, sao có thể bỏ lỡ được chứ?",
+"ch": [
+{
+"t": "我终于遇见了对的人",
+"py": "wǒ zhōngyú yùjiàn le duì de rén",
+"vn": "mình cuối cùng cũng gặp được đúng người",
+"frame": "终于 + V + 了",
+"note": "Diễn tả một việc mong đợi từ lâu cuối cùng đã xảy ra.",
+"ex": [
+[
+"我终于学会骑自行车了。",
+"Cuối cùng mình cũng biết đi xe đạp rồi."
+],
+[
+"他终于完成了作业。",
+"Cậu ấy cuối cùng cũng làm xong bài tập."
+]
+],
+"try": "Nói: “Cuối cùng tôi cũng thi đỗ HSK4 rồi.”"
+},
+{
+"t": "哪能错过呢",
+"py": "nǎ néng cuòguò ne",
+"vn": "sao có thể bỏ lỡ được chứ",
+"frame": "哪能 + V + 呢",
+"note": "Cách nói phủ định tu từ, nhấn mạnh rằng việc đó chắc chắn không thể xảy ra.",
+"ex": [
+[
+"这么好的机会，哪能错过呢？",
+"Cơ hội tốt thế này, sao có thể bỏ lỡ chứ?"
+],
+[
+"这么简单的题，哪能做错呢？",
+"Câu hỏi đơn giản thế này, sao có thể làm sai chứ?"
+]
+],
+"try": "Nói: “Thời tiết đẹp thế này, sao có thể ở nhà chứ?”"
+}
+]
+},
+{
+"line": 5,
+"s": "遇见你，我也觉得很幸运。",
+"vn": "Gặp được cậu, mình cũng cảm thấy rất may mắn.",
+"ch": []
+}
+],
+"2": [
+{
+"line": 0,
+"s": "看到一飞和同乐结婚后这么幸福，我这个介绍人也特别开心。",
+"vn": "Thấy Nhất Phi và Đồng Lạc sau khi kết hôn hạnh phúc như vậy, tôi là người giới thiệu cũng thấy đặc biệt vui.",
+"ch": []
+},
+{
+"line": 1,
+"s": "是啊，同乐是你的好朋友，一飞是你妹妹，你都很了解。",
+"vn": "Đúng vậy, Đồng Lạc là bạn tốt của cậu, Nhất Phi là em gái cậu, cậu đều rất hiểu họ.",
+"ch": [
+{
+"t": "你都很了解",
+"py": "nǐ dōu hěn liǎojiě",
+"vn": "cậu đều rất hiểu",
+"frame": "……你都很了解",
+"note": "Dùng để khẳng định sự hiểu biết sâu sắc về một nhóm người hoặc sự việc đã nhắc đến.",
+"ex": [
+[
+"这两个学生的情况，你都很了解。",
+"Tình hình của hai học sinh này, cậu đều rất hiểu."
+],
+[
+"这些菜的做法，你都很了解。",
+"Cách làm những món ăn này, cậu đều rất hiểu."
+]
+],
+"try": "Nói: “Những khó khăn của các bạn, tôi đều rất hiểu.”"
+}
+]
+},
+{
+"line": 2,
+"s": "嗯，他们尽管性格不同，但是有很多共同爱好。特别是同乐人好，性格也好，很有责任感。",
+"vn": "Ừ, họ mặc dù tính cách khác nhau, nhưng có rất nhiều sở thích chung. Đặc biệt là Đồng Lạc người tốt, tính cách cũng tốt, rất có tinh thần trách nhiệm.",
+"ch": [
+{
+"t": "尽管性格不同，但是有很多共同爱好",
+"py": "jǐnguǎn xìnggé bùtóng, dànshì yǒu hěnduō gòngtóng àihào",
+"vn": "mặc dù tính cách khác nhau, nhưng có nhiều sở thích chung",
+"frame": "尽管 A，但是 B",
+"note": "Cấu trúc nhượng bộ, dùng để nối hai vế đối lập. 尽管 thường dùng trong văn viết hoặc tình huống trang trọng.",
+"ex": [
+[
+"尽管工作很忙，但是他每天都坚持学习。",
+"Mặc dù công việc rất bận, nhưng anh ấy mỗi ngày đều kiên trì học tập."
+],
+[
+"尽管天气不好，但是我们还是去爬山了。",
+"Mặc dù thời tiết không tốt, nhưng chúng tôi vẫn đi leo núi."
+]
+],
+"try": "Nói: “Mặc dù tiếng Trung khó, nhưng tôi vẫn rất thích học.”"
+}
+]
+},
+{
+"line": 3,
+"s": "是的，一飞也算在对的时间遇到了对的人。后边的路还很长，希望他们能一直相互理解、相互支持。",
+"vn": "Đúng vậy, Nhất Phi cũng coi như là gặp đúng người vào đúng thời điểm. Con đường phía sau còn rất dài, hy vọng họ có thể luôn thấu hiểu và ủng hộ lẫn nhau.",
+"ch": [
+{
+"t": "在对的时间遇到了对的人",
+"py": "zài duì de shíjiān yùdào le duì de rén",
+"vn": "gặp đúng người vào đúng thời điểm",
+"frame": "在对的时间 + V + 对的人",
+"note": "Cụm từ lãng mạn, dùng để chỉ sự may mắn khi gặp gỡ đúng lúc, đúng đối tượng.",
+"ex": [
+[
+"在对的时间做对的事情，很重要。",
+"Làm đúng việc vào đúng thời điểm là rất quan trọng."
+],
+[
+"他终于在对的时间遇到了对的人。",
+"Cuối cùng anh ấy cũng đã gặp đúng người vào đúng thời điểm."
+]
+],
+"try": "Nói: “Tôi hy vọng sẽ gặp đúng người vào đúng thời điểm.”"
+},
+{
+"t": "相互理解、相互支持",
+"py": "xiānghù lǐjiě, xiānghù zhīchí",
+"vn": "thấu hiểu lẫn nhau, ủng hộ lẫn nhau",
+"frame": "相互 + V",
+"note": "相互 (lẫn nhau) kết hợp với các động từ chỉ hành động tương tác. Rất hay dùng trong các mối quan hệ.",
+"ex": [
+[
+"朋友之间应该相互帮助。",
+"Bạn bè với nhau nên giúp đỡ lẫn nhau."
+],
+[
+"我们要相互学习，共同进步。",
+"Chúng ta phải học hỏi lẫn nhau, cùng nhau tiến bộ."
+]
+],
+"try": "Nói: “Đồng nghiệp nên thấu hiểu và ủng hộ lẫn nhau.”"
+}
+]
+},
+{
+"line": 4,
+"s": "我了解同乐，更了解一飞，相信他们会一直走下去的。",
+"vn": "Tôi hiểu Đồng Lạc, càng hiểu Nhất Phi hơn, tin rằng họ sẽ mãi đi cùng nhau.",
+"ch": []
+},
+{
+"line": 5,
+"s": "祝他们越来越幸福。",
+"vn": "Chúc họ ngày càng hạnh phúc.",
+"ch": [
+{
+"t": "越来越幸福",
+"py": "yuè lái yuè xìngfú",
+"vn": "ngày càng hạnh phúc",
+"frame": "越来越 + Adj",
+"note": "Cấu trúc chỉ mức độ thay đổi theo thời gian. Không dùng với các từ chỉ trạng thái tĩnh.",
+"ex": [
+[
+"汉语越来越难了。",
+"Tiếng Trung ngày càng khó rồi."
+],
+[
+"天气越来越热了。",
+"Thời tiết ngày càng nóng rồi."
+]
+],
+"try": "Nói: “Chúc công ty của bạn ngày càng phát triển.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "王一雪比杨同乐更早进入公司。杨同乐刚来不久，王一雪对他印象就非常好：",
+"vn": "Vương Nhất Tuyết vào công ty sớm hơn Dương Đồng Lạc. Dương Đồng Lạc mới đến không lâu, Vương Nhất Tuyết đã có ấn tượng rất tốt về anh ấy:",
+"ch": [
+{
+"t": "对他印象就非常好",
+"py": "duì tā yìnxiàng jiù fēicháng hǎo",
+"vn": "có ấn tượng rất tốt về anh ấy",
+"frame": "A 对 B 印象 + (rất/không) tốt",
+"note": "Cấu trúc dùng để bày tỏ cảm nhận cá nhân về một người. Dùng '就' để nhấn mạnh thời điểm ấn tượng xuất hiện sớm.",
+"ex": [
+[
+"老师对这个学生的印象非常好。",
+"Thầy giáo có ấn tượng rất tốt về học sinh này."
+],
+[
+"大家对新同事的印象非常好。",
+"Mọi người có ấn tượng rất tốt về đồng nghiệp mới."
+]
+],
+"try": "Nói: “Tôi có ấn tượng rất tốt về người bạn này.”"
+}
+]
+},
+{
+"line": 0,
+"s": "人很实在，性格阳光，工作负责，表现积极……后来他们一起出了次差，此次出差，让两人熟悉了起来，从此成了好朋友。",
+"vn": "Người rất chân thật, tính cách lạc quan, làm việc có trách nhiệm, biểu hiện tích cực... Sau đó họ cùng đi công tác một chuyến, chuyến công tác này khiến hai người trở nên thân thiết, từ đó trở thành bạn tốt.",
+"ch": [
+{
+"t": "熟悉了起来",
+"py": "shúxī le qǐlái",
+"vn": "trở nên thân thiết/quen thuộc",
+"frame": "V + 起来",
+"note": "Cấu trúc 'V + 起来' diễn tả sự bắt đầu và tiếp diễn của một trạng thái (từ không quen thành quen).",
+"ex": [
+[
+"我们聊着聊着就熟悉了起来。",
+"Chúng tôi trò chuyện một lúc thì trở nên thân thiết."
+],
+[
+"天气慢慢暖和起来了。",
+"Thời tiết dần dần ấm lên rồi."
+]
+],
+"try": "Nói: “Sau khi học tiếng Trung, tôi và các bạn đã trở nên thân thiết.”"
+}
+]
+},
+{
+"line": 0,
+"s": "一次聊天儿时，王一雪了解到杨同乐还没女朋友，正好自己的妹妹王一飞也没有男朋友，于是王一雪就把王一飞介绍给了他。",
+"vn": "Một lần khi đang trò chuyện, Vương Nhất Tuyết biết được Dương Đồng Lạc vẫn chưa có bạn gái, vừa hay em gái Vương Nhất Phi của cô cũng chưa có bạn trai, thế là Vương Nhất Tuyết liền giới thiệu Vương Nhất Phi cho anh ấy.",
+"ch": [
+{
+"t": "就把王一飞介绍给了他",
+"py": "jiù bǎ Wáng Yīfēi jièshào gěi le tā",
+"vn": "liền giới thiệu Vương Nhất Phi cho anh ấy",
+"frame": "把 + A + 介绍给 + B",
+"note": "Cấu trúc 把 dùng để nhấn mạnh hành động tác động lên đối tượng A, sau đó chuyển giao cho B.",
+"ex": [
+[
+"我把我的好朋友介绍给你。",
+"Tôi giới thiệu bạn tốt của tôi cho bạn."
+],
+[
+"老师把这本书介绍给了学生。",
+"Thầy giáo giới thiệu cuốn sách này cho học sinh."
+]
+],
+"try": "Nói: “Tôi giới thiệu giáo viên tiếng Trung cho bạn tôi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "杨同乐和王一飞认识后，很聊得来，两人之间慢慢产生了爱情，最后成了夫妻。",
+"vn": "Sau khi Dương Đồng Lạc và Vương Nhất Phi quen nhau, họ rất hợp ý, giữa hai người dần dần nảy sinh tình yêu, cuối cùng trở thành vợ chồng.",
+"ch": [
+{
+"t": "很聊得来",
+"py": "hěn liáo de lái",
+"vn": "rất hợp ý/nói chuyện rất hợp",
+"frame": "V + 得 / 不 + 来",
+"note": "Cấu trúc bổ ngữ khả năng, dùng để chỉ việc giao tiếp/tương tác có thuận lợi hay không.",
+"ex": [
+[
+"我和新室友很聊得来。",
+"Tôi và bạn cùng phòng mới rất hợp ý."
+],
+[
+"他们性格不同，不太聊得来。",
+"Tính cách họ khác nhau, không hợp nói chuyện lắm."
+]
+],
+"try": "Nói: “Tôi và đồng nghiệp rất hợp nhau.”"
+}
+]
+},
+{
+"line": 1,
+"s": "杨同乐说自己很幸运，和王一雪这份同事间的友情，给他带来了美好的爱情。",
+"vn": "Dương Đồng Lạc nói anh ấy rất may mắn, tình bạn giữa đồng nghiệp với Vương Nhất Tuyết này đã mang đến cho anh ấy một tình yêu tươi đẹp.",
+"ch": [
+{
+"t": "给他带来了",
+"py": "gěi tā dàilái le",
+"vn": "mang đến cho anh ấy",
+"frame": "给 + ai + mang đến + cái gì",
+"note": "Dùng để diễn tả việc ai đó mang lại kết quả hoặc món quà gì cho người khác.",
+"ex": [
+[
+"这份工作给他带来了很多经验。",
+"Công việc này mang đến cho anh ấy nhiều kinh nghiệm."
+],
+[
+"学习汉语给我带来了很多快乐。",
+"Học tiếng Trung mang đến cho tôi nhiều niềm vui."
+]
+],
+"try": "Nói: “Du lịch mang đến cho tôi nhiều kỷ niệm đẹp.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "李文在校园里遇见白家月，从此，他们的人生变得更加精彩；",
+"vn": "Lý Văn gặp Bạch Gia Nguyệt trong khuôn viên trường, từ đó, cuộc đời họ trở nên đặc sắc hơn;",
+"ch": []
+},
+{
+"line": 0,
+"s": "王一飞和杨同乐通过王一雪介绍认识后，感情越来越深，最后两人幸福地走到了一起。",
+"vn": "Sau khi Vương Nhất Phi và Dương Đồng Nhạc quen nhau qua sự giới thiệu của Vương Nhất Tuyết, tình cảm ngày càng sâu đậm, cuối cùng hai người hạnh phúc đến với nhau.",
+"ch": [
+{
+"t": "感情越来越深",
+"py": "gǎnqíng yuè lái yuè shēn",
+"vn": "tình cảm ngày càng sâu đậm",
+"frame": "感情 + 越来越 + tính từ",
+"note": "Dùng để diễn tả sự thay đổi dần dần theo thời gian. 越来越 + tính từ chỉ sự tăng tiến.",
+"ex": [
+[
+"我们在一起工作，感情越来越深。",
+"Chúng tôi làm việc cùng nhau, tình cảm ngày càng sâu đậm."
+],
+[
+"学了半年，我和老师的感情越来越深。",
+"Học nửa năm rồi, tình cảm giữa tôi và thầy giáo ngày càng sâu đậm."
+]
+],
+"try": "Nói: “Sau khi đi du lịch cùng nhau, tình cảm của họ ngày càng tốt.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在我看来，遇见爱情的方式并不重要，重要的是在合适的时间遇到了合适的人。遇见你，刚刚好。",
+"vn": "Theo tôi thấy, cách gặp được tình yêu không quan trọng, quan trọng là gặp đúng người vào đúng thời điểm. Gặp được bạn, thật vừa vặn.",
+"ch": [
+{
+"t": "在我看来",
+"py": "zài wǒ kàn lái",
+"vn": "theo quan điểm của tôi",
+"frame": "在我看来，……",
+"note": "Dùng để đưa ra ý kiến cá nhân, tương đương với “theo tôi thấy” hoặc “đối với tôi mà nói”.",
+"ex": [
+[
+"在我看来，学好汉语最重要的是多练习。",
+"Theo tôi thấy, học tốt tiếng Trung quan trọng nhất là luyện tập nhiều."
+],
+[
+"在我看来，这份工作很有意义。",
+"Theo tôi thấy, công việc này rất có ý nghĩa."
+]
+],
+"try": "Nói: “Theo tôi thấy, đi du lịch một mình rất thú vị.”"
+}
+]
+},
+{
+"line": 1,
+"s": "不过美好的遇见只是爱的开始，爱更需要经营。",
+"vn": "Tuy nhiên cuộc gặp gỡ tốt đẹp chỉ là khởi đầu của tình yêu, tình yêu càng cần phải vun đắp.",
+"ch": [
+{
+"t": "爱更需要经营",
+"py": "ài gèng xūyào jīngyíng",
+"vn": "tình yêu càng cần phải vun đắp",
+"frame": "……更需要 + V",
+"note": "经营 ở đây nghĩa là vun đắp, xây dựng. Cấu trúc này nhấn mạnh tầm quan trọng của việc nỗ lực làm gì đó.",
+"ex": [
+[
+"这份工作更需要耐心。",
+"Công việc này càng cần sự kiên nhẫn."
+],
+[
+"学习语言更需要每天坚持。",
+"Học ngôn ngữ càng cần sự kiên trì mỗi ngày."
+]
+],
+"try": "Nói: “Học HSK4 càng cần phải học từ mới mỗi ngày.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在一段感情中，两个人要多关注对方的感受，尤其是结婚后，更要共同经营好家庭，日子才能越过越好。",
+"vn": "Trong một mối quan hệ, hai người cần quan tâm nhiều hơn đến cảm nhận của đối phương, đặc biệt là sau khi kết hôn, càng phải cùng nhau vun đắp gia đình, cuộc sống mới có thể ngày càng tốt đẹp hơn.",
+"ch": [
+{
+"t": "关注对方的感受",
+"py": "guānzhù duìfāng de gǎnshòu",
+"vn": "quan tâm đến cảm nhận của đối phương",
+"frame": "关注 + A + 的感受",
+"note": "Dùng để nhắc nhở về sự thấu hiểu trong giao tiếp hoặc mối quan hệ.",
+"ex": [
+[
+"作为朋友，我们要多关注对方的感受。",
+"Là bạn bè, chúng ta cần quan tâm nhiều hơn đến cảm nhận của đối phương."
+],
+[
+"老师很关注学生的感受。",
+"Thầy giáo rất quan tâm đến cảm nhận của học sinh."
+]
+],
+"try": "Nói: “Khi làm việc nhóm, chúng ta nên quan tâm đến cảm nhận của đồng nghiệp.”"
+},
+{
+"t": "日子才能越过越好",
+"py": "rìzi cáinéng yuè guò yuè hǎo",
+"vn": "cuộc sống mới có thể ngày càng tốt đẹp hơn",
+"frame": "……才能越 + V + 越 + Adj",
+"note": "越...越... diễn tả sự tăng tiến. 才能 nhấn mạnh điều kiện cần để đạt được kết quả đó.",
+"ex": [
+[
+"多读书，才能越学越聪明。",
+"Đọc nhiều sách, mới có thể càng học càng thông minh."
+],
+[
+"多练习，汉语才能越说越好。",
+"Luyện tập nhiều, tiếng Trung mới có thể càng nói càng giỏi."
+]
+],
+"try": "Nói: “Chăm chỉ làm việc, cuộc sống mới có thể ngày càng tốt hơn.”"
+}
+]
+},
+{
+"line": 1,
+"s": "爱，从来都是相互尊重、理解与支持，不是吗？",
+"vn": "Tình yêu, trước nay luôn là sự tôn trọng, thấu hiểu và ủng hộ lẫn nhau, không phải sao?",
+"ch": [
+{
+"t": "从来都是",
+"py": "cónglái dōu shì",
+"vn": "trước nay luôn là",
+"frame": "从来 + 都 + (không) + V/Adj",
+"note": "Dùng để khẳng định một chân lý hoặc thói quen không thay đổi từ trước đến nay.",
+"ex": [
+[
+"他从来都是这么认真。",
+"Anh ấy trước nay luôn nghiêm túc như vậy."
+],
+[
+"我从来都不迟到。",
+"Tôi trước nay chưa bao giờ đi muộn."
+]
+],
+"try": "Nói: “Học tiếng Trung trước nay luôn cần sự kiên trì.”"
+}
+]
+}
+]
+}

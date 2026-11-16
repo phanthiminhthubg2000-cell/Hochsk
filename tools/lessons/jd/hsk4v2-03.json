@@ -1,0 +1,1051 @@
+{
+"1": [
+{
+"line": 0,
+"s": "你上午的面试怎么样？",
+"vn": "Buổi phỏng vấn sáng nay của cậu thế nào?",
+"ch": []
+},
+{
+"line": 1,
+"s": "还可以，他们问的问题都挺容易的，就是我有点儿紧张。",
+"vn": "Cũng ổn, các câu hỏi họ hỏi đều khá là dễ, chỉ là tớ có chút hồi hộp.",
+"ch": [
+{
+"t": "都挺容易的",
+"py": "dōu tǐng róngyì de",
+"vn": "đều khá là dễ",
+"frame": "……都挺 + Tính từ + 的",
+"note": "Khung '挺……的' dùng để biểu thị mức độ khá/rất. Thêm '都' khi muốn nhấn mạnh nhiều đối tượng cùng có đặc điểm đó.",
+"ex": [
+[
+"这里的菜都挺好吃的。",
+"Đồ ăn ở đây đều khá là ngon."
+],
+[
+"这次考试的题都挺难的。",
+"Đề thi lần này đều khá là khó."
+]
+],
+"try": "Nói: “Các bạn học trong lớp đều khá là thân thiện.”"
+},
+{
+"t": "就是我有点儿紧张",
+"py": "jiùshì wǒ yǒudiǎnr jǐnzhāng",
+"vn": "chỉ là tớ có chút hồi hộp",
+"frame": "就是……有点儿 + Tính từ",
+"note": "Từ '就是' ở đây mang nghĩa 'chỉ có điều / chỉ là', đặt ở vế sau để nêu một điểm trừ nhỏ hoặc sự tiếc nuối.",
+"ex": [
+[
+"这件衣服很好看，就是有点儿贵。",
+"Bộ quần áo này rất đẹp, chỉ là hơi đắt một chút."
+],
+[
+" cái 这个工作很好，就是有点儿累。",
+"Công việc này rất tốt, chỉ là hơi mệt một chút."
+]
+],
+"try": "Nói: “Món ăn này ngon lắm, chỉ là hơi cay một chút.”"
+}
+]
+},
+{
+"line": 2,
+"s": "面试的时候，一定要对自己有信心，要相信自己的能力。",
+"vn": "Lúc phỏng vấn, nhất định phải có niềm tin vào bản thân, phải tin tưởng vào năng lực của mình.",
+"ch": [
+{
+"t": "对自己有信心",
+"py": "duì zìjǐ yǒu xìnxīn",
+"vn": "có niềm tin vào bản thân",
+"frame": "对……有信心",
+"note": "Nhớ cả khung '对 + đối tượng + 有信心' nghĩa là có niềm tin vào ai/cái gì. Đừng dịch ngược word-by-word.",
+"ex": [
+[
+"我们要对自己有信心。",
+"Chúng ta phải có niềm tin vào chính mình."
+],
+[
+"经理对这个项目很有信心。",
+"Giám đốc rất có niềm tin vào dự án này."
+]
+],
+"try": "Nói: “Tôi rất có niềm tin vào bản thân.”"
+},
+{
+"t": "相信自己的能力",
+"py": "xiāngxìn zìjǐ de nénglì",
+"vn": "tin tưởng vào năng lực của bản thân",
+"frame": "相信……的能力",
+"note": "Động từ '相信' đi trực tiếp với '……的能力' để diễn tả việc tin tưởng vào khả năng của ai đó.",
+"ex": [
+[
+"你要相信自己的能力，不能轻易放弃。",
+"Cậu phải tin vào năng lực của mình, không được dễ dàng từ bỏ."
+],
+[
+"老师很相信你的能力。",
+"Thầy cô rất tin tưởng vào năng lực của em."
+]
+],
+"try": "Nói: “Công ty rất tin tưởng vào năng lực của anh ấy.”"
+}
+]
+},
+{
+"line": 3,
+"s": "你说得对！3月15号上午8点在学校体育馆还有一个招聘会，你去吗？",
+"vn": "Cậu nói đúng đấy! 8 giờ sáng ngày 15 tháng 3 ở nhà thi đấu của trường còn có một buổi hội chợ tuyển dụng nữa, cậu có đi không?",
+"ch": []
+},
+{
+"line": 4,
+"s": "我还没决定呢。",
+"vn": "Tớ vẫn chưa quyết định nữa.",
+"ch": []
+},
+{
+"line": 5,
+"s": "听说这次招聘会提供的工作机会很多，我们一起去看看吧。",
+"vn": "Nghe nói hội chợ tuyển dụng lần này cung cấp rất nhiều cơ hội việc làm, chúng mình cùng đi xem thử đi.",
+"ch": [
+{
+"t": "提供的工作机会很多",
+"py": "tígōng de gōngzuò jīhuì hěn duō",
+"vn": "cơ hội việc làm cung cấp rất nhiều",
+"frame": "……提供……",
+"note": "Động từ '提供' nghĩa là cung cấp (cơ hội, dịch vụ, điều kiện...). Cụm '提供的工作机会' làm định ngữ bổ nghĩa cho cơ hội việc làm.",
+"ex": [
+[
+"这家公司为员工提供免费午餐。",
+"Công ty này cung cấp bữa trưa miễn phí cho nhân viên."
+],
+[
+"学校给我们提供了很多学习资源。",
+"Trường học cung cấp cho chúng tôi rất nhiều tài nguyên học tập."
+]
+],
+"try": "Nói: “Khách sạn này cung cấp dịch vụ rất tốt.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "小林，这次招聘不是小李负责吗？",
+"vn": "Tiểu Lâm, đợt tuyển dụng lần này không phải Tiểu Lý phụ trách sao?",
+"ch": [
+{
+"t": "不是小李负责吗",
+"py": "bú shì Xiǎo Lǐ fùzé ma",
+"vn": "không phải Tiểu Lý phụ trách sao",
+"frame": "不是 + A + V/N + 吗",
+"note": "Dùng để xác nhận lại một việc mà mình tưởng là chắc chắn nhưng nghe tin khác. Đổi A thành người khác là dùng được.",
+"ex": [
+[
+"明天开会不是你负责吗？",
+"Mai họp không phải bạn phụ trách sao?"
+],
+[
+"这份文件不是小王翻译的吗？",
+"Tài liệu này không phải Tiểu Vương dịch sao?"
+]
+],
+"try": "Nói: “Cuối tuần này không phải bạn mời khách sao?”"
+}
+]
+},
+{
+"line": 1,
+"s": "本来是小李负责的，但是他突然生病住院了，所以就交给我来做了。",
+"vn": "Vốn dĩ là Tiểu Lý phụ trách, nhưng anh ấy đột ngột ốm phải nhập viện, thế là giao cho tôi làm rồi.",
+"ch": [
+{
+"t": "本来是小李负责的",
+"py": "běnlái shì Xiǎo Lǐ fùzé de",
+"vn": "vốn dĩ là Tiểu Lý phụ trách",
+"frame": "本来是 + A + 的",
+"note": "Nhấn mạnh kế hoạch ban đầu, hay đi với 但是 ở vế sau để nói về sự thay đổi.",
+"ex": [
+[
+"本来是我去北京出差的。",
+"Vốn dĩ là tôi đi Bắc Kinh công tác."
+],
+[
+"本来这个工作是小王做的。",
+"Vốn dĩ công việc này do Tiểu Vương làm."
+]
+],
+"try": "Nói: “Vốn dĩ là tôi mua vé máy bay.”"
+},
+{
+"t": "突然生病住院了",
+"py": "tūrán shēngbìng zhùyuàn le",
+"vn": "đột ngột ốm nhập viện",
+"frame": "突然 + V / ốm đau + 住院",
+"note": "Dùng để giải thích lý do bất ngờ khiến kế hoạch thay đổi.",
+"ex": [
+[
+"他昨天突然生病住院了。",
+"Hôm qua anh ấy đột ngột ốm nhập viện."
+],
+[
+"爷爷上周突然生病住院了。",
+"Ông tuần trước đột ngột ốm nhập viện."
+]
+],
+"try": "Nói: “Bút của tôi đột ngột hỏng rồi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "哦，这次应聘的人多吗？",
+"vn": "Ồ, đợt ứng tuyển lần này người có đông không?",
+"ch": []
+},
+{
+"line": 3,
+"s": "经理，这次来应聘的一共有15人。经过笔试和面试，有两个不错。这是他们的材料，您看看。",
+"vn": "Giám đốc, đợt này đến ứng tuyển tổng cộng có 15 người. Trải qua thi viết và phỏng vấn, có 2 người khá tốt. Đây là hồ sơ của họ, ngài xem thử xem.",
+"ch": [
+{
+"t": "一共有15人",
+"py": "yīgyòng yǒu shíwǔ rén",
+"vn": "tổng cộng có 15 người",
+"frame": "一共有 + số lượng + N",
+"note": "Dùng khi cần tổng kết số lượng trong một nhóm hoặc tình huống.",
+"ex": [
+[
+"我们班一共有二十个学生。",
+"Lớp chúng ta tổng cộng có 20 học sinh."
+],
+[
+"这次考试一共有三道题。",
+"Bài thi lần này tổng cộng có 3 câu hỏi."
+]
+],
+"try": "Nói: “Công ty chúng tôi tổng cộng có 50 nhân viên.”"
+},
+{
+"t": "这是他们的材料",
+"py": "zhè shì tāmen de cáiliào",
+"vn": "đây là hồ sơ của họ",
+"frame": "这是 + A 的 + 材料",
+"note": "Dùng khi đưa tài liệu, giấy tờ hoặc thông tin của ai đó cho người khác xem.",
+"ex": [
+[
+"这是新员工的材料。",
+"Đây là tài liệu của nhân viên mới."
+],
+[
+"这是去办签证的材料。",
+"Đây là tài liệu để đi làm visa."
+]
+],
+"try": "Nói: “Đây là tài liệu ôn thi HSK của tôi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "这两个人的能力都比较符合我们的要求。你通知他们下周一上午九点来我办公室吧。",
+"vn": "Năng lực của hai người này đều tương đối phù hợp với yêu cầu của chúng ta. Em thông báo họ thứ Hai tuần sau 9 giờ sáng đến văn phòng của anh nhé.",
+"ch": [
+{
+"t": "符合我们的要求",
+"py": "fúhé wǒmen de yàoqiú",
+"vn": "phù hợp với yêu cầu của chúng ta",
+"frame": "符合 + A 的 + 要求/标准",
+"note": "Diễn tả một đối tượng, năng lực đáp ứng đúng tiêu chuẩn đề ra.",
+"ex": [
+[
+"这辆车符合我的要求。",
+"Chiếc xe này phù hợp với yêu cầu của tôi."
+],
+[
+"他的成绩符合大学的标准。",
+"Thành tích của cậu ấy phù hợp với tiêu chuẩn của trường đại học."
+]
+],
+"try": "Nói: “Căn phòng này rất phù hợp với yêu cầu của tôi.”"
+},
+{
+"t": "下周一上午九点",
+"py": "xià zhōuyī shàngwǔ jiǔ diǎn",
+"vn": "9 giờ sáng thứ Hai tuần sau",
+"frame": "thời gian + đến địa điểm",
+"note": "Cách sắp xếp thời gian trước, địa điểm sau rất tự nhiên trong tiếng Trung khi hẹn gặp.",
+"ex": [
+[
+"下周五下午三点来教室。",
+"Thứ Sáu tuần sau 3 giờ chiều đến phòng học."
+],
+[
+"明天晚上八点去饭馆。",
+"Tối mai 8 giờ đến nhà hàng."
+]
+],
+"try": "Nói: “Sáng chủ nhật tuần này 10 giờ đến công ty.”"
+}
+]
+},
+{
+"line": 5,
+"s": "好的，那我马上跟他们联系。",
+"vn": "Vâng, vậy em sẽ liên lạc với họ ngay đây.",
+"ch": [
+{
+"t": "马上跟他们联系",
+"py": "mǎshàng gēn tāmen liánxì",
+"vn": "ngay lập tức liên lạc với họ",
+"frame": "马上 + gēn + ai + 联系",
+"note": "Dùng khi nhận nhiệm vụ và hứa thực hiện nhanh chóng.",
+"ex": [
+[
+"经理到了，我马上跟她联系。",
+"Giám đốc đến rồi, tôi sẽ liên lạc với cô ấy ngay."
+],
+[
+"老师，我马上跟家长联系。",
+"Thưa thầy, em sẽ liên lạc với phụ huynh ngay."
+]
+],
+"try": "Nói: “Tôi sẽ liên lạc với khách hàng ngay.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "王静，好久不见了！大学毕业后就没联系了，你现在在哪儿工作呢？",
+"vn": "Vương Tĩnh, lâu không gặp rồi! Sau khi tốt nghiệp đại học là không liên lạc nữa, hiện tại cậu đang làm việc ở đâu vậy?",
+"ch": []
+},
+{
+"line": 1,
+"s": "我一毕业就去上海当律师了。",
+"vn": "Tôi vừa tốt nghiệp là đến Thượng Hải làm luật sư rồi.",
+"ch": [
+{
+"t": "一毕业就去",
+"py": "yī bìyè jiù qù",
+"vn": "vừa tốt nghiệp là đi luôn",
+"frame": "一 + V + 就 + V2",
+"note": "Biểu thị hành động thứ hai xảy ra ngay lập tức sau hành động thứ nhất.",
+"ex": [
+[
+"我一下班就回家了。",
+"Tôi vừa tan làm là về nhà luôn."
+],
+[
+"弟弟一放假就去旅游了。",
+"Em trai vừa nghỉ hè là đi du lịch luôn."
+]
+],
+"try": "Nói: “Tôi vừa đến công ty là bắt đầu làm việc luôn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "你对现在的工作一定非常满意吧？",
+"vn": "Cậu nhất định rất hài lòng với công việc hiện tại phải không?",
+"ch": [
+{
+"t": "对现在的工作一定非常满意",
+"py": "duì xiànzài de gōngzuò yīdìng fēicháng mǎnyì",
+"vn": "nhất định rất hài lòng với công việc hiện tại",
+"frame": "对……满意",
+"note": "Chỉ thái độ hài lòng đối với một sự việc hoặc đối tượng nào đó.",
+"ex": [
+[
+"老板对我的工作很满意。",
+"Sếp rất hài lòng với công việc của tôi."
+],
+[
+"我对这个房间满意。",
+"Tôi rất hài lòng với căn phòng này."
+]
+],
+"try": "Nói: “Họ rất hài lòng với kết quả thi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "我很喜欢现在的工作，因为我学的就是法律专业，而且同事们都很喜欢我。另外，收入也不错。",
+"vn": "Tôi rất thích công việc hiện tại, bởi vì tôi học chính là chuyên nghiệp luật, hơn nữa các đồng nghiệp đều rất quý tôi. Ngoài ra, thu nhập cũng không tồi.",
+"ch": [
+{
+"t": "因为我学的就是法律专业",
+"py": "yīnwèi wǒ xué de jiù shì fǎlǜ zhuānyè",
+"vn": "bởi vì cái tôi học chính là chuyên ngành luật",
+"frame": "因为……，而且……。另外，……",
+"note": "Dùng “另外” để bổ sung thêm một lý do hoặc thông tin khác.",
+"ex": [
+[
+"这家餐厅的菜很好吃，而且环境不错。另外，价格也很便宜。",
+"Đồ ăn quán này rất ngon, hơn nữa môi trường đẹp. Ngoài ra, giá cả cũng rất rẻ."
+],
+[
+"学汉语需要多听多练，而且要坚持。另外，多交中国朋友。",
+"Học tiếng Trung cần nghe nhiều luyện nhiều, hơn nữa phải kiên trì. Ngoài ra, nên kết bạn Trung Quốc nhiều."
+]
+],
+"try": "Nói: “Hôm nay tôi rất bận, hơn nữa trời còn mưa. Ngoài ra, xe buýt lại đến muộn.”"
+}
+]
+},
+{
+"line": 4,
+"s": "星期天咱们同学聚会，你能来参加吗？",
+"vn": "Chủ nhật lớp mình tụ họp, cậu có thể đến tham gia không?",
+"ch": [
+{
+"t": "你能来参加吗",
+"py": "nǐ néng lái cānjiā ma",
+"vn": "cậu có thể đến tham gia không",
+"frame": "能来参加……吗",
+"note": "Dùng khi mời mọc hoặc hỏi khả năng tham gia sự kiện của người khác.",
+"ex": [
+[
+"明天晚上的生日会，你能来参加吗?",
+"Tiệc sinh nhật tối mai, cậu có thể đến tham gia không?"
+],
+[
+"周末的汉语比赛，你能来参加吗?",
+"Cuộc thi tiếng Trung cuối tuần, cậu có thể đến tham gia không?"
+]
+],
+"try": "Nói: “Thứ Bảy có buổi phỏng vấn việc làm, cậu có thể đến tham gia không?”"
+}
+]
+},
+{
+"line": 5,
+"s": "能来。虽然这次来北京，时间安排得很紧张，但我一定借这次机会去跟大家见见面。",
+"vn": "Có thể đến. Mặc dù lần này đến Bắc Kinh, thời gian sắp xếp rất căng thẳng, nhưng tôi nhất định mượn cơ hội này để đi gặp mọi người một chút.",
+"ch": [
+{
+"t": "时间安排得很紧张",
+"py": "shíjiān ānpái de hěn jǐnzhāng",
+"vn": "thời gian sắp xếp rất căng thẳng",
+"frame": "时间安排得 + adj",
+"note": "Dùng cấu trúc bổ ngữ trạng thái (được + tính từ) để miêu tả cách thức sắp xếp thời gian.",
+"ex": [
+[
+"最近工作安排得很紧张，我很累。",
+"Dạo này công việc sắp xếp căng thẳng quá, tôi rất mệt."
+],
+[
+"明天的日程安排得很满。",
+"Lịch trình ngày mai được sắp xếp rất kín."
+]
+],
+"try": "Nói: “Tuần này thời gian ôn thi được sắp xếp rất gấp.”"
+},
+{
+"t": "借这次机会去跟大家见见面",
+"py": "jiè zhè cì jīhuì qù gēn dàjiā jiàn jiàn miàn",
+"vn": "nhân cơ hội này đi gặp mọi người một chút",
+"frame": "借机会 + V",
+"note": "“借” ở đây mang nghĩa là tranh thủ, nhân cơ hội để làm gì đó.",
+"ex": [
+[
+"我想借这个机会谢谢大家。",
+"Tôi muốn nhân cơ hội này cảm ơn mọi người."
+],
+[
+"大家可以借这次旅游放松一下。",
+"Mọi người có thể nhân chuyến du lịch này thả lỏng một chút."
+]
+],
+"try": "Nói: “Tôi muốn nhân cơ hội này để luyện tập tiếng Trung.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "面试的时候，经理对我印象不错，",
+"vn": "Lúc phỏng vấn, giám đốc có ấn tượng tốt với tôi,",
+"ch": [
+{
+"t": "对我印象不错",
+"py": "duì wǒ yìnxiàng búcuò",
+"vn": "có ấn tượng tốt với tôi",
+"frame": "A 对 B 印象不错",
+"note": "Đừng dịch từng chữ, nhớ cả khung: “ai đó có ấn tượng tốt về ai”. Đổi A, B là dùng được ngay.",
+"ex": [
+[
+"经理对我印象不错。",
+"Giám đốc có ấn tượng tốt với tôi."
+],
+[
+"老板对这个新员工印象不错。",
+"Sếp có ấn tượng tốt về nhân viên mới này."
+]
+],
+"try": "Nói: “Khách hàng có ấn tượng tốt về công ty chúng ta.”"
+}
+]
+},
+{
+"line": 0,
+"s": "还通知我明天就可以上班了。真没想到，找工作这么顺利。",
+"vn": "còn thông báo ngày mai tôi có thể đi làm rồi. Thật không ngờ, tìm việc lại thuận lợi như vậy.",
+"ch": [
+{
+"t": "通知我明天就可以上班了",
+"py": "tōngzhī wǒ míngtiān jiù kěyǐ shàngbān le",
+"vn": "thông báo ngày mai tôi đi làm luôn được",
+"frame": "通知 + ai + việc gì",
+"note": "Thông báo trực tiếp cho người nhận không cần thêm giới từ.",
+"ex": [
+[
+"公司通知我们下周一开会。",
+"Công ty thông báo chúng tôi thứ Hai tuần sau họp."
+],
+[
+"老师通知大家明天不上课。",
+"Thầy giáo thông báo cả lớp ngày mai nghỉ học."
+]
+],
+"try": "Nói: “Công ty thông báo tôi tuần sau đi làm.”"
+},
+{
+"t": "真没想到",
+"py": "zhēn méi xiǎngdào",
+"vn": "thật không ngờ",
+"frame": "真没想到，……",
+"note": "Cụm mở đầu biểu thị sự bất ngờ trước một sự việc.",
+"ex": [
+[
+"真没想到，他汉语说得这么好。",
+"Thật không ngờ anh ấy nói tiếng Trung giỏi thế."
+],
+[
+"真没想到，今天考试这么难。",
+"Thật không ngờ bài kiểm tra hôm nay khó thế."
+]
+],
+"try": "Nói: “Thật không ngờ hôm nay mưa to thế.”"
+}
+]
+},
+{
+"line": 1,
+"s": "你想知道面试需要注意什么吗？",
+"vn": "Bạn có muốn biết phỏng vấn cần chú ý điều gì không?",
+"ch": []
+},
+{
+"line": 1,
+"s": "首先，要穿正式的衣服，这会给面试者留下一个好的印象，让他觉得你是一个认真的人。",
+"vn": "Trước tiên, phải mặc quần áo trang trọng, điều này sẽ để lại ấn tượng tốt cho người phỏng vấn, khiến họ cảm thấy bạn là một người nghiêm túc.",
+"ch": [
+{
+"t": "穿正式的衣服",
+"py": "chuān zhèngshì de yīfu",
+"vn": "mặc quần áo trang trọng",
+"frame": "穿 + tính từ + 的衣服",
+"note": "Diễn tả phong cách ăn mặc phù hợp với từng hoàn cảnh.",
+"ex": [
+[
+"去参加婚礼要穿正式的衣服。",
+"Đi dự đám cưới phải mặc quần áo trang trọng."
+],
+[
+"平时上课可以穿舒服的衣服。",
+"Bình thường đi học có thể mặc quần áo thoải mái."
+]
+],
+"try": "Nói: “Đi làm việc phải mặc quần áo trang trọng.”"
+},
+{
+"t": "给面试者留下一个好的印象",
+"py": "gěi miànshìzhě liǔxià yí gè hǎo de yìnxiàng",
+"vn": "để lại ấn tượng tốt cho người phỏng vấn",
+"frame": "给 + ai + 留下 + (一个) + ấn tượng",
+"note": "Cấu trúc rất hay dùng khi muốn nói tạo thiện cảm với ai đó.",
+"ex": [
+[
+"这次活动给老师留下了一个好的印象。",
+"Hoạt động lần này đã để lại ấn tượng tốt cho thầy cô."
+],
+[
+"第一次见面要给大家留下好的印象。",
+"Lần đầu gặp mặt phải để lại ấn tượng tốt cho mọi người."
+]
+],
+"try": "Nói: “Làm việc chăm chỉ sẽ để lại ấn tượng tốt cho sếp.”"
+}
+]
+},
+{
+"line": 2,
+"s": "其次，应聘时不要紧张。回答问题时，说得不要太快，声音也不要太小，要相信自己有能力做好。",
+"vn": "Thứ hai, lúc ứng tuyển đừng căng thẳng. Lúc trả lời câu hỏi, nói đừng quá nhanh, âm thanh cũng đừng quá nhỏ, phải tin bản thân có năng lực làm tốt.",
+"ch": [
+{
+"t": "应聘时不要紧张",
+"py": "yìngpìn shí bú yào jǐnzhāng",
+"vn": "lúc ứng tuyển đừng căng thẳng",
+"frame": "……时 + 不要紧张",
+"note": "Dùng lời khuyên không nên lo lắng trong các tình huống quan trọng.",
+"ex": [
+[
+"考试时不要紧张。",
+"Lúc thi cử đừng căng thẳng."
+],
+[
+"比赛时不要紧张。",
+"Lúc thi đấu đừng căng thẳng."
+]
+],
+"try": "Nói: “Lúc phỏng vấn đừng căng thẳng.”"
+},
+{
+"t": "有能力做好",
+"py": "yǒu nénglì zuò hǎo",
+"vn": "có năng lực làm tốt",
+"frame": "有能力 + làm gì",
+"note": "Khẳng định năng lực bản thân có thể hoàn thành tốt công việc.",
+"ex": [
+[
+"我有能力完成这个任务。",
+"Tôi có năng lực hoàn thành nhiệm vụ này."
+],
+[
+"相信你有能力学好汉语。",
+"Tin rằng bạn có năng lực học tốt tiếng Trung."
+]
+],
+"try": "Nói: “Tôi có năng lực làm tốt công việc này.”"
+}
+]
+},
+{
+"line": 3,
+"s": "当然，最重要的是回答问题要诚实。",
+"vn": "Đương nhiên, điều quan trọng nhất là trả lời câu hỏi phải thành thật.",
+"ch": [
+{
+"t": "最重要的是",
+"py": "zuì zhòngyào de shì",
+"vn": "điều quan trọng nhất là",
+"frame": "最重要的是 + việc gì",
+"note": "Dùng để nhấn mạnh điểm cốt lõi của vấn đề.",
+"ex": [
+[
+"学汉语，最重要的是多听多说。",
+"Học tiếng Trung, quan trọng nhất là nghe nhiều nói nhiều."
+],
+[
+"做生意，最重要的是诚信。",
+"Làm kinh doanh, quan trọng nhất là chữ tín."
+]
+],
+"try": "Nói: “Đi làm, quan trọng nhất là đúng giờ.”"
+},
+{
+"t": "回答问题要诚实",
+"py": "huídá wèntí yào chéngshí",
+"vn": "trả lời câu hỏi phải thành thật",
+"frame": "回答……要诚实",
+"note": "Đưa ra yêu cầu hoặc nguyên tắc cần tuân thủ khi giao tiếp.",
+"ex": [
+[
+"跟朋友说话要诚实。",
+"Nói chuyện với bạn bè phải thành thật."
+],
+[
+"填写资料要诚实。",
+"Điền thông tin tài liệu phải thành thật."
+]
+],
+"try": "Nói: “Làm bài kiểm tra phải thành thật.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "第一印象就是在第一次见面时给别人留下的印象。",
+"vn": "Ấn tượng đầu tiên chính là ấn tượng để lại cho người khác vào lần gặp đầu tiên.",
+"ch": [
+{
+"t": "给别人留下的印象",
+"py": "gěi biérén liúxià de yìnxiàng",
+"vn": "ấn tượng để lại cho người khác",
+"frame": "给 + ai + 留下 + (adj) + 印象",
+"note": "Cấu trúc kinh điển khi nói về việc tạo ấn tượng. Đổi người và tính từ là dùng được ngay.",
+"ex": [
+[
+"这次旅行给我留下了深刻的印象。",
+"Chuyến du lịch này để lại cho tôi ấn tượng sâu sắc."
+],
+[
+"面试时要给经理留下好印象。",
+"Lúc phỏng vấn phải để lại ấn tượng tốt cho giám đốc."
+]
+],
+"try": "Nói: “Giáo viên mới để lại ấn tượng rất tốt cho chúng tôi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "虽然第一印象不总是对的，但如果想改变却很困难。",
+"vn": "Mặc dù ấn tượng đầu tiên không phải lúc nào cũng đúng, nhưng nếu muốn thay đổi thì lại rất khó khăn.",
+"ch": [
+{
+"t": "如果想改变却很困难",
+"py": "rúguǒ xiǎng gǎibiàn què hěn kùnnán",
+"vn": "nếu muốn thay đổi lại rất khó khăn",
+"frame": "如果想 + V + 却很困难",
+"note": "却 chỉ sự quay ngoắt, trái ngược kỳ vọng. Kết hợp với 想 tạo thành cụm phản biện hay.",
+"ex": [
+[
+"如果想学好汉语却很困难。",
+"Nếu muốn học tốt tiếng Trung thì lại rất khó khăn."
+],
+[
+"如果想找好工作却很困难。",
+"Nếu muốn tìm công việc tốt lại rất khó khăn."
+]
+],
+"try": "Nói: “Nếu muốn mua chiếc xe này lại rất khó khăn.”"
+}
+]
+},
+{
+"line": 1,
+"s": "你给别人的第一印象会影响他们以后对你的感觉和判断。",
+"vn": "Ấn tượng đầu tiên của bạn đối với người khác sẽ ảnh hưởng đến cảm giác và phán đoán của họ về bạn sau này.",
+"ch": [
+{
+"t": "影响他们以后对你的感觉",
+"py": "yǐngxiǎng tāmen yǐhòu duì nǐ de gǎnjué",
+"vn": "ảnh hưởng đến cảm giác của họ về bạn sau này",
+"frame": "影响 + ai + 对……的看法/感觉",
+"note": "影响 đi trực tiếp với đối tượng bị tác động, không cần giới thiệu rườm rà.",
+"ex": [
+[
+"这件事会影响老板对你的看法。",
+"Việc này sẽ ảnh hưởng đến cách nhìn của sếp về bạn."
+],
+[
+"天气会影响大家的心情。",
+"Thời tiết sẽ ảnh hưởng đến tâm trạng mọi người."
+]
+],
+"try": "Nói: “Điểm số thi cử sẽ ảnh hưởng đến cảm xúc của tôi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "所以，给第一次见面的同事留下好的印象，以后的工作可能会更顺利；",
+"vn": "Cho nên, để lại ấn tượng tốt cho đồng nghiệp mới gặp lần đầu, công việc sau này có thể sẽ thuận lợi hơn;",
+"ch": [
+{
+"t": "给第一次见面的同事留下好的印象",
+"py": "gěi dì yī cì jiànmiàn de tóngshì liúxià hǎo de yìnxiàng",
+"vn": "để lại ấn tượng tốt cho đồng nghiệp mới gặp lần đầu",
+"frame": "给 + đối tượng + 留下好印象",
+"note": "Mở rộng từ khối ở dòng 0, kết hợp thêm cụm 'lần đầu gặp mặt' để tăng độ tự nhiên.",
+"ex": [
+[
+"给新同事留下好印象很重要。",
+"Để lại ấn tượng tốt cho đồng nghiệp mới là rất quan trọng."
+],
+[
+"给客户留下好印象能帮公司卖出东西。",
+"Để lại ấn tượng tốt cho khách hàng có thể giúp công ty bán được đồ."
+]
+],
+"try": "Nói: “Để lại ấn tượng tốt cho thầy cô giáo là rất cần thiết.”"
+}
+]
+},
+{
+"line": 2,
+"s": "给第一次见面的顾客留下好的印象，你可能会卖出更多的东西。",
+"vn": "để lại ấn tượng tốt cho khách hàng mới gặp lần đầu, bạn có thể sẽ bán được nhiều đồ hơn.",
+"ch": []
+},
+{
+"line": 3,
+"s": "但是，如果第一次见面给别人留下像不准时这样的坏印象，那么以后就很难让别人相信你。",
+"vn": "Nhưng, nếu lần đầu gặp mặt mà để lại ấn tượng xấu như việc không đúng giờ, thì sau đó sẽ rất khó để người khác tin tưởng bạn.",
+"ch": [
+{
+"t": "很难让别人相信你",
+"py": "hěn nán ràng biérén xiāngxìn nǐ",
+"vn": "rất khó để người khác tin tưởng bạn",
+"frame": "让 + ai + tin tưởng/làm gì",
+"note": "让 ở đây mang nghĩa khiến cho, sai khiến hoặc tác động ai đó làm gì.",
+"ex": [
+[
+"老板的话让大家很相信。",
+"Lời nói của sếp khiến mọi người rất tin tưởng."
+],
+[
+"这件事很难让父母放心。",
+"Việc này rất khó khiến bố mẹ yên tâm."
+]
+],
+"try": "Nói: “Cậu ấy nói dối khiến tôi không thể tin tưởng được.”"
+}
+]
+},
+{
+"line": 3,
+"s": "所以不管是上课、上班，还是与别人约会，准时都非常重要。",
+"vn": "Cho nên cho dù là đi học, đi làm, hay hẹn hò với người khác, đúng giờ đều vô cùng quan trọng.",
+"ch": [
+{
+"t": "不管是上课、上班，还是与别人约会",
+"py": "bùguǎn shì shàngkè, shàngbān, háishì yǔ biérén yuēhuì",
+"vn": "cho dù là đi học, đi làm, hay hẹn hò với người khác",
+"frame": "不管 A，还是 B，都……",
+"note": "Mẫu câu kinh điển thể hiện bất kể trường hợp nào cũng đều cho ra một kết quả.",
+"ex": [
+[
+"不管工作忙不忙，都要锻炼身体。",
+"Bất kể công việc bận hay không, đều phải tập thể dục."
+],
+[
+"不管去哪儿旅游，都要带护照。",
+"Bất kể đi du lịch ở đâu, đều phải mang hộ chiếu."
+]
+],
+"try": "Nói: “Bất kể học tiếng Trung hay tiếng Anh, đều phải chăm chỉ nói.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "中山装和旗袍分别是中国男士和女士的传统正式服装。",
+"vn": "Trung Sơn trang và sườn xám lần lượt là trang phục chính thức truyền thống của nam giới và nữ giới Trung Quốc.",
+"ch": [
+{
+"t": "分别",
+"py": "fēnbié",
+"vn": "lần lượt / phân biệt",
+"frame": "A 和 B 分别是……",
+"note": "Dùng để chỉ từng đối tượng tương ứng trong một tập hợp, tránh dịch là “chia tay”.",
+"ex": [
+[
+"我和他分别去北京和上海。",
+"Tôi và anh ấy lần lượt đi Bắc Kinh và Thượng Hải."
+],
+[
+"这两个人分别是经理和老板。",
+"Hai người này lần lượt là giám đốc và ông chủ."
+]
+],
+"try": "Nói: “Anh ấy và tôi lần lượt là học sinh lớp A và lớp B.”"
+},
+{
+"t": "传统正式服装",
+"py": "chuántǒng zhèngshì fúzhuāng",
+"vn": "trang phục chính thức truyền thống",
+"frame": "传统的正式服装",
+"note": "Cụm danh từ miêu tả trang phục mang tính lịch sử và quy chuẩn nghiêm túc.",
+"ex": [
+[
+"这是我们学校传统的正式服装。",
+"Đây là trang phục chính thức truyền thống của trường chúng tôi."
+],
+[
+"参加婚礼最好穿正式服装。",
+"Tham gia đám cưới tốt nhất nên mặc trang phục chính thức."
+]
+],
+"try": "Nói: “Cô ấy thích mặc trang phục chính thức truyền thống.”"
+}
+]
+},
+{
+"line": 1,
+"s": "“中山装”是中国民主革命的开拓者孙中山先生综合了西式服装与中式服装的特点设计出来的。",
+"vn": "\"Trung Sơn trang\" là do nhà khai sáng cách mạng dân chủ Trung Quốc Tôn Trung Sơn tổng hợp đặc điểm của trang phục kiểu Tây và trang phục kiểu Trung để thiết kế ra.",
+"ch": [
+{
+"t": "综合了……的特点",
+"py": "zōnghé le …… de tèdiǎn",
+"vn": "tổng hợp đặc điểm của...",
+"frame": "综合了 A 与 B 的特点",
+"note": "Dùng khi kết hợp những ưu điểm hoặc đặc trưng của nhiều đối tượng lại với nhau.",
+"ex": [
+[
+"这部电影综合了喜剧与悲剧的特点。",
+"Bộ phim này tổng hợp đặc điểm của hài kịch và bi kịch."
+],
+[
+"这种新产品综合了手机与电脑的特点。",
+"Sản phẩm mới này tổng hợp đặc điểm của điện thoại và máy tính."
+]
+],
+"try": "Nói: “Món ăn này tổng hợp đặc điểm của ẩm thực miền Nam và miền Bắc.”"
+},
+{
+"t": "设计出来的",
+"py": "shèjì chūlái de",
+"vn": "được thiết kế ra",
+"frame": "……设计出来的",
+"note": "Bổ túc xu hướng kết hợp với trợ từ 的 để nhấn mạnh kết quả của quá trình sáng tạo.",
+"ex": [
+[
+"这件衣服是我自己设计出来的。",
+"Bộ y phục này là do tôi tự thiết kế ra."
+],
+[
+"那个软件是程序员设计出来的。",
+"Phần mềm đó là do lập trình viên thiết kế ra."
+]
+],
+"try": "Nói: “Ngôi nhà này là do anh ấy tự thiết kế ra.”"
+}
+]
+},
+{
+"line": 1,
+"s": "它的直翻领代表孙中山严谨的治国理念，四个口袋代表中国四种传统的道德思想，即礼、义、廉、耻。",
+"vn": "Cổ áo bẻ thẳng của nó đại diện cho tư duy quản lý đất nước nghiêm cẩn của Tôn Trung Sơn, bốn chiếc túi đại diện cho bốn tư tưởng đạo đức truyền thống của Trung Quốc, tức là lễ, nghĩa, liêm, sỉ.",
+"ch": [
+{
+"t": "代表",
+"py": "dàibiǎo",
+"vn": "đại diện cho",
+"frame": "……代表……",
+"note": "Dùng khi một vật, hành động hoặc người mang ý nghĩa biểu trưng cho một giá trị nào đó.",
+"ex": [
+[
+"这个Vượng phát cờ đại diện cho may mắn。",
+"Lá cờ này đại diện cho sự may mắn."
+],
+[
+"送红包代表一种祝福。",
+"Tặng phong bao đỏ đại diện cho một lời chúc phúc."
+]
+],
+"try": "Nói: “Màu đỏ đại diện cho sự vui vẻ và may mắn.”"
+},
+{
+"t": "四个口袋",
+"py": "sì gè kǒudài",
+"vn": "bốn chiếc túi",
+"frame": "……四个口袋",
+"note": "Cụm danh từ chỉ số lượng bộ phận của trang phục.",
+"ex": [
+[
+"这件外套一共有四个口袋。",
+"Chiếc áo khoác này tổng cộng có bốn chiếc túi."
+],
+[
+"请把手机放在口袋里。",
+"Xin hãy để điện thoại vào trong túi áo/quần."
+]
+],
+"try": "Nói: “Quần của tôi có bốn chiếc túi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "旗袍，被当代国际服装界誉为“东方女装的代表”，旗袍的造型与妇女的体态相适合，线条简单，优美大方。",
+"vn": "Sườn xám, được giới thời trang quốc tế đương đại ca ngợi là \"đại diện trang phục nữ phương Đông\", kiểu dáng của sườn xám rất phù hợp với vóc dáng của phụ nữ, đường nét đơn giản, thanh nhã và phóng khoáng.",
+"ch": [
+{
+"t": "被……誉为",
+"py": "bèi …… yùwéi",
+"vn": "được ca ngợi là / được tôn vinh là",
+"frame": "A 被……誉为 B",
+"note": "Cấu trúc bị động trang trọng, thường dùng trong văn phong giới thiệu văn hóa, du lịch, nghệ thuật.",
+"ex": [
+[
+"下龙湾被誉为世界自然遗产。",
+"Vịnh Hạ Long được ca ngợi là di sản thiên nhiên thế giới."
+],
+[
+"他被誉为优秀的年轻演员。",
+"Anh ấy được ca ngợi là diễn viên trẻ xuất sắc."
+]
+],
+"try": "Nói: “Hà Nội được ca ngợi là thành phố vì hòa bình.”"
+},
+{
+"t": "与……相适合",
+"py": "yǔ …… xiāng shìhé",
+"vn": "phù hợp với...",
+"frame": "……与……相适合",
+"note": "Diễn tả sự tương thích, hài hòa giữa hai đối tượng.",
+"ex": [
+[
+"这份工作与我的兴趣相适合。",
+"Công việc này phù hợp với sở thích của tôi."
+],
+[
+"这首音乐与今天的气氛相适合。",
+"Bản nhạc này phù hợp với bầu không khí ngày hôm nay."
+]
+],
+"try": "Nói: “Quần áo này rất phù hợp với vóc dáng của cô ấy.”"
+}
+]
+},
+{
+"line": 2,
+"s": "在电影、电视、时装展中经常会看到，现在女人穿旗袍已经成了一种时尚。",
+"vn": "Trong phim ảnh, truyền hình, các buổi trình diễn thời trang thường xuyên có thể nhìn thấy, hiện nay phụ nữ mặc sườn xám đã trở thành một thứ mốt thời trang.",
+"ch": [
+{
+"t": "经常会看到",
+"py": "jīngcháng huì kàndào",
+"vn": "thường xuyên nhìn thấy",
+"frame": "在……中经常会看到",
+"note": "Dùng để miêu tả một hiện tượng phổ biến xuất hiện ở nhiều nơi.",
+"ex": [
+[
+"在街上经常会看到卖花的人。",
+"Trên phố thường xuyên nhìn thấy người bán hoa."
+],
+[
+"在书店里经常会看到很多学生。",
+"Ở hiệu sách thường xuyên nhìn thấy rất nhiều học sinh."
+]
+],
+"try": "Nói: “Trong cuộc sống hàng ngày thường xuyên nhìn thấy người dùng điện thoại.”"
+},
+{
+"t": "成了一种时尚",
+"py": "chéng le yī zhǒng shíshàng",
+"vn": "đã trở thành một thứ mốt thời trang",
+"frame": "……成了一种时尚",
+"note": "Diễn tả xu hướng mới được nhiều người theo đuổi trong đời sống hiện đại.",
+"ex": [
+[
+"网上购物已经成了一种时尚。",
+"Mua sắm trực tuyến đã trở thành một thứ mốt thời trang."
+],
+[
+"周末去爬山成了一种时尚。",
+"Cuối tuần đi leo núi đã trở thành một thứ mốt thời trang."
+]
+],
+"try": "Nói: “Học tiếng Trung đã trở thành một thứ mốt thời trang.”"
+}
+]
+}
+]
+}

@@ -1,0 +1,662 @@
+{
+"1": [
+{
+"line": 0,
+"s": "请进！我给你们介绍一下，这个房子有两个房间，那个大房间出租，房租每月5500元。",
+"vn": "Mời vào! Tôi giới thiệu với các bạn một chút, căn nhà này có hai phòng, phòng lớn đằng kia cho thuê, tiền thuê mỗi tháng 5500 tệ.",
+"ch": [
+{
+"t": "我给你们介绍一下",
+"py": "wǒ gěi nǐmen jièshào yíxià",
+"vn": "tôi giới thiệu cho các bạn một chút",
+"frame": "我给 + người nghe + 介绍一下",
+"note": "Dùng cấu trúc 给 + người để chỉ đối tượng lắng nghe. Đây là câu mở đầu tự nhiên, lịch sự khi dẫn khách xem nhà hoặc giới thiệu ai/cái gì.",
+"ex": [
+[
+"我给大家介绍一下新来的同事。",
+"Tôi giới thiệu với mọi người đồng nghiệp mới đến một chút."
+],
+[
+"我给你介绍一下我们学校的情况。",
+"Mình giới thiệu cho bạn tình hình trường mình một chút nhé."
+]
+],
+"try": "Nói: “Tôi giới thiệu cho các bạn công ty của chúng tôi một chút.”"
+}
+]
+},
+{
+"line": 0,
+"s": "现在已经收拾好了，想租的话，今天就可以搬进来。",
+"vn": "Hiện giờ đã dọn dẹp xong xuôi rồi, nếu muốn thuê thì hôm nay có thể dọn vào luôn.",
+"ch": [
+{
+"t": "已经收拾好了",
+"py": "yǐjīng shōushi hǎo le",
+"vn": "đã dọn dẹp xong xuôi rồi",
+"frame": "已经 + V + 好了",
+"note": "Bổ ngữ kết quả 好 biểu thị hành động đã hoàn tất và đạt kết quả thỏa đáng, sẵn sàng cho việc tiếp theo.",
+"ex": [
+[
+"今天的作业我已经做好了。",
+"Bài tập hôm nay tôi đã làm xong xuôi rồi."
+],
+[
+"去旅行的行李我们已经准备好了。",
+"Hành lý đi du lịch chúng tôi đã chuẩn bị xong xuôi rồi."
+]
+],
+"try": "Nói: “Cơm tối tôi đã nấu xong xuôi rồi, mau vào ăn đi.”"
+},
+{
+"t": "想租的话",
+"py": "xiǎng zū dehuà",
+"vn": "nếu muốn thuê",
+"frame": "想 + V + 的话",
+"note": "“……的话” đứng cuối phân câu giả thiết, mang nghĩa “nếu… thì…”, khẩu ngữ rất chuộng dùng mà không cần thêm “如果”.",
+"ex": [
+[
+"想学好汉语的话，每天都要坚持练习。",
+"Nếu muốn học giỏi tiếng Trung thì ngày nào cũng phải kiên trì luyện tập."
+],
+[
+"想去旅游的话，现在就得买飞机票了。",
+"Nếu muốn đi du lịch thì bây giờ phải mua vé máy bay rồi."
+]
+],
+"try": "Nói: “Nếu muốn tìm việc thì bạn phải chuẩn bị sơ yếu lý lịch trước.”"
+}
+]
+},
+{
+"line": 1,
+"s": "嗯，这个房间真不小，还挺亮。小区离我们学校也不远。",
+"vn": "Vâng, phòng này quả thật không nhỏ, lại khá sáng sủa. Khu nhà cách trường của chúng cháu cũng không xa.",
+"ch": [
+{
+"t": "离我们学校也不远",
+"py": "lí wǒmen xuéxiào yě bù yuǎn",
+"vn": "cách trường chúng tôi cũng không xa",
+"frame": "A 离 B + (不)远 / (很)近",
+"note": "Dùng 离 để diễn đạt khoảng cách giữa hai địa điểm. Người Việt hay nhầm sang dùng 从 (từ… đến…).",
+"ex": [
+[
+"我家离公司很近，走路十分钟就到了。",
+"Nhà tôi cách công ty rất gần, đi bộ 10 phút là tới."
+],
+[
+"这个宾馆离机场不远，交通很方便。",
+"Khách sạn này cách sân bay không xa, giao thông rất thuận tiện."
+]
+],
+"try": "Nói: “Ký túc xá cách thư viện không xa.”"
+}
+]
+},
+{
+"line": 2,
+"s": "是的，我们小区离地铁站也很近，生活上很方便。如果决定租了，告诉我就是了。",
+"vn": "Đúng vậy, khu này cách ga tàu điện ngầm cũng rất gần, sinh hoạt rất thuận tiện. Nếu quyết định thuê thì cứ bảo tôi là được.",
+"ch": [
+{
+"t": "生活上很方便",
+"py": "shēnghuó shang hěn fāngbiàn",
+"vn": "trong sinh hoạt rất tiện lợi",
+"frame": "Danh từ + 上很方便",
+"note": "Danh từ + 上 dùng để giới hạn phương diện, khía cạnh đang được nhắc đến (về mặt đời sống, công việc, học tập...).",
+"ex": [
+[
+"住在市中心，交通上很方便。",
+"Sống ở trung tâm thành phố, về mặt giao thông rất thuận tiện."
+],
+[
+"用手机支付，购物上很方便。",
+"Thanh toán bằng điện thoại, về mặt mua sắm rất tiện lợi."
+]
+],
+"try": "Nói: “Ở ký túc xá, về mặt học tập rất thuận tiện.”"
+},
+{
+"t": "告诉我就是了",
+"py": "gàosù wǒ jiùshì le",
+"vn": "cứ báo cho tôi là được",
+"frame": "V / cụm hành động + 就是了",
+"note": "“……就是了” đặt ở cuối câu để nhấn mạnh giải pháp rất đơn giản, không cần băn khoăn hay phức tạp hóa: “cứ làm thế là xong/được”.",
+"ex": [
+[
+"有什么问题，随时问我就是了。",
+"Có câu hỏi gì, bạn cứ hỏi tôi bất cứ lúc nào là được."
+],
+[
+"你想去就去就是了，不用想那么多。",
+"Cậu muốn đi thì cứ đi thôi, không cần nghĩ nhiều thế."
+]
+],
+"try": "Nói: “Nếu không hiểu, bạn cứ tra từ điển là xong.”"
+}
+]
+},
+{
+"line": 3,
+"s": "好的，我们再去看看外边的环境。",
+"vn": "Vâng ạ, chúng cháu đi xem thêm môi trường xung quanh bên ngoài một chút.",
+"ch": []
+}
+],
+"2": [
+{
+"line": 0,
+"s": "家月，你看，那边还有个小花园。",
+"vn": "Gia Nguyệt, cậu xem kìa, bên kia còn có một cái khu vườn nhỏ.",
+"ch": []
+},
+{
+"line": 1,
+"s": "嗯，这个小区到处是花，",
+"vn": "Ừm, khu dân cư này đâu đâu cũng là hoa,",
+"ch": [
+{
+"t": "到处是",
+"py": "dàochù shì",
+"vn": "đâu đâu cũng là / khắp nơi đều là",
+"frame": "……到处是……",
+"note": "Cụm từ dùng để diễn tả một nơi có rất nhiều cái gì đó xuất hiện khắp nơi, không cần dịch câu từ dài dòng.",
+"ex": [
+[
+"周末公园里到处是人。",
+"Cuối tuần trong công viên đâu đâu cũng là người."
+],
+[
+"房间里到处是书。",
+"Trong phòng đâu đâu cũng là sách."
+]
+],
+"try": "Nói: “Thành phố này đâu đâu cũng là quán cà phê.”"
+}
+]
+},
+{
+"line": 1,
+"s": "还种了不少树，周围也很安静。",
+"vn": "còn trồng không ít cây, xung quanh cũng rất yên tĩnh.",
+"ch": [
+{
+"t": "不少",
+"py": "bù shǎo",
+"vn": "không ít / khá nhiều",
+"frame": "V + 了不少 + N",
+"note": "Người Trung Quốc rất hay dùng “không ít” để thay cho “rất nhiều”, nghe tự nhiên và lịch sự hơn.",
+"ex": [
+[
+"这几天我复习了不少生词。",
+"Mấy ngày nay tôi đã ôn tập không ít từ mới."
+],
+[
+"他买了不少水果。",
+"Cậu ấy đã mua không ít hoa quả."
+]
+],
+"try": "Nói: “Anh ấy đã kết bạn được không ít người bạn mới.”"
+}
+]
+},
+{
+"line": 2,
+"s": "是啊！这个小区的环境真不错，不过我听说，",
+"vn": "Đúng vậy! Môi trường khu dân cư này thật tốt, nhưng tớ nghe nói,",
+"ch": [
+{
+"t": "不过我听说",
+"py": "búguò wǒ tīngshuō",
+"vn": "nhưng tớ nghe nói",
+"frame": "不过我听说，……",
+"note": "Dùng khi muốn chuyển ý nhẹ nhàng (不过) kết hợp với thông tin nghe từ người khác (听说).",
+"ex": [
+[
+"这家饭馆很好吃，不过我听说人很多。",
+"Quán ăn này ngon lắm, nhưng tớ nghe nói rất đông người."
+],
+[
+"工作不难，不过我听说要经常加班。",
+"Công việc không khó, nhưng tớ nghe nói phải thường xuyên tăng ca."
+]
+],
+"try": "Nói: “Hà Nội đẹp lắm, nhưng tớ nghe nói mùa hè rất nóng.”"
+}
+]
+},
+{
+"line": 2,
+"s": "附近有十几家公司，很多刚毕业的学生都租住在这里。",
+"vn": "gần đây có hơn chục công ty, rất nhiều sinh viên vừa tốt nghiệp đều thuê ở đây.",
+"ch": [
+{
+"t": "刚毕业的学生",
+"py": "gāng bìyè de xuésheng",
+"vn": "sinh viên vừa tốt nghiệp",
+"frame": "刚 + V + 的 + N",
+"note": "Cấu trúc diễn đạt “người/vật vừa mới làm việc gì xong”, ghép trực tiếp động từ làm định ngữ cho danh từ.",
+"ex": [
+[
+"刚参加工作的人没有经验。",
+"Người vừa mới đi làm chưa có kinh nghiệm."
+],
+[
+"刚买的手机就丢了。",
+"Điện thoại vừa mới mua đã bị mất rồi."
+]
+],
+"try": "Nói: “Học sinh mới đến rất chăm chỉ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "周末他们可能会玩到很晚，恐怕会影响你休息。",
+"vn": "Cuối tuần có thể họ sẽ chơi tới muộn, e là sẽ ảnh hưởng đến việc nghỉ ngơi của cậu.",
+"ch": [
+{
+"t": "恐怕会",
+"py": "kǒngpà huì",
+"vn": "e là sẽ / sợ rằng sẽ",
+"frame": "恐怕会……",
+"note": "Dùng để phỏng đoán một khả năng không mấy tích cực hoặc điều mình lo lắng có thể xảy ra.",
+"ex": [
+[
+"今天有些堵车，恐怕会迟到。",
+"Hôm nay hơi tắc đường, e là sẽ muộn mất."
+],
+[
+"下这么大的雨，恐怕不能去游泳了。",
+"Mưa to thế này, sợ rằng không đi bơi được rồi."
+]
+],
+"try": "Nói: “Bài thi hôm nay khó quá, e là tôi không qua được.”"
+},
+{
+"t": "影响你休息",
+"py": "yǐngxiǎng nǐ xiūxi",
+"vn": "ảnh hưởng đến việc nghỉ ngơi của cậu",
+"frame": "影响 + ai + V/N",
+"note": "Tiếng Trung nói thẳng “ảnh hưởng ai làm gì”, không dùng thêm giới từ như “đến/tới” trong tiếng Việt.",
+"ex": [
+[
+"看电视会影响孩子学习。",
+"Xem tivi sẽ ảnh hưởng đến việc học của con."
+],
+[
+"说话声音太大，会影响别人工作。",
+"Nói to quá sẽ ảnh hưởng đến việc làm của người khác."
+]
+],
+"try": "Nói: “Đừng thức khuya nữa, sẽ ảnh hưởng đến sức khỏe đấy.”"
+}
+]
+},
+{
+"line": 3,
+"s": "没关系，我还想多认识一些朋友，和他们一起玩呢。",
+"vn": "Không sao đâu, tớ còn muốn quen biết thêm nhiều bạn bè, chơi cùng với họ cơ.",
+"ch": [
+{
+"t": "多认识一些朋友",
+"py": "duō rènshi yìxiē péngyou",
+"vn": "quen biết thêm nhiều bạn bè",
+"frame": "多 + V + 一些 + N",
+"note": "Cấu trúc khuyên bảo hoặc bày tỏ mong muốn “làm gì nhiều hơn một chút”, đặt “多” trước động từ.",
+"ex": [
+[
+"去外面要多穿一些衣服。",
+"Ra ngoài phải mặc thêm áo vào."
+],
+[
+"你要多喝一些水。",
+"Cậu phải uống thêm nhiều nước vào."
+]
+],
+"try": "Nói: “Đi du lịch có thể quen biết thêm nhiều bạn bè.”"
+},
+{
+"t": "和他们一起",
+"py": "hé tāmen yìqǐ",
+"vn": "cùng với họ",
+"frame": "和 / 跟 + ai + 一起 + V",
+"note": "Khung câu dùng khi kể hoặc rủ rê cùng ai đó làm việc gì.",
+"ex": [
+[
+"我想和你一起去喝咖啡。",
+"Tớ muốn cùng cậu đi uống cà phê."
+],
+[
+"他喜欢跟朋友一起打球。",
+"Cậu ấy thích chơi bóng cùng với bạn bè."
+]
+],
+"try": "Nói: “Tối nay tớ muốn ăn cơm cùng với gia đình.”"
+}
+]
+},
+{
+"line": 4,
+"s": "是呢，大家可以一起热闹热闹。",
+"vn": "Đúng thế, mọi người có thể cùng nhau náo nhiệt một chút.",
+"ch": [
+{
+"t": "热闹热闹",
+"py": "rènao renao",
+"vn": "náo nhiệt / vui vẻ một chút",
+"frame": "AA/ABAB (động từ hóa tính từ)",
+"note": "Lặp lại tính từ hai âm tiết dạng ABAB để làm động từ, mang nghĩa “làm cho không khí thêm vui vẻ/thư giãn”.",
+"ex": [
+[
+"过年了，咱们聚一聚热闹热闹。",
+"Tết rồi, chúng mình tụ tập vui vẻ chút đi."
+],
+[
+"去外面放松放松吧。",
+"Ra ngoài thư giãn một chút đi."
+]
+],
+"try": "Nói: “Sinh nhật cậu, chúng mình cùng đi ăn mừng cho vui vẻ chút đi.”"
+}
+]
+},
+{
+"line": 5,
+"s": "这里房租合适，环境很好，",
+"vn": "Tiền thuê nhà ở đây hợp lý, môi trường rất tốt,",
+"ch": []
+},
+{
+"line": 5,
+"s": "而且房东也热情，所以我决定租这个房子了，明天就入住新家。",
+"vn": "hơn nữa chủ nhà cũng nhiệt tình, cho nên tớ quyết định thuê căn nhà này rồi, ngày mai sẽ dọn vào nhà mới luôn.",
+"ch": [
+{
+"t": "而且",
+"py": "érqiě",
+"vn": "hơn nữa",
+"frame": "……，而且……也 / 还……",
+"note": "Dùng để bổ sung thêm một lý do hoặc ưu điểm cùng chiều với vế trước.",
+"ex": [
+[
+"这家店的衣服便宜，而且质量很好。",
+"Quần áo quán này rẻ, hơn nữa chất lượng rất tốt."
+],
+[
+"他汉语说得好，而且还会说英语。",
+"Cậu ấy nói tiếng Trung giỏi, hơn nữa còn biết nói tiếng Anh."
+]
+],
+"try": "Nói: “Công việc này rất thú vị, hơn nữa lương cũng cao.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "8月25日，晴",
+"vn": "Ngày 25 tháng 8, trời nắng.",
+"ch": []
+},
+{
+"line": 1,
+"s": "昨天我顺利租到了合适的房子，今天李文帮我搬家。",
+"vn": "Hôm qua tôi đã thuê được căn nhà phù hợp một cách thuận lợi, hôm nay Lý Văn giúp tôi chuyển nhà.",
+"ch": [
+{
+"t": "顺利租到了",
+"py": "shùnlì zūdào le",
+"vn": "thuê được một cách thuận lợi",
+"frame": "顺利 + V (kết quả)",
+"note": "顺利 là trạng từ chỉ việc gì đó diễn ra suôn sẻ, không gặp trở ngại.",
+"ex": [
+[
+"我顺利通过了HSK4级考试。",
+"Tôi đã vượt qua kỳ thi HSK4 một cách thuận lợi."
+],
+[
+"他顺利找到了理想的工作。",
+"Anh ấy đã tìm được công việc lý tưởng một cách thuận lợi."
+]
+],
+"try": "Nói: \"Tôi đã hoàn thành bài tập một cách thuận lợi.\""
+}
+]
+},
+{
+"line": 1,
+"s": "搬进去的时候，房东又向我介绍了一下房子里的东西，并告诉我这些东西怎么用。",
+"vn": "Lúc chuyển vào, chủ nhà lại giới thiệu qua cho tôi về đồ đạc trong nhà, và bảo tôi cách sử dụng những thứ này.",
+"ch": [
+{
+"t": "向我介绍了一下",
+"py": "xiàng wǒ jièshào le yīxià",
+"vn": "giới thiệu qua cho tôi",
+"frame": "向 + ai + giới thiệu/giải thích",
+"note": "Dùng 向 để chỉ hướng đối tượng nhận thông tin, thay vì dùng 给.",
+"ex": [
+[
+"老师向我们介绍了新的学习方法。",
+"Thầy giáo giới thiệu cho chúng tôi phương pháp học mới."
+],
+[
+"请向我解释一下这个词的意思。",
+"Hãy giải thích cho tôi nghĩa của từ này."
+]
+],
+"try": "Nói: \"Hãy giới thiệu cho tôi về sở thích của bạn.\""
+}
+]
+},
+{
+"line": 2,
+"s": "我看了一下，客厅里有椅子、沙发，还有一台大电视；厨房里有冰箱和一些做饭用的东西，不过，我平常主要在学校食堂吃，基本上不做饭。",
+"vn": "Tôi xem qua một chút, trong phòng khách có ghế, ghế sofa, còn có một chiếc tivi lớn; trong bếp có tủ lạnh và một số đồ dùng nấu ăn, nhưng tôi thường ăn ở căng tin trường, cơ bản là không nấu cơm.",
+"ch": [
+{
+"t": "平常主要在",
+"py": "píngcháng zhǔyào zài",
+"vn": "thường chủ yếu ở...",
+"frame": "平常主要在 + địa điểm + V",
+"note": "Dùng để diễn tả thói quen sinh hoạt cố định.",
+"ex": [
+[
+"我平常主要在图书馆看书。",
+"Tôi thường chủ yếu đọc sách ở thư viện."
+],
+[
+"周末我平常主要在家里休息。",
+"Cuối tuần tôi thường chủ yếu nghỉ ngơi ở nhà."
+]
+],
+"try": "Nói: \"Tôi thường chủ yếu học tiếng Trung ở trung tâm.\""
+}
+]
+},
+{
+"line": 2,
+"s": "我租的房间里，除了一张床以外，还有一台空调、一张书桌和一把椅子。",
+"vn": "Trong căn phòng tôi thuê, ngoài một chiếc giường ra, còn có một chiếc điều hòa, một cái bàn học và một cái ghế.",
+"ch": [
+{
+"t": "除了一张床以外，还有",
+"py": "chúle yī zhāng chuáng yǐwài, hái yǒu",
+"vn": "ngoài một chiếc giường ra, còn có",
+"frame": "除了 + A + 以外，还有 + B",
+"note": "Cấu trúc liệt kê, nhấn mạnh ngoài cái đã có còn thêm cái khác.",
+"ex": [
+[
+"除了汉语以外，我还想学英语。",
+"Ngoài tiếng Trung ra, tôi còn muốn học tiếng Anh."
+],
+[
+"除了这件衣服以外，我还要买鞋子。",
+"Ngoài bộ quần áo này ra, tôi còn muốn mua giày."
+]
+],
+"try": "Nói: \"Ngoài sách ra, tôi còn có từ điển.\""
+}
+]
+},
+{
+"line": 3,
+"s": "看完整个房子后，我准备再去买几条毛巾，其他东西还不需要。",
+"vn": "Sau khi xem xong toàn bộ căn nhà, tôi định đi mua thêm vài cái khăn mặt, những thứ khác thì chưa cần đến.",
+"ch": [
+{
+"t": "看完整个房子后",
+"py": "kànwán zhěnggè fángzi hòu",
+"vn": "sau khi xem xong toàn bộ căn nhà",
+"frame": "看完 + danh từ + 后",
+"note": "Dùng để chỉ thời điểm sau khi hoàn thành một hành động xem xét/đọc/nghe.",
+"ex": [
+[
+"看完这本书后，我感触很深。",
+"Sau khi đọc xong cuốn sách này, tôi có cảm xúc rất sâu sắc."
+],
+[
+"看完电影后，我们去吃饭吧。",
+"Sau khi xem xong phim, chúng ta đi ăn nhé."
+]
+],
+"try": "Nói: \"Sau khi xem xong bài giảng, tôi đã hiểu bài.\""
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "在李文的帮助下，白家月租到了合适的房子。",
+"vn": "Với sự giúp đỡ của Lý Văn, Bạch Gia Nguyệt đã thuê được căn nhà phù hợp.",
+"ch": [
+{
+"t": "在……的帮助下",
+"py": "zài... de bāngzhù xià",
+"vn": "Với sự giúp đỡ của...",
+"frame": "在 + A + 的帮助下",
+"note": "Cấu trúc dùng để cảm ơn hoặc ghi nhận sự hỗ trợ từ người khác.",
+"ex": [
+[
+"在老师的帮助下，我通过了HSK4级。",
+"Với sự giúp đỡ của thầy giáo, tôi đã đỗ HSK4."
+],
+[
+"在朋友的帮助下，我找到了这份工作。",
+"Với sự giúp đỡ của bạn bè, tôi đã tìm được công việc này."
+]
+],
+"try": "Nói: “Với sự giúp đỡ của đồng nghiệp, tôi đã hoàn thành dự án.”"
+}
+]
+},
+{
+"line": 0,
+"s": "对白家月来说，这次租房并不容易。",
+"vn": "Đối với Bạch Gia Nguyệt mà nói, lần thuê nhà này không hề dễ dàng.",
+"ch": [
+{
+"t": "对……来说",
+"py": "duì... lái shuō",
+"vn": "Đối với... mà nói",
+"frame": "对 + đối tượng + 来说",
+"note": "Dùng để nêu quan điểm hoặc đánh giá từ góc nhìn của một người/nhóm người.",
+"ex": [
+[
+"对学生来说，考试很重要。",
+"Đối với học sinh, thi cử rất quan trọng."
+],
+[
+"对我们来说，学汉语很有意思。",
+"Đối với chúng tôi, học tiếng Trung rất thú vị."
+]
+],
+"try": "Nói: “Đối với tôi mà nói, sống ở thành phố này rất tiện lợi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "根据李文的建议，她先在租房网站和App上查看有关信息，查找合适的房子，接着又去看了看房子，同时了解房子周围的环境。",
+"vn": "Theo lời khuyên của Lý Văn, cô ấy trước tiên xem thông tin liên quan trên trang web và ứng dụng thuê nhà, tìm kiếm căn nhà phù hợp, sau đó đi xem nhà, đồng thời tìm hiểu môi trường xung quanh.",
+"ch": [
+{
+"t": "根据……的建议",
+"py": "gēnjù... de jiànyì",
+"vn": "Theo lời khuyên của...",
+"frame": "根据 + A + 的建议",
+"note": "Dùng khi làm theo ý kiến hoặc lời khuyên của ai đó.",
+"ex": [
+[
+"根据老师的建议，我每天都练习听力。",
+"Theo lời khuyên của thầy, tôi luyện nghe mỗi ngày."
+],
+[
+"根据经理的建议，我修改了计划。",
+"Theo lời khuyên của giám đốc, tôi đã sửa kế hoạch."
+]
+],
+"try": "Nói: “Theo lời khuyên của bác sĩ, tôi nên ăn nhiều rau.”"
+}
+]
+},
+{
+"line": 0,
+"s": "她看了好几个房子，才找到一个位置、环境和价格都合适的，最后顺利租到了理想的房子。",
+"vn": "Cô ấy xem qua mấy căn nhà mới tìm được một căn có vị trí, môi trường và giá cả đều phù hợp, cuối cùng thuận lợi thuê được căn nhà lý tưởng.",
+"ch": []
+},
+{
+"line": 1,
+"s": "租房的时候，李文告诉白家月，在中国，由于很多刚工作的年轻人工资还不太高，所以他们一开始也不买房，都选择租房。",
+"vn": "Khi thuê nhà, Lý Văn nói với Bạch Gia Nguyệt rằng, ở Trung Quốc, do nhiều người trẻ mới đi làm lương còn chưa cao, nên lúc đầu họ không mua nhà mà đều chọn thuê nhà.",
+"ch": [
+{
+"t": "由于……所以……",
+"py": "yóuyú... suǒyǐ...",
+"vn": "Do... nên...",
+"frame": "由于 + nguyên nhân, 所以 + kết quả",
+"note": "Cấu trúc chỉ nguyên nhân - kết quả, mang sắc thái trang trọng hơn '因为'.",
+"ex": [
+[
+"由于天气不好，所以我们取消了旅行。",
+"Do thời tiết xấu nên chúng tôi đã hủy chuyến du lịch."
+],
+[
+"由于工作太忙，所以他没时间运动。",
+"Do công việc bận quá nên anh ấy không có thời gian tập thể dục."
+]
+],
+"try": "Nói: “Do giá nhà quá đắt nên tôi chưa mua được nhà.”"
+}
+]
+},
+{
+"line": 1,
+"s": "工作几年后，不少人就会买房，因为大家一直觉得，有房才有家，有自己的房子会更有安全感。",
+"vn": "Sau khi làm việc vài năm, không ít người sẽ mua nhà, vì mọi người luôn cảm thấy có nhà mới có gia đình, có nhà của riêng mình sẽ có cảm giác an toàn hơn.",
+"ch": [
+{
+"t": "更有安全感",
+"py": "gèng yǒu ānquángǎn",
+"vn": "có cảm giác an toàn hơn",
+"frame": "……更有安全感",
+"note": "Cụm từ rất phổ biến khi nói về tâm lý mong muốn sự ổn định.",
+"ex": [
+[
+"有存款会让我更有安全感。",
+"Có tiền tiết kiệm làm tôi thấy an toàn hơn."
+],
+[
+"跟家人在一起，我更有安全感。",
+"Ở cùng gia đình, tôi thấy an toàn hơn."
+]
+],
+"try": "Nói: “Có công việc ổn định sẽ khiến người ta có cảm giác an toàn hơn.”"
+}
+]
+}
+]
+}

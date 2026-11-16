@@ -1,0 +1,488 @@
+{
+"1": [
+{
+"line": 0,
+"s": "小雪，你们的话剧排好了吗？",
+"vn": "Tiểu Tuyết, vở kịch của các con đã tập xong chưa?",
+"ch": []
+},
+{
+"line": 1,
+"s": "差不多了，妈妈。艺术节周五下午开始，我内心还是有些紧张，有时候不是忘词，就是忘记做动作。",
+"vn": "Sắp xong rồi mẹ ạ. Liên hoan nghệ thuật bắt đầu vào chiều thứ Sáu, trong lòng con vẫn thấy hơi căng thẳng, đôi lúc không quên lời thoại thì cũng quên mất động tác.",
+"ch": [
+{
+"t": "不是忘词，就是忘记做动作",
+"py": "búshì wàngcí, jiùshì wàngjì zuò dòngzuò",
+"vn": "không quên lời thoại thì cũng quên động tác",
+"frame": "不是 A，就是 B",
+"note": "Cấu trúc diễn tả tình trạng chỉ có hai khả năng xảy ra, thường dùng để than phiền hoặc liệt kê các lựa chọn.",
+"ex": [
+[
+"周末他不是在家睡觉，就是去打球。",
+"Cuối tuần cậu ấy không ngủ ở nhà thì cũng đi chơi bóng."
+],
+[
+"我每天不是上课，就是写作业。",
+"Mỗi ngày tôi không đi học thì cũng làm bài tập."
+]
+],
+"try": "Nói: \"Thời gian này tôi không bận việc công ty thì cũng bận học tiếng Trung.\""
+}
+]
+},
+{
+"line": 2,
+"s": "没事，妈妈相信你一定可以。放松些，再自信些！",
+"vn": "Không sao đâu, mẹ tin con nhất định làm được. Thả lỏng một chút, tự tin hơn nữa nhé!",
+"ch": [
+{
+"t": "妈妈相信你一定可以",
+"py": "māma xiāngxìn nǐ yídìng kěyǐ",
+"vn": "mẹ tin con nhất định làm được",
+"frame": "相信 + ai + nhất định làm được",
+"note": "Dùng để khích lệ người khác, khẳng định niềm tin vào khả năng của họ.",
+"ex": [
+[
+"老师相信你一定可以考过HSK4。",
+"Thầy tin em nhất định có thể thi đỗ HSK4."
+],
+[
+"朋友们都相信你一定可以成功。",
+"Bạn bè đều tin bạn nhất định có thể thành công."
+]
+],
+"try": "Nói: \"Mẹ tin con nhất định có thể tìm được công việc tốt.\""
+}
+]
+},
+{
+"line": 3,
+"s": "好的，我同学演少年歌手，他的歌声美极了。我演他的妈妈，不知道像不像呢。",
+"vn": "Vâng ạ, bạn con đóng vai ca sĩ thiếu niên, giọng hát của bạn ấy hay lắm. Con đóng vai mẹ của bạn ấy, không biết có giống không nữa.",
+"ch": []
+},
+{
+"line": 4,
+"s": "没问题的，努力做最好的自己就好。演出时，我和你爸都去给你加油。",
+"vn": "Không vấn đề gì đâu, cứ nỗ lực làm phiên bản tốt nhất của chính mình là được. Lúc biểu diễn, bố và mẹ đều sẽ đến cổ vũ cho con.",
+"ch": [
+{
+"t": "努力做最好的自己就好",
+"py": "nǔlì zuò zuì hǎo de zìjǐ jiù hǎo",
+"vn": "nỗ lực làm phiên bản tốt nhất của chính mình là được",
+"frame": "努力做 + danh từ + 就好",
+"note": "Cấu trúc khuyên nhủ, chỉ cần cố gắng hết sức là đủ, không cần quá áp lực về kết quả.",
+"ex": [
+[
+"学习不用太急，努力做好每一天就好。",
+"Học tập không cần quá vội, nỗ lực làm tốt mỗi ngày là được."
+],
+[
+"工作时努力做好自己的事就好。",
+"Khi làm việc chỉ cần nỗ lực làm tốt việc của mình là được."
+]
+],
+"try": "Nói: \"Đi thi không cần lo lắng, nỗ lực làm tốt bài thi là được.\""
+}
+]
+},
+{
+"line": 5,
+"s": "好的，谢谢妈妈！",
+"vn": "Vâng ạ, con cảm ơn mẹ!",
+"ch": []
+}
+],
+"2": [
+{
+"line": 0,
+"s": "下周六晚上，我请大家去国家大剧院看京剧，怎么样？",
+"vn": "Tối thứ Bảy tuần sau, tôi mời mọi người đi Nhà hát lớn quốc gia xem kinh kịch, thế nào?",
+"ch": []
+},
+{
+"line": 1,
+"s": "好啊。我小时候在加拿大度假时，在宾馆的电视上看过一次，是梅兰芳等演员演的，演员们都非常棒，他们演唱得好听极了，给我留下的印象特别深。",
+"vn": "Được chứ. Hồi nhỏ khi đi nghỉ mát ở Canada, tôi từng xem một lần trên tivi khách sạn, là do Mai Lan Phương và các diễn viên khác biểu diễn, các diễn viên đều rất tuyệt, họ hát hay cực kỳ, để lại cho tôi ấn tượng vô cùng sâu sắc.",
+"ch": [
+{
+"t": "给我留下的印象特别深",
+"py": "gěi wǒ liúxià de yìnxiàng tèbié shēn",
+"vn": "để lại cho tôi ấn tượng vô cùng sâu sắc",
+"frame": "给……留下……印象",
+"note": "Cấu trúc cố định dùng để nói về một trải nghiệm đáng nhớ. Có thể thay '特别深' bằng '不错' hoặc '很好'.",
+"ex": [
+[
+"这次旅行给我留下的印象特别深。",
+"Chuyến du lịch này để lại cho tôi ấn tượng vô cùng sâu sắc."
+],
+[
+"他给老师留下了很好的印象。",
+"Anh ấy đã để lại ấn tượng rất tốt cho thầy giáo."
+]
+],
+"try": "Nói: “Bộ phim này để lại cho tôi ấn tượng rất sâu sắc.”"
+}
+]
+},
+{
+"line": 2,
+"s": "梅兰芳先生是中国著名京剧艺术家。咱们要看的这个京剧是青年演员们演的，要去看的观众也特别多。",
+"vn": "Ông Mai Lan Phương là nghệ sĩ kinh kịch nổi tiếng Trung Quốc. Vở kinh kịch chúng ta sắp xem là do các diễn viên trẻ biểu diễn, khán giả đi xem cũng rất đông.",
+"ch": []
+},
+{
+"line": 3,
+"s": "不知道我们能不能看懂。",
+"vn": "Không biết chúng ta có xem hiểu không.",
+"ch": []
+},
+{
+"line": 4,
+"s": "咱们先做做功课，提前了解下，能懂一点儿是一点儿。",
+"vn": "Chúng ta làm bài tập trước đi, tìm hiểu trước một chút, hiểu được bao nhiêu hay bấy nhiêu.",
+"ch": [
+{
+"t": "能懂一点儿是一点儿",
+"py": "néng dǒng yìdiǎnr shì yìdiǎnr",
+"vn": "hiểu được bao nhiêu hay bấy nhiêu",
+"frame": "能 V 一 X 是 一 X",
+"note": "Cấu trúc thể hiện thái độ tích cực, làm được bao nhiêu thì tốt bấy nhiêu, không cần quá áp lực.",
+"ex": [
+[
+"复习功课，能背一点儿是一点儿。",
+"Ôn bài, học thuộc được bao nhiêu hay bấy nhiêu."
+],
+[
+"存钱，能存一点儿是一点儿。",
+"Tiết kiệm tiền, tiết kiệm được bao nhiêu hay bấy nhiêu."
+]
+],
+"try": "Nói: “Học từ mới, nhớ được bao nhiêu hay bấy nhiêu.”"
+}
+]
+},
+{
+"line": 5,
+"s": "对，我先去网上查资料，查完后也转发给你们。",
+"vn": "Đúng vậy, tôi đi tra tài liệu trên mạng trước, tra xong sẽ chuyển tiếp cho các bạn.",
+"ch": []
+},
+{
+"line": 6,
+"s": "谢谢天中！",
+"vn": "Cảm ơn Thiên Trung!",
+"ch": []
+},
+{
+"line": 7,
+"s": "那我就在网上订票了，到时候咱们在大剧院入口见。",
+"vn": "Vậy tôi đặt vé trên mạng nhé, đến lúc đó chúng ta gặp nhau ở lối vào nhà hát.",
+"ch": [
+{
+"t": "到时候",
+"py": "dàoshíhòu",
+"vn": "đến lúc đó",
+"frame": "到时候 + V",
+"note": "Dùng để chỉ một thời điểm cụ thể trong tương lai khi sự việc diễn ra.",
+"ex": [
+[
+"到时候我们一起去机场。",
+"Đến lúc đó chúng ta cùng đi sân bay."
+],
+[
+"你先准备，到时候我来找你。",
+"Bạn chuẩn bị trước đi, đến lúc đó tôi sẽ đến tìm bạn."
+]
+],
+"try": "Nói: “Đến lúc đó chúng ta gặp nhau ở cổng trường.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "周六晚上，李文等四人来到国家大剧院观看京剧演出。",
+"vn": "Tối thứ Bảy, Lý Văn cùng bốn người đến nhà hát lớn quốc gia xem biểu diễn kinh kịch.",
+"ch": []
+},
+{
+"line": 0,
+"s": "入座后，李文指着节目表说：“这些演员很专业，功夫很深，在京剧比赛中获过很多奖，有的还是国家、国际大奖。我特别期待这场演出。”",
+"vn": "Sau khi ngồi vào chỗ, Lý Văn chỉ vào tờ chương trình nói: “Các diễn viên này rất chuyên nghiệp, công phu rất sâu, từng đạt nhiều giải thưởng trong các cuộc thi kinh kịch, có cái còn là giải thưởng quốc gia, quốc tế. Tôi đặc biệt mong chờ buổi biểu diễn này.”",
+"ch": [
+{
+"t": "功夫很深",
+"py": "gōngfu hěn shēn",
+"vn": "công phu rất sâu (trình độ cao)",
+"frame": "……功夫很深",
+"note": "Dùng để khen ngợi trình độ chuyên môn hoặc kỹ năng của ai đó đã luyện tập lâu năm.",
+"ex": [
+[
+"他的中文功夫很深，写文章没问题。",
+"Trình độ tiếng Trung của anh ấy rất sâu, viết bài không vấn đề gì."
+],
+[
+"老师的教学功夫很深。",
+"Trình độ giảng dạy của thầy giáo rất cao."
+]
+],
+"try": "Nói: “Anh ấy tập võ nhiều năm, công phu rất sâu.”"
+},
+{
+"t": "我特别期待",
+"py": "wǒ tèbié qīdài",
+"vn": "tôi đặc biệt mong chờ",
+"frame": "我特别期待 + (sự kiện/việc gì)",
+"note": "Dùng để bày tỏ sự háo hức đối với một sự kiện sắp diễn ra.",
+"ex": [
+[
+"我特别期待下个月的旅行。",
+"Tôi đặc biệt mong chờ chuyến du lịch tháng sau."
+],
+[
+"大家都特别期待这次的聚会。",
+"Mọi người đều đặc biệt mong chờ buổi họp mặt lần này."
+]
+],
+"try": "Nói: “Tôi đặc biệt mong chờ kết quả thi HSK.”"
+}
+]
+},
+{
+"line": 1,
+"s": "演出开始后，他们看到演员们做的动作很难，但是做得都特别好，观众们不断鼓掌。",
+"vn": "Sau khi buổi diễn bắt đầu, họ thấy các động tác diễn viên làm rất khó, nhưng làm đều đặc biệt tốt, khán giả không ngừng vỗ tay.",
+"ch": [
+{
+"t": "不断鼓掌",
+"py": "búduàn gǔzhǎng",
+"vn": "không ngừng vỗ tay",
+"frame": "……不断 + V",
+"note": "Động từ lặp lại hành động liên tục không dừng.",
+"ex": [
+[
+"他不断练习，终于学会了。",
+"Anh ấy không ngừng luyện tập, cuối cùng đã học được."
+],
+[
+"大家不断提问，老师耐心地回答。",
+"Mọi người không ngừng đặt câu hỏi, thầy giáo kiên nhẫn trả lời."
+]
+],
+"try": "Nói: “Trong buổi họp, mọi người không ngừng thảo luận.”"
+}
+]
+},
+{
+"line": 1,
+"s": "因为李文他们提前把故事了解了一遍，所以差不多都看懂了。演出结束后，演员们邀请观众和他们一起庆祝演出成功。",
+"vn": "Vì Lý Văn và mọi người đã tìm hiểu trước câu chuyện một lượt, nên hầu như đều xem hiểu. Sau khi buổi diễn kết thúc, các diễn viên mời khán giả cùng họ chúc mừng buổi diễn thành công.",
+"ch": [
+{
+"t": "把故事了解了一遍",
+"py": "bǎ gùshì liǎojiě le yíbiàn",
+"vn": "tìm hiểu câu chuyện một lượt",
+"frame": "把 + O + V + 了一遍",
+"note": "Cấu trúc nhấn mạnh việc thực hiện hành động từ đầu đến cuối một lượt.",
+"ex": [
+[
+"我把课文读了一遍。",
+"Tôi đọc bài khóa một lượt."
+],
+[
+"请把这些资料检查一遍。",
+"Hãy kiểm tra lại đống tài liệu này một lượt."
+]
+],
+"try": "Nói: “Tôi đã xem lại đề thi một lượt.”"
+}
+]
+},
+{
+"line": 2,
+"s": "回来的路上，大家特别激动，觉得京剧很有意思，演员演得很精彩。李文点头说：“是啊，以后咱们还来看。”",
+"vn": "Trên đường về, mọi người đặc biệt phấn khích, cảm thấy kinh kịch rất thú vị, diễn viên diễn rất xuất sắc. Lý Văn gật đầu nói: “Đúng vậy, sau này chúng ta lại đến xem.”",
+"ch": [
+{
+"t": "觉得京剧很有意思",
+"py": "juéde jīngjù hěn yǒuyìsi",
+"vn": "cảm thấy kinh kịch rất thú vị",
+"frame": "觉得 + A + 很有意思",
+"note": "Cấu trúc bày tỏ quan điểm cá nhân về một sự vật, sự việc.",
+"ex": [
+[
+"我觉得这份工作很有意思。",
+"Tôi thấy công việc này rất thú vị."
+],
+[
+"大家都觉得这个电影很有意思。",
+"Mọi người đều thấy bộ phim này rất thú vị."
+]
+],
+"try": "Nói: “Tôi thấy học tiếng Trung rất thú vị.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "马可·波罗是意大利旅行家，在1275年和家人来到中国，在中国大约生活了17年，最后完成了一部作品——《马可·波罗游记》。",
+"vn": "Marco Polo là nhà du hành người Ý, năm 1275 cùng gia đình đến Trung Quốc, sống ở Trung Quốc khoảng 17 năm, cuối cùng hoàn thành một tác phẩm - \"Du ký của Marco Polo\".",
+"ch": []
+},
+{
+"line": 0,
+"s": "在这部影响很大的作品中，作者向世界介绍了13世纪时的中国。",
+"vn": "Trong tác phẩm có ảnh hưởng lớn này, tác giả đã giới thiệu với thế giới về Trung Quốc vào thế kỷ 13.",
+"ch": [
+{
+"t": "影响很大",
+"py": "yǐngxiǎng hěn dà",
+"vn": "ảnh hưởng rất lớn",
+"frame": "……影响很大",
+"note": "Dùng để mô tả mức độ tác động của một sự vật, hiện tượng hoặc con người.",
+"ex": [
+[
+"这本书对我的影响很大。",
+"Cuốn sách này có ảnh hưởng rất lớn đối với tôi."
+],
+[
+"这次比赛的影响很大。",
+"Cuộc thi lần này có ảnh hưởng rất lớn."
+]
+],
+"try": "Nói: \"Người thầy này có ảnh hưởng rất lớn đến tôi.\""
+}
+]
+},
+{
+"line": 1,
+"s": "作为读者，读完这部作品后，我也很想成为作家，更想来中国看看。",
+"vn": "Với tư cách là độc giả, sau khi đọc xong tác phẩm này, tôi cũng rất muốn trở thành nhà văn, càng muốn đến Trung Quốc xem thử.",
+"ch": [
+{
+"t": "作为",
+"py": "zuòwéi",
+"vn": "với tư cách là",
+"frame": "作为 + danh từ, ……",
+"note": "Dùng để xác định vai trò hoặc vị thế của chủ thể trong một tình huống.",
+"ex": [
+[
+"作为学生，我们要努力学习。",
+"Là học sinh, chúng ta phải nỗ lực học tập."
+],
+[
+"作为老师，我很高兴。",
+"Với tư cách là giáo viên, tôi rất vui."
+]
+],
+"try": "Nói: \"Với tư cách là người yêu du lịch, tôi rất muốn đi khắp thế giới.\""
+}
+]
+},
+{
+"line": 1,
+"s": "来到中国后，我发现现在的中国和书里的中国已有很大不同。",
+"vn": "Sau khi đến Trung Quốc, tôi phát hiện Trung Quốc hiện nay và Trung Quốc trong sách đã có sự khác biệt rất lớn.",
+"ch": [
+{
+"t": "已有很大不同",
+"py": "yǐ yǒu hěn dà bùtóng",
+"vn": "đã có sự khác biệt rất lớn",
+"frame": "A 和 B 已有很大不同",
+"note": "Dùng để so sánh sự thay đổi hoặc khác biệt giữa hai đối tượng theo thời gian.",
+"ex": [
+[
+"现在的他和以前已有很大不同。",
+"Anh ấy bây giờ và trước kia đã có sự khác biệt rất lớn."
+],
+[
+"这座城市和五年前已有很大不同。",
+"Thành phố này và 5 năm trước đã có sự khác biệt rất lớn."
+]
+],
+"try": "Nói: \"Tiếng Trung của tôi bây giờ và năm ngoái đã có sự khác biệt rất lớn.\""
+}
+]
+},
+{
+"line": 2,
+"s": "前两天，我去书店看到了中文版的《马可·波罗游记》，马上买了一本，到家后又把这本书看了两天。",
+"vn": "Hai hôm trước, tôi đến hiệu sách thấy bản tiếng Trung của \"Du ký của Marco Polo\", liền mua ngay một cuốn, về đến nhà lại đem cuốn sách này đọc mất hai ngày.",
+"ch": [
+{
+"t": "把这本书看了两天",
+"py": "bǎ zhè běn shū kàn le liǎng tiān",
+"vn": "đã đọc cuốn sách này mất hai ngày",
+"frame": "把 + O + V + 了 + khoảng thời gian",
+"note": "Cấu trúc nhấn mạnh hành động tác động lên đối tượng kéo dài trong bao lâu.",
+"ex": [
+[
+"我把作业写了三个小时。",
+"Tôi làm bài tập mất ba tiếng đồng hồ."
+],
+[
+"他把这封信看了半天。",
+"Anh ấy đọc bức thư này mất nửa ngày."
+]
+],
+"try": "Nói: \"Tôi đã dọn dẹp phòng mất cả buổi sáng.\""
+}
+]
+},
+{
+"line": 2,
+"s": "看完后，我决定把自己来中国后写的文章、日记等全部整理出来，完成一部文字加图片的作品——《东方旅行日记》，再次把中国介绍给世界。",
+"vn": "Sau khi đọc xong, tôi quyết định đem tất cả bài viết, nhật ký... mà tôi viết sau khi đến Trung Quốc sắp xếp lại, hoàn thành một tác phẩm gồm chữ và ảnh - \"Nhật ký du lịch phương Đông\", một lần nữa giới thiệu Trung Quốc với thế giới.",
+"ch": [
+{
+"t": "整理出来",
+"py": "zhěnglǐ chūlái",
+"vn": "sắp xếp/hệ thống lại",
+"frame": "把 + O + 整理出来",
+"note": "Kết cấu bổ ngữ xu hướng, chỉ việc thu thập và sắp xếp mọi thứ ngăn nắp từ trạng thái lộn xộn.",
+"ex": [
+[
+"请把这些文件整理出来。",
+"Hãy sắp xếp những tài liệu này lại."
+],
+[
+"我把以前的照片都整理出来了。",
+"Tôi đã sắp xếp lại hết ảnh cũ rồi."
+]
+],
+"try": "Nói: \"Tôi cần sắp xếp lại hết tài liệu học tiếng Trung.\""
+}
+]
+},
+{
+"line": 2,
+"s": "同时我也想继续学习中文和中国文化，报考中国语言文学专业的研究生。",
+"vn": "Đồng thời tôi cũng muốn tiếp tục học tiếng Trung và văn hóa Trung Quốc, đăng ký thi cao học chuyên ngành ngôn ngữ và văn học Trung Quốc.",
+"ch": [
+{
+"t": "同时",
+"py": "tóngshí",
+"vn": "đồng thời",
+"frame": "同时，……",
+"note": "Dùng để kết nối hai hành động hoặc ý định diễn ra song song.",
+"ex": [
+[
+"他工作很忙，同时还要照顾孩子。",
+"Anh ấy công việc rất bận, đồng thời còn phải chăm sóc con cái."
+],
+[
+"我想学汉语，同时想去中国旅游。",
+"Tôi muốn học tiếng Trung, đồng thời muốn đi du lịch Trung Quốc."
+]
+],
+"try": "Nói: \"Tôi muốn nâng cao kỹ năng nghe, đồng thời muốn học thêm từ vựng mới.\""
+}
+]
+}
+]
+}

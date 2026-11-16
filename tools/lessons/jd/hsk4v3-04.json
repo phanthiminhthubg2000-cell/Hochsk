@@ -1,0 +1,471 @@
+{
+"1": [
+{
+"line": 0,
+"s": "啊，我的手机停机了！怎么办啊？",
+"vn": "À, điện thoại của tôi bị khóa máy rồi! Làm sao đây?",
+"ch": [
+{
+"t": "手机停机了",
+"py": "shǒujī tíngjī le",
+"vn": "điện thoại bị khóa máy (hết tiền)",
+"frame": "……手机停机了",
+"note": "停机 chỉ việc điện thoại bị cắt liên lạc do hết cước, rất hay gặp khi sống ở Trung Quốc.",
+"ex": [
+[
+"糟糕，我的手机停机了。",
+"Hỏng rồi, điện thoại tôi bị khóa máy rồi."
+],
+[
+"交完费手机就不会停机了。",
+"Nộp tiền xong thì điện thoại sẽ không bị khóa nữa."
+]
+],
+"try": "Nói: “Điện thoại của bạn tôi bị khóa máy rồi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "你好，你看上去很着急，需要帮忙吗？",
+"vn": "Xin chào, trông bạn có vẻ rất sốt ruột, có cần giúp đỡ không?",
+"ch": [
+{
+"t": "你看上去很着急",
+"py": "nǐ kàn shàngqù hěn zháojí",
+"vn": "trông bạn có vẻ rất sốt ruột",
+"frame": "A 看上去 + tính từ",
+"note": "Khung dùng để phán đoán trạng thái bề ngoài của ai đó (giống “trông có vẻ” trong tiếng Việt).",
+"ex": [
+[
+"他看上去很累。",
+"Anh ấy trông có vẻ rất mệt."
+],
+[
+"这家餐厅看上去不错。",
+"Nhà hàng này trông có vẻ được đấy."
+]
+],
+"try": "Nói: “Hôm nay trông bạn có vẻ rất vui.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我忘了交电话费，手机停机了。我没带现金，手机没有信号，上不了网，买不了地铁票了。",
+"vn": "Tôi quên nộp cước điện thoại, điện thoại bị khóa rồi. Tôi không mang tiền mặt, điện thoại không có sóng, không lên được mạng, không mua được vé tàu điện ngầm nữa.",
+"ch": [
+{
+"t": "上不了网，买不了地铁票了",
+"py": "shàng bù liǎo wǎng, mǎi bù liǎo dìtiě piào le",
+"vn": "không lên được mạng, không mua được vé tàu điện ngầm",
+"frame": "V + 不了 + O",
+"note": "Cấu trúc bổ ngữ khả năng dạng phủ định, thể hiện không thể thực hiện hành động vì điều kiện khách quan.",
+"ex": [
+[
+"今天人太多，买不了票了。",
+"Hôm nay đông người quá, không mua được vé nữa rồi."
+],
+[
+"雨太大，出不了门了。",
+"Mưa to quá, không ra khỏi nhà được nữa rồi."
+]
+],
+"try": "Nói: “Hôm nay tôi bận lắm, không đi chơi được.”"
+}
+]
+},
+{
+"line": 3,
+"s": "你要去哪儿？我帮你买张票。",
+"vn": "Bạn định đi đâu? Tôi giúp bạn mua một vé nhé.",
+"ch": []
+},
+{
+"line": 4,
+"s": "太感谢你了，我要去北京大学站。对了，能不能告诉我你的联系方式？我想把钱还给你。",
+"vn": "Cảm ơn bạn nhiều nhé, tôi muốn đi ga Đại học Bắc Kinh. Phải rồi, có thể cho tôi biết phương thức liên lạc của bạn không? Tôi muốn trả lại tiền cho bạn.",
+"ch": [
+{
+"t": "能不能告诉我你的联系方式",
+"py": "néng bu néng gàosù nǐ de liánxì fāngshì",
+"vn": "có thể cho tôi biết phương thức liên lạc của bạn không",
+"frame": "能不能告诉我 + thông tin",
+"note": "Cách hỏi lịch sự khi muốn xin thông tin của người khác.",
+"ex": [
+[
+"能不能告诉我你的邮箱？",
+"Có thể cho tôi biết hộp thư của bạn không?"
+],
+[
+"能不能告诉我明天的行程？",
+"Có thể cho tôi biết lịch trình ngày mai không?"
+]
+],
+"try": "Nói: “Có thể cho tôi biết số điện thoại của bạn không?”"
+}
+]
+},
+{
+"line": 5,
+"s": "别客气，很高兴能帮到你。",
+"vn": "Đừng khách sáo, rất vui vì có thể giúp được bạn.",
+"ch": [
+{
+"t": "很高兴能帮到你",
+"py": "hěn gāoxìng néng bāng dào nǐ",
+"vn": "rất vui vì có thể giúp được bạn",
+"frame": "很高兴能帮到 + ai",
+"note": "Câu xã giao lịch sự, ấm áp khi vừa giúp đỡ ai đó xong.",
+"ex": [
+[
+"很高兴能帮到我的同事。",
+"Rất vui vì có thể giúp đỡ đồng nghiệp của tôi."
+],
+[
+"很高兴能帮到大家。",
+"Rất vui vì có thể giúp đỡ mọi người."
+]
+],
+"try": "Nói: “Rất vui vì có thể giúp được bạn học.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "阿姨，您怎么站在这儿不上楼？",
+"vn": "Cô ơi, sao cô đứng ở đây mà không lên lầu ạ?",
+"ch": []
+},
+{
+"line": 1,
+"s": "我开车去超市买了不少东西，刚拿过来了一些。我先休息一会儿，再去车里拿剩下的。",
+"vn": "Tôi lái xe đi siêu thị mua không ít đồ, vừa mới xách qua một ít. Tôi nghỉ một lát rồi sẽ ra xe lấy chỗ còn lại.",
+"ch": [
+{
+"t": "买了不少东西",
+"py": "mǎi le bù shǎo dōngxi",
+"vn": "mua không ít đồ",
+"frame": "买了不少 + danh từ",
+"note": "Cách nói giảm nói tránh của “mua rất nhiều”, nghe tự nhiên hơn trong giao tiếp.",
+"ex": [
+[
+"周末我买了不少水果。",
+"Cuối tuần tôi mua không ít trái cây."
+],
+[
+"他买了不少汉语书。",
+"Anh ấy mua không ít sách tiếng Trung."
+]
+],
+"try": "Nói: “Tôi mua không ít quà lưu niệm khi đi du lịch.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我正好要上楼，我帮您提上去吧。",
+"vn": "Cháu cũng đang định lên lầu, để cháu xách giúp cô lên nhé.",
+"ch": [
+{
+"t": "我正好要",
+"py": "wǒ zhènghǎo yào",
+"vn": "cháu cũng đang định / cháu tiện thể muốn",
+"frame": "我正好要 + V",
+"note": "Dùng khi hành động của mình trùng hợp với nhu cầu của người khác, thể hiện sự nhiệt tình.",
+"ex": [
+[
+"我正好要去学校，顺便带你去吧。",
+"Tôi đang định đến trường, tiện thể chở bạn đi nhé."
+],
+[
+"我正好要买咖啡，你想喝什么？",
+"Tôi đang định mua cà phê, bạn muốn uống gì?"
+]
+],
+"try": "Nói: “Tôi đang định đi siêu thị, bạn có cần mua gì không?”"
+}
+]
+},
+{
+"line": 3,
+"s": "不用不用，这几个袋子太重了，我自己拿吧。",
+"vn": "Không cần đâu, mấy cái túi này nặng lắm, để tự cô xách là được rồi.",
+"ch": []
+},
+{
+"line": 4,
+"s": "没事，我提着这些东西就算锻炼身体了，再说邻居之间就是要互相帮助啊。",
+"vn": "Không sao đâu, cháu xách mấy thứ này coi như là tập thể dục luôn, hơn nữa hàng xóm với nhau thì phải giúp đỡ lẫn nhau chứ ạ.",
+"ch": [
+{
+"t": "就算锻炼身体了",
+"py": "jiù suàn duànliàn shēntǐ le",
+"vn": "coi như là tập thể dục rồi",
+"frame": "……就算 + V + 了",
+"note": "Dùng để an ủi hoặc nhìn nhận một việc vất vả theo hướng tích cực.",
+"ex": [
+[
+"走路上班就算锻炼身体了。",
+"Đi bộ đi làm coi như là tập thể dục rồi."
+],
+[
+"帮妈妈做家务就算锻炼身体了。",
+"Giúp mẹ làm việc nhà coi như là tập thể dục rồi."
+]
+],
+"try": "Nói: “Đi bộ lên tầng 5 coi như là tập thể dục rồi.”"
+},
+{
+"t": "邻居之间就是要互相帮助",
+"py": "línjū zhī jiān jiù shì yào hùxiāng bāngzhù",
+"vn": "hàng xóm với nhau là phải giúp đỡ lẫn nhau",
+"frame": "……之间就是要 + V",
+"note": "Cấu trúc nhấn mạnh nghĩa vụ hoặc cách ứng xử trong một mối quan hệ.",
+"ex": [
+[
+"朋友之间就是要互相帮助。",
+"Bạn bè với nhau là phải giúp đỡ lẫn nhau."
+],
+[
+"同学之间就是要互相帮助。",
+"Bạn học với nhau là phải giúp đỡ lẫn nhau."
+]
+],
+"try": "Nói: “Đồng nghiệp với nhau là phải giúp đỡ lẫn nhau.”"
+}
+]
+},
+{
+"line": 5,
+"s": "谢谢家月！那就辛苦你了。",
+"vn": "Cảm ơn Gia Nguyệt nhé! Vậy thì làm phiền cháu rồi.",
+"ch": [
+{
+"t": "辛苦你了",
+"py": "xīnkǔ nǐ le",
+"vn": "làm phiền cháu rồi / vất vả cho cháu rồi",
+"frame": "辛苦 + ai + 了",
+"note": "Câu cửa miệng khi nhờ vả hoặc được ai đó giúp đỡ, thể hiện sự lịch sự và cảm kích.",
+"ex": [
+[
+"谢谢你帮我搬家，辛苦你了。",
+"Cảm ơn bạn giúp tôi chuyển nhà, vất vả cho bạn rồi."
+],
+[
+"老师改作业辛苦你了。",
+"Thầy giáo chấm bài vất vả cho thầy rồi."
+]
+],
+"try": "Nói: “Cảm ơn bạn đã đợi tôi lâu như vậy, vất vả cho bạn rồi.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "在城市里，人们出行的方式越来越多。短距离出行时，骑自行车往往是人们常见的选择。",
+"vn": "Trong thành phố, cách thức đi lại của mọi người ngày càng nhiều. Khi đi lại quãng đường ngắn, đi xe đạp thường là lựa chọn phổ biến của mọi người.",
+"ch": [
+{
+"t": "短距离出行时",
+"py": "duǎn jùlí chūxíng shí",
+"vn": "khi đi lại quãng đường ngắn",
+"frame": "……时，……",
+"note": "Cấu trúc “khi làm gì đó” rất thông dụng để xác định bối cảnh thời gian.",
+"ex": [
+[
+"工作时，请把手机关掉。",
+"Khi làm việc, vui lòng tắt điện thoại."
+],
+[
+"学习时，不要看电视。",
+"Khi học bài, đừng xem tivi."
+]
+],
+"try": "Nói: “Khi đi du lịch, tôi thích mang theo máy ảnh.”"
+}
+]
+},
+{
+"line": 0,
+"s": "白家月就很喜欢骑车去学校，她觉得这样既方便，又能锻炼身体，还能保护环境。",
+"vn": "Bạch Gia Nguyệt rất thích đạp xe đến trường, cô ấy cảm thấy như vậy vừa tiện lợi, vừa có thể rèn luyện sức khỏe, lại còn bảo vệ môi trường.",
+"ch": [
+{
+"t": "既方便，又能锻炼身体，还能保护环境",
+"py": "jì fāngbiàn, yòu néng duànliàn shēntǐ, hái néng bǎohù huánjìng",
+"vn": "vừa tiện lợi, vừa có thể rèn luyện sức khỏe, lại còn bảo vệ môi trường",
+"frame": "既……又……，还……",
+"note": "Cấu trúc liệt kê nhiều ưu điểm hoặc đặc điểm cùng lúc, dùng để nhấn mạnh sự đa năng.",
+"ex": [
+[
+"这台电脑既便宜，又好用，还很轻。",
+"Cái máy tính này vừa rẻ, vừa dễ dùng, lại còn nhẹ."
+],
+[
+"他既聪明，又努力，还很热心。",
+"Anh ấy vừa thông minh, vừa nỗ lực, lại còn nhiệt tình."
+]
+],
+"try": "Nói: “Học tiếng Trung vừa giúp tôi hiểu văn hóa, vừa giúp tôi tìm việc tốt, lại còn kết bạn được nhiều người.”"
+}
+]
+},
+{
+"line": 1,
+"s": "除了骑自行车，人们还会选择骑电动车。电动车速度快，价格不高，充电也很方便，所以越来越流行。",
+"vn": "Ngoài việc đi xe đạp, mọi người còn chọn đi xe điện. Xe điện tốc độ nhanh, giá không cao, sạc điện cũng rất tiện, nên ngày càng phổ biến.",
+"ch": [
+{
+"t": "除了骑自行车，人们还会选择骑电动车",
+"py": "chúle qí zìxíngchē, rénmen hái huì xuǎnzé qí diàndòngchē",
+"vn": "Ngoài việc đi xe đạp, mọi người còn chọn đi xe điện",
+"frame": "除了 A，还 B",
+"note": "Dùng để bổ sung thêm một lựa chọn hoặc hành động khác bên cạnh cái đã có.",
+"ex": [
+[
+"除了汉语，我还想学英语。",
+"Ngoài tiếng Trung, tôi còn muốn học tiếng Anh."
+],
+[
+"除了看书，我周末还喜欢去运动。",
+"Ngoài đọc sách, cuối tuần tôi còn thích đi vận động."
+]
+],
+"try": "Nói: “Ngoài cơm, tôi còn muốn gọi thêm một bát canh.”"
+}
+]
+},
+{
+"line": 1,
+"s": "陈天中平时也骑自行车，不过为了省力气，他最近打算买一辆电动车。",
+"vn": "Trần Thiên Trung bình thường cũng đi xe đạp, nhưng để đỡ tốn sức, gần đây cậu ấy dự định mua một chiếc xe điện.",
+"ch": [
+{
+"t": "为了省力气",
+"py": "wèile shěng lìqì",
+"vn": "để đỡ tốn sức",
+"frame": "为了 + mục đích, ……",
+"note": "Cấu trúc chỉ mục đích, đặt ở đầu câu để giải thích lý do cho hành động phía sau.",
+"ex": [
+[
+"为了学好汉语，我每天都练习。",
+"Để học tốt tiếng Trung, ngày nào tôi cũng luyện tập."
+],
+[
+"为了身体健康，他开始跑步了。",
+"Để sức khỏe tốt, anh ấy bắt đầu chạy bộ rồi."
+]
+],
+"try": "Nói: “Để thi đỗ HSK4, tôi phải học từ mới mỗi ngày.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "在中国，乘客可以在不少地铁站里直接扫码购买食物和饮料，有的地铁站还提供免费借雨伞、发雨衣等服务。",
+"vn": "Tại Trung Quốc, hành khách có thể trực tiếp quét mã mua đồ ăn và đồ uống tại không ít ga tàu điện ngầm, một số ga còn cung cấp các dịch vụ như cho mượn ô miễn phí, phát áo mưa.",
+"ch": [
+{
+"t": "提供免费借雨伞、发雨衣等服务",
+"py": "tígōng miǎnfèi jiè yǔsǎn, fā yǔyī děng fúwù",
+"vn": "cung cấp dịch vụ như cho mượn ô, phát áo mưa miễn phí",
+"frame": "提供 + [danh từ/hành động] + 等服务",
+"note": "Dùng để liệt kê các loại hình dịch vụ. 等服务 giúp câu văn trở nên chuyên nghiệp và đầy đủ.",
+"ex": [
+[
+"学校提供免费咨询、心理辅导等服务。",
+"Nhà trường cung cấp các dịch vụ như tư vấn miễn phí, hỗ trợ tâm lý."
+],
+[
+"酒店提供免费早餐、洗衣等服务。",
+"Khách sạn cung cấp các dịch vụ như bữa sáng miễn phí, giặt là."
+]
+],
+"try": "Nói: \"Công ty này cung cấp dịch vụ như đào tạo nhân viên, bảo hiểm sức khỏe.\""
+}
+]
+},
+{
+"line": 1,
+"s": "有些地铁站附近公司比较多，工作日站里还有早餐车，没来得及吃早饭的人在这里就能买到热包子和牛奶等，省了不少时间。",
+"vn": "Gần một số ga tàu điện ngầm có khá nhiều công ty, ngày làm việc trong ga còn có xe bán đồ ăn sáng, những người không kịp ăn sáng có thể mua bánh bao nóng và sữa ở đây, tiết kiệm được không ít thời gian.",
+"ch": [
+{
+"t": "没来得及吃早饭",
+"py": "méi láidejí chī zǎofàn",
+"vn": "không kịp ăn sáng",
+"frame": "没来得及 + V",
+"note": "Dùng khi muốn nói một việc gì đó chưa kịp làm vì không đủ thời gian.",
+"ex": [
+[
+"我早上起晚了，没来得及吃早饭。",
+"Sáng nay tôi dậy muộn, không kịp ăn sáng."
+],
+[
+"出门太急，没来得及带伞。",
+"Ra ngoài vội quá, không kịp mang theo ô."
+]
+],
+"try": "Nói: \"Tôi không kịp làm bài tập trước khi đến lớp.\""
+}
+]
+},
+{
+"line": 1,
+"s": "有的地铁站里甚至还有鲜花店，乘客下班时可以顺便买花送给家人。",
+"vn": "Có những ga tàu điện ngầm thậm chí còn có cả cửa hàng hoa, hành khách khi tan làm có thể tiện đường mua hoa tặng người nhà.",
+"ch": [
+{
+"t": "顺便买花",
+"py": "shùnbiàn mǎi huā",
+"vn": "tiện đường mua hoa",
+"frame": "顺便 + V",
+"note": "Dùng khi làm một việc gì đó nhân tiện đang làm việc chính.",
+"ex": [
+[
+"下班时，我顺便去超市买点菜。",
+"Lúc tan làm, tôi tiện đường ghé siêu thị mua ít thức ăn."
+],
+[
+"你去食堂的话，顺便帮我带一份饭。",
+"Nếu bạn đi nhà ăn thì tiện đường mua giúp tôi một suất cơm."
+]
+],
+"try": "Nói: \"Tôi tiện đường ghé qua thư viện trả sách.\""
+}
+]
+},
+{
+"line": 2,
+"s": "这些小小的服务，不仅方便了人们的出行，也让大家的心情变得更加愉快。",
+"vn": "Những dịch vụ nhỏ bé này không chỉ thuận tiện cho việc đi lại của mọi người, mà còn làm cho tâm trạng của mọi người trở nên vui vẻ hơn.",
+"ch": [
+{
+"t": "不仅方便了人们的出行，也让大家的心情变得更加愉快",
+"py": "bùjǐn fāngbiàn le rénmen de chūxíng, yě ràng dàjiā de xīnqíng biàn de gèngjiā yúkuài",
+"vn": "không chỉ thuận tiện cho việc đi lại, mà còn làm tâm trạng mọi người vui vẻ hơn",
+"frame": "不仅 + A，也 + B",
+"note": "Cấu trúc “không những… mà còn…”. A và B thường là hai khía cạnh tích cực của một sự việc.",
+"ex": [
+[
+"学汉语不仅能找好工作，也能了解中国文化。",
+"Học tiếng Trung không chỉ tìm được việc tốt, mà còn hiểu được văn hóa Trung Quốc."
+],
+[
+"这个手机不仅价格便宜，而且质量也很好。",
+"Chiếc điện thoại này không chỉ giá rẻ, mà chất lượng cũng rất tốt."
+]
+],
+"try": "Nói: \"Tập thể dục không chỉ giúp khỏe mạnh, mà còn giúp tinh thần thoải mái hơn.\""
+}
+]
+}
+]
+}

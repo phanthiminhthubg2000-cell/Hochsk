@@ -1,0 +1,684 @@
+{
+"1": [
+{
+"line": 0,
+"s": "你觉得老妈穿这件毛衣怎么样？",
+"vn": "Cậu thấy mẹ mặc chiếc áo len này thế nào?",
+"ch": []
+},
+{
+"line": 1,
+"s": "样子不错，就是颜色好像不怎么适合她。",
+"vn": "Kiểu dáng thì được, chỉ là màu sắc hình như không hợp với bà ấy lắm.",
+"ch": [
+{
+"t": "不怎么适合",
+"py": "bù zěnme shìhé",
+"vn": "không hợp lắm",
+"frame": "A 不怎么适合 B",
+"note": "不怎么 dùng để giảm nhẹ mức độ phủ định, nghe lịch sự và tự nhiên hơn là nói thẳng “không hợp”.",
+"ex": [
+[
+"这件衣服不怎么适合我。",
+"Chiếc áo này không hợp với tôi lắm."
+],
+[
+"这个工作不怎么适合他。",
+"Công việc này không hợp với anh ấy lắm."
+]
+],
+"try": "Nói: “Món ăn này không hợp với khẩu vị của tôi lắm.”"
+}
+]
+},
+{
+"line": 2,
+"s": "老年人穿这种颜色的衣服正合适，颜色不深，质量还特别好。您看那位阿姨正试着呢，是不是很好看？",
+"vn": "Người già mặc màu này rất hợp, màu không đậm, chất lượng lại cực tốt. Anh xem cô kia đang thử kìa, có phải rất đẹp không?",
+"ch": [
+{
+"t": "正合适",
+"py": "zhèng héshì",
+"vn": "vừa vặn, rất hợp",
+"frame": "……正合适",
+"note": "正 nhấn mạnh sự vừa vặn, đúng lúc hoặc đúng ý. Dùng để khen ngợi sự lựa chọn phù hợp.",
+"ex": [
+[
+"这双鞋大小正合适。",
+"Đôi giày này kích cỡ vừa vặn."
+],
+[
+"现在去旅游正合适。",
+"Bây giờ đi du lịch là hợp nhất."
+]
+],
+"try": "Nói: “Thời tiết hôm nay đi dạo phố là rất hợp.”"
+}
+]
+},
+{
+"line": 3,
+"s": "嗯，是挺不错的。同乐，我印象中，老妈也常穿这种颜色的衣服，她应该会喜欢的，买一件吧。",
+"vn": "Ừ, cũng khá được đấy. Đồng Lạc, trong ấn tượng của tớ, mẹ cũng hay mặc màu này, bà ấy chắc sẽ thích đấy, mua một chiếc đi.",
+"ch": [
+{
+"t": "我印象中",
+"py": "wǒ yìnxiàng zhōng",
+"vn": "trong ấn tượng của tôi",
+"frame": "我印象中，……",
+"note": "Cụm từ dùng để bắt đầu một hồi ức hoặc điều mình nhớ về ai đó/việc gì đó.",
+"ex": [
+[
+"我印象中，他是个很努力的人。",
+"Trong ấn tượng của tôi, cậu ấy là người rất nỗ lực."
+],
+[
+"我印象中，这家店以前不在这里。",
+"Trong ấn tượng của tôi, cửa hàng này trước đây không ở đây."
+]
+],
+"try": "Nói: “Trong ấn tượng của tôi, cô ấy rất thích đọc sách.”"
+}
+]
+},
+{
+"line": 4,
+"s": "好的，老妈高兴比什么都强。",
+"vn": "Được, mẹ vui là hơn tất cả mọi thứ.",
+"ch": [
+{
+"t": "比什么都强",
+"py": "bǐ shénme dōu qiáng",
+"vn": "tốt hơn bất cứ thứ gì",
+"frame": "A 比什么都强",
+"note": "Cách nói nhấn mạnh sự quan trọng hoặc giá trị của một điều gì đó so với mọi thứ khác.",
+"ex": [
+[
+"身体健康比什么都强。",
+"Sức khỏe tốt là quan trọng hơn cả."
+],
+[
+"一家人在一起比什么都强。",
+"Cả nhà ở bên nhau là tốt hơn bất cứ thứ gì."
+]
+],
+"try": "Nói: “Đối với học sinh, thi đỗ đại học là quan trọng hơn cả.”"
+}
+]
+},
+{
+"line": 5,
+"s": "就是，老人开心最重要。我们店正好年底有活动，全场打七折呢，挺值的。",
+"vn": "Đúng thế, người già vui vẻ là quan trọng nhất. Cửa hàng chúng tôi đúng dịp cuối năm có chương trình, toàn bộ giảm giá 30%, rất đáng tiền.",
+"ch": [
+{
+"t": "老人开心最重要",
+"py": "lǎorén kāixīn zuì zhòngyào",
+"vn": "người già vui vẻ là quan trọng nhất",
+"frame": "……最重要",
+"note": "Cấu trúc nhấn mạnh ưu tiên hàng đầu trong một tình huống cụ thể.",
+"ex": [
+[
+"考试的时候，细心最重要。",
+"Khi thi cử, cẩn thận là quan trọng nhất."
+],
+[
+"学语言，坚持最重要。",
+"Học ngoại ngữ, kiên trì là quan trọng nhất."
+]
+],
+"try": "Nói: “Đi làm, thái độ là quan trọng nhất.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "爷爷、奶奶还没回来呢？",
+"vn": "Ông bà vẫn chưa về ạ?",
+"ch": []
+},
+{
+"line": 1,
+"s": "没呢，估计快了。下午老年班举办一期听力保护活动，他们去参加活动了。",
+"vn": "Chưa, đoán là sắp về rồi. Chiều nay lớp người cao tuổi tổ chức một đợt hoạt động bảo vệ thính giác, họ đi tham gia hoạt động rồi.",
+"ch": [
+{
+"t": "估计快了",
+"py": "gūjì kuài le",
+"vn": "đoán là sắp rồi",
+"frame": "估计 + thời gian/trạng thái + 了",
+"note": "Dùng để phỏng đoán sự việc sắp xảy ra hoặc sắp tới nơi.",
+"ex": [
+[
+"估计他快到了。",
+"Đoán là cậu ấy sắp đến nơi rồi."
+],
+[
+"估计考试快结束了。",
+"Đoán là kỳ thi sắp kết thúc rồi."
+]
+],
+"try": "Nói: “Đoán là xe buýt sắp đến rồi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "他们的活动还挺丰富的！",
+"vn": "Hoạt động của họ phong phú thật đấy!",
+"ch": []
+},
+{
+"line": 3,
+"s": "嗯。小明最近要考试，心里有点儿烦，昨天因为脱、挂衣服这点儿小事，就对奶奶发脾气了。",
+"vn": "Ừ. Tiểu Minh dạo này sắp thi, trong lòng hơi phiền muộn, hôm qua chỉ vì chuyện nhỏ như cởi và treo quần áo mà đã nổi cáu với bà.",
+"ch": [
+{
+"t": "心里有点儿烦",
+"py": "xīnlǐ yǒudiǎnr fán",
+"vn": "trong lòng hơi phiền muộn",
+"frame": "心里 + cảm xúc (烦/高兴/难受)",
+"note": "Cách diễn đạt trạng thái tâm lý bên trong.",
+"ex": [
+[
+"最近工作太忙，心里有点儿烦。",
+"Dạo này công việc bận quá, trong lòng hơi phiền."
+],
+[
+"想到要出国，心里有点儿紧张。",
+"Nghĩ đến việc sắp ra nước ngoài, trong lòng hơi hồi hộp."
+]
+],
+"try": "Nói: “Sắp thi HSK, trong lòng tôi hơi lo lắng.”"
+},
+{
+"t": "对奶奶发脾气了",
+"py": "duì nǎinai fā píqì le",
+"vn": "nổi cáu với bà",
+"frame": "对 + đối tượng + 发脾气",
+"note": "Cấu trúc dùng khi muốn nói về việc nổi giận với ai đó.",
+"ex": [
+[
+"别对父母发脾气。",
+"Đừng nổi cáu với bố mẹ."
+],
+[
+"他因为压力大，对同事发脾气。",
+"Vì áp lực lớn nên anh ấy nổi cáu với đồng nghiệp."
+]
+],
+"try": "Nói: “Đừng nổi cáu với bạn bè.”"
+}
+]
+},
+{
+"line": 4,
+"s": "是吗？他这样做老人该伤心了。",
+"vn": "Vậy sao? Nó làm thế ông bà chắc sẽ buồn lắm.",
+"ch": []
+},
+{
+"line": 5,
+"s": "就是啊。他也不是不知道自己错了，我批评他以后，他马上说放学回来就向奶奶道歉。",
+"vn": "Đúng thế. Nó cũng không phải là không biết mình sai, sau khi tôi phê bình nó, nó lập tức nói tan học về sẽ xin lỗi bà.",
+"ch": [
+{
+"t": "也不是不知道",
+"py": "yě bú shì bù zhīdào",
+"vn": "cũng không phải là không biết",
+"frame": "也不是 + không + V/Adj",
+"note": "Cấu trúc phủ định kép để nhấn mạnh một sự thật (thực ra là biết/là có).",
+"ex": [
+[
+"他也不是不想去，只是太忙了。",
+"Cậu ấy không phải không muốn đi, chỉ là quá bận thôi."
+],
+[
+"这也不是不重要，只是现在没时间。",
+"Việc này không phải không quan trọng, chỉ là bây giờ không có thời gian."
+]
+],
+"try": "Nói: “Không phải là tôi không muốn học, mà là tôi không có sách.”"
+}
+]
+},
+{
+"line": 6,
+"s": "好的，我也再跟他聊聊。",
+"vn": "Được, tôi cũng sẽ nói chuyện lại với nó.",
+"ch": []
+},
+{
+"line": 7,
+"s": "那就更好了。",
+"vn": "Thế thì tốt quá rồi.",
+"ch": []
+}
+],
+"3": [
+{
+"line": 0,
+"s": "杨同乐的老家在上海，他自毕业后一直在北京工作。",
+"vn": "Quê của Dương Đồng Lạc ở Thượng Hải, từ sau khi tốt nghiệp anh ấy vẫn luôn làm việc ở Bắc Kinh.",
+"ch": [
+{
+"t": "自毕业后",
+"py": "zì bìyè hòu",
+"vn": "từ sau khi tốt nghiệp",
+"frame": "自 + khoảng thời gian/sự việc + 后",
+"note": "自 tương đương 从, dùng trong văn viết hoặc tình huống trang trọng hơn một chút.",
+"ex": [
+[
+"自开学以来，他每天都去图书馆。",
+"Từ khi khai giảng đến nay, ngày nào cậu ấy cũng đến thư viện."
+],
+[
+"自去年的那次面试后，我一直很努力。",
+"Từ sau buổi phỏng vấn năm ngoái, tôi vẫn luôn rất nỗ lực."
+]
+],
+"try": "Nói: “Từ sau khi tốt nghiệp, tôi bắt đầu đi làm.”"
+}
+]
+},
+{
+"line": 0,
+"s": "虽然没和父母生活在一起，但父子、母子关系特别好。",
+"vn": "Mặc dù không sống cùng bố mẹ, nhưng quan hệ cha con, mẹ con vô cùng tốt.",
+"ch": [
+{
+"t": "和父母生活在一起",
+"py": "hé fùmǔ shēnghuó zài yìqǐ",
+"vn": "sống cùng với bố mẹ",
+"frame": "和 + ai + shēnghuó zài yìqǐ",
+"note": "Diễn tả việc sinh hoạt chung một nhà với ai đó.",
+"ex": [
+[
+"我和室友生活在一起。",
+"Tôi sống cùng bạn cùng phòng."
+],
+[
+"很多年轻人结婚后不和父母生活在一起。",
+"Nhiều người trẻ sau khi kết hôn không sống cùng bố mẹ."
+]
+],
+"try": "Nói: “Bây giờ tôi sống cùng bạn tôi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "杨同乐很关心父母，无论平时工作有多忙，他每个周末都会给父母打电话。",
+"vn": "Dương Đồng Lạc rất quan tâm bố mẹ, dù ngày thường công việc có bận thế nào, cuối tuần nào anh ấy cũng gọi điện cho bố mẹ.",
+"ch": [
+{
+"t": "无论平时工作有多忙",
+"py": "wúlùn píngshí gōngzuò yǒu duō máng",
+"vn": "dù ngày thường công việc có bận thế nào",
+"frame": "无论 + từ để hỏi + 都……",
+"note": "无论 biểu thị điều kiện không thay đổi, đi kèm các đại từ nghi vấn như 怎么, 多么, 谁.",
+"ex": [
+[
+"无论遇到什么问题，我们都不要放弃。",
+"Dù gặp vấn đề gì, chúng ta cũng đừng bỏ cuộc."
+],
+[
+"无论天气怎么变，我都去上课。",
+"Dù thời tiết thay đổi thế nào, tôi vẫn đi học."
+]
+],
+"try": "Nói: “Dù bận thế nào, tôi cũng học tiếng Trung mỗi ngày.”"
+},
+{
+"t": "给父母打电话",
+"py": "gěi fùmǔ dǎ diànhuà",
+"vn": "gọi điện cho bố mẹ",
+"frame": "给 + ai + dǎ diànhuà",
+"note": "Cấu trúc giao tiếp cơ bản dùng để liên lạc.",
+"ex": [
+[
+"下班后我要给老板打电话。",
+"Tan làm xong tôi phải gọi điện cho sếp."
+],
+[
+"老师给学生家长打电话。",
+"Thầy giáo gọi điện cho phụ huynh học sinh."
+]
+],
+"try": "Nói: “Tối nay tôi sẽ gọi điện cho mẹ.”"
+}
+]
+},
+{
+"line": 0,
+"s": "条件允许时，他会回上海看父母。",
+"vn": "Khi điều kiện cho phép, anh ấy sẽ về Thượng Hải thăm bố mẹ.",
+"ch": [
+{
+"t": "条件允许时",
+"py": "tiáojiàn yǔnxǔ shí",
+"vn": "khi điều kiện cho phép",
+"frame": "条件允许时，……",
+"note": "Cụm diễn tả hoàn cảnh, khả năng cho phép làm việc gì đó.",
+"ex": [
+[
+"条件允许时，我想去中国旅游。",
+"Khi điều kiện cho phép, tôi muốn đi du lịch Trung Quốc."
+],
+[
+"条件允许时，多买几本书看。",
+"Khi điều kiện cho phép, hãy mua thêm vài cuốn sách để đọc."
+]
+],
+"try": "Nói: “Khi điều kiện cho phép, tôi muốn đổi điện thoại mới.”"
+}
+]
+},
+{
+"line": 1,
+"s": "刘明和王一雪结婚后，一直没有和父母生活在一起，",
+"vn": "Lưu Minh và Vương Nhất Tuyết sau khi kết hôn vẫn luôn không sống cùng bố mẹ,",
+"ch": []
+},
+{
+"line": 1,
+"s": "他们平时会另外找时间去看父母，帮父母做做饭，打扫打扫卫生。",
+"vn": "họ thường tranh thủ tìm thời gian khác để đi thăm bố mẹ, giúp bố mẹ nấu nướng, dọn dẹp vệ sinh.",
+"ch": [
+{
+"t": "另外找时间",
+"py": "lìngwài zhǎo shíjiān",
+"vn": "tìm thời gian khác",
+"frame": "另外 + V + thời gian/địa điểm",
+"note": "另外 biểu thị ngoài những cái hiện tại thì bổ sung thêm cái khác.",
+"ex": [
+[
+"这件衣服太贵了，我们另外看看吧。",
+"Bộ quần áo này đắt quá, chúng ta xem cái khác đi."
+],
+[
+"今天太忙了，我们另外约时间见面吧。",
+"Hôm nay bận quá, chúng ta hẹn thời gian khác gặp nhau nhé."
+]
+],
+"try": "Nói: “Hôm nay không kịp rồi, chúng ta tìm thời gian khác thảo luận đi.”"
+},
+{
+"t": "打扫打扫卫生",
+"py": "dǎsǎo dǎsǎo wèishēng",
+"vn": "dọn dẹp vệ sinh một chút",
+"frame": "V-V (lặp lại động từ) + danh từ",
+"note": "Lặp lại động từ thể hiện hành động ngắn, nhẹ nhàng hoặc mang tính thử nghiệm.",
+"ex": [
+[
+"周末我在家里休息休息。",
+"Cuối tuần tôi ở nhà nghỉ ngơi một chút."
+],
+[
+"吃完饭后，我们一起收拾收拾房间。",
+"Ăn cơm xong, chúng ta cùng thu dọn phòng ốc một chút."
+]
+],
+"try": "Nói: “Trước khi đi làm, tôi lau dọn nhà cửa một chút.”"
+}
+]
+},
+{
+"line": 1,
+"s": "这两年，刘明的母亲身体不太好，他们很担心，就把父母接到了自己家里照顾。",
+"vn": "Hai năm nay, sức khỏe mẹ của Lưu Minh không tốt lắm, họ rất lo lắng, liền đón bố mẹ đến nhà mình để chăm sóc.",
+"ch": [
+{
+"t": "身体不太好",
+"py": "shēntǐ bú tài hǎo",
+"vn": "sức khỏe không tốt lắm",
+"frame": "身体 +不太好/很好",
+"note": "Dùng để nói về tình trạng sức khỏe của ai đó.",
+"ex": [
+[
+"爷爷年纪大了，身体不太好。",
+"Ông tuổi cao rồi, sức khỏe không tốt lắm."
+],
+[
+"多吃蔬菜，身体才会好。",
+"Ăn nhiều rau xanh, cơ thể mới khỏe mạnh."
+]
+],
+"try": "Nói: “Mấy ngày nay thời tiết thay đổi, sức khỏe tôi không tốt lắm.”"
+},
+{
+"t": "把父母接到了自己家里",
+"py": "bǎ fùmǔ jiē dào le zìjǐ jiālǐ",
+"vn": "đón bố mẹ về nhà mình",
+"frame": "把 + A + 接到 + địa điểm",
+"note": "Dùng 接 khi đón người thân, bạn bè đến một nơi nào đó.",
+"ex": [
+[
+"放学后我要去学校接孩子。",
+"Tan học tôi phải đến trường đón con."
+],
+[
+"周末我把朋友接到家里吃饭。",
+"Cuối tuần tôi đón bạn về nhà ăn cơm."
+]
+],
+"try": "Nói: “Tôi muốn đón bố mẹ lên thành phố chơi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "父母待在他们身边，他们也终于能放心地去工作了。",
+"vn": "Bố mẹ ở bên cạnh họ, cuối cùng họ cũng có thể yên tâm đi làm rồi.",
+"ch": [
+{
+"t": "待在他们身边",
+"py": "dāi zài tāmen shēnbiān",
+"vn": "ở bên cạnh họ",
+"frame": "待在 + ai + shēnbiān",
+"note": "待 chỉ việc ở lại đâu đó trong một khoảng thời gian.",
+"ex": [
+[
+"我想一直待在父母身边。",
+"Tôi muốn mãi ở bên cạnh bố mẹ."
+],
+[
+"他在北京待了三年。",
+"Anh ấy ở Bắc Kinh ba năm."
+]
+],
+"try": "Nói: “Cuối tuần tôi thích ở bên cạnh gia đình.”"
+},
+{
+"t": "能放心地去工作了",
+"py": "néng fàngxīn de qù gōngzuò le",
+"vn": "có thể yên tâm đi làm rồi",
+"frame": "能 + fàngxīn de + V",
+"note": "放心 biểu thị sự an tâm, không còn lo lắng nữa khi làm việc gì.",
+"ex": [
+[
+"听了你的话，我终于能放心了。",
+"Nghe lời bạn nói, cuối cùng tôi cũng có thể yên tâm rồi."
+],
+[
+"看到孩子考得很好，妈妈放心了。",
+"Thấy con thi rất tốt, mẹ đã yên tâm."
+]
+],
+"try": "Nói: “Làm xong bài tập rồi, tôi có thể yên tâm đi ngủ.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "下班回家，林静静将父母从老家寄来的鸡汤热了热，当闻到从小就熟悉的味道时，平时冷静的她鼻子还是酸了。",
+"vn": "Tan làm về nhà, Lâm Tĩnh Tĩnh hâm nóng món canh gà bố mẹ gửi từ quê lên, khi ngửi thấy mùi vị quen thuộc từ nhỏ, cô gái vốn bình tĩnh thường ngày vẫn thấy cay sống mũi.",
+"ch": [
+{
+"t": "将父母从老家寄来的鸡汤热了热",
+"py": "jiāng fùmǔ cóng lǎojiā jì lái de jītāng rè le rè",
+"vn": "hâm nóng món canh gà bố mẹ gửi từ quê lên",
+"frame": "将 + O + V + 了 + V",
+"note": "Cấu trúc 将 (tương đương 把) dùng để nhấn mạnh hành động tác động lên tân ngữ. V + 了 + V biểu thị hành động diễn ra nhanh hoặc thử làm.",
+"ex": [
+[
+"我将这份文件改了改。",
+"Tôi sửa lại tài liệu này một chút."
+],
+[
+"请将这件衣服洗了洗。",
+"Hãy giặt qua bộ quần áo này."
+]
+],
+"try": "Nói: “Tôi đã hâm nóng lại món cơm chiên.”"
+},
+{
+"t": "当闻到从小就熟悉的味道时",
+"py": "dāng wéndào cóngxiǎo jiù shúxī de wèidào shí",
+"vn": "khi ngửi thấy mùi vị quen thuộc từ nhỏ",
+"frame": "当……时",
+"note": "Cấu trúc dùng để chỉ thời điểm xảy ra sự việc, tương đương với 'khi...'.",
+"ex": [
+[
+"当看到这张照片时，我想起了童年。",
+"Khi nhìn thấy tấm ảnh này, tôi nhớ về tuổi thơ."
+],
+[
+"当听到这个消息时，他很高兴。",
+"Khi nghe tin này, anh ấy rất vui."
+]
+],
+"try": "Nói: “Khi nhìn thấy mẹ, tôi cảm thấy rất hạnh phúc.”"
+}
+]
+},
+{
+"line": 1,
+"s": "林静静一个人来北京工作三年了，父母总是担心她为了节约时间而不好好吃饭，所以每个月都给她寄各种好吃的。",
+"vn": "Lâm Tĩnh Tĩnh một mình đến Bắc Kinh làm việc đã ba năm, bố mẹ luôn lo lắng cô vì tiết kiệm thời gian mà không ăn uống tử tế, nên tháng nào cũng gửi cho cô đủ loại đồ ăn ngon.",
+"ch": [
+{
+"t": "为了节约时间而不好好吃饭",
+"py": "wèile jiéyuē shíjiān ér bù hǎohǎo chīfàn",
+"vn": "vì tiết kiệm thời gian mà không ăn uống tử tế",
+"frame": "为了……而……",
+"note": "Cấu trúc chỉ mục đích và kết quả/hành động tương ứng. '而' nối giữa mục đích và hành động.",
+"ex": [
+[
+"为了学好汉语而努力练习。",
+"Vì học tốt tiếng Trung mà nỗ lực luyện tập."
+],
+[
+"为了省钱而每天自己做饭。",
+"Vì tiết kiệm tiền mà mỗi ngày tự nấu ăn."
+]
+],
+"try": "Nói: “Vì thi đỗ HSK4 mà tôi học rất chăm chỉ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "这次母亲专门做了林静静最爱喝的鸡汤，为了让食物新鲜，父亲选择了城里最快的快递，上午寄出，下午就能收到。",
+"vn": "Lần này mẹ đặc biệt làm món canh gà Lâm Tĩnh Tĩnh thích uống nhất, để thức ăn được tươi, bố đã chọn dịch vụ chuyển phát nhanh nhất trong thành phố, sáng gửi đi, chiều là nhận được.",
+"ch": [
+{
+"t": "为了让食物新鲜",
+"py": "wèile ràng shíwù xīnxiān",
+"vn": "để thức ăn được tươi",
+"frame": "为了 + 让 + O + Adj",
+"note": "Dùng để diễn đạt mục đích khiến cho đối tượng nào đó đạt được trạng thái gì.",
+"ex": [
+[
+"为了让身体健康，我要多运动。",
+"Để cơ thể khỏe mạnh, tôi phải vận động nhiều."
+],
+[
+"为了让房间干净，我每天打扫。",
+"Để phòng sạch sẽ, tôi dọn dẹp mỗi ngày."
+]
+],
+"try": "Nói: “Để cho tiếng Trung tiến bộ, tôi thường xuyên nghe nhạc.”"
+}
+]
+},
+{
+"line": 2,
+"s": "鸡汤很鲜，林静静心里更暖，她觉得父母好像就在身边。",
+"vn": "Canh gà rất tươi, lòng Lâm Tĩnh Tĩnh càng ấm áp hơn, cô cảm thấy bố mẹ như đang ở ngay bên cạnh.",
+"ch": []
+},
+{
+"line": 2,
+"s": "都说“儿行千里母担忧”，父母总对她说：“遇到困难别害怕，要勇敢面对，任何时候都可以和父母商量。”",
+"vn": "Người ta vẫn nói 'con đi ngàn dặm mẹ lo âu', bố mẹ luôn nói với cô: 'Gặp khó khăn đừng sợ, phải dũng cảm đối mặt, bất cứ lúc nào cũng có thể bàn bạc với bố mẹ.'",
+"ch": [
+{
+"t": "要勇敢面对",
+"py": "yào yǒnggǎn miànduì",
+"vn": "phải dũng cảm đối mặt",
+"frame": "要 + V (tích cực)",
+"note": "Dùng để đưa ra lời khuyên hoặc yêu cầu bản thân phải thực hiện hành động tích cực.",
+"ex": [
+[
+"遇到问题要冷静面对。",
+"Gặp vấn đề phải bình tĩnh đối mặt."
+],
+[
+"考试前要认真准备。",
+"Trước khi thi phải chuẩn bị nghiêm túc."
+]
+],
+"try": "Nói: “Gặp thất bại phải dũng cảm đứng lên.”"
+},
+{
+"t": "任何时候都可以和父母商量",
+"py": "rènhé shíhòu dōu kěyǐ hé fùmǔ shāngliang",
+"vn": "bất cứ lúc nào cũng có thể bàn bạc với bố mẹ",
+"frame": "任何时候 + 都 + có thể",
+"note": "Nhấn mạnh tính bao quát của thời gian. '任何' đi với '都' là cặp bài trùng.",
+"ex": [
+[
+"任何时候都要保持信心。",
+"Bất cứ lúc nào cũng phải giữ vững niềm tin."
+],
+[
+"任何时候都可以给我打电话。",
+"Bất cứ lúc nào cũng có thể gọi điện cho tôi."
+]
+],
+"try": "Nói: “Bất cứ lúc nào bạn cũng có thể hỏi tôi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "尽管在大城市生活压力有些大，但每当想到父母的这些话，尝到来自老家熟悉的味道，她就觉得又能笑着面对生活了。",
+"vn": "Mặc dù áp lực cuộc sống ở thành phố lớn hơi cao, nhưng mỗi khi nghĩ đến những lời này của bố mẹ, nếm được mùi vị quen thuộc từ quê nhà, cô lại cảm thấy có thể mỉm cười đối mặt với cuộc sống.",
+"ch": [
+{
+"t": "尽管……但每当想到……就……",
+"py": "jǐnguǎn... dàn měidāng xiǎngdào... jiù...",
+"vn": "Mặc dù... nhưng mỗi khi nghĩ đến... thì...",
+"frame": "尽管 A，但每当 B，就 C",
+"note": "Cấu trúc nhượng bộ kết hợp với thói quen suy nghĩ. Dùng để diễn tả sự kiên cường trước khó khăn.",
+"ex": [
+[
+"尽管工作忙，但每当看到孩子，我就不累了。",
+"Mặc dù công việc bận, nhưng mỗi khi nhìn thấy con, tôi không thấy mệt nữa."
+],
+[
+"尽管天气冷，但每当想到目标，我就有动力。",
+"Mặc dù thời tiết lạnh, nhưng mỗi khi nghĩ đến mục tiêu, tôi lại có động lực."
+]
+],
+"try": "Nói: “Mặc dù học tiếng Trung khó, nhưng mỗi khi hiểu bài, tôi lại thấy vui.”"
+}
+]
+}
+]
+}

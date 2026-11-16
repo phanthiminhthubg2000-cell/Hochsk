@@ -1,0 +1,1092 @@
+{
+"1": [
+{
+"line": 0,
+"s": "上次女儿问我飞机是怎么起飞和降落的，真不知道该怎么回答她，她现在总是有各种各样的“为什么”。",
+"vn": "Hôm trước con gái hỏi tôi máy bay cất cánh và hạ cánh như thế nào, thật không biết nên trả lời nó thế nào đây, nó bây giờ lúc nào cũng có đủ loại “tại sao”.",
+"ch": [
+{
+"t": "真不知道该怎么回答她",
+"py": "zhēn bù zhīdào gāi zěnme huídá tā",
+"vn": "thật không biết nên trả lời nó thế nào",
+"frame": "真不知道该怎么 + V",
+"note": "Cấu trúc bộc lộ sự lúng túng khi gặp câu hỏi khó.",
+"ex": [
+[
+"老师问的问题太难了，真不知道该怎么回答他。",
+"Thầy giáo hỏi câu khó quá, thật không biết nên trả lời thầy thế nào."
+],
+[
+"面对面试官的提问，真不知道该怎么回答。",
+"Đối mặt với câu hỏi của người phỏng vấn, thật không biết nên trả lời thế nào."
+]
+],
+"try": "Nói: “Con hỏi một câu khó như vậy, thật không biết nên trả lời con thế nào.”"
+}
+]
+},
+{
+"line": 1,
+"s": "孩子眼中的世界是美丽和奇特的。有一本书叫《新十万个为什么》，现在卖得非常火。书里的内容都是儿童想知道的科学知识，相信你女儿一定喜欢读。",
+"vn": "Thế giới trong mắt trẻ thơ thật tươi đẹp và kì lạ. Có một cuốn sách tên là “Mười vạn câu hỏi vì sao mới”, hiện đang bán rất chạy. Nội dung trong sách đều là kiến thức khoa học mà trẻ em muốn biết, tin rằng con gái cậu chắc chắn thích đọc.",
+"ch": [
+{
+"t": "卖得非常火",
+"py": "mài de fēicháng huǒ",
+"vn": "bán rất chạy, rất hot",
+"frame": "V + 得非常火",
+"note": "Dùng 火 để chỉ sản phẩm đang cực kỳ thịnh hành hoặc bán chạy.",
+"ex": [
+[
+"这家店的奶茶最近卖得非常火。",
+"Trà sữa của quán này dạo này bán rất chạy."
+],
+[
+"这款手机刚上市就卖得非常火。",
+"Dòng điện thoại này vừa ra mắt đã bán rất chạy."
+]
+],
+"try": "Nói: “Cuốn tiểu thuyết này mới phát hành đã bán rất chạy.”"
+},
+{
+"t": "相信你女儿一定喜欢读",
+"py": "xiāngxìn nǐ nǚ'ér yí dìng xǐhuan dú",
+"vn": "tin rằng con gái cậu chắc chắn thích đọc",
+"frame": "相信 + ai + nhất định thích + V",
+"note": "Dùng khi muốn đề xuất, giới thiệu một cách tự tin.",
+"ex": [
+[
+"这本书很有趣，相信你儿子一定喜欢读。",
+"Cuốn sách này rất thú vị, tin rằng con trai cậu chắc chắn thích đọc."
+],
+[
+"这部电影很感人，相信大家一定喜欢看。",
+"Bộ phim này rất cảm động, tin rằng mọi người chắc chắn thích xem."
+]
+],
+"try": "Nói: “Món ăn này rất ngon, tin rằng bạn bè cậu chắc chắn thích ăn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "难道它和我们小时候看的《十万个为什么》不一样吗？作者是谁啊？",
+"vn": "Chẳng lẽ nó không giống với “Mười vạn câu hỏi vì sao” chúng ta xem hồi nhỏ à? Tác giả là ai vậy?",
+"ch": [
+{
+"t": "难道它和……不一样吗",
+"py": "nándào tā hé …… bú yàng ma",
+"vn": "chẳng lẽ nó không giống với...",
+"frame": "难道 A 和 B 不一样吗",
+"note": "Dùng 难道 để hỏi vặn lại khi thấy điều bất ngờ, khó tin.",
+"ex": [
+[
+"难道今天的作业和昨天的不一样吗？",
+"Chẳng lẽ bài tập hôm nay không giống hôm qua à?"
+],
+[
+"难道这件衣服和那件不一样吗？",
+"Chẳng lẽ chiếc áo này không giống chiếc kia à?"
+]
+],
+"try": "Nói: “Chẳng lẽ nội dung kỳ thi này không giống lần trước à?”"
+}
+]
+},
+{
+"line": 3,
+"s": "作者的名字我没记住。《新十万个为什么》的内容更新，介绍了各种科学知识，包括地球、动物、植物、交通、科学技术、社会和文化等很多方面。",
+"vn": "Tên tác giả tôi không nhớ. Nội dung của “Mười vạn câu hỏi vì sao mới” cập nhật hơn, giới thiệu nhiều kiến thức khoa học, bao gồm trái đất, động vật, thực vật, giao thông, khoa học kỹ thuật, xã hội và văn hóa v.v. rất nhiều mặt.",
+"ch": [
+{
+"t": "介绍了各种科学知识",
+"py": "jièshào le gèzhǒng kēxué zhīshi",
+"vn": "giới thiệu các loại kiến thức khoa học",
+"frame": "介绍 + các loại + N",
+"note": "Dùng để nói về việc cung cấp thông tin, kiến thức đa dạng.",
+"ex": [
+[
+"老师介绍了各种学习方法。",
+"Thầy giáo giới thiệu các phương pháp học tập khác nhau."
+],
+[
+"导游向游客介绍了各种Local特色。",
+"Hướng dẫn viên giới thiệu cho khách du lịch các đặc sản địa phương."
+]
+],
+"try": "Nói: “Cuốn sách này giới thiệu các loại quy tắc văn hóa.”"
+}
+]
+},
+{
+"line": 4,
+"s": "太好了！不过她这么小，我不知道她是否能读懂。",
+"vn": "Tuyệt quá! Chỉ là nó nhỏ thế này, tôi không biết liệu nó có đọc hiểu được không.",
+"ch": [
+{
+"t": "我不知道她是否能读懂",
+"py": "wǒ bù zhīdào tā shìfǒu néng dú dǒng",
+"vn": "tôi không biết liệu nó có đọc hiểu được không",
+"frame": "我不知道 + A + 是否 + V",
+"note": "是否 mang sắc thái trang trọng hơn 是不是, hay dùng trong văn viết và câu hỏi nghi vấn.",
+"ex": [
+[
+"我不知道他是否能按时完成任务。",
+"Tôi không biết liệu anh ấy có hoàn thành nhiệm vụ đúng hạn không."
+],
+[
+"老师问我是否去参加明天的活动。",
+"Thầy giáo hỏi tôi có tham gia hoạt động ngày mai không."
+]
+],
+"try": "Nói: “Tôi không biết liệu ngày mai trời có mưa không.”"
+}
+]
+},
+{
+"line": 5,
+"s": "放心吧，这本书的语言简单易懂，一定能增长孩子的科学知识。",
+"vn": "Cứ yên tâm đi, ngôn ngữ của cuốn sách này đơn giản dễ hiểu, nhất định có thể tăng cường kiến thức khoa học cho trẻ.",
+"ch": [
+{
+"t": "简单易懂",
+"py": "jiǎndān yì dǒng",
+"vn": "đơn giản dễ hiểu",
+"frame": "…… 简单易懂",
+"note": "Thành ngữ cấu trúc A+易+B, rất hay dùng để khen sách, tài liệu hoặc cách giảng dạy.",
+"ex": [
+[
+"这篇文章的语言简单易懂。",
+"Ngôn ngữ của bài viết này đơn giản dễ hiểu."
+],
+[
+"老师的讲解简单易懂，大家都听懂了。",
+"Lời giảng của thầy giáo đơn giản dễ hiểu, mọi người đều nghe hiểu."
+]
+],
+"try": "Nói: “Hướng dẫn sử dụng của thiết bị này đơn giản dễ hiểu.”"
+},
+{
+"t": "一定能增长孩子的科学知识",
+"py": "yí dìng néng zēngzhǎng háizi de kēxué zhīshi",
+"vn": "nhất định có thể tăng thêm kiến thức khoa học cho trẻ",
+"frame": "一定能增长 + N",
+"note": "Dùng khi khẳng định tác dụng tích cực của việc học tập, đọc sách.",
+"ex": [
+[
+"多看书一定能增长见识。",
+"Đọc nhiều sách nhất định có thể tăng thêm kiến thức, tầm nhìn."
+],
+[
+"多跟中国人交流一定能增长口语能力。",
+"Giao tiếp nhiều với người Trung Quốc nhất định có thể tăng năng lực khẩu ngữ."
+]
+],
+"try": "Nói: “Đi du lịch nhiều nhất định có thể tăng thêm hiểu biết.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "现在的大学生一遇到不明白的问题，可以马上在网上查找答案，几秒钟就把问题解决了，这比我们上学的时候方便多了。",
+"vn": "Sinh viên đại học hiện nay hễ gặp vấn đề không hiểu là có thể tra cứu đáp án ngay trên mạng, mấy giây là giải quyết xong vấn đề, cái này tiện lợi hơn thời chúng ta đi học nhiều.",
+"ch": [
+{
+"t": "一遇到不明白的问题",
+"py": "yī yùdào bù míngbái de wèntí",
+"vn": "hễ gặp vấn đề không hiểu",
+"frame": "一 + V1，就 + V2",
+"note": "Biểu thị hành động V2 diễn ra ngay sau V1. Chữ 一 giữ nguyên thanh điệu.",
+"ex": [
+[
+"我一回家就洗手。",
+"Tôi hễ về nhà là rửa tay."
+],
+[
+"他一看到汉字就頭疼。",
+"Cậu ấy cứ nhìn thấy chữ Hán là đau đầu."
+]
+],
+"try": "Nói: “Hễ gặp từ mới là tôi tra từ điển.”"
+},
+{
+"t": "比我们上学的时候方便多了",
+"py": "bǐ wǒmen shàngxué de shíhòu fāngbiàn duō le",
+"vn": "tiện lợi hơn thời chúng ta đi học nhiều",
+"frame": "A 比 B + adj + 多了",
+"note": "Dùng 多了 ở cuối để nhấn mạnh mức độ chênh lệch nhiều. Đổi A, B là dùng được ngay.",
+"ex": [
+[
+"今天的汉字比昨天的容易多了。",
+"Chữ Hán hôm nay dễ hơn hôm qua nhiều."
+],
+[
+"坐地铁比开车快多了。",
+"Đi tàu điện ngầm nhanh hơn lái xe nhiều."
+]
+],
+"try": "Nói: “Thành phố này to hơn quê tôi nhiều.”"
+}
+]
+},
+{
+"line": 1,
+"s": "现在的人们，尤其是大学生开始普遍使用电脑，他们的生活已经离不开电脑。据调查，70%的人遇到问题时，首先想到的就是上网找答案。",
+"vn": "Con người hiện nay, đặc biệt là sinh viên bắt đầu sử dụng máy tính phổ biến, cuộc sống của họ đã không thể tách rời máy tính. Theo điều tra, 70% số người khi gặp vấn đề, điều nghĩ đến đầu tiên chính là lên mạng tìm đáp án.",
+"ch": [
+{
+"t": "离不开电脑",
+"py": "lí bù kāi diànnǎo",
+"vn": "không thể tách rời máy tính",
+"frame": "离不开 + đối tượng",
+"note": "Cụm từ cố định chỉ sự phụ thuộc không thể thiếu. Có thể thay máy tính bằng điện thoại, cà phê...",
+"ex": [
+[
+"现代人的生活离不开手机。",
+"Cuộc sống của người hiện đại không thể thiếu điện thoại."
+],
+[
+"我早上离不开一杯咖啡。",
+"Buổi sáng tôi không thể thiếu một cốc cà phê."
+]
+],
+"try": "Nói: “Học tiếng Trung không thể thiếu từ điển.”"
+},
+{
+"t": "首先想到的就是",
+"py": "shǒuxiān xiǎngdào de jiù shì",
+"vn": "điều nghĩ đến đầu tiên chính là",
+"frame": "首先想到的就是 + hành động/sự việc",
+"note": "Dùng để nhấn mạnh phản ứng đầu tiên khi đối mặt với một tình huống.",
+"ex": [
+[
+"遇到困难时，首先想到的就是找朋友帮忙。",
+"Khi gặp khó khăn, điều nghĩ đến đầu tiên chính là tìm bạn giúp đỡ."
+],
+[
+"饿了的时候，首先想到的就是吃面条。",
+"Khi đói, điều nghĩ đến đầu tiên chính là ăn mì."
+]
+],
+"try": "Nói: “Khi có chuyện vui, điều nghĩ đến đầu tiên chính là gọi điện cho mẹ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "电脑和互联网技术的发展使学生们的学习方式发生了很多变化，不过天天对着电脑看，眼睛实在受不了。",
+"vn": "Sự phát triển của công nghệ máy tính và Internet đã khiến phương thức học tập của học sinh sinh viên xảy ra rất nhiều thay đổi, nhưng ngày nào cũng nhìn vào máy tính, mắt thật sự không chịu nổi.",
+"ch": [
+{
+"t": "使学生们的学习方式发生了很多变化",
+"py": "shǐ xuéshēngmen de xuéxí fāngshì fāshēng le hěn duō biànhuà",
+"vn": "khiến phương thức học tập của học sinh xảy ra rất nhiều thay đổi",
+"frame": "使 + ai/sự việc + V",
+"note": "Từ使 mang sắc thái trang trọng, tương đương với 让. Phía sau thường đi với các cụm từ chỉ sự thay đổi.",
+"ex": [
+[
+"互联网的发展使人们的生活更方便了。",
+"Sự phát triển của Internet khiến cuộc sống con người thuận tiện hơn."
+],
+[
+"老师的话使我明白了.",
+"Lời của thầy khiến tôi đã hiểu."
+]
+],
+"try": "Nói: “Công việc này khiến tôi học được rất nhiều.”"
+},
+{
+"t": "天天对着电脑看",
+"py": "tiāntiān duìzhe diànnǎo kàn",
+"vn": "ngày nào cũng đối diện máy tính mà nhìn",
+"frame": "对着 + đối tượng + V",
+"note": "Đứng trước hành động hướng về một phía hoặc một đối tượng cụ thể.",
+"ex": [
+[
+"别天天对着手机玩游戏。",
+"Đừng ngày nào cũng cắm mặt chơi game trên điện thoại."
+],
+[
+"上课时要对着老师听。",
+"Khi lên lớp phải hướng về phía thầy giáo mà nghe."
+]
+],
+"try": "Nói: “Hôm nay tôi phải đối diện máy tính cả ngày.”"
+}
+]
+},
+{
+"line": 3,
+"s": "不仅是学习方式，而且连生活方式也发生了很大改变。现在越来越多的学生喜欢在网上写日记，他们说这样可以让朋友及时了解自己的生活。",
+"vn": "Không chỉ là phương thức học tập, mà ngay cả phương thức sinh hoạt cũng đã xảy ra thay đổi lớn. Hiện nay ngày càng có nhiều học sinh thích viết nhật ký trên mạng, họ nói làm như vậy có thể để bạn bè kịp thời hiểu về cuộc sống của mình.",
+"ch": [
+{
+"t": "不仅是学习方式，而且连生活方式也发生了很大改变",
+"py": "bùjǐn shì xuéxí fāngshì, érqiě lián shēnghuó fāngshì yě fāshēng le hěn dà gǎibiàn",
+"vn": "không chỉ là phương thức học tập, mà ngay cả phương thức sinh hoạt cũng xảy ra thay đổi lớn",
+"frame": "不仅是 A，而且连 B 也……",
+"note": "Mẫu câu tăng tiến, nhấn mạnh B còn mức độ cao hơn A.",
+"ex": [
+[
+"不仅是汉语，而且连英语他也学得很好。",
+"Không chỉ tiếng Trung, mà ngay cả tiếng Anh cậu ấy cũng học rất giỏi."
+],
+[
+"不仅是周六，而且连周日也要加班。",
+"Không chỉ thứ Bảy, mà ngay cả Chủ nhật cũng phải tăng ca."
+]
+],
+"try": "Nói: “Không chỉ tôi, mà ngay cả em trai tôi cũng thích ăn phở.”"
+},
+{
+"t": "越来越多的学生喜欢在网上写日记",
+"py": "yuè lái yuè duō de xuéshēng xǐhuan zài wǎngshàng xiě rìjì",
+"vn": "ngày càng có nhiều học sinh thích viết nhật ký trên mạng",
+"frame": "越来越 + adj/V",
+"note": "Biểu thị mức độ thay đổi theo thời gian. Tránh dùng với các tính từ đã tuyệt đối.",
+"ex": [
+[
+"学汉语的人越来越多了。",
+"Người học tiếng Trung ngày càng nhiều lên."
+],
+[
+"天气越来越冷了。",
+"Thời tiết ngày càng lạnh rồi."
+]
+],
+"try": "Nói: “Công việc của tôi ngày càng bận rộn.”"
+}
+]
+},
+{
+"line": 4,
+"s": "这个办法不错，既能方便大家的交流，还能节约用纸，保护环境。但是如果别人都能看到我的日记的话，多不安全啊！",
+"vn": "Cách này không tồi, vừa có thể thuận tiện cho việc giao lưu của mọi người, lại vừa có thể tiết kiệm giấy, bảo vệ môi trường. Nhưng nếu người khác đều có thể xem được nhật ký của tôi thì không an toàn biết bao!",
+"ch": [
+{
+"t": "既能方便大家的交流，还能节约用纸",
+"py": "jì néng fāngbiàn dàjiā de jiāoliū, hái néng jiéyuē yòng zhǐ",
+"vn": "vừa có thể thuận tiện giao lưu của mọi người, lại vừa có thể tiết kiệm giấy",
+"frame": "既能 A，还能 B",
+"note": "Dùng để kể ra hai ưu điểm hoặc hành động song song cùng tồn tại.",
+"ex": [
+[
+"这家餐厅既能吃中餐，还能吃西餐。",
+"Nhà hàng này vừa có thể ăn món Trung, lại vừa có thể ăn món Tây."
+],
+[
+"多运动既能减肥，还能身体健康。",
+"Năng vận động vừa giảm cân vừa khỏe mạnh."
+]
+],
+"try": "Nói: “Học tiếng Trung vừa thú vị, lại vừa có ích cho công việc.”"
+},
+{
+"t": "多不安全啊",
+"py": "duō bù ānquán a",
+"vn": "không an toàn biết bao",
+"frame": "多 + adj + 呢/啊",
+"note": "Câu cảm thán biểu thị mức độ cao, thường dùng trong văn nói hàng ngày.",
+"ex": [
+[
+"一个人走路多危险啊！",
+"Một mình đi đường nguy hiểm biết bao!"
+],
+[
+"这件衣服多好看啊！",
+"Bộ quần áo này đẹp biết bao!"
+]
+],
+"try": "Nói: “Quên mang ô thì mưa ướt biết bao!”"
+}
+]
+},
+{
+"line": 5,
+"s": "放心吧，可以给网上的日记加密码，那样只有得到了允许，别人才能看到。",
+"vn": "Yên tâm đi, có thể cài mật khẩu cho nhật ký trên mạng, như vậy chỉ khi nhận được sự cho phép, người khác mới có thể xem được.",
+"ch": [
+{
+"t": "只有得到了允许，别人才能看到",
+"py": "zhǐyǒu dédào le yǔnxǔ, biérén cái néng kàn dào",
+"vn": "chỉ khi nhận được sự cho phép, người khác mới có thể xem được",
+"frame": "只有 A，才 B",
+"note": "A là điều kiện duy nhất để B xảy ra. Phía sau thường có 才.",
+"ex": [
+[
+"只有努力学习，才能考上好大学。",
+"Chỉ có nỗ lực học tập, mới có thể đậu đại học tốt."
+],
+[
+"只有多听多说，才能学好口语。",
+"Chỉ có nghe nhiều nói nhiều, mới học tốt khẩu ngữ."
+]
+],
+"try": "Nói: “Chỉ có hoàn thành bài tập, tối nay mới được đi chơi.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "我昨天晚上做了一个特别奇怪的梦，梦到自己正在一座桥上走，走着走着，突然开过来一辆车，非常危险，接着又梦见我跳到车上，跟警察一起抓住了一个坏人。",
+"vn": "Tối hôm qua tôi mơ một giấc mơ đặc biệt kỳ lạ, mơ thấy mình đang đi trên một cây cầu, đi mãi thì đột nhiên có một chiếc xe chạy tới, rất nguy hiểm, tiếp theo lại mơ thấy tôi nhảy lên xe, cùng cảnh sát bắt được một kẻ xấu.",
+"ch": [
+{
+"t": "梦到自己正在一座桥上走",
+"py": "mèng dào zìjǐ zhèngzài yí zuò qiáo shàng zǒu",
+"vn": "mơ thấy bản thân đang đi trên một cây cầu",
+"frame": "梦到 + ai + đang làm gì",
+"note": "梦到 theo sau là diễn biến trong giấc mơ. 座 là lượng từ dùng cho cầu, núi, nhà cửa.",
+"ex": [
+[
+"我梦到自己正在学校里考试。",
+"Tôi mơ thấy bản thân đang thi trong trường học."
+],
+[
+"她梦到自己正在海边散步。",
+"Cô ấy mơ thấy bản thân đang tản bộ ở bờ biển."
+]
+],
+"try": "Nói: “Tôi mơ thấy bản thân đang đi siêu thị mua sắm.”"
+},
+{
+"t": "接着又梦见我",
+"py": "jiēzhe yòu mèngjiàn wǒ",
+"vn": "tiếp theo lại mơ thấy tôi",
+"frame": "接着又 + V",
+"note": "接着 thể hiện hành động tiếp nối ngay sau đó trong giấc mơ hoặc thực tế.",
+"ex": [
+[
+"他先喝了一杯水，接着又吃了两个面包。",
+"Anh ấy uống một cốc nước trước, tiếp theo lại ăn hai chiếc bánh mỳ."
+],
+[
+"老师讲完语法，接着又让我们练习。",
+"Cô giáo giảng xong ngữ pháp, tiếp theo lại cho chúng tôi luyện tập."
+]
+],
+"try": "Nói: “Tôi làm xong bài tập, tiếp theo lại xem TV.”"
+}
+]
+},
+{
+"line": 1,
+"s": "奇怪，你怎么总能记住自己做了什么梦？我好像从来没做过梦。",
+"vn": "Lạ thật, sao cậu lúc nào cũng nhớ được mình đã làm giấc mơ gì thế? Tớ dường như chưa từng mơ bao giờ.",
+"ch": []
+},
+{
+"line": 2,
+"s": "每个人都会做梦，区别只是有多有少。有的人睡醒之后还记得梦里的事情，有的人却记不清楚了。你之所以觉得从来没做过梦，只不过是忘记了。",
+"vn": "Ai cũng sẽ mơ, sự khác biệt chỉ là nhiều hay ít. Có người sau khi thức dậy vẫn nhớ chuyện trong giấc mơ, có người lại nhớ không rõ. Sở dĩ cậu cảm thấy chưa từng mơ bao giờ, chẳng qua là đã quên mất thôi.",
+"ch": [
+{
+"t": "区别只是有多有少",
+"py": "qūbié zhǐshì yǒu duō yǒu shǎo",
+"vn": "sự khác biệt chỉ là có nhiều có ít",
+"frame": "区别只是 + N",
+"note": "Dùng để chỉ ra điểm khác biệt cốt lõi giữa các sự vật hoặc hiện tượng.",
+"ex": [
+[
+"学汉语的方法很多，区别只是适合不适合自己。",
+"Cách học tiếng Trung rất nhiều, khác biệt chỉ là có hợp với mình hay không."
+],
+[
+"大家都在努力，区别只是方法不同。",
+"Mọi người đều đang nỗ lực, khác biệt chỉ là phương pháp khác nhau."
+]
+],
+"try": "Nói: “Hai cuốn sách này giống nhau, khác biệt chỉ là giá tiền.”"
+},
+{
+"t": "之所以觉得……，只不过是……",
+"py": "zhīsuǒyǐ juéde ……, zhǐbúguò shì ……",
+"vn": "sở dĩ cảm thấy……, chẳng qua là……",
+"frame": "之所以 A，只不过是 B",
+"note": "Chỉ nguyên nhân A thực chất chỉ vì B đơn giản như vậy.",
+"ex": [
+[
+"你之所以觉得累，只不过是没有休息好。",
+"Cậu sở dĩ cảm thấy mệt, chẳng qua là không nghỉ ngơi tốt thôi."
+],
+[
+"他之所以考得好，只不过是复习得很认真。",
+"Cậu ấy sở dĩ thi tốt, chẳng qua là ôn tập rất nghiêm túc."
+]
+],
+"try": "Nói: “Cậu sở dĩ nói tiếng Trung tốt, chẳng qua là luyện tập nhiều thôi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "你说的有道理，我一般都是一觉睡到天亮。很多人认为做梦是上天要告诉他们将来会发生的一些事情，可能上天不想让我知道吧。",
+"vn": "Cậu nói có lý, tớ bình thường toàn ngủ một mạch đến sáng. Rất nhiều người cho rằng mơ là ông trời muốn báo trước cho họ một số việc sẽ xảy ra trong tương lai, có lẽ ông trời không muốn cho tớ biết đây mà.",
+"ch": [
+{
+"t": "一觉睡到天亮",
+"py": "yí jiào shuì dào tiānliàng",
+"vn": "ngủ một giấc đến sáng",
+"frame": "一觉睡到 + thời điểm",
+"note": "Thành ngữ chỉ giấc ngủ sâu, ngon giấc không bị tỉnh giữa đêm.",
+"ex": [
+[
+"昨晚太累了，我一觉睡到天亮。",
+"Tối qua mệt quá, tôi ngủ một giấc đến sáng."
+],
+[
+"换了新房间，他还是睡不着，不能一觉睡到天亮。",
+"Đổi phòng mới, anh ấy vẫn khó ngủ, không thể ngủ một giấc đến sáng."
+]
+],
+"try": "Nói: “Đi du lịch về mệt quá, tối qua tôi ngủ một giấc đến sáng.”"
+}
+]
+},
+{
+"line": 4,
+"s": "一般晚上睡觉时，身体感觉到什么，人就容易梦到什么内容。记得有一次，我晚饭吃得太咸，那天晚上就梦见自己到处找商店买矿泉水。",
+"vn": "Bình thường khi đi ngủ vào buổi tối, cơ thể cảm nhận thấy gì, con người rất dễ mơ thấy nội dung đó. Nhớ có một lần, bữa tối tôi ăn mặn quá, tối hôm đó liền mơ thấy bản thân đi khắp nơi tìm cửa hàng mua nước khoáng.",
+"ch": [
+{
+"t": "吃得太咸",
+"py": "chī de tài xián",
+"vn": "ăn mặn quá",
+"frame": "V + 得 + 太咸 / 太淡",
+"note": "Bổ ngữ trình bày mức độ của vị giác trong món ăn.",
+"ex": [
+[
+"今天的汤做得太咸了。",
+"Canh hôm nay nấu mặn quá rồi."
+],
+[
+"为了健康，炒菜时不要放得太咸。",
+"Vì sức khỏe, lúc xào rau đừng cho mặn quá."
+]
+],
+"try": "Nói: “Món ăn nhà hàng này làm mặn quá.”"
+}
+]
+},
+{
+"line": 5,
+"s": "很多人都试着对梦进行解释，有些人甚至专门写过这方面的书，可惜到现在仍然没有一个科学的说法。",
+"vn": "Rất nhiều người đều thử tiến hành giải thích về giấc mơ, có người thậm chí còn chuyên viết sách về mặt này, đáng tiếc cho đến nay vẫn chưa có một cách nói khoa học nào.",
+"ch": [
+{
+"t": "试着对梦进行解释",
+"py": "shìzhe duì mèng jìnxíng jiěshì",
+"vn": "thử tiến hành giải thích về giấc mơ",
+"frame": "试着对 + N + 进行 + V",
+"note": "Cấu trúc trang trọng dùng 对 và 进行 để làm nổi bật hành động tác động.",
+"ex": [
+[
+"老师试着对这个语法进行解释。",
+"Thầy giáo thử tiến hành giải thích về ngữ pháp này."
+],
+[
+"公司试着对工作计划进行调整。",
+"Công ty thử tiến hành điều chỉnh kế hoạch công việc."
+]
+],
+"try": "Nói: “Chúng ta thử tiến hành thảo luận về vấn đề này.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "现在手机不但价格降低了，而且作用也越来越大，",
+"vn": "Hiện nay điện thoại di động không những giá cả giảm xuống, mà tác dụng cũng ngày càng lớn,",
+"ch": [
+{
+"t": "不但价格降低了，而且作用也越来越大",
+"py": "bú dàn jiàgé jiàngdī le, érqiě zuòyòng yě yuè lái yuè dà",
+"vn": "không những giá giảm, mà tác dụng cũng ngày càng lớn",
+"frame": "不但 A ……，而且 B ……",
+"note": "Cặp liên từ tăng tiến kinh điển, vế sau bổ sung ý mức độ cao hơn.",
+"ex": [
+[
+"这部电脑不但价格便宜，而且很好用。",
+"Chiếc máy tính này không những giá rẻ, mà dùng rất thích."
+],
+[
+"学汉语不但很有意思，而且对找工作有帮助。",
+"Học tiếng Trung không những rất thú vị, mà còn có ích cho việc tìm việc."
+]
+],
+"try": "Nói: “Cửa hàng này không những đồ ăn ngon, mà phục vụ cũng rất tốt.”"
+}
+]
+},
+{
+"line": 0,
+"s": "打电话、发短信已经成了人们普遍使用的联系方法。除此以外，你还可以用它来听音乐、看电影、阅读、玩儿游戏、付款购物等，",
+"vn": "gọi điện, nhắn tin đã trở thành phương thức liên lạc được mọi người sử dụng phổ biến. Ngoài ra, bạn còn có thể dùng nó để nghe nhạc, xem phim, đọc sách, chơi game, thanh toán mua sắm v.v.,",
+"ch": [
+{
+"t": "用它来听音乐",
+"py": "yòng tā lái tīng yīnyuè",
+"vn": "dùng nó để nghe nhạc",
+"frame": "用 + công cụ + 来 + hành động",
+"note": "Dùng 来 nối sau công cụ để chỉ mục đích thực hiện hành động.",
+"ex": [
+[
+"我们可以用手机来练习发音。",
+"Chúng ta có thể dùng điện thoại để luyện phát âm."
+],
+[
+"大家可以用这个软件来查汉字。",
+"Mọi người có thể dùng phần mềm này để tra chữ Hán."
+]
+],
+"try": "Nói: “Tôi dùng máy tính để xem phim.”"
+}
+]
+},
+{
+"line": 0,
+"s": "这大大方便了人们的生活。",
+"vn": "điều này đã tạo sự tiện lợi lớn cho cuộc sống của con người.",
+"ch": [
+{
+"t": "方便了人们的生活",
+"py": "fāngbiàn le rénmen de shēnghuó",
+"vn": "làm cho cuộc sống của mọi người tiện lợi",
+"frame": "方便 + ai / cái gì",
+"note": "方便 ở đây dùng như động từ mang nghĩa 'tạo sự tiện lợi, giúp ích'.",
+"ex": [
+[
+"互联网极大地方便了我们的生活。",
+"Mạng Internet đã tạo sự tiện lợi rất lớn cho cuộc sống của chúng ta."
+],
+[
+"这个新App方便了大家的出行。",
+"Ứng dụng mới này tạo sự tiện lợi cho việc đi lại của mọi người."
+]
+],
+"try": "Nói: “Mua sắm trực tuyến làm cuộc sống của chúng ta tiện lợi hơn.”"
+}
+]
+},
+{
+"line": 1,
+"s": "举一个例子，迷路时，只要用手机地图查一下地址，马上就能知道怎么去那个地点。",
+"vn": "Lấy một ví dụ, khi bị lạc đường, chỉ cần dùng bản đồ điện thoại tra một chút địa chỉ, ngay lập tức là có thể biết đi đến địa điểm đó như thế nào.",
+"ch": [
+{
+"t": "只要用手机地图查一下地址，马上就能知道怎么去",
+"py": "zhǐyào yòng shǒujī dìtú chá yíxià dìzhǐ, mǎshàng jiù néng zhīdào zěnme qù",
+"vn": "chỉ cần dùng bản đồ điện thoại tra địa chỉ là ngay lập tức có thể biết đi thế nào",
+"frame": "只要 A，马上就 B",
+"note": "Cấu trúc điều kiện đủ, thể hiện sự dễ dàng, nhanh chóng đạt được kết quả.",
+"ex": [
+[
+"只要多练习，马上就能记住生词。",
+"Chỉ cần luyện tập nhiều, ngay lập tức có thể nhớ từ mới."
+],
+[
+"只要出发早，马上就能到公司。",
+"Chỉ cần xuất phát sớm, ngay lập tức có thể đến công ty."
+]
+],
+"try": "Nói: “Chỉ cần hỏi giáo viên, ngay lập tức sẽ biết làm bài tập này.”"
+}
+]
+},
+{
+"line": 1,
+"s": "现在的手机更像是一部可以拿在手中的电脑，现代人的生活已经越来越离不开手机了。",
+"vn": "Điện thoại di động hiện nay càng giống như một chiếc máy tính có thể cầm trong tay, cuộc sống của con người hiện đại đã ngày càng không thể tách rời điện thoại di động nữa rồi.",
+"ch": [
+{
+"t": "越来越离不开手机了",
+"py": "yuè lái yuè lí bù kāi shǒujī le",
+"vn": "ngày càng không thể rời khỏi điện thoại",
+"frame": "越来越离不开 + người / vật",
+"note": "离不开 biểu thị mức độ phụ thuộc không thể thiếu trong sinh hoạt.",
+"ex": [
+[
+"现代人越来越离不开电脑了。",
+"Con người hiện đại ngày càng không thể thiếu máy tính."
+],
+[
+"我越来越离不开杯子里的咖啡了。",
+"Tôi ngày càng không thể thiếu ly cà phê trong tay."
+]
+],
+"try": "Nói: “Học sinh ngày càng không thể thiếu từ điển tiếng Trung.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "21世纪，我们的生活发生了巨大变化。",
+"vn": "Thế kỷ 21, cuộc sống của chúng ta đã xảy ra thay đổi to lớn.",
+"ch": [
+{
+"t": "生活发生了巨大变化",
+"py": "shēnghuó fāshēng le jùdà biànhuà",
+"vn": "cuộc sống xảy ra thay đổi to lớn",
+"frame": "……生活发生巨大变化",
+"note": "Dùng 发生 đi với 变化 (xảy ra thay đổi), kết hợp 巨大 để nhấn mạnh mức độ to lớn.",
+"ex": [
+[
+"这几年来，我家乡的生活发生了巨大变化。",
+"Mấy năm nay, cuộc sống quê tôi đã có thay đổi to lớn."
+],
+[
+"来中国以后，我的生活发生了巨大变化。",
+"Sau khi đến Trung Quốc, cuộc sống của tôi đã thay đổi to lớn."
+]
+],
+"try": "Nói: “Cuộc sống của chúng ta đã xảy ra thay đổi to lớn.”"
+}
+]
+},
+{
+"line": 0,
+"s": "几千公里以外的国家，以前坐船需要几个月，现在乘坐飞机不过十几个小时。",
+"vn": "Quốc gia cách mấy nghìn cây số, trước kia đi tàu thủy mất mấy tháng, nay ngồi máy bay chưa đến mười mấy tiếng.",
+"ch": []
+},
+{
+"line": 0,
+"s": "原来寄信需要好几天，现在连邮局都不用去，",
+"vn": "Hồi xưa gửi thư cần mấy ngày liền, nay đến bưu điện cũng không cần đi,",
+"ch": [
+{
+"t": "连邮局都不用去",
+"py": "lián yóujú dōu bú yòng qù",
+"vn": "đến bưu điện cũng không cần đi",
+"frame": "连……都不用 / 没 + V",
+"note": "连 ... 都 ... dùng để nhấn mạnh cấp độ cao, “đến… cũng không cần”.",
+"ex": [
+[
+"周末太累了，我连门都不想出。",
+"Cuối tuần mệt quá, tôi đến cửa cũng không muốn ra."
+],
+[
+"这个问题很简单，连小孩子都知道。",
+"Vấn đề này rất đơn giản, đến trẻ con cũng biết."
+]
+],
+"try": "Nói: “Hôm nay bài tập rất ít, đến tôi cũng không cần làm.”"
+}
+]
+},
+{
+"line": 0,
+"s": "只要在家里上网发个电子邮件，用不了一分钟，远处的朋友就能收到，比写信封用的时间都短。",
+"vn": "chỉ cần ở nhà lên mạng gửi một email, chưa mất tới một phút, bạn bè ở xa đã có thể nhận được, còn ngắn hơn thời gian dùng để viết phong bì.",
+"ch": [
+{
+"t": "用不了一分钟",
+"py": "yòng bú liǎo yì fēnzhōng",
+"vn": "chưa đầy một phút / dùng không hết một phút",
+"frame": "用不了 + khoảng thời gian",
+"note": "Dùng không hết / không tốn đến khoảng thời gian nào đó.",
+"ex": [
+[
+"从这里到地铁站，用不了十分钟。",
+"Từ đây đến trạm tàu điện ngầm, chưa đến mười phút."
+],
+[
+"这个菜很简单，用不了半小时就能做好。",
+"Món này rất đơn giản, chưa tới nửa tiếng là làm xong."
+]
+],
+"try": "Nói: “Làm xong bài tập này, chưa đầy mười phút.”"
+},
+{
+"t": "比写信封用的时间都短",
+"py": "bǐ xiě xìnfēng yòng de shíjiān dōu duǎn",
+"vn": "còn ngắn hơn thời gian dùng để viết phong bì",
+"frame": "A 比 B + adj + 得多 / 甚至……",
+"note": "Cấu trúc so sánh hơn, kết hợp với 比 và từ 都 để nhấn mạnh sự chênh lệch.",
+"ex": [
+[
+"坐飞机比坐火车用的时间短得多。",
+"Ngồi máy bay ngắn hơn ngồi tàu hỏa rất nhiều thời gian."
+],
+[
+"复习的时候比考试用的时间长多了。",
+"Lúc ôn tập dài hơn lúc thi rất nhiều thời gian."
+]
+],
+"try": "Nói: “Đi bộ còn nhanh hơn đi xe đạp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "以前外地的新闻要几天后才能知道，现在只要打开网站，",
+"vn": "Trước kia tin tức ngoại tỉnh phải mấy ngày sau mới có thể biết, giờ chỉ cần mở trang web,",
+"ch": [
+{
+"t": "要几天后才能知道",
+"py": "yào jǐ tiān hòu cái néng zhīdào",
+"vn": "mấy ngày sau mới có thể biết",
+"frame": "……要 + thời gian + 才 + V",
+"note": "Thể hiện điều kiện cần, phải đợi đến thời gian đó mới thực hiện được hành động.",
+"ex": [
+[
+"这件衣服要三天后才能做好。",
+"Chiếc áo này phải ba ngày sau mới làm xong."
+],
+[
+"下个星期才开始考试。",
+"Tuần sau mới bắt đầu thi."
+]
+],
+"try": "Nói: “Tuần sau mới có thể nhận được kết quả.”"
+}
+]
+},
+{
+"line": 1,
+"s": "任何信息都可以在第一时间获得。",
+"vn": "bất kỳ thông tin nào cũng có thể nhận được ngay trong thời gian đầu tiên.",
+"ch": [
+{
+"t": "任何信息都可以在第一时间获得",
+"py": "rènhé xìnxī dōu kěyǐ zài dì yī shíjiān huòdé",
+"vn": "bất kỳ thông tin nào cũng có thể nhận được ngay lập tức",
+"frame": "任何 + danh từ + 都……在第一时间获得",
+"note": "任何 chỉ sự bao quát (bất kỳ), kết hợp 在第一时间獲得 (nhận được trong thời gian đầu / ngay lập tức).",
+"ex": [
+[
+"任何问题都可以在课堂上问老师。",
+"Bất kỳ câu hỏi nào cũng có thể hỏi thầy cô trên lớp."
+],
+[
+"有困难时，任何人都愿意帮你。",
+"Khi gặp khó khăn, bất kỳ ai cũng sẵn lòng giúp bạn."
+]
+],
+"try": "Nói: “Bất kỳ thông tin nào cũng có thể tìm thấy trên trang web này.”"
+}
+]
+},
+{
+"line": 1,
+"s": "现代科学技术的发展让世界变得越来越小，所以现在人们都把地球叫作“地球村”。",
+"vn": "Sự phát triển của khoa học kỹ thuật hiện đại khiến thế giới ngày càng nhỏ lại, thế nên hiện nay mọi người đều gọi trái đất là “Làng toàn cầu”.",
+"ch": [
+{
+"t": "把地球叫作“地球村”",
+"py": "bǎ dìqiú jiàozuò “dìqiúcūn”",
+"vn": "gọi trái đất là “làng toàn cầu”",
+"frame": "把 A 叫作 B",
+"note": "Dùng 把 câu chữ 把 để gọi A là B, thay đổi tên gọi của sự vật.",
+"ex": [
+[
+"大家都把这位老教授叫作好老师。",
+"Mọi người đều gọi vị giáo sư già này là giáo viên tốt."
+],
+[
+"老师把这个地方叫作我们的第二个家。",
+"Thầy giáo gọi nơi này là ngôi nhà thứ hai của chúng ta."
+]
+],
+"try": "Nói: “Mọi người đều gọi anh ấy là chuyên gia máy tính.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "微博，是微博客（MicroBlog）的简称，",
+"vn": "Weibo là từ viết tắt của MicroBlog,",
+"ch": [
+{
+"t": "是……的简称",
+"py": "shì …… de jiǎntōng",
+"vn": "là từ viết tắt của...",
+"frame": "A 是 B 的简称",
+"note": "Dùng để giới thiệu tên viết tắt của một thuật ngữ hoặc tổ chức. Rất hay gặp trong văn phong giới thiệu.",
+"ex": [
+[
+"“ATM”是自动取款机的简称。",
+"ATM là từ viết tắt của máy rút tiền tự động."
+],
+[
+"“HSK”是汉语水平考试的简称。",
+"HSK là từ viết tắt của kỳ thi năng lực tiếng Trung."
+]
+],
+"try": "Nói: “HCV là từ viết tắt của huy chương vàng.”"
+}
+]
+},
+{
+"line": 0,
+"s": "是一个基于用户关系信息分享、传播以及获取的平台。",
+"vn": "là một nền tảng dựa trên việc chia sẻ, truyền bá và thu thập thông tin quan hệ người dùng.",
+"ch": []
+},
+{
+"line": 0,
+"s": "用户可以通过电脑或手机访问，以140字左右的文字更新信息，并实现即时分享。",
+"vn": "Người dùng có thể truy cập qua máy tính hoặc điện thoại di động, cập nhật thông tin bằng văn bản khoảng 140 chữ, và thực hiện chia sẻ tức thì.",
+"ch": [
+{
+"t": "可以通过……访问",
+"py": "kěyǐ tōngguò …… fǎngwèn",
+"vn": "có thể truy cập thông qua...",
+"frame": "用户可以通过 + công cụ + 访问",
+"note": "Chỉ phương thức truy cập vào các trang web hoặc phần mềm. Phù hợp khi nói về công nghệ thông tin.",
+"ex": [
+[
+"学生可以通过电脑访问学校图书馆网站。",
+"Học sinh có thể truy cập trang web thư viện trường qua máy tính."
+],
+[
+"我们可以通过手机访问这个学习平台。",
+"Chúng ta có thể truy cập nền tảng học tập này qua điện thoại."
+]
+],
+"try": "Nói: “Nhân viên có thể truy cập hệ thống công ty qua điện thoại.”"
+}
+]
+},
+{
+"line": 0,
+"s": "最早也是最著名的微博是美国Twitter。",
+"vn": "Weibo sớm nhất và nổi tiếng nhất là Twitter của Mỹ.",
+"ch": []
+},
+{
+"line": 0,
+"s": "2009年8月中国门户网站新浪成为门户网站中第一家提供微博服务的网站，微博正式进入中文上网主流人群视野。",
+"vn": "Tháng 8 năm 2009, trang web cổng thông tin Sina của Trung Quốc đã trở thành trang web đầu tiên trong các cổng thông tin cung cấp dịch vụ Weibo, Weibo chính thức bước vào tầm nhìn của đông đảo cư dân mạng tiếng Trung.",
+"ch": [
+{
+"t": "成为……中第一家",
+"py": "chéngwéi …… zhōng dì yī jiā",
+"vn": "trở thành... đầu tiên trong số...",
+"frame": "A 成为 B 中第一家 + V",
+"note": "Dùng để nhấn mạnh sự tiên phong của một đơn vị trong lĩnh vực nào đó.",
+"ex": [
+[
+"这家公司成为同行中第一家提供免费午餐的企业。",
+"Công ty này trở thành doanh nghiệp đầu tiên trong ngành cung cấp bữa trưa miễn phí."
+],
+[
+"他成为班里第一次考试中第一个拿满分的人。",
+"Anh ấy trở thành người đầu tiên đạt điểm tối đa trong kỳ thi đầu tiên của lớp."
+]
+],
+"try": "Nói: “Cửa hàng này trở thành quán đầu tiên trong phố bán cà phê muối.”"
+},
+{
+"t": "进入……视野",
+"py": "jìnrù …… shìyě",
+"vn": "bước vào tầm nhìn của...",
+"frame": "进入 + ai đó + 视野",
+"note": "Diễn tả một sự vật, hiện tượng lần đầu tiên được chú ý rộng rãi.",
+"ex": [
+[
+"这个新品牌很快进入年轻人的视野。",
+"Thương hiệu mới này nhanh chóng bước vào tầm nhìn của giới trẻ."
+],
+[
+"这种环保产品逐渐进入大众视野。",
+"Sản phẩm bảo vệ môi trường này dần bước vào tầm nhìn đại chúng."
+]
+],
+"try": "Nói: “Công nghệ mới này đã bước vào tầm nhìn của chúng tôi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "微信（WeChat）是腾讯公司2011年推出的一款即时语音通讯软件，用户可以通过手机快速发送语音、视频、图片和文字。",
+"vn": "WeChat là một phần mềm liên lạc thoại tức thời do công ty Tencent ra mắt vào năm 2011, người dùng có thể dùng điện thoại nhanh chóng gửi tin nhắn thoại, video, hình ảnh và văn bản.",
+"ch": []
+},
+{
+"line": 1,
+"s": "微信提供公众平台、朋友圈和消息推送等功能，",
+"vn": "WeChat cung cấp các tính năng như nền tảng công cộng, khoảnh khắc và đẩy tin nhắn,",
+"ch": [
+{
+"t": "提供……等功能",
+"py": "tígōng …… děng gōngnéng",
+"vn": "cung cấp các tính năng như...",
+"frame": "提供 + A、B 和 C 等功能",
+"note": "Dùng để liệt kê các chức năng của phần mềm, dịch vụ hoặc thiết bị.",
+"ex": [
+[
+"这个软件提供在线支付和聊天等功能。",
+"Phần mềm này cung cấp các tính năng như thanh toán trực tuyến và trò chuyện."
+],
+[
+"手机提供拍照和听歌等功能。",
+"Điện thoại cung cấp các tính năng như chụp ảnh và nghe nhạc."
+]
+],
+"try": "Nói: “Ứng dụng này cung cấp các tính năng như tìm đường và đặt xe.”"
+}
+]
+},
+{
+"line": 1,
+"s": "用户可以通过“摇一摇”“搜索号码”“附近的人”“扫二维码”方式添加好友和关注微信公众平台，",
+"vn": "người dùng có thể thông qua các phương thức \"lắc lắc\", \"tìm kiếm số\", \"người ở gần\", \"quét mã QR\" để kết bạn và theo dõi nền tảng công cộng WeChat,",
+"ch": [
+{
+"t": "通过……方式",
+"py": "tōngguò …… fāngshì",
+"vn": "thông qua phương thức...",
+"frame": "通过 + cụm hành động + 方式",
+"note": "Diễn tả cách thức thực hiện một việc gì đó trong công việc hoặc cuộc sống.",
+"ex": [
+[
+"我们可以通过这种方式解决问题。",
+"Chúng ta có thể giải quyết vấn đề thông qua phương pháp này."
+],
+[
+"学生可以通过网上报名方式参加考试。",
+"Học sinh có thể tham gia kỳ thi thông qua phương thức đăng ký trực tuyến."
+]
+],
+"try": "Nói: “Tôi tìm kiếm việc làm thông qua phương thức giới thiệu.”"
+}
+]
+},
+{
+"line": 1,
+"s": "同时微信可以把内容分享给好友，还可以把用户看到的精彩内容分享到微信朋友圈。",
+"vn": "đồng thời WeChat có thể chia sẻ nội dung cho bạn bè, còn có thể chia sẻ nội dung đặc sắc mà người dùng nhìn thấy lên vòng bạn bè WeChat.",
+"ch": [
+{
+"t": "把……分享给好友",
+"py": "bǎ …… fēnxiǎng gěi hǎoyǒu",
+"vn": "chia sẻ... cho bạn bè",
+"frame": "把 + vật + 分享给好友",
+"note": "Mẫu câu chữ 把 kết hợp với động từ chia sẻ, rất thường dùng khi dùng mạng xã hội.",
+"ex": [
+[
+"我把这个好消息分享给好友。",
+"Tôi chia sẻ tin vui này cho bạn bè."
+],
+[
+"请把照片分享给好友。",
+"Hãy chia sẻ bức ảnh cho bạn bè."
+]
+],
+"try": "Nói: “Tôi đem bài viết hay chia sẻ cho bạn bè.”"
+}
+]
+}
+]
+}

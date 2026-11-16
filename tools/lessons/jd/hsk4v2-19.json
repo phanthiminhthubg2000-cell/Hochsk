@@ -1,0 +1,1254 @@
+{
+"1": [
+{
+"line": 0,
+"s": "老师，您好！我希望下个学期在这里继续学习，",
+"vn": "Thầy/Cô ơi, xin chào! Em hy vọng học kỳ sau tiếp tục học tập ở đây,",
+"ch": [
+{
+"t": "希望下个学期在这里继续学习",
+"py": "xīwàng xià gè xuéqí zài zhèlǐ jìxù xuéxí",
+"vn": "hy vọng học kỳ sau tiếp tục học tập ở đây",
+"frame": "希望 + vế câu",
+"note": "Dùng 希望 để bày tỏ mong muốn lịch sự với giáo viên hoặc người quản lý.",
+"ex": [
+[
+"我希望下个学期能过HSK4级。",
+"Em hy vọng học kỳ sau có thể qua HSK 4."
+],
+[
+"老师，我希望下周还能上您的课。",
+"Thầy ơi, em hy vọng tuần sau vẫn được học lớp của thầy."
+]
+],
+"try": "Nói: “Em hy vọng học kỳ sau tiếp tục nhận được học bổng.”"
+}
+]
+},
+{
+"line": 0,
+"s": "请问还需要重新申请吗？",
+"vn": "xin hỏi có cần phải nộp lại đơn từ đầu không ạ?",
+"ch": [
+{
+"t": "还需要重新申请吗",
+"py": "hái xūyào chóngxīn shēnqǐng ma",
+"vn": "vẫn cần phải nộp đơn lại chứ",
+"frame": "还需要 + V lại (chóngxīn) + O không",
+"note": "Dùng 重新 trước động từ để chỉ hành động làm lại từ đầu.",
+"ex": [
+[
+"这篇课文太难了，需要重新看一遍。",
+"Bài khóa này khó quá, cần xem lại một lượt."
+],
+[
+"明天的会议需要重新安排吗？",
+"Cuộc họp ngày mai có cần sắp xếp lại không?"
+]
+],
+"try": "Nói: “Bài kiểm tra này làm sai nhiều, tôi có cần làm lại từ đầu không?”"
+}
+]
+},
+{
+"line": 1,
+"s": "是的。给你表格，出生年月、性别、护照号码都要填，还有联系地址、联系电话。",
+"vn": "Đúng vậy. Đưa em bảng này, năm tháng sinh, giới tính, số hộ chiếu đều phải điền, còn có địa chỉ liên lạc, số điện thoại liên lạc.",
+"ch": [
+{
+"t": "都要填",
+"py": "dōu yào tián",
+"vn": "đều phải điền",
+"frame": "……都 + yào + V",
+"note": "Dùng 都 để liệt kê các mục cần hoàn thành khi điền giấy tờ.",
+"ex": [
+[
+"这些表格上的信息都要填。",
+"Thông tin trên những bảng này đều phải điền."
+],
+[
+"老师布置的练习都要写。",
+"Bài tập thầy giáo giao đều phải viết."
+]
+],
+"try": "Nói: “Họ tên và số điện thoại đều phải điền.”"
+}
+]
+},
+{
+"line": 2,
+"s": "真抱歉，我不小心把护照号码填错了，您能再给我一份新的申请表吗？",
+"vn": "Thật xin lỗi, em lỡ điền sai số hộ chiếu mất rồi, thầy/cô có thể cho em một tờ đơn xin mới nữa được không?",
+"ch": [
+{
+"t": "我不小心把护照号码填错了",
+"py": "wǒ bù xiǎoxīn bǎ hùzhào hàomǎ tián cuò le",
+"vn": "em lỡ vô ý điền sai số hộ chiếu mất rồi",
+"frame": "我不小心把 + O + V + kết quả",
+"note": "Cấu trúc chữ 把 dùng khi làm thay đổi trạng thái của đồ vật do vô ý (bù xiǎoxīn).",
+"ex": [
+[
+"我不小心把钥匙丢了。",
+"Tôi vô ý làm mất chìa khóa."
+],
+[
+"我不小心把杯子摔坏了。",
+"Tôi lỡ tay làm vỡ cốc rồi."
+]
+],
+"try": "Nói: “Em lỡ vô ý làm sai bài tập này rồi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "没关系，不用道歉，谁都有粗心填错的时候。申请表都被别人拿走了，我给你重新打印一份，你等一下。",
+"vn": "Không sao, không cần xin lỗi đâu, ai mà chẳng có lúc sơ ý điền sai chứ. Đơn xin đều bị người khác lấy đi hết rồi, tôi in lại cho em một bản nhé, em đợi một lát.",
+"ch": [
+{
+"t": "谁都有粗心填错的时候",
+"py": "shuí dōu yǒu cūxīn tián cuò de shíhòu",
+"vn": "ai mà chẳng có lúc sơ ý điền sai",
+"frame": "谁都有 + N + 的时候",
+"note": "Dùng 谁都有 để an ủi người khác rằng ai cũng có lúc mắc lỗi tương tự.",
+"ex": [
+[
+"谁都有考试紧张的时候。",
+"Ai mà chẳng có lúc căng thẳng khi đi thi."
+],
+[
+"谁都有忘带东西的时候。",
+"Ai mà chẳng có lúc quên mang đồ."
+]
+],
+"try": "Nói: “Ai mà chẳng có lúc quên từ mới.”"
+},
+{
+"t": "我给你重新打印一份",
+"py": "wǒ gěi nǐ chóngxīn dǎyìn yī fèn",
+"vn": "tôi in lại cho em một bản",
+"frame": "gěi + ai + chóngxīn + V + một lượng từ",
+"note": "Dùng 量词 份 cho các loại giấy tờ, tài liệu, đơn từ.",
+"ex": [
+[
+"老师帮我重新打印一份资料。",
+"Thầy giáo giúp tôi in lại một bản tài liệu."
+],
+[
+"经理给我发了一份邮件。",
+"Giám đốc gửi cho tôi một bức thư điện tử."
+]
+],
+"try": "Nói: “Tôi có thể in lại một bản hợp đồng cho bạn không?”"
+}
+]
+},
+{
+"line": 4,
+"s": "这次我按照要求都填写完了，请问还需要做别的事情吗？",
+"vn": "Lần này em đều điền xong theo đúng yêu cầu rồi, xin hỏi còn cần làm việc gì khác nữa không ạ?",
+"ch": [
+{
+"t": "按照要求都填写完了",
+"py": "ànzhào yāoqiú dōu tiánxiě wán le",
+"vn": "đều điền xong theo đúng yêu cầu",
+"frame": "按照要求 + V + xong",
+"note": "Khung 按照…… dùng rất phổ biến trong môi trường học tập, công sở để nhấn mạnh sự tuân thủ quy định.",
+"ex": [
+[
+"请按照老师的要求写作业。",
+"Hãy viết bài tập theo đúng yêu cầu của thầy giáo."
+],
+[
+"大家都按照规定完成了工作。",
+"Mọi người đều hoàn thành công việc theo đúng quy định."
+]
+],
+"try": "Nói: “Làm bài thi theo đúng yêu cầu.”"
+}
+]
+},
+{
+"line": 5,
+"s": "请把你的护照给我，我们要把护照复印一下。",
+"vn": "Hãy đưa hộ chiếu của em cho tôi, chúng tôi phải đi photo hộ chiếu một chút.",
+"ch": [
+{
+"t": "要把护照复印一下",
+"py": "yào bǎ hùzhào fùyìn yīxià",
+"vn": "phải photo hộ chiếu một chút",
+"frame": "bǎ + O + V + 一下",
+"note": "Dùng 把 kết hợp 一下 để diễn tả hành động xử lý giấy tờ, đồ vật diễn ra nhanh chóng.",
+"ex": [
+[
+"请把这份文件复印一下。",
+"Xin hãy photo tập tài liệu này một chút."
+],
+[
+"老师让我把护照复印一下。",
+"Thầy giáo bảo tôi photo hộ chiếu một chút."
+]
+],
+"try": "Nói: “Hãy giúp tôi photo thẻ sinh viên này một chút.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "呀，你的手怎么流血了？等一下，我给你包起来。",
+"vn": "Ái chà, tay bạn sao lại chảy máu rồi? Đợi chút, tôi băng lại cho bạn.",
+"ch": [
+{
+"t": "手怎么流血了",
+"py": "shǒu zěnme liúxiě le",
+"vn": "tay sao lại chảy máu rồi",
+"frame": "……怎么 + V + le",
+"note": "Dùng 怎么 để hỏi nguyên nhân một việc bất ngờ vừa xảy ra, cuối câu thêm 了.",
+"ex": [
+[
+"你怎么流汗了？",
+"Sao bạn ra mồ hôi thế?"
+],
+[
+"你的脚怎么受伤了？",
+"Chân bạn sao lại bị thương thế?"
+]
+],
+"try": "Nói: “Điện thoại của bạn sao lại hỏng rồi?”"
+},
+{
+"t": "我给你包起来",
+"py": "wǒ gěi nǐ bāo qǐlái",
+"vn": "tôi băng lại cho bạn",
+"frame": "给 + ai + V + 起来",
+"note": "Kết cấu 起来 chỉ hành động làm gọn hoặc bọc kín lại.",
+"ex": [
+[
+"我帮你把书收起来。",
+"Tôi giúp bạn thu dọn sách vở lại."
+],
+[
+"妈妈把饭菜热起来了。",
+"Mẹ hâm nóng thức ăn lên rồi."
+]
+],
+"try": "Nói: “Tôi giúp bạn cất quần áo đi nhé.”"
+}
+]
+},
+{
+"line": 1,
+"s": "没关系，我想给你做点儿羊肉饺子，刚才用刀切肉的时候把手弄破了。",
+"vn": "Không sao, tôi muốn làm chút sủi cảo thịt cừu cho bạn, lúc nãy dùng dao thái thịt đã lỡ làm đứt tay rồi.",
+"ch": [
+{
+"t": "切肉的时候把手弄破了",
+"py": "qiē ròu de shíhou bǎ shǒu nòng pò le",
+"vn": "lúc thái thịt làm đứt tay",
+"frame": "……的时候，把 + danh từ + V + 弄 + kết quả",
+"note": "把 dùng để nhấn mạnh kết quả tác động lên đồ vật hoặc cơ thể, 弄破 có nghĩa là làm rách/làm đứt.",
+"ex": [
+[
+"洗衣服的时候把手机弄坏了。",
+"Lúc giặt quần áo làm hỏng điện thoại."
+],
+[
+"擦桌子的时候把杯子弄破了。",
+"Lúc lau bàn làm vỡ cốc."
+]
+],
+"try": "Nói: “Lúc dọn phòng làm bẩn quần áo rồi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "你也太不小心了，不过好像不太严重，过几天就好了。",
+"vn": "Bạn cũng bất cẩn quá đấy, nhưng hình như không nghiêm trọng lắm, qua mấy ngày là khỏi thôi.",
+"ch": [
+{
+"t": "你也太不小心了",
+"py": "nǐ yě tài bù xiǎoxīn le",
+"vn": "bạn cũng bất cẩn quá đấy",
+"frame": "你也太 + tính từ + le",
+"note": "Biểu thị sự phàn nàn nhẹ nhàng nhưng thân thiết đối với đối phương.",
+"ex": [
+[
+"你也太马虎了。",
+"Cậu cũng cẩu thả quá đấy."
+],
+[
+"你也太累了，早点休息吧。",
+"Cậu mệt quá rồi đấy, nghỉ sớm đi."
+]
+],
+"try": "Nói: “Cậu cũng lười quá đấy.”"
+},
+{
+"t": "过几天就好了",
+"py": "guò jǐ tiān jiù hǎo le",
+"vn": "vài ngày nữa là khỏi thôi",
+"frame": "过几天就 + V",
+"note": "Dùng để an ủi người khác rằng tình trạng hiện tại sẽ sớm qua đi.",
+"ex": [
+[
+"感冒了吃点药，过几天就好了。",
+"Bốm thì uống ít thuốc, vài ngày là khỏi."
+],
+[
+"适应一下，过几天就好了。",
+"Thích nghi một chút, vài ngày là quen ngay thôi."
+]
+],
+"try": "Nói: “Nghỉ ngơi vài ngày là khỏe lại thôi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "衣服上也有一点儿血，你把衣服脱下来，我给你洗洗。",
+"vn": "Trên quần áo cũng có một chút máu, bạn cởi áo ra đi, tôi giặt giúp cho.",
+"ch": [
+{
+"t": "你把衣服脱下来",
+"py": "nǐ bǎ yīfu tuō xiàlái",
+"vn": "bạn cởi áo xuống đi",
+"frame": "把 + đồ đạc + 脱 / 拿 / 下来",
+"note": "脱下来 dùng khi cởi trang phục hoặc giày dép ra khỏi cơ thể.",
+"ex": [
+[
+"进屋前请把鞋脱下来。",
+"Trước khi vào phòng phiền cởi giày ra."
+],
+[
+"天气热了，把外套脱下来吧。",
+"Thời tiết nóng rồi, cởi áo khoác ra đi."
+]
+],
+"try": "Nói: “Bạn cởi mũ ra đi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "看来今天吃不上羊肉饺子了。",
+"vn": "Xem ra hôm nay không được ăn sủi cảo thịt cừu rồi.",
+"ch": [
+{
+"t": "看来今天吃不上",
+"py": "kànlái jīntiān chī bu shàng",
+"vn": "xem ra hôm nay không ăn được",
+"frame": "看来 + sự việc + V + 不上",
+"note": "V + 不上 biểu thị không đạt được điều kiện hoặc cơ hội để thực hiện việc gì đó.",
+"ex": [
+[
+"雨太大了，看来今天去不成了。",
+"Mưa to quá, xem ra hôm nay không đi được nữa rồi."
+],
+[
+"人太多了，买不上票了。",
+"Đông người quá, không mua được vé nữa rồi."
+]
+],
+"try": "Nói: “Xem ra hôm nay không kịp lên lớp rồi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "那我们就吃点儿别的。我常去的那家理发店附近有个餐厅，那里的包子很好吃，我一会儿去买一点儿。",
+"vn": "Thế thì chúng ta ăn món khác đi. Gần tiệm cắt tóc mà tôi hay đến có một nhà hàng, bánh bao ở đó rất ngon, lát nữa tôi đi mua chút ít.",
+"ch": [
+{
+"t": "我常去的那家理发店附近",
+"py": "wǒ cháng qù de nà jiā lǐfàdiàn fùjìn",
+"vn": "gần tiệm cắt tóc mà tôi hay đến",
+"frame": "……附近 + 有 + địa điểm",
+"note": "Dùng để chỉ vị trí xung quanh một địa điểm quen thuộc.",
+"ex": [
+[
+"我家附近有一个超市。",
+"Gần nhà tôi có một siêu thị."
+],
+[
+"公司附近的饭馆很多。",
+"Các quán ăn gần công ty rất nhiều."
+]
+],
+"try": "Nói: “Gần trường học có một hiệu sách.”"
+}
+]
+},
+{
+"line": 5,
+"s": "好吧，我衣服口袋里有十几块零钱，买包子应该够。",
+"vn": "Được thôi, trong túi áo tôi có hơn chục tệ tiền lẻ, mua bánh bao chắc là đủ.",
+"ch": [
+{
+"t": "衣服口袋里",
+"py": "yīfu kǒudài lǐ",
+"vn": "trong túi quần áo",
+"frame": "……里有 + danh từ",
+"note": "Chỉ vị trí bên trong của một vật dụng cá nhân.",
+"ex": [
+[
+"书包里有一本汉语书。",
+"Trong cặp sách có một cuốn sách tiếng Trung."
+],
+[
+"钱包里没有钱了。",
+"Trong ví không còn tiền nữa."
+]
+],
+"try": "Nói: “Trong túi quần có một chiếc chìa khóa.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "我早上跟你打招呼，你没看见。想不到又在这儿碰见你了。",
+"vn": "Sáng nay tôi chào bạn mà bạn không thấy. Không ngờ lại gặp bạn ở đây.",
+"ch": [
+{
+"t": "想不到",
+"py": "xiǎngbùdào",
+"vn": "không ngờ tới",
+"frame": "想不到 + câu",
+"note": "Dùng để bày tỏ sự ngạc nhiên về một sự việc vừa xảy ra.",
+"ex": [
+[
+"想不到今天这么多人。",
+"Không ngờ hôm nay đông người thế."
+],
+[
+"想不到他竟然会说越南语。",
+"Không ngờ cậu ấy lại biết nói tiếng Việt."
+]
+],
+"try": "Nói: “Không ngờ bài tập này khó thế.”"
+}
+]
+},
+{
+"line": 1,
+"s": "真是对不起，我不是故意的，今天早上我忘戴眼镜了，看不清楚。",
+"vn": "Thật sự xin lỗi, tôi không cố ý đâu, sáng nay tôi quên đeo kính nên nhìn không rõ.",
+"ch": [
+{
+"t": "我不是故意的",
+"py": "wǒ bú shì gùyì de",
+"vn": "tôi không cố ý",
+"frame": "我不是故意的，……",
+"note": "Dùng để giải thích khi mình làm sai điều gì đó mà không có chủ đích.",
+"ex": [
+[
+"对不起，我不是故意的，我没看见你。",
+"Xin lỗi, tôi không cố ý, tôi không nhìn thấy bạn."
+],
+[
+"我不是故意的，请原谅我。",
+"Tôi không cố ý, hãy tha lỗi cho tôi."
+]
+],
+"try": "Nói: “Xin lỗi, tôi không cố ý làm hỏng điện thoại của bạn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "刚才我在旁边看到你跳中国舞了，没看出来你跳得这么好！难道你以前在你们国家就学过中国舞蹈吗？",
+"vn": "Vừa nãy tôi đứng bên cạnh thấy bạn múa điệu múa Trung Quốc, không nhận ra là bạn múa giỏi thế! Chẳng lẽ trước đây ở nước bạn, bạn đã từng học múa Trung Quốc rồi sao?",
+"ch": [
+{
+"t": "难道……吗",
+"py": "nándào... ma",
+"vn": "chẳng lẽ... sao",
+"frame": "难道 + chủ ngữ + V + 吗？",
+"note": "Dùng trong câu hỏi tu từ để nhấn mạnh sự nghi ngờ hoặc ngạc nhiên.",
+"ex": [
+[
+"难道你不知道这件事吗？",
+"Chẳng lẽ bạn không biết chuyện này sao?"
+],
+[
+"难道他还没来吗？",
+"Chẳng lẽ cậu ấy vẫn chưa đến sao?"
+]
+],
+"try": "Nói: “Chẳng lẽ bạn không đi học sao?”"
+}
+]
+},
+{
+"line": 3,
+"s": "我小时候妈妈教我跳过两年的舞，所以稍微有点儿基础。再说，舞蹈不仅是一门艺术，也是一种“语言”，这种语言与国籍无关，无论哪个国家的人都能看懂。",
+"vn": "Hồi nhỏ mẹ tôi có dạy tôi múa hai năm, nên tôi có chút căn bản. Hơn nữa, múa không chỉ là một môn nghệ thuật, mà còn là một loại \"ngôn ngữ\", loại ngôn ngữ này không liên quan đến quốc tịch, dù là người nước nào cũng có thể xem hiểu.",
+"ch": [
+{
+"t": "不仅是……也是……",
+"py": "bùjǐn shì... yě shì...",
+"vn": "không chỉ là... mà còn là...",
+"frame": "不仅是 A，也是 B",
+"note": "Dùng để bổ sung thông tin, nhấn mạnh tính chất đa dạng của sự vật.",
+"ex": [
+[
+"学汉语不仅是学习语言，也是了解文化。",
+"Học tiếng Trung không chỉ là học ngôn ngữ, mà còn là hiểu về văn hóa."
+],
+[
+"他不仅是我的老师，也是我的朋友。",
+"Anh ấy không chỉ là thầy giáo của tôi, mà còn là bạn của tôi."
+]
+],
+"try": "Nói: “Đi du lịch không chỉ là đi chơi, mà còn là mở rộng tầm mắt.”"
+},
+{
+"t": "无论……都……",
+"py": "wúlùn... dōu...",
+"vn": "bất kể... đều...",
+"frame": "无论 + ai/cái gì + 都 + V",
+"note": "Diễn tả kết quả không thay đổi dù điều kiện có khác nhau.",
+"ex": [
+[
+"无论天气怎么样，我都去上课。",
+"Bất kể thời tiết thế nào, tôi đều đi học."
+],
+[
+"无论做什么事，都要认真。",
+"Bất kể làm việc gì, đều phải nghiêm túc."
+]
+],
+"try": "Nói: “Dù khó thế nào, tôi đều sẽ cố gắng.”"
+}
+]
+},
+{
+"line": 4,
+"s": "太好了！我刚学习跳这种舞没多久，你帮我看看，我的这个动作对不对。",
+"vn": "Tốt quá! Tôi mới học múa điệu này không lâu, bạn xem giúp tôi động tác này của tôi có đúng không.",
+"ch": [
+{
+"t": "刚……没多久",
+"py": "gāng... méi duōjiǔ",
+"vn": "vừa... không lâu",
+"frame": "刚 + V + 没多久",
+"note": "Dùng để nói về việc gì đó mới bắt đầu trong thời gian ngắn.",
+"ex": [
+[
+"我刚来中国没多久。",
+"Tôi mới đến Trung Quốc không lâu."
+],
+[
+"他刚开始工作没多久。",
+"Cậu ấy mới bắt đầu đi làm không lâu."
+]
+],
+"try": "Nói: “Tôi mới học tiếng Trung không lâu.”"
+}
+]
+},
+{
+"line": 5,
+"s": "你这个动作做得还是不太标准，我给你跳一遍。你仔细看着，应该像我这样：先抬胳膊，然后抬腿，最后头再向右转一下。",
+"vn": "Động tác này của bạn làm vẫn chưa chuẩn lắm, tôi múa lại một lần cho bạn xem. Bạn nhìn kỹ nhé, nên làm như tôi này: trước tiên giơ tay, sau đó nhấc chân, cuối cùng đầu quay sang phải một cái.",
+"ch": [
+{
+"t": "先……然后……最后……",
+"py": "xiān... ránhòu... zuìhòu...",
+"vn": "trước tiên... sau đó... cuối cùng...",
+"frame": "先 + V1, 然后 + V2, 最后 + V3",
+"note": "Cấu trúc liệt kê các bước thực hiện một quy trình.",
+"ex": [
+[
+"先洗手，然后吃饭，最后看书。",
+"Trước tiên rửa tay, sau đó ăn cơm, cuối cùng đọc sách."
+],
+[
+"先打开电脑，然后输入密码，最后进入系统。",
+"Trước tiên mở máy tính, sau đó nhập mật khẩu, cuối cùng vào hệ thống."
+]
+],
+"try": "Nói: “Trước tiên tôi học từ mới, sau đó làm bài tập, cuối cùng nghe nhạc.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "马克去年租的房子离马路很近，对面有大大小小的商店，周围环境非常吵。所以，房子还没到期，马克就开始着急换房子了。",
+"vn": "Căn nhà Mark thuê năm ngoái ở rất gần đường lớn, đối diện có các cửa hàng lớn nhỏ, môi trường xung quanh rất ồn ào. Cho nên, nhà chưa đến hạn, Mark đã bắt đầu sốt ruột đổi nhà rồi.",
+"ch": [
+{
+"t": "离马路很近",
+"py": "lí mǎlù hěn jìn",
+"vn": "rất gần đường lớn",
+"frame": "……离……很近",
+"note": "Dùng cấu trúc khoảng cách A 离 B 很近 để chỉ vị trí, đừng dịch ngược thứ tự từ.",
+"ex": [
+[
+"我的公司离地铁站很近。",
+"Công ty của tôi rất gần ga tàu điện ngầm."
+],
+[
+"学校离我家很近。",
+"Trường học rất gần nhà tôi."
+]
+],
+"try": "Nói: “Nhà của tôi rất gần bệnh viện.”"
+},
+{
+"t": "房子还没到期",
+"py": "fángzi hái méi dàoqī",
+"vn": "nhà vẫn chưa đến hạn (hợp đồng)",
+"frame": "……还没到期",
+"note": "到期 chỉ hạn hợp đồng, thẻ, giấy tờ; thêm 还/还没 để nhấn mạnh chưa đến lúc.",
+"ex": [
+[
+"护照还没到期。",
+"Hộ chiếu vẫn chưa đến hạn."
+],
+[
+"合同还没到期。",
+"Hợp đồng vẫn chưa đến hạn."
+]
+],
+"try": "Nói: “Thẻ thư viện vẫn chưa đến hạn.”"
+},
+{
+"t": "开始着急换房子了",
+"py": "kāishǐ zháojí huàn fángzi le",
+"vn": "bắt đầu sốt ruột đổi nhà rồi",
+"frame": "开始着急 + V",
+"note": "着急 đứng sau bắt đầu thể hiện trạng thái sốt ruột khi gặp vấn đề.",
+"ex": [
+[
+"考试快到了，他开始着急复习了。",
+"Kỳ thi sắp đến, cậu ấy bắt đầu sốt ruột ôn tập rồi."
+],
+[
+"找不到钱包，我开始着急找了。",
+"Không tìm thấy ví, tôi bắt đầu sốt ruột tìm rồi."
+]
+],
+"try": "Nói: “Muộn giờ làm rồi, anh ấy bắt đầu sốt ruột đi rồi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "有一天，他在小区门口看到一个租房子的广告。广告上说房子交通方便，周围很安静，厨房很大。总的来说，这套房子他很满意，于是他就记下了房东的手机号码。",
+"vn": "Có một hôm, anh ấy nhìn thấy một quảng cáo cho thuê nhà ở cổng khu chung cư. Trên quảng cáo nói nhà giao thông thuận tiện, xung quanh rất yên tĩnh, phòng bếp rất lớn. Nhìn chung, căn nhà này anh ấy rất hài lòng, thế là anh ấy đã ghi lại số điện thoại của chủ nhà.",
+"ch": [
+{
+"t": "交通方便",
+"py": "jiāotōng fāngbiàn",
+"vn": "giao thông thuận tiện",
+"frame": "……交通方便",
+"note": "Cụm cố định miêu tả vị trí địa lý, nhà cửa hoặc khu vực.",
+"ex": [
+[
+"这附近交通很方便。",
+"Khu vực quanh đây giao thông rất thuận tiện."
+],
+[
+"那个地方交通不太方便。",
+"Nơi đó giao thông không thuận tiện lắm."
+]
+],
+"try": "Nói: “Công ty này giao thông thuận tiện.”"
+},
+{
+"t": "总的来说",
+"py": "zǒng de lái shuō",
+"vn": "nhìn chung / nói tóm lại",
+"frame": "总的来说，……",
+"note": "Dùng ở đầu câu để tổng kết lại vấn đề trước khi đưa ra nhận xét cuối cùng.",
+"ex": [
+[
+"总的来说，这次考试不难。",
+"Nhìn chung, kỳ thi lần này không khó."
+],
+[
+"总的来说，这件衣服不错。",
+"Nhìn chung, bộ quần áo này được đấy."
+]
+],
+"try": "Nói: “Nhìn chung, món ăn này rất ngon.”"
+}
+]
+},
+{
+"line": 2,
+"s": "可回家后打电话，电话总是占线。第二天，他路过小区门口时，又仔细看了一下广告，原来在记号码的时候写错了一个数字。",
+"vn": "Nhưng sau khi về nhà gọi điện thoại, điện thoại lúc nào cũng bận. Ngày hôm sau, lúc anh ấy đi ngang qua cổng khu chung cư, lại xem kỹ lại quảng cáo một chút, hóa ra lúc ghi số điện thoại đã viết sai một con số.",
+"ch": [
+{
+"t": "电话总是占线",
+"py": "diànhuà zǒngshì zhànxiàn",
+"vn": "điện thoại lúc nào cũng bận (máy)",
+"frame": "……总 / 总是占线",
+"note": "占线 là từ chuyên dùng cho điện thoại bận đường dây.",
+"ex": [
+[
+"刚才打电话一直占线。",
+"Vừa nãy gọi điện thoại cứ bận máy suốt."
+],
+[
+"难怪打不通，原来电话占线了。",
+"Thảo nào gọi không được, hóa ra điện thoại bận máy rồi."
+]
+],
+"try": "Nói: “Gọi cho ngân hàng mà điện thoại cứ bận.”"
+},
+{
+"t": "写错了一个数字",
+"py": "xiě cuò le yí gè shùzì",
+"vn": "viết sai một con số",
+"frame": "写错 / 做错 + một lượng từ + danh từ",
+"note": "Động từ + 错 thể hiện hành động làm nhưng kết quả bị sai.",
+"ex": [
+[
+"作业里写错了一个字。",
+"Trong bài tập viết sai một chữ."
+],
+[
+"考试时听错了一个词。",
+"Khi thi nghe sai một từ."
+]
+],
+"try": "Nói: “Tôi viết sai một số điện thoại.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "很多外国人认为所有中国人都会功夫和乒乓球，其实只是喜爱这两种运动的中国人比较多。",
+"vn": "Nhiều người nước ngoài cho rằng tất cả người Trung Quốc đều biết kungfu và bóng bàn, thực ra chỉ là số người Trung Quốc yêu thích hai môn thể thao này khá nhiều.",
+"ch": [
+{
+"t": "认为所有",
+"py": "rènwéi suǒyǒu",
+"vn": "cho rằng tất cả",
+"frame": "认为 + 所有 + N",
+"note": "Dùng để nêu quan điểm chung của số đông. Chú ý vị trí của 所有 đứng trước danh từ.",
+"ex": [
+[
+"大家认为所有考试都很难。",
+"Mọi người cho rằng tất cả các kỳ thi đều khó."
+],
+[
+"经理认为所有问题都能解決。",
+"Giám đốc cho rằng tất cả vấn đề đều có thể giải quyết."
+]
+],
+"try": "Nói: “Tôi cho rằng tất cả các món ăn Việt Nam đều ngon.”"
+},
+{
+"t": "喜爱这两种运动",
+"py": "xǐ'ài zhè liǎng zhǒng yùndòng",
+"vn": "yêu thích hai loại thể thao này",
+"frame": "喜爱 + số lượng + loại N",
+"note": "喜爱 mang sắc thái thích thú lâu dài, sâu sắc hơn 喜欢 thông thường.",
+"ex": [
+[
+"我很喜爱学习汉语。",
+"Tôi rất yêu thích học tiếng Trung."
+],
+[
+"老师很喜爱这个努力的学生。",
+"Thầy cô rất yêu thích học sinh nỗ lực này."
+]
+],
+"try": "Nói: “Bạn tôi rất yêu thích du lịch.”"
+}
+]
+},
+{
+"line": 0,
+"s": "中国人特别喜欢打乒乓球，在中国你会发现到处都有乒乓球桌。",
+"vn": "Người Trung Quốc đặc biệt thích chơi bóng bàn, ở Trung Quốc bạn sẽ thấy đâu đâu cũng có bàn bóng bàn.",
+"ch": [
+{
+"t": "你会发现到处都有",
+"py": "nǐ huì fāxiàn dàochù dōu yǒu",
+"vn": "bạn sẽ thấy khắp nơi đều có",
+"frame": "你会发现 + nơi chốn + 都 + có",
+"note": "Dùng để diễn tả một hiện tượng phổ biến khi đến một nơi nào đó.",
+"ex": [
+[
+"去中国旅游，你会发现到处都有咖啡馆。",
+"Đi du lịch Trung Quốc, bạn sẽ thấy khắp nơi đều có quán cà phê."
+],
+[
+"走进学校，你会发现到处都有读书的学生。",
+"Đi vào trường học, bạn sẽ thấy khắp nơi đều có học sinh đọc sách."
+]
+],
+"try": "Nói: “Bạn sẽ thấy khắp nơi đều có cửa hàng tiện lợi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "像乒乓球、羽毛球、跑步等运动对条件要求不高，所以它们都成为人们运动不错的选择。",
+"vn": "Những môn thể thao như bóng bàn, cầu lông, chạy bộ... không đòi hỏi điều kiện cao, thế nên chúng đều trở thành lựa chọn tập thể dục không tồi của mọi người.",
+"ch": [
+{
+"t": "对条件要求不高",
+"py": "duì tiáojiàn yāoqiú bù gāo",
+"vn": "đối với điều kiện yêu cầu không cao",
+"frame": "对 + sth + yêu cầu cao/không cao",
+"note": "Cấu trúc dùng để đánh giá mức độ khó dễ của việc gì đó về mặt điều kiện.",
+"ex": [
+[
+"这份工作对经验要求不高。",
+"Công việc này yêu cầu kinh nghiệm không cao."
+],
+[
+"旅游对身体条件要求不高。",
+"Du lịch không đòi hỏi điều kiện sức khỏe cao."
+]
+],
+"try": "Nói: “Môn thể thao này yêu cầu điều kiện không cao.”"
+},
+{
+"t": "不错的选择",
+"py": "bùcuò de xuǎnzé",
+"vn": "lựa chọn không tồi",
+"frame": "……是不错的选择",
+"note": "Dùng để gợi ý hoặc đánh giá một phương án tốt.",
+"ex": [
+[
+"周末在家休息是不错的选择。",
+"Cuối tuần ở nhà nghỉ ngơi là một lựa chọn không tồi."
+],
+[
+"找个中国朋友练口语是不错的选择。",
+"Tìm một người bạn Trung Quốc luyện khẩu ngữ là lựa chọn không tồi."
+]
+],
+"try": "Nói: “Học tiếng Trung là một lựa chọn không tồi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "人们常说“生命在于运动”，所以很多人一到周末就会到体育馆打几场球。",
+"vn": "Mọi người thường nói \"sinh mệnh nằm ở vận động\", thế nên rất nhiều người cứ đến cuối tuần là lại đến nhà thi đấu đánh vài trận bóng.",
+"ch": [
+{
+"t": "一到周末就会",
+"py": "yī dào zhōumò jiù huì",
+"vn": "cứ đến cuối tuần là lại",
+"frame": "一到 + thời gian/dịp + 就会 + V",
+"note": "Diễn tả hành động lặp đi lặp lại mang tính quy luật mỗi khi đến thời gian đó.",
+"ex": [
+[
+"一到考试他就很紧张。",
+"Cứ đến kỳ thi là anh ấy rất căng thẳng."
+],
+[
+"一到晚上大家就想吃夜宵。",
+"Cứ đến tối là mọi người lại muốn ăn đêm."
+]
+],
+"try": "Nói: “Cứ đến chủ nhật là tôi lại đi mua sắm.”"
+}
+]
+},
+{
+"line": 1,
+"s": "“乒乓球”这个名字也很有意思，“乒”和“乓”就是打球时发出的声音。",
+"vn": "Cái tên \"bóng bàn\" cũng rất thú vị, \"ping\" và \"pông\" chính là âm thanh phát ra khi đánh bóng.",
+"ch": [
+{
+"t": "名字也很有意思",
+"py": "míngzi yě hěn yǒuyìsi",
+"vn": "tên gọi cũng rất thú vị",
+"frame": "名字很有意思 / ……很有意思",
+"note": "Dùng để khen ngợi một sự vật, hiện tượng có điểm thu hút.",
+"ex": [
+[
+"这个汉语词语很有意思。",
+"Từ tiếng Trung này rất thú vị."
+],
+[
+"这本书的故事很有意思。",
+"Câu chuyện trong cuốn sách này rất thú vị."
+]
+],
+"try": "Nói: “Cái tên của bộ phim này rất thú vị.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在看乒乓球比赛时，尤其是在运动员发球的时候，观众要安静，禁止大声讲话或者离开座位随便走动。",
+"vn": "Khi xem thi đấu bóng bàn, đặc biệt là lúc vận động viên phát bóng, khán giả phải giữ trật tự, cấm nói lớn tiếng hoặc rời khỏi chỗ ngồi đi lại tùy ý.",
+"ch": [
+{
+"t": "禁止大声讲话",
+"py": "jìnzhǐ dàshēng jiǎnghuà",
+"vn": "cấm nói chuyện lớn tiếng",
+"frame": "禁止 + V (hành động)",
+"note": "Chỉ dùng trong văn viết hoặc các bảng quy định thông báo nơi công cộng.",
+"ex": [
+[
+"博物馆里禁止拍照。",
+"Trong bảo tàng cấm chụp ảnh."
+],
+[
+"图书馆禁止吃东西。",
+"Thư viện cấm ăn đồ ăn."
+]
+],
+"try": "Nói: “Phòng thi cấm sử dụng điện thoại.”"
+},
+{
+"t": "离开座位随便走动",
+"py": "líkāi zuòwèi suíbiàn zǒudòng",
+"vn": "rời khỏi chỗ ngồi đi lại tùy ý",
+"frame": "离开 + chỗ ngồi + V",
+"note": "Cụm từ hay gặp trong quy định lớp học, hội nghị hoặc thi cử.",
+"ex": [
+[
+"上课时不要随便走动。",
+"Giờ học đừng đi lại tùy ý."
+],
+[
+"考试期间不能离开座位。",
+"Trong thời gian thi không được rời khỏi chỗ ngồi."
+]
+],
+"try": "Nói: “Họp không được rời khỏi chỗ ngồi đi lại tùy ý.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "对大多数中国家庭尤其是北方的中国家庭来说，包饺子、吃饺子是庆祝春节的一个重要活动。",
+"vn": "Đối với đại đa số các gia đình Trung Quốc, đặc biệt là các gia đình miền Bắc, gói sủi cảo, ăn sủi cảo là một hoạt động quan trọng để chào đón Tết Nguyên Đán.",
+"ch": [
+{
+"t": "对……来说",
+"py": "duì …… lái shuō",
+"vn": "đối với ... mà nói",
+"frame": "对 + ai/sự việc + 来说",
+"note": "Dùng để đưa ra đối tượng hoặc phạm vi nhận xét, người Việt hay dịch là “đối với”.",
+"ex": [
+[
+"对我们来说，学汉语很有意思。",
+"Đối với chúng tôi mà nói, học tiếng Trung rất thú vị."
+],
+[
+"对留学生来说，找工作不容易。",
+"Đối với lưu học sinh mà nói, tìm việc không dễ."
+]
+],
+"try": "Nói: “Đối với tôi mà nói, món ăn Trung Quốc rất ngon.”"
+}
+]
+},
+{
+"line": 0,
+"s": "饺子一般要在大年三十晚上子时（23点到凌晨1点）以前包好，",
+"vn": "Sủi cảo thường phải được gói xong trước giờ Tý (23 giờ đến 1 giờ sáng) đêm 30 Tết,",
+"ch": [
+{
+"t": "以前",
+"py": "yǐqián",
+"vn": "trước ...",
+"frame": "thời gian/sự việc + 以前",
+"note": "Chỉ mốc thời gian hoặc hành động xảy ra trước một thời điểm nào đó.",
+"ex": [
+[
+"上课以前要预习生词。",
+"Trước khi lên lớp phải chuẩn bị từ mới."
+],
+[
+"10点以前必须回家。",
+"Trước 10 giờ nhất định phải về nhà."
+]
+],
+"try": "Nói: “Trước khi đi ngủ phải làm xong bài tập.”"
+}
+]
+},
+{
+"line": 0,
+"s": "等到了子时再吃，因为子时正是中国农历正月初一的开始，",
+"vn": "chờ đến giờ Tý mới ăn, bởi vì giờ Tý chính là lúc bắt đầu ngày mùng 1 tháng Giêng Âm lịch của Trung Quốc,",
+"ch": [
+{
+"t": "等到了……再吃",
+"py": "děng dàole …… zài chī",
+"vn": "chờ đến ... rồi mới ăn",
+"frame": "等 + thời gian + 再 + động từ",
+"note": "Biểu thị hành động chỉ xảy ra sau khi đạt đến một thời điểm hoặc điều kiện nhất định.",
+"ex": [
+[
+"等下了课再去吃饭。",
+"Chờ tan học rồi hãy đi ăn cơm."
+],
+[
+"等经理来了再1开会。",
+"Chờ giám đốc đến rồi họp."
+]
+],
+"try": "Nói: “Chờ bạn bè đến rồi mới bắt đầu.”"
+}
+]
+},
+{
+"line": 0,
+"s": "所以“饺子”有“交子”的意思。",
+"vn": "cho nên \"sủi cảo\" mang ý nghĩa là \"giao tử\" (giao thoa thời gian).",
+"ch": [
+{
+"t": "有……的意思",
+"py": "yǒu …… de yìsi",
+"vn": "có ý nghĩa là ...",
+"frame": "A 有 B 的意思",
+"note": "Dùng để giải thích ý nghĩa tượng trưng của từ ngữ hoặc hành động.",
+"ex": [
+[
+"红色在中国有高兴的意思。",
+"Màu đỏ ở Trung Quốc có ý nghĩa vui mừng."
+],
+[
+"这个礼物有感谢的意思。",
+"Món quà này có ý nghĩa cảm ơn."
+]
+],
+"try": "Nói: “Tên của cô ấy có ý nghĩa là hạnh phúc.”"
+}
+]
+},
+{
+"line": 0,
+"s": "“子”指子时，“交”和“饺”谐音，代表喜庆、团圆。",
+"vn": "\"Tử\" chỉ giờ Tý, \"giao\" và \"giảo\" đồng âm, đại diện cho sự vui mừng, đoàn viên.",
+"ch": []
+},
+{
+"line": 0,
+"s": "另外，饺子形状像元宝，包饺子意味着包住好运气。",
+"vn": "Ngoài ra, hình dáng sủi cảo giống như nén vàng, gói sủi cảo có nghĩa là gói giữ lại vận may.",
+"ch": [
+{
+"t": "意味着",
+"py": "yìwèizhe",
+"vn": "có nghĩa là / đồng nghĩa với",
+"frame": "……意味着……",
+"note": "Dùng để chỉ ý nghĩa sâu xa hoặc hệ quả của một sự việc.",
+"ex": [
+[
+"下雨意味着要带1雨伞。",
+"Trời mưa có nghĩa là phải mang ô."
+],
+[
+"努力工作意味着能得到更好的机会。",
+"Làm việc chăm chỉ có nghĩa là có thể nhận được cơ hội tốt hơn."
+]
+],
+"try": "Nói: “Đạt điểm cao có nghĩa là bạn đã học rất chăm chỉ.”"
+}
+]
+},
+{
+"line": 0,
+"s": "所以，包饺子和吃饺子是人们在新年时祈求愿望的一种方式。",
+"vn": "Cho nên, gói sủi cảo và ăn sủi cảo là một cách thức để mọi người cầu mong ước nguyện vào dịp năm mới.",
+"ch": [
+{
+"t": "一种方式",
+"py": "yī zhǒng fāngshì",
+"vn": "một loại phương thức / cách thức",
+"frame": "是 + ... + 的一种方式",
+"note": "Dùng để xếp một hành động vào nhóm phương thức thực hiện.",
+"ex": [
+[
+"旅游是了解世界的一种方式。",
+"Du lịch là một cách để hiểu về thế giới."
+],
+[
+"发email是工作中的一种方式。",
+"Gửi email là một cách trong công việc."
+]
+],
+"try": "Nói: “Đọc sách là một cách để học từ mới.”"
+}
+]
+},
+{
+"line": 1,
+"s": "饺子皮用面粉制作，馅儿有肉馅儿、肉菜馅儿、素馅儿等，可煮可蒸，美味营养。",
+"vn": "Vỏ sủi cảo được làm bằng bột mì, nhân có nhân thịt, nhân thịt rau, nhân chay v.v., có thể luộc có thể hấp, ngon miệng và bổ dưỡng.",
+"ch": [
+{
+"t": "用……制作",
+"py": "yòng …… zhìzuò",
+"vn": "được làm bằng ...",
+"frame": "A 用 B 制作",
+"note": "Chỉ nguyên liệu hoặc cách thức tạo ra sản phẩm.",
+"ex": [
+[
+"这个椅子是用木头制作的。",
+"Cái ghế này được làm bằng gỗ."
+],
+[
+"1蛋糕是用鸡蛋和面粉制作的。",
+"Bánh ngọt được làm bằng trứng và bột mì."
+]
+],
+"try": "Nói: “Món ăn này được làm bằng rau tươi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在中国水饺传入西方之前，西方人就已经知道意大利饺子了。",
+"vn": "Trước khi sủi cảo Trung Quốc truyền vào phương Tây, người phương Tây đã biết đến bánh mì hấp kiểu Ý (ravioli) rồi.",
+"ch": [
+{
+"t": "在……之前",
+"py": "zài …… zhīqián",
+"vn": "trước khi ...",
+"frame": "在 + sự việc/thời gian + 之前",
+"note": "Chỉ khoảng thời gian hoặc hành động xảy ra trước một mốc nào đó.",
+"ex": [
+[
+"在1_上课之前，我要喝咖啡。",
+"Trước khi lên lớp, tôi muốn uống cà phê."
+],
+[
+"在1 2来中国之前，我已经学习了一年汉语。",
+"Trước khi đến Trung Quốc, tôi đã học tiếng Trung một năm."
+]
+],
+"try": "Nói: “Trước khi đi du lịch, tôi đã mua vé máy bay.”"
+}
+]
+},
+{
+"line": 1,
+"s": "由于中国的饺子很像意大利饺子，所以他们一般把“饺子”翻译成英语的“dumpling”。",
+"vn": "Do sủi cảo Trung Quốc rất giống sủi cảo Ý, nên họ thường dịch \"giảo tử\" sang tiếng Anh là \"dumpling\".",
+"ch": [
+{
+"t": "由于……所以……",
+"py": "yóuyú …… suǒyǐ ……",
+"vn": "do ... cho nên ...",
+"frame": "由于 + nguyên nhân, 所以 + kết quả",
+"note": "Biểu thị quan hệ nhân quả, trang trọng hơn 因为...所以...",
+"ex": [
+[
+"由于今天堵车，所以我迟到了。",
+"Do hôm nay tắc đường, cho nên tôi đến muộn."
+],
+[
+"由于汉语很好，所以他找到了好工作.",
+"Do tiếng Trung rất tốt, nên anh ấy tìm được công việc tốt."
+]
+],
+"try": "Nói: “Do thời tiết rất đẹp, nên chúng tôi đi công viên.”"
+},
+{
+"t": "把……翻译成",
+"py": "bǎ …… fānyì chéng",
+"vn": "dịch ... thành ...",
+"frame": "把 + từ/câu + 翻译成 + ngôn ngữ",
+"note": "Cấu trúc chữ 把 dùng khi dịch thuật ngữ sang tiếng nước khác.",
+"ex": [
+[
+"请把这个句子翻译成越语。",
+"Hãy dịch câu này sang tiếng Việt."
+],
+[
+"老师把生词翻译成英语。",
+"Thầy giáo dịch từ mới sang tiếng Anh."
+]
+],
+"try": "Nói: “Hãy dịch tên của bạn sang tiếng Trung.”"
+}
+]
+},
+{
+"line": 1,
+"s": "实际上，“dumpling”并不是特指中国饺子，它是指所有有皮包馅这类食物。",
+"vn": "Trên thực tế, \"dumpling\" không chỉ riêng sủi cảo Trung Quốc, nó chỉ tất cả các loại thực phẩm có vỏ bọc nhân như thế này.",
+"ch": [
+{
+"t": "并不是",
+"py": "bìng bú shì",
+"vn": "vốn không phải là / không hẳn là",
+"frame": "并 + 不是 + ...",
+"note": "Dùng để phủ định mạnh mẽ một quan niệm sai lầm phổ biến.",
+"ex": [
+[
+"学汉语并__不难。",
+"Học tiếng Trung vốn không khó."
+],
+[
+"他并不是我的老板。",
+"Anh ấy vốn không phải là sếp của tôi."
+]
+],
+"try": "Nói: “Việc này vốn không đơn giản như bạn nghĩ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "因此，随着西方对中国文化了解的增加，越来越多的西方人开始习惯用 jiaozi 来称呼这种食品了。",
+"vn": "Do đó, cùng với việc phương Tây ngày càng hiểu biết nhiều hơn về văn hóa Trung Quốc, ngày càng có nhiều người phương Tây bắt đầu quen dùng từ jiaozi để gọi loại thực phẩm này.",
+"ch": [
+{
+"t": "随着……的增加",
+"py": "suízhe …… de zēngjiā",
+"vn": "cùng với sự gia tăng của ...",
+"frame": "随着 + danh từ + 的增加",
+"note": "Biểu thị sự thay đổi diễn ra song song với một yếu tố đang tăng lên.",
+"ex": [
+[
+"随着工作经验的增加，工资也多了。",
+"Cùng với sự gia tăng kinh nghiệm làm việc, lương cũng nhiều lên."
+],
+[
+"随着人口的增加，traffic越来越忙。",
+"Cùng với sự gia tăng dân số, giao thông ngày càng bận rộn."
+]
+],
+"try": "Nói: “Cùng với sự gia tăng của số lượng học sinh, lớp học càng ngày càng đông.”"
+},
+{
+"t": "越来越多的",
+"py": "yuè lái yuè duō de",
+"vn": "ngày càng nhiều ...",
+"frame": "越来越多 + danh từ",
+"note": "Chỉ xu hướng phát triển số lượng lớn dần theo thời gian.",
+"ex": [
+[
+"越来越多的人喜欢网购。",
+"Ngày càng có nhiều người thích mua sắm online."
+],
+[
+"越来越1多的留学生来中国学习。",
+"Ngày càng có nhiều lưu học sinh đến Trung Quốc học tập."
+]
+],
+"try": "Nói: “Ngày càng có nhiều người học tiếng Trung ở công ty chúng tôi.”"
+}
+]
+}
+]
+}

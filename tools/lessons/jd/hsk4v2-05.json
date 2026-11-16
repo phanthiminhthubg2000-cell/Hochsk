@@ -1,0 +1,960 @@
+{
+"1": [
+{
+"line": 0,
+"s": "小姐，您好！您想买什么家具？需要我为您介绍一下吗？",
+"vn": "Cô ơi, xin chào! Cô muốn mua đồ nội thất gì? Có cần tôi giới thiệu cho cô một chút không?",
+"ch": [
+{
+"t": "需要我为您介绍一下吗",
+"py": "xūyào wǒ wèi nín jièshào yíxià ma",
+"vn": "có cần tôi giới thiệu cho bạn một chút không",
+"frame": "需要 + ai + V + 吗",
+"note": "Dùng khi muốn đề nghị giúp đỡ lịch sự với khách hàng hoặc người lớn tuổi.",
+"ex": [
+[
+"需要我为您复印一下合同吗？",
+"Có cần tôi phốt-tô hợp đồng giúp bạn một chút không?"
+],
+[
+"需要我帮您搬行李吗？",
+"Có cần tôi giúp bạn khiêng hành lý không?"
+]
+],
+"try": "Nói: “Có cần tôi giúp bạn xem lại bài tập một chút không?”"
+}
+]
+},
+{
+"line": 1,
+"s": "谢谢，我想买沙发。",
+"vn": "Cảm ơn, tôi muốn mua ghế sô-pha.",
+"ch": []
+},
+{
+"line": 2,
+"s": "您看这个沙发怎么样？现在正在打折，比平时便宜了一千块。",
+"vn": "Cô xem chiếc ghế sô-pha này thế nào? Hiện đang giảm giá, rẻ hơn bình thường một nghìn tệ.",
+"ch": [
+{
+"t": "现在正在打折",
+"py": "xiànzài zhèngzài dǎzhé",
+"vn": "hiện đang giảm giá",
+"frame": "……正在 + V",
+"note": "正在 diễn tả hành động hoặc trạng thái đang diễn ra ngay tại thời điểm nói.",
+"ex": [
+[
+"周末超市正在打折。",
+"Cuối tuần siêu thị đang giảm giá."
+],
+[
+"经理正在开会。",
+"Giám đốc đang họp."
+]
+],
+"try": "Nói: “Cửa hàng sách đang giảm giá.”"
+},
+{
+"t": "比平时便宜了一千块",
+"py": "bǐ píngshí piányi le yì qiān kuài",
+"vn": "rẻ hơn bình thường một nghìn tệ",
+"frame": "A 比 B + adj + 了 + số lượng",
+"note": "Dùng so sánh hơn, “了” ở cuối câu thể hiện sự thay đổi so với trước.",
+"ex": [
+[
+"今天的菜比平时便宜了二十块。",
+"Món ăn hôm nay rẻ hơn bình thường hai mươi tệ."
+],
+[
+"今天的人比平时多了一点儿。",
+"Hôm nay đông người hơn bình thường một chút."
+]
+],
+"try": "Nói: “Điện thoại này rẻ hơn bình thường năm trăm tệ.”"
+}
+]
+},
+{
+"line": 3,
+"s": "价格还可以，就是不知道质量有没有保证。",
+"vn": "Giá cả thì cũng tạm ổn, chỉ là không biết chất lượng có được đảm bảo không.",
+"ch": [
+{
+"t": "质量有没有保证",
+"py": "zhìliàng yǒu méiyǒu bǎozhèng",
+"vn": "chất lượng có được đảm bảo không",
+"frame": "……有没有 + N",
+"note": "Dùng cấu trúc chính-phản (có hay không) để đặt câu hỏi về một yếu tố quan trọng.",
+"ex": [
+[
+"买电子产品，不知道质量有没有保证。",
+"Mua sản phẩm điện tử, không biết chất lượng có được đảm bảo không."
+],
+[
+"考试时，不知道时间有没有保证。",
+"Khi thi, không biết thời gian có được đảm bảo không."
+]
+],
+"try": "Nói: “Mua quần áo online, không biết chất lượng có được đảm bảo không.”"
+}
+]
+},
+{
+"line": 4,
+"s": "您放心，质量肯定不“打折”，这种沙发是今年最流行的。有很多种颜色可以选择，您可以看一下。",
+"vn": "Cô cứ yên tâm, chất lượng chắc chắn không \"giảm giá\", loại ghế sô-pha này là kiểu thịnh hành nhất năm nay. Có rất nhiều màu sắc để lựa chọn, cô có thể xem thử một chút.",
+"ch": [
+{
+"t": "质量肯定不“打折”",
+"py": "zhìliàng kěndìng bù “dǎzhé”",
+"vn": "chất lượng chắc chắn không \"giảm giá\"",
+"frame": "……肯定不……",
+"note": "Dùng “肯定” để khẳng định mạnh mẽ điều gì đó sẽ không xảy ra.",
+"ex": [
+[
+"明天开会，经理肯定不迟到。",
+"Ngày mai họp, giám đốc chắc chắn không đến muộn."
+],
+[
+"复习好了，这次考试肯定没问题。",
+"Ôn tập kỹ rồi, kỳ thi lần này chắc chắn không vấn đề gì."
+]
+],
+"try": "Nói: “Làm việc chăm chỉ, ông chủ chắc chắn không từ chối.”"
+},
+{
+"t": "是今年最流行的",
+"py": "shì jīnnián zuì liúxíng de",
+"vn": "là kiểu thịnh hành nhất năm nay",
+"frame": "……是 + thời gian + 最流行的",
+"note": "Dùng để giới thiệu xu hướng hoặc phong cách được ưa chuộng trong khoảng thời gian nào đó.",
+"ex": [
+[
+"这种颜色的衣服是今年最流行的。",
+"Quần áo màu này là thịnh hành nhất năm nay."
+],
+[
+"这种学习方法是现在最流行的。",
+"Phương pháp học này là thịnh hành nhất hiện nay."
+]
+],
+"try": "Nói: “Mẫu giày này là thịnh hành nhất năm nay.”"
+}
+]
+},
+{
+"line": 5,
+"s": "这个蓝色的看上去不错，就要这个吧。",
+"vn": "Cái màu xanh lam này nhìn có vẻ được đấy, lấy cái này đi.",
+"ch": [
+{
+"t": "看上去不错",
+"py": "kàn shàngqù búcuò",
+"vn": "nhìn có vẻ được",
+"frame": "……看上去 + adj",
+"note": "Dùng để nêu cảm nhận ban đầu qua vẻ bề ngoài.",
+"ex": [
+[
+"这道菜看上去不错，我想尝尝。",
+"Món ăn này nhìn có vẻ ngon, tôi muốn nếm thử."
+],
+[
+"这个新同事看上去不错。",
+"Đồng nghiệp mới này nhìn có vẻ được."
+]
+],
+"try": "Nói: “Cuốn sách này nhìn có vẻ hay.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "咱家的冰箱太旧了，商场正好打折，我们顺便也买一台吧。",
+"vn": "Tủ lạnh nhà mình cũ quá rồi, trung tâm thương mại vừa đúng lúc đang giảm giá, hay là chúng ta tiện thể mua một cái luôn đi.",
+"ch": [
+{
+"t": "顺便也买一台吧",
+"py": "shùnbiàn yě mǎi yì tái ba",
+"vn": "tiện thể cũng mua một cái đi",
+"frame": "顺便 + V",
+"note": "顺便 dùng khi tiện tay làm một việc phụ khi đang làm việc chính. 台 là lượng từ chuyên dùng cho máy móc, thiết bị.",
+"ex": [
+[
+"我下班顺便买点水果。",
+"Tôi tan làm tiện thể mua ít hoa quả."
+],
+[
+"去超市顺便帮我带瓶水。",
+"Đi siêu thị tiện thể mua hộ tớ chai nước nhé."
+]
+],
+"try": "Nói: “Tớ đi thư viện, tiện thể trả sách luôn.”"
+}
+]
+},
+{
+"line": 1,
+"s": "今天买的东西太多了。再说，这个月家里已经花了五千多了。",
+"vn": "Hôm nay mua nhiều đồ quá rồi. Hơn nữa, tháng này nhà mình đã tiêu hơn năm nghìn rồi.",
+"ch": [
+{
+"t": "再说，这个月家里已经花了五千多了",
+"py": "zàishuō, zhè ge yuè jiālǐ yǐjīng huā le wǔqiān duō le",
+"vn": "hơn nữa, tháng này nhà mình đã tiêu hơn năm nghìn rồi",
+"frame": "再说，……",
+"note": "再说 dùng để bổ sung lý do, ý nghĩa giống như “hơn nữa” hoặc “vả lại” trong tiếng Việt.",
+"ex": [
+[
+"这件衣服太贵了，再说我也有一件.",
+"Chiếc áo này đắt quá, hơn nữa tôi cũng có một chiếc rồi."
+],
+[
+"今天太晚了，再说外面下雨呢。",
+"Hôm nay muộn lắm rồi, vả lại bên ngoài đang mưa mà."
+]
+],
+"try": "Nói: “Tôi không muốn đi xem phim đâu, hơn nữa ngày mai tôi còn phải thi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "这么多？你不会是记错了吧？",
+"vn": "Nhiều thế á? Em không nhớ nhầm đấy chứ?",
+"ch": [
+{
+"t": "你不会是记错了吧",
+"py": "nǐ bú huì shì jì cuò le ba",
+"vn": "bạn không nhớ nhầm đấy chứ",
+"frame": "你不会是 + V + 吧",
+"note": "Biểu thị sự đoán định mang tính hoài nghi, bất ngờ trước một thông tin.",
+"ex": [
+[
+"你不会是18岁吧？",
+"Cậu không phải 18 tuổi đấy chứ?"
+],
+[
+"你不会是忘了吧？",
+"Cậu không quên mất đấy chứ?"
+]
+],
+"try": "Nói: “Cậu không làm sai bài tập đấy chứ?”"
+}
+]
+},
+{
+"line": 3,
+"s": "没错。上个星期光买沙发就花了两千多。",
+"vn": "Không sai đâu. Tuần trước tính riêng tiền mua sấp-fa thôi đã mất hơn hai nghìn rồi.",
+"ch": [
+{
+"t": "光买沙发就花了两千多",
+"py": "guāng mǎi shāfā jiù huā le liǎngqiān duō",
+"vn": "chỉ riêng mua súp-fa thôi đã tiêu hơn hai nghìn",
+"frame": "光 + việc gì + 就 + kết quả",
+"note": "光 mang nghĩa “chỉ, đơn thuần là”, thường kết hợp với 就 để nhấn mạnh phạm vi hoặc số lượng lớn.",
+"ex": [
+[
+"光这个汉字我就写了十遍。",
+"Chỉ riêng chữ Hán này tôi đã viết mười lần."
+],
+[
+"光学费就要五千块。",
+"Chỉ riêng học phí đã mất năm nghìn tệ."
+]
+],
+"try": "Nói: “Chỉ riêng học từ mới thôi đã mất hai tiếng rồi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "但是咱家的冰箱实在太旧了，制冷效果也不太好了，还是买个新的吧。",
+"vn": "Nhưng tủ lạnh nhà mình cũ lắm rồi, hiệu quả làm lạnh cũng không còn tốt lắm nữa, hay là mua cái mới đi.",
+"ch": [
+{
+"t": "实在太旧了",
+"py": "shízài tài jiù le",
+"vn": "thực sự quá cũ rồi",
+"frame": "实在 + tính từ",
+"note": "实在 nhấn mạnh mức độ thực tế, chân thực, thường dùng để đưa ra lý do thuyết phục người nghe.",
+"ex": [
+[
+"今天的汉字实在太多了。",
+"Hôm nay chữ Hán thực sự quá nhiều."
+],
+[
+"这个题实在太难了。",
+"Câu hỏi này thực sự quá khó."
+]
+],
+"try": "Nói: “Cái áo này thực sự quá đắt rồi.”"
+}
+]
+},
+{
+"line": 5,
+"s": "那好吧，我带的现金不够，用你的信用卡吧。",
+"vn": "Thôi được rồi, tiền mặt tôi mang theo không đủ, dùng thẻ tín dụng của anh đi.",
+"ch": [
+{
+"t": "我带的现金不够",
+"py": "wǒ dài de xiànjīn bú gòu",
+"vn": "tiền mặt tôi mang theo không đủ",
+"frame": "……的 + danh từ + 不够",
+"note": "Cụm danh từ định ngữ với 的, diễn tả lượng của danh từ phía sau không đạt yêu cầu.",
+"ex": [
+[
+"我带的钱不够。",
+"Tiền tôi mang theo không đủ."
+],
+[
+"准备的时间不够。",
+"Thời gian chuẩn bị không đủ."
+]
+],
+"try": "Nói: “Thời gian tôi có không đủ.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "李老师邀请咱们去他家做客，",
+"vn": "Thầy Lý mời chúng ta đến nhà thầy chơi,",
+"ch": [
+{
+"t": "邀请咱们去他家做客",
+"py": "yāoqǐng zánmen qù tā jiā zuòkè",
+"vn": "mời chúng ta đến nhà thầy chơi",
+"frame": "邀请 + ai + đi đâu + zuòkè",
+"note": "Dùng 咱们 để bao gồm cả người nghe, zuòkè là cụm cố định chỉ việc đến nhà ai đó chơi/dự tiệc.",
+"ex": [
+[
+"经理邀请我们去他家做客。",
+"Giám đốc mời chúng tôi đến nhà anh ấy chơi."
+],
+[
+"周末朋友邀请我去做客。",
+"Cuối tuần bạn mời tôi đến nhà chơi."
+]
+],
+"try": "Nói: “Thầy giáo mời chúng tôi đến nhà thầy chơi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "给他带点儿什么礼物好呢？",
+"vn": "mang cho thầy chút quà gì thì được nhỉ?",
+"ch": [
+{
+"t": "带点儿什么礼物好呢",
+"py": "dài diǎr shénme lǐwù hǎo ne",
+"vn": "mang chút quà gì thì được nhỉ",
+"frame": "带点儿 + vật gì + hǎo ne",
+"note": "Mẫu câu hỏi ý kiến khi đang đắn đo lựa chọn việc gì đó, rất hay dùng trong đời sống.",
+"ex": [
+[
+"第一次去见客户，带点儿什么礼物好呢？",
+"Lần đầu đi gặp khách hàng, mang chút quà gì thì được nhỉ?"
+],
+[
+"周末去朋友家，带点儿什么水果好呢？",
+"Cuối tuần đến nhà bạn, mang chút hoa quả gì thì được nhỉ?"
+]
+],
+"try": "Nói: “Đi dự tiệc sinh nhật, mua chút quà gì thì được nhỉ?”"
+}
+]
+},
+{
+"line": 1,
+"s": "他很喜欢葡萄酒，我们就给他买两瓶葡萄酒吧。",
+"vn": "Thầy ấy rất thích rượu vang, chúng ta mua tặng thầy hai chai rượu vang đi.",
+"ch": [
+{
+"t": "买两瓶葡萄酒",
+"py": "mǎi liǎng píng pútaojiǔ",
+"vn": "mua hai chai rượu vang",
+"frame": "买 + số lượng + lượng từ + đồ vật",
+"note": "Chú ý lượng từ 瓶 đi với các loại chai lọ như rượu, bia, nước ngọt.",
+"ex": [
+[
+"妈妈让我去超市买两瓶果汁。",
+"Mẹ bảo tôi ra siêu thị mua hai chai nước ép trái cây."
+],
+[
+"桌子上有两瓶水。",
+"Trên bàn có hai chai nước."
+]
+],
+"try": "Nói: “Tôi muốn mua ba chai rượu vang.”"
+}
+]
+},
+{
+"line": 2,
+"s": "可是这里有这么多种，你知道哪种好吗？",
+"vn": "Nhưng ở đây có nhiều loại thế này, cậu biết loại nào ngon không?",
+"ch": [
+{
+"t": "这里有这么多种",
+"py": "zhèli yǒu zhème duō zhǒng",
+"vn": "ở đây có nhiều loại thế này",
+"frame": "这里有 + số lượng/mức độ + loại",
+"note": "Dùng 这么多种 để diễn tả sự phong phú, đa dạng của hàng hóa trong siêu thị hoặc cửa hàng.",
+"ex": [
+[
+"超市里有这么多种水果，我不知道买哪个。",
+"Trong siêu thị có nhiều loại hoa quả thế này, tôi không biết mua cái nào."
+],
+[
+"书店里有这么多种书。",
+"Trong tiệm sách có nhiều loại sách thế này."
+]
+],
+"try": "Nói: “Cửa hàng này có nhiều loại trà thế này.”"
+}
+]
+},
+{
+"line": 3,
+"s": "我觉得这种不错，你看它酒瓶做得都这么艺术。而且电视上经常有它的广告，我想味道应该不错。",
+"vn": "Tớ thấy loại này được đấy, cậu xem chai rượu của nó làm trông cũng nghệ thuật thế cơ mà. Hơn nữa trên TV thường xuyên có quảng cáo của nó, tớ nghĩ vị chắc là ngon.",
+"ch": [
+{
+"t": "电视上经常有它的广告",
+"py": "diànshì shàng jīngcháng yǒu tā de guǎnggào",
+"vn": "trên TV thường xuyên có quảng cáo của nó",
+"frame": "电视上经常有 + cái gì + de guǎnggào",
+"note": "Diễn tả việc một sản phẩm xuất hiện liên tục trên truyền thông.",
+"ex": [
+[
+"最近电视上经常有这种手机的广告。",
+"Dạo này trên TV thường xuyên có quảng cáo điện thoại loại này."
+],
+[
+"报纸上经常有旅游广告。",
+"Trên báo thường xuyên có quảng cáo du lịch."
+]
+],
+"try": "Nói: “Trên TV thường xuyên có quảng cáo xe hơi này.”"
+},
+{
+"t": "我想味道应该不错",
+"py": "wǒ xiǎng wèidao yīnggāi búcuò",
+"vn": "tớ nghĩ vị chắc là ngon",
+"frame": "我想 + sự việc + 应该不错",
+"note": "Dùng 应该 để phỏng đoán mang tính khách quan dựa trên những gì vừa quan sát được.",
+"ex": [
+[
+"这家店的人这么多，我想味道应该不错。",
+"Quán này đông khách thế, tớ nghĩ vị chắc là ngon."
+],
+[
+"我看过这部电影，我想内容应该不错。",
+"Tôi xem phim này rồi, nội dung chắc là hay."
+]
+],
+"try": "Nói: “Món ăn này nhìn rất đẹp, tớ nghĩ vị chắc là ngon.”"
+}
+]
+},
+{
+"line": 4,
+"s": "广告只会介绍优点，却不会说它的缺点。实际上，很多东西并不像广告上说的那么好，所以不能完全相信广告。",
+"vn": "Quảng cáo chỉ giới thiệu ưu điểm, chứ không nói khuyết điểm của nó. Thực ra, rất nhiều thứ không giống như những gì quảng cáo nói đâu, cho nên không thể hoàn toàn tin vào quảng cáo.",
+"ch": [
+{
+"t": "只会介绍优点，却不会说它的缺点",
+"py": "zhǐ huì jièshào yōudiǎn, què bú huì shuō tā de quēdiǎn",
+"vn": "chỉ biết giới thiệu ưu điểm, lại không nói khuyết điểm của nó",
+"frame": "只会 + A, 却不会 + B",
+"note": "Dùng 却 để chỉ sự đối lập giữa hai mặt của một vấn đề (ưu điểm và khuyết điểm).",
+"ex": [
+[
+"他只会看书，却不会做饭。",
+"Cậu ấy chỉ biết đọc sách, chứ không biết nấu cơm."
+],
+[
+"买东西时只看价格，却不看质量。",
+"Mua đồ chỉ nhìn giá cả, lại không xem chất lượng."
+]
+],
+"try": "Nói: “Bạn ấy chỉ biết chơi game, chứ không biết học bài.”"
+},
+{
+"t": "并不像广告上说的那么好",
+"py": "bìng bú xiàng guǎnggào shàng shuō de nàme hǎo",
+"vn": "vốn không giống như những gì quảng cáo nói tốt thế",
+"frame": "并不像 + ai/cái gì + nói/làm + nàme + tính từ",
+"note": "Dùng 并不 để phủ nhận mạnh mẽ một nhận định sai lầm trước đó.",
+"ex": [
+[
+"学汉语并不像你想的那么难。",
+"Học tiếng Trung vốn không khó như bạn nghĩ."
+],
+[
+"这份工作并不像广告上说的那么轻松。",
+"Công việc này vốn không nhàn như quảng cáo nói."
+]
+],
+"try": "Nói: “Kỳ thi này vốn không khó như bạn tưởng.”"
+}
+]
+},
+{
+"line": 5,
+"s": "你说的也对。",
+"vn": "Cậu nói cũng đúng.",
+"ch": []
+}
+],
+"4": [
+{
+"line": 0,
+"s": "买衣服只考虑价格当然不好，但是只考虑买好看的也不一定对。",
+"vn": "Mua quần áo mà chỉ tính đến giá cả thì đương nhiên không tốt, nhưng chỉ nghĩ đến việc mua đồ đẹp thì chưa chắc đã đúng.",
+"ch": [
+{
+"t": "只考虑价格",
+"py": "zhǐ kǎolǜ jiàgé",
+"vn": "chỉ cân nhắc giá cả",
+"frame": "只考虑 + N",
+"note": "考虑 kết hợp trực tiếp với danh từ chỉ sự việc, không cần thêm giới từ.",
+"ex": [
+[
+"买车时不能只考虑价格。",
+"Khi mua xe không thể chỉ cân nhắc giá cả."
+],
+[
+"租房时不仅要考虑价格，还要考虑交通。",
+"Thuê nhà không chỉ phải nghĩ đến giá mà còn phải nghĩ đến giao thông."
+]
+],
+"try": "Nói: “Chọn trường đại học không thể chỉ cân nhắc địa điểm.”"
+},
+{
+"t": "也不一定对",
+"py": "yě bú yídìng duì",
+"vn": "cũng chưa chắc đã đúng",
+"frame": "……也不一定对",
+"note": "Dùng 不一定 để diễn tả phỏng đoán có chừng mực, “chưa chắc đã”.",
+"ex": [
+[
+"大家都说好的东西，也不一定对。",
+"Mọi thứ ai cũng bảo tốt thì chưa chắc đã đúng."
+],
+[
+"这种做法也不一定对。",
+"Cách làm này cũng chưa chắc đã đúng."
+]
+],
+"try": "Nói: “Người lớn nói điều đó cũng chưa chắc đã đúng.”"
+}
+]
+},
+{
+"line": 1,
+"s": "我买衣服的标准是“只买对的，不买贵的”。第一，自己穿着舒服；第二，衣服的质量要好，而且又不能太贵。",
+"vn": "Tiêu chuẩn mua quần áo của tôi là “chỉ mua đồ phù hợp, không mua đồ đắt”. Thứ nhất, bản thân mặc phải thoải mái; thứ hai, chất lượng quần áo phải tốt, hơn nữa lại không được quá đắt.",
+"ch": [
+{
+"t": "我买衣服的标准是",
+"py": "wǒ mǎi yīfu de biāozhǔn shì",
+"vn": "tiêu chuẩn mua quần áo của tôi là",
+"frame": "……的标准是 + ……",
+"note": "Cấu trúc định nghĩa hoặc nêu rõ tiêu chí của việc gì đó.",
+"ex": [
+[
+"我选手机的标准是质量好。",
+"Tiêu chuẩn chọn điện thoại của tôi là chất lượng tốt."
+],
+[
+"交朋友的标准是真诚。",
+"Tiêu chuẩn kết bạn là sự chân thành."
+]
+],
+"try": "Nói: “Tiêu chuẩn chọn việc làm của tôi là lương cao.”"
+},
+{
+"t": "自己穿着舒服",
+"py": "zìjǐ zhuānzhe shūfu",
+"vn": "bản thân mặc thoải mái",
+"frame": "自己 + V + 着 + tính từ",
+"note": "Trạng thái đang thực hiện hành động (mặc) kèm cảm nhận.",
+"ex": [
+[
+"这双鞋自己穿着很舒服。",
+"Đôi giày này tự mình đi rất thoải mái."
+],
+[
+"这张椅子自己坐着很舒服。",
+"Cái ghế này tự mình ngồi rất thoải mái."
+]
+],
+"try": "Nói: “Bộ đồ này bản thân mặc rất thoải mái.”"
+}
+]
+},
+{
+"line": 2,
+"s": "对我来说，衣服的样子流行不流行并不是很重要。",
+"vn": "Đối với tôi, kiểu dáng quần áo có hợp mốt hay không thực ra không quan trọng lắm.",
+"ch": [
+{
+"t": "对我来说",
+"py": "duì wǒ lái shuō",
+"vn": "đối với tôi",
+"frame": "对 + ai + 来说",
+"note": "Khung rất phổ biến để nêu quan điểm cá nhân, phía sau thường có 逗号.",
+"ex": [
+[
+"对学生来说，学习最重要。",
+"Đối với học sinh, việc học là quan trọng nhất."
+],
+[
+"对上班族来说，时间就是钱。",
+"Đối với người đi làm, thời gian chính là tiền bạc."
+]
+],
+"try": "Nói: “Đối với tôi, việc học tiếng Trung rất thú vị.”"
+},
+{
+"t": "并不是很重要",
+"py": "bìng bú shì hěn zhòngyào",
+"vn": "vốn không phải là rất quan trọng",
+"frame": "并 + 不/没 + là/có ……",
+"note": "并 dùng trước phủ định để nhấn mạnh sự phủ định đó là thực tế.",
+"ex": [
+[
+"这件事情并没有那么难。",
+"Sự việc này vốn không khó đến thế."
+],
+[
+"他并不是很累。",
+"Anh ấy vốn không phải rất mệt."
+]
+],
+"try": "Nói: “Điểm số vốn không phải là rất quan trọng.”"
+}
+]
+},
+{
+"line": 3,
+"s": "很多年龄大的人喜欢在打折的时候买便宜的衣服，但对那些衣服是不是适合自己却考虑得不多。这点是我理解不了的，因为如果不适合自己，即使花钱很少，也是一种浪费。",
+"vn": "Nhiều người lớn tuổi thích mua quần áo rẻ vào lúc giảm giá, nhưng lại cân nhắc không nhiều việc những bộ quần áo đó có hợp với mình hay không. Điểm này là điều tôi không thể hiểu nổi, bởi vì nếu không hợp với mình, dù có tốn ít tiền đi nữa thì cũng là một sự lãng phí.",
+"ch": [
+{
+"t": "年龄大的人",
+"py": "niánlíng dà de rén",
+"vn": "những người lớn tuổi",
+"frame": "年龄大的人 / 年轻人",
+"note": "Cách gọi trang trọng hơn 老人.",
+"ex": [
+[
+"年龄大的人喜欢早起锻炼。",
+"Người lớn tuổi thích dậy sớm tập thể dục."
+],
+[
+"年龄大的人经验更丰富。",
+"Người lớn tuổi có kinh nghiệm phong phú hơn."
+]
+],
+"try": "Nói: “Người lớn tuổi thường thích uống trà nóng.”"
+},
+{
+"t": "是我理解不了的",
+"py": "shì wǒ lǐjiě bù liǎo de",
+"vn": "là điều tôi không thể hiểu nổi",
+"frame": "……是……不了的",
+"note": "Động từ + 不了 chỉ khả năng không thể hoàn thành, kết hợp với 的 tạo thành cụm danh từ.",
+"ex": [
+[
+"这是我接受不了的。",
+"Đây là điều tôi không thể tiếp nhận nổi."
+],
+[
+"那个地方是我忘不了的。",
+"Nơi đó là nơi tôi không thể quên được."
+]
+],
+"try": "Nói: “Hành động này là điều tôi không thể tha thứ nổi.”"
+},
+{
+"t": "即使花钱很少",
+"py": "jíshǐ huā qián hěn shǎo",
+"vn": "cho dù tiêu ít tiền",
+"frame": "即使……也……",
+"note": "Cấu trúc giả định nhượng bộ: “cho dù… cũng…”.",
+"ex": [
+[
+"即使工作再忙，也要吃饭。",
+"Cho dù công việc bận đến đâu cũng phải ăn cơm."
+],
+[
+"即使下雨，我也要去上课。",
+"Cho dù trời mưa, tôi cũng phải đi học."
+]
+],
+"try": "Nói: “Cho dù bài khó đến đâu, tôi cũng sẽ cố gắng làm.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "现在网上购物变得越来越流行了，年轻人尤其喜欢在网上买东西。",
+"vn": "Bây giờ mua sắm trên mạng ngày càng trở nên thịnh hành, giới trẻ đặc biệt thích mua đồ trên mạng.",
+"ch": [
+{
+"t": "变得越来越流行了",
+"py": "biàn dé yuè lái yuè liúxíng le",
+"vn": "trở nên ngày càng thịnh hành",
+"frame": "……变得越来越 + tính từ + le",
+"note": "Biểu thị sự thay đổi xu hướng theo thời gian. Có thể thay tính từ phía sau.",
+"ex": [
+[
+"现在学习汉语的人变得越来越多了。",
+"Bây giờ người học tiếng Trung trở nên ngày càng nhiều lên."
+],
+[
+"这里的交通变得越来越方便了。",
+"Giao thông ở đây trở nên ngày càng thuận tiện rồi."
+]
+],
+"try": "Nói: “Công việc của tôi trở nên ngày càng bận rộn rồi.”"
+},
+{
+"t": "尤其喜欢",
+"py": "yóuqí xǐhuān",
+"vn": "đặc biệt thích",
+"frame": "……尤其 + động từ/tính từ",
+"note": "Dùng để nhấn mạnh một đối tượng nổi bật hơn so với các đối tượng khác trong cùng nhóm.",
+"ex": [
+[
+"我喜欢吃水果，尤其喜欢吃西瓜。",
+"Tôi thích ăn hoa quả, đặc biệt thích ăn dưa hấu."
+],
+[
+"这件衣服很好看，我同事尤其喜欢。",
+"Bộ đồ này rất đẹp, đồng nghiệp của tôi đặc biệt thích."
+]
+],
+"try": "Nói: “Tôi thích đi du lịch, đặc biệt thích đi cùng gia đình.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在网上几乎什么都可以买到，你可以上网买书、买衣服、买包，还可以买家具、买手机。",
+"vn": "Trên mạng hầu như cái gì cũng có thể mua được, bạn có thể lên mạng mua sách, mua quần áo, mua túi xách, còn có thể mua đồ gia dụng, mua điện thoại.",
+"ch": [
+{
+"t": "几乎什么都可以买到",
+"py": "jīhū shénme dōu kěyǐ mǎidào",
+"vn": "hầu như cái gì cũng có thể mua được",
+"frame": "几乎什么都 + có thể + động từ + được",
+"note": "几乎 đứng trước chủ ngữ hoặc sau chủ ngữ đều được, kết hợp với 什么都 nhấn mạnh phạm vi toàn bộ.",
+"ex": [
+[
+"周末我太忙了，几乎哪儿也不能去。",
+"Cuối tuần tôi bận quá, hầu như đi đâu cũng không được."
+],
+[
+"商店里的人太多了，几乎什么东西都没有了。",
+"Người trong cửa hàng đông quá, hầu như chẳng còn món đồ nào nữa."
+]
+],
+"try": "Nói: “Siêu thị này rất lớn, hầu như thứ gì cũng có.”"
+}
+]
+},
+{
+"line": 2,
+"s": "网上购物能够受到人们的喜爱，原因主要有两个：首先，网上的东西很多，而且比去商店买便宜，这是吸引人们购买的主要原因。",
+"vn": "Mua sắm trên mạng có thể được mọi người yêu thích, nguyên nhân chủ yếu có hai điều: trước hết, đồ trên mạng rất nhiều, hơn nữa lại rẻ hơn đi cửa hàng mua, đây là nguyên nhân chủ yếu thu hút mọi người mua sắm.",
+"ch": [
+{
+"t": "受到人们的喜爱",
+"py": "shòudào rénmen de xǐ'ài",
+"vn": "được mọi người yêu thích",
+"frame": "A 受到 B 的喜爱 / 欢迎",
+"note": "Cấu trúc bị động nhưng mang nghĩa chủ động tích cực, rất hay dùng trong văn viết và thương mại.",
+"ex": [
+[
+"这个新手机一上市就受到了大家的喜爱。",
+"Chiếc điện thoại mới này vừa ra mắt đã được mọi người yêu thích."
+],
+[
+"这种教学方法很受学生欢迎。",
+"Phương pháp giảng dạy này rất được học sinh hoan nghênh."
+]
+],
+"try": "Nói: “Bộ phim này rất được các bạn trẻ yêu thích.”"
+},
+{
+"t": "原因主要有两个",
+"py": "yuányīn zhǔyào yǒu liǎng gè",
+"vn": "nguyên nhân chủ yếu có hai điều",
+"frame": "……原因主要有两个：首先……其次……",
+"note": "Dùng để liệt kê lý do một cách rành mạch, rất phù hợp khi viết bài luận HSK4.",
+"ex": [
+[
+"我学汉语的原因主要有两个：兴趣和工作需要。",
+"Nguyên nhân tôi học tiếng Trung chủ yếu có hai: sở thích và nhu cầu công việc."
+],
+[
+"今天迟到的原因主要有两个：堵车和闹钟坏了。",
+"Nguyên nhân đi muộn hôm nay chủ yếu có hai: tắc đường và hỏng đồng hồ báo thức."
+]
+],
+"try": "Nói: “Nguyên nhân tôi chọn công ty này chủ yếu có hai.”"
+}
+]
+},
+{
+"line": 3,
+"s": "其次，人们可以在任何时间上网购买自己喜欢的东西，卖家可以把你买的东西寄到你办公室或者家里，非常方便。",
+"vn": "Thứ hai, mọi người có thể vào bất kỳ thời gian nào lên mạng mua sắm món đồ mình thích, người bán hàng có thể gửi món đồ bạn mua đến văn phòng hoặc nhà bạn, vô cùng tiện lợi.",
+"ch": [
+{
+"t": "在任何时间",
+"py": "zài rènhé shíjiān",
+"vn": "vào bất kỳ thời gian nào",
+"frame": "在任何 + danh từ + 都……",
+"note": "任何 đi với danh từ chỉ thời gian, địa điểm, người… và thường đi kèm 都 ở vế sau để nhấn mạnh 'bất cứ... nào cũng'.",
+"ex": [
+[
+"在任何情况下，我们都不能放弃。",
+"Trong bất kỳ hoàn cảnh nào, chúng ta cũng không thể từ bỏ."
+],
+[
+"任何问题都可以跟老师商量。",
+"Bất kỳ vấn đề nào cũng có thể trao đổi với thầy giáo."
+]
+],
+"try": "Nói: “Bất kỳ ai cũng có thể tham gia cuộc thi này.”"
+},
+{
+"t": "寄到你办公室或者家里",
+"py": "jì dào nǐ bàngōngshì huòzhě jiālǐ",
+"vn": "gửi đến văn phòng hoặc nhà bạn",
+"frame": "寄 + vật + đến + địa điểm",
+"note": "Động từ 寄 (gửi) kết hợp với bổ ngữ kết quả 到 (đến) rồi cộng với địa điểm nhận.",
+"ex": [
+[
+"请把合同寄到公司来。",
+"Xin hãy gửi hợp đồng đến công ty nhé."
+],
+[
+"妈妈从老家给我寄了很多好吃的。",
+"Mẹ gửi cho tôi rất nhiều đồ ăn ngon từ quê lên."
+]
+],
+"try": "Nói: “Hãy gửi bưu kiện này đến nhà của tôi.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "购物是我们生活中几乎每天都要发生的事情。目前很多商场集购物、休闲、娱乐、餐饮等多种功能于一体，可以满足一个家庭所有成员的需求。逛商场已经成为人们家庭生活的一部分。",
+"vn": "Mua sắm là việc hầu như ngày nào cũng diễn ra trong cuộc sống của chúng ta. Hiện nay, nhiều trung tâm thương mại tích hợp nhiều chức năng như mua sắm, giải trí, ăn uống làm một, có thể đáp ứng nhu cầu của tất cả các thành viên trong một gia đình. Đi mua sắm đã trở thành một phần trong cuộc sống gia đình của mọi người.",
+"ch": [
+{
+"t": "集购物、休闲、娱乐、餐饮等多种功能于一体",
+"py": "jí gōuwù, xiūxián, yúlè, cānyǐn děng duōzhǒng gōngnéng yú yíqiè",
+"vn": "tích hợp nhiều chức năng như mua sắm, nghỉ ngơi, giải trí, ăn uống làm một",
+"frame": "……集 + A, B, C……于一体",
+"note": "Cấu trúc hay dùng để miêu tả các tòa nhà hoặc dịch vụ hiện đại kết hợp nhiều tiện ích.",
+"ex": [
+[
+"这个新公园集运动、休闲于一体。",
+"Công viên mới này tích hợp thể thao và nghỉ ngơi làm một."
+],
+[
+"这家酒店集住宿、吃饭于一体。",
+"Khách sạn này tích hợp lưu trú và ăn uống làm một."
+]
+],
+"try": "Nói: “Tòa nhà mới này tích hợp văn phòng và mua sắm làm một.”"
+},
+{
+"t": "满足一个家庭所有成员的需求",
+"py": "mǎnzhù yí gè jiātíng suǒyǒu chéngyuán de xūqiú",
+"vn": "đáp ứng nhu cầu của tất cả thành viên trong một gia đình",
+"frame": "满足 + ai/cái gì + 的需求",
+"note": "Cụm từ cố định rất hữu ích khi nói về việc phục vụ khách hàng hoặc người thân.",
+"ex": [
+[
+"我们要努力满足客户的需求。",
+"Chúng ta phải nỗ lực đáp ứng nhu cầu của khách hàng."
+],
+[
+"学校的图书馆能满足学生的需求。",
+"Thư viện của trường có thể đáp ứng nhu cầu của học sinh."
+]
+],
+"try": "Nói: “Cửa hàng này có thể đáp ứng nhu cầu của bạn.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在一些小店里买东西还可以砍价，如果掌握一些砍价的方法，你就可以用更低的价格买到你想要的东西。",
+"vn": "Mua đồ ở một số cửa hàng nhỏ còn có thể mặc cả, nếu nắm vững một số phương pháp mặc cả, bạn có thể mua được món đồ mình muốn với giá thấp hơn.",
+"ch": [
+{
+"t": "如果掌握一些砍价的方法",
+"py": "rúguǒ zhǎngwò yìxiē kǎnjià de fāngfǎ",
+"vn": "nếu nắm vững một số phương pháp mặc cả",
+"frame": "如果掌握 + … + 的方法",
+"note": "Dùng để đưa ra điều kiện về kỹ năng hoặc bí quyết làm việc gì đó.",
+"ex": [
+[
+"如果掌握一些学习的方法，汉语学得更快。",
+"Nếu nắm vững một số phương pháp học, học tiếng Trung sẽ nhanh hơn."
+],
+[
+"如果掌握工作的方法，效率会很高。",
+"Nếu nắm vững phương pháp làm việc, hiệu suất sẽ rất cao."
+]
+],
+"try": "Nói: “Nếu nắm vững phương pháp thi, bạn sẽ dễ đỗ hơn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "另外，现在网上购物也越来越流行了。总之，人们购物的方式越来越丰富了。",
+"vn": "Ngoài ra, mua sắm qua mạng hiện nay cũng ngày càng thịnh hành. Tóm lại, phương thức mua sắm của mọi người ngày càng phong phú.",
+"ch": [
+{
+"t": "越来越流行了",
+"py": "yuè lái yuè liúxíng le",
+"vn": "ngày càng thịnh hành rồi",
+"frame": "……越来越 + tính từ + 了",
+"note": "Biểu thị sự thay đổi theo thời gian, rất hay xuất hiện trong HSK4.",
+"ex": [
+[
+"现在学汉语的人越来越多了。",
+"Người học tiếng Trung hiện nay ngày càng nhiều lên."
+],
+[
+"这种手机越来越贵了。",
+"Loại điện thoại này ngày càng đắt hơn."
+]
+],
+"try": "Nói: “Công việc này ngày càng bận rộn rồi.”"
+}
+]
+}
+]
+}

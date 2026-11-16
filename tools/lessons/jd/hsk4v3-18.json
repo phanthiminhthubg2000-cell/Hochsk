@@ -1,0 +1,562 @@
+{
+"1": [
+{
+"line": 0,
+"s": "安妮，我们在这儿呢。",
+"vn": "Annie, chúng mình ở đây này.",
+"ch": []
+},
+{
+"line": 1,
+"s": "天中、家月，你们猜我是怎么过来的？",
+"vn": "Thiên Trung, Gia Nguyệt, các bạn đoán xem mình đến đây bằng cách nào?",
+"ch": [
+{
+"t": "你们猜我是怎么……的",
+"py": "nǐmen cǎi wǒ shì zěnme... de",
+"vn": "Các bạn đoán xem mình làm... như thế nào",
+"frame": "你们猜我是怎么 + V + 的？",
+"note": "Dùng để đố người khác về cách thức mình đã thực hiện một hành động nào đó.",
+"ex": [
+[
+"你们猜我是怎么学会做饭的？",
+"Các bạn đoán xem mình học nấu ăn bằng cách nào?"
+],
+[
+"你们猜我是怎么找到这份工作的？",
+"Các bạn đoán xem mình tìm được công việc này bằng cách nào?"
+]
+],
+"try": "Nói: Các bạn đoán xem mình đã học tiếng Trung bằng cách nào?"
+}
+]
+},
+{
+"line": 2,
+"s": "坐公交车吗？",
+"vn": "Đi xe buýt à?",
+"ch": []
+},
+{
+"line": 3,
+"s": "我先坐的公交车，然后骑共享单车，快到那边那个出口时又推了一小段。",
+"vn": "Mình đi xe buýt trước, sau đó đạp xe chia sẻ, lúc sắp đến cái lối ra đằng kia thì dắt bộ một đoạn ngắn.",
+"ch": [
+{
+"t": "快到……时",
+"py": "kuài dào... shí",
+"vn": "lúc sắp đến...",
+"frame": "快到 + địa điểm + 时",
+"note": "Dùng để chỉ thời điểm sát nút khi sắp tiếp cận một nơi nào đó.",
+"ex": [
+[
+"快到学校时，我才发现没带书。",
+"Lúc sắp đến trường, tôi mới phát hiện không mang sách."
+],
+[
+"快到公司时，我买了一杯咖啡。",
+"Lúc sắp đến công ty, tôi đã mua một cốc cà phê."
+]
+],
+"try": "Nói: Lúc sắp đến nhà, trời bắt đầu mưa."
+}
+]
+},
+{
+"line": 4,
+"s": "我看很多人都骑共享单车，我还没骑过呢。",
+"vn": "Mình thấy nhiều người đạp xe chia sẻ lắm, mình thì chưa đạp bao giờ.",
+"ch": [
+{
+"t": "我还没……过呢",
+"py": "wǒ hái méi... guo ne",
+"vn": "mình chưa từng... bao giờ",
+"frame": "我还没 + V + 过呢",
+"note": "Dùng để diễn tả một trải nghiệm mình chưa từng có trước đây.",
+"ex": [
+[
+"我还没去过中国呢。",
+"Tôi chưa từng đến Trung Quốc bao giờ."
+],
+[
+"我还没看过这部电影呢。",
+"Tôi chưa từng xem bộ phim này bao giờ."
+]
+],
+"try": "Nói: Mình chưa từng thử món ăn này bao giờ."
+}
+]
+},
+{
+"line": 5,
+"s": "我骑过，很方便的。第一次骑的时候，你打开微信，对着共享单车上的二维码扫一下，在App上完成注册就可以了，怎么使用、费用标准什么的App上都有说明。",
+"vn": "Mình đạp rồi, rất tiện. Lần đầu đạp, bạn mở WeChat, quét mã QR trên xe, hoàn thành đăng ký trên App là được, cách sử dụng, tiêu chuẩn phí các thứ trên App đều có hướng dẫn.",
+"ch": [
+{
+"t": "第一次……的时候",
+"py": "dì yī cì... de shíhou",
+"vn": "lúc lần đầu tiên...",
+"frame": "第一次 + V + 的时候",
+"note": "Dùng để nhắc về lần đầu tiên thực hiện một việc gì đó.",
+"ex": [
+[
+"第一次学汉语的时候，我觉得很难。",
+"Lúc mới học tiếng Trung lần đầu, tôi thấy rất khó."
+],
+[
+"第一次去面试的时候，我很紧张。",
+"Lúc đi phỏng vấn lần đầu tiên, tôi rất căng thẳng."
+]
+],
+"try": "Nói: Lúc lần đầu tiên đi du lịch, mình rất vui."
+},
+{
+"t": "……什么的",
+"py": "... shénme de",
+"vn": "... các thứ",
+"frame": "A, B + 什么的",
+"note": "Dùng để liệt kê không đầy đủ, mang nghĩa là 'vân vân' hoặc 'các thứ'.",
+"ex": [
+[
+"我喜欢买衣服、鞋子什么的。",
+"Tôi thích mua quần áo, giày dép các thứ."
+],
+[
+"我们要准备护照、签证什么的。",
+"Chúng ta cần chuẩn bị hộ chiếu, visa các thứ."
+]
+],
+"try": "Nói: Mình cần mua bút, vở các thứ để đi học."
+}
+]
+},
+{
+"line": 6,
+"s": "好啊！哪天我出去办事时也试试。",
+"vn": "Được đấy! Hôm nào mình ra ngoài có việc cũng sẽ thử xem.",
+"ch": []
+}
+],
+"2": [
+{
+"line": 0,
+"s": "差点儿忘了，我给你们看个短视频。",
+"vn": "Suýt chút nữa thì quên, để tôi cho các bạn xem một đoạn video ngắn.",
+"ch": [
+{
+"t": "差点儿忘了",
+"py": "chàdiǎnr wàngle",
+"vn": "suýt nữa thì quên",
+"frame": "差点儿 + V",
+"note": "Dùng để diễn tả một việc suýt xảy ra nhưng may là chưa xảy ra hoặc kịp thời nhận ra.",
+"ex": [
+[
+"差点儿迟到了。",
+"Suýt nữa thì muộn giờ."
+],
+[
+"差点儿把手机丢了。",
+"Suýt nữa thì làm mất điện thoại."
+]
+],
+"try": "Nói: \"Suýt nữa thì tôi quên làm bài tập về nhà.\""
+}
+]
+},
+{
+"line": 1,
+"s": "啊？你们拍的？真不错！",
+"vn": "À? Các bạn quay đấy à? Thật tuyệt!",
+"ch": []
+},
+{
+"line": 2,
+"s": "对！前段时间老师留了个作业，叫各个小组拍个短视频，介绍中国美食。我们小组讨论后决定，由AI小语演厨师，做出中国各地的著名小吃。拍完后，老师说很不错。",
+"vn": "Đúng vậy! Thời gian trước thầy giáo giao bài tập, bảo các nhóm quay một video ngắn giới thiệu ẩm thực Trung Quốc. Nhóm mình thảo luận xong quyết định để AI Xiaoyu đóng vai đầu bếp, làm các món ăn vặt nổi tiếng khắp Trung Quốc. Sau khi quay xong, thầy nói rất tuyệt.",
+"ch": [
+{
+"t": "由AI小语演厨师",
+"py": "yóu AI Xiǎoyǔ yǎn chúshī",
+"vn": "do AI Xiaoyu đóng vai đầu bếp",
+"frame": "由 + ai + làm gì",
+"note": "Dùng để chỉ việc gì đó được giao cho ai phụ trách hoặc do ai thực hiện.",
+"ex": [
+[
+"这件事由他负责。",
+"Việc này do anh ấy phụ trách."
+],
+[
+"会议由经理主持。",
+"Cuộc họp do giám đốc chủ trì."
+]
+],
+"try": "Nói: \"Bài thuyết trình này do tôi trình bày.\""
+}
+]
+},
+{
+"line": 3,
+"s": "嗯，语言也很幽默！",
+"vn": "Ừm, ngôn ngữ cũng rất hài hước!",
+"ch": []
+},
+{
+"line": 4,
+"s": "后来这个视频让我同学放到了互联网上，很多人都来点赞。",
+"vn": "Sau đó video này được bạn tôi đăng lên mạng, rất nhiều người đã vào thả tim.",
+"ch": [
+{
+"t": "让我同学放到了互联网上",
+"py": "ràng wǒ tóngxué fàng dào le hùliánwǎng shàng",
+"vn": "được bạn tôi đăng lên mạng",
+"frame": "让 + ai + làm gì",
+"note": "Cấu trúc khiến/để cho ai đó thực hiện hành động, ở đây mang nghĩa bị động nhẹ nhàng.",
+"ex": [
+[
+"让他帮你吧。",
+"Để anh ấy giúp bạn đi."
+],
+[
+"别让我等太久。",
+"Đừng để tôi đợi quá lâu."
+]
+],
+"try": "Nói: \"Để tôi gửi tài liệu cho bạn.\""
+}
+]
+},
+{
+"line": 5,
+"s": "看来大家都喜欢这个视频。",
+"vn": "Xem ra mọi người đều thích video này.",
+"ch": [
+{
+"t": "看来",
+"py": "kànlái",
+"vn": "xem ra",
+"frame": "看来 + mệnh đề",
+"note": "Dùng để đưa ra nhận định dựa trên những gì đã thấy hoặc đã nghe.",
+"ex": [
+[
+"看来明天会下雨。",
+"Xem ra ngày mai sẽ mưa."
+],
+[
+"看来他今天不来了。",
+"Xem ra hôm nay anh ấy không đến rồi."
+]
+],
+"try": "Nói: \"Xem ra hôm nay mọi người đều rất bận.\""
+}
+]
+},
+{
+"line": 6,
+"s": "后边我们打算拍第二个、第三个，让小语带大家到中国各地走一走、看一看。",
+"vn": "Sau này chúng mình dự định quay cái thứ hai, thứ ba, để Xiaoyu dẫn mọi người đi dạo, đi xem khắp Trung Quốc.",
+"ch": [
+{
+"t": "打算拍",
+"py": "dǎsuàn pāi",
+"vn": "dự định quay",
+"frame": "打算 + V",
+"note": "Dùng để nói về kế hoạch hoặc dự định trong tương lai gần.",
+"ex": [
+[
+"我打算去旅游。",
+"Tôi dự định đi du lịch."
+],
+[
+"你打算什么时候回国？",
+"Bạn dự định khi nào về nước?"
+]
+],
+"try": "Nói: \"Tôi dự định học thêm tiếng Trung.\""
+}
+]
+},
+{
+"line": 7,
+"s": "这样大家就能通过你们的视频了解中国了，我支持你们！",
+"vn": "Như vậy mọi người có thể thông qua video của các bạn để hiểu về Trung Quốc rồi, tôi ủng hộ các bạn!",
+"ch": [
+{
+"t": "通过你们的视频了解中国",
+"py": "tōngguò nǐmen de shìpín liǎojiě Zhōngguó",
+"vn": "thông qua video của các bạn để hiểu về Trung Quốc",
+"frame": "通过 + phương tiện + V",
+"note": "Dùng để chỉ cách thức hoặc công cụ để đạt được mục đích.",
+"ex": [
+[
+"通过努力，我通过了考试。",
+"Thông qua nỗ lực, tôi đã đỗ kỳ thi."
+],
+[
+"通过新闻了解世界。",
+"Thông qua tin tức để hiểu về thế giới."
+]
+],
+"try": "Nói: \"Thông qua sách để học từ mới.\""
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "安妮骑共享单车到了白家月、陈天中的学校，三人从共享单车聊到AI眼镜和3D打印机，从绿色经济聊到上门经济。",
+"vn": "Annie đạp xe đạp chia sẻ đến trường của Bạch Gia Nguyệt và Trần Thiên Trung, ba người họ nói chuyện từ xe đạp chia sẻ đến kính AI và máy in 3D, từ kinh tế xanh đến kinh tế dịch vụ tận nơi.",
+"ch": [
+{
+"t": "从……聊到……",
+"py": "cóng... liáodào...",
+"vn": "nói chuyện từ... đến...",
+"frame": "从 A 聊到 B",
+"note": "Dùng để liệt kê các chủ đề câu chuyện thay đổi liên tục. Không cần dịch từng từ, chỉ cần hiểu là chuyển chủ đề.",
+"ex": [
+[
+"我们从学习聊到工作。",
+"Chúng tôi nói chuyện từ việc học sang việc làm."
+],
+[
+"大家从旅游聊到美食。",
+"Mọi người nói chuyện từ du lịch sang ẩm thực."
+]
+],
+"try": "Nói: “Chúng tôi nói chuyện từ phim ảnh sang âm nhạc.”"
+}
+]
+},
+{
+"line": 0,
+"s": "科技到底对世界产生了怎样的影响？他们都认为，科技确实改变了人们的生活。",
+"vn": "Rốt cuộc thì công nghệ đã gây ra ảnh hưởng như thế nào đối với thế giới? Họ đều cho rằng, công nghệ thực sự đã thay đổi cuộc sống của con người.",
+"ch": [
+{
+"t": "科技到底对世界产生了怎样的影响",
+"py": "kējì dàodǐ duì shìjiè chǎnshēng le zěnyàng de yǐngxiǎng",
+"vn": "công nghệ rốt cuộc đã tạo ra ảnh hưởng thế nào đến thế giới",
+"frame": "到底 + câu hỏi",
+"note": "到底 dùng trong câu hỏi để nhấn mạnh sự tò mò, muốn biết rõ bản chất vấn đề (rốt cuộc là).",
+"ex": [
+[
+"你到底想买哪一个？",
+"Rốt cuộc là bạn muốn mua cái nào?"
+],
+[
+"这件事情到底是怎么回事？",
+"Chuyện này rốt cuộc là thế nào?"
+]
+],
+"try": "Nói: “Rốt cuộc là bạn có đi học không?”"
+}
+]
+},
+{
+"line": 1,
+"s": "接着，安妮给大家看了她和同学们拍的短视频。安妮说，短视频是用手机拍的，他们装了一些免费的App，仅用几天就拍完了。",
+"vn": "Tiếp đó, Annie cho mọi người xem video ngắn mà cô và các bạn cùng lớp đã quay. Annie nói, video ngắn được quay bằng điện thoại, họ cài một vài ứng dụng miễn phí, chỉ mất vài ngày là quay xong.",
+"ch": [
+{
+"t": "仅用几天",
+"py": "jǐn yòng jǐ tiān",
+"vn": "chỉ mất vài ngày",
+"frame": "仅 + số lượng + V",
+"note": "仅 mang nghĩa là “chỉ”, nhấn mạnh sự ít ỏi hoặc nhanh chóng, thường dùng trong văn viết hoặc tình huống trang trọng hơn chút.",
+"ex": [
+[
+"他仅用一年就学会了汉语。",
+"Anh ấy chỉ mất một năm đã học được tiếng Trung."
+],
+[
+"这个项目仅用了三天就完成了。",
+"Dự án này chỉ mất ba ngày là hoàn thành."
+]
+],
+"try": "Nói: “Tôi chỉ mất 10 phút để chuẩn bị bài.”"
+}
+]
+},
+{
+"line": 1,
+"s": "视频里，小语做的小吃丰富多样，看起来好吃极了。短视频推出后，大家认为非常精彩，白家月和陈天中看后也特别喜欢，并且表示支持他们拍更多的视频。",
+"vn": "Trong video, những món ăn vặt Tiểu Ngữ làm rất phong phú đa dạng, nhìn cực kỳ ngon. Sau khi video ngắn được tung ra, mọi người đều thấy rất đặc sắc, Bạch Gia Nguyệt và Trần Thiên Trung sau khi xem xong cũng đặc biệt thích, và bày tỏ ủng hộ họ quay thêm nhiều video nữa.",
+"ch": [
+{
+"t": "看起来好吃极了",
+"py": "kàn qǐlái hǎochī jí le",
+"vn": "nhìn cực kỳ ngon",
+"frame": "看起来 + tính từ + 极了",
+"note": "Cấu trúc dùng để nhận xét về vẻ ngoài của sự vật, 极了 nhấn mạnh mức độ cao nhất.",
+"ex": [
+[
+"这件衣服看起来漂亮极了。",
+"Bộ quần áo này nhìn đẹp cực kỳ."
+],
+[
+"这里的风景看起来美极了。",
+"Phong cảnh ở đây nhìn đẹp tuyệt vời."
+]
+],
+"try": "Nói: “Món ăn này nhìn ngon cực kỳ.”"
+},
+{
+"t": "表示支持",
+"py": "biǎoshì zhīchí",
+"vn": "bày tỏ sự ủng hộ",
+"frame": "表示 + hành động/thái độ",
+"note": "Dùng để diễn đạt việc công khai thể hiện quan điểm hoặc thái độ về một vấn đề.",
+"ex": [
+[
+"老师表示同意我的想法。",
+"Thầy giáo bày tỏ đồng ý với suy nghĩ của tôi."
+],
+[
+"他表示愿意帮忙。",
+"Anh ấy bày tỏ sẵn lòng giúp đỡ."
+]
+],
+"try": "Nói: “Sếp bày tỏ ủng hộ kế hoạch của tôi.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "随着互联网技术的发展，现在又出现了一种新的服务方式——上门经济，就是预约者通过网上预约，让服务人员在合适的时间到家里或者约好的地点服务，",
+"vn": "Cùng với sự phát triển của công nghệ internet, hiện nay lại xuất hiện một phương thức dịch vụ mới - kinh tế tận nơi, tức là người đặt dịch vụ thông qua đặt lịch trực tuyến, để nhân viên dịch vụ đến nhà hoặc địa điểm đã hẹn vào thời gian thích hợp để phục vụ,",
+"ch": [
+{
+"t": "随着互联网技术的发展",
+"py": "suízhe hùliánwǎng jìshù de fāzhǎn",
+"vn": "cùng với sự phát triển của công nghệ internet",
+"frame": "随着 + N (sự thay đổi/phát triển), ……",
+"note": "Dùng để dẫn dắt bối cảnh hoặc nguyên nhân dẫn đến sự thay đổi.",
+"ex": [
+[
+"随着经济的发展，人们的生活水平提高了。",
+"Cùng với sự phát triển kinh tế, mức sống của mọi người đã tăng lên."
+],
+[
+"随着年龄的增长，他变得越来越成熟了。",
+"Cùng với sự tăng lên của tuổi tác, anh ấy ngày càng trưởng thành hơn."
+]
+],
+"try": "Nói: “Cùng với việc học tiếng Trung, tôi hiểu thêm về văn hóa Trung Quốc.”"
+},
+{
+"t": "让服务人员在合适的时间到家里",
+"py": "ràng fúwù rényuán zài héshì de shíjiān dào jiālǐ",
+"vn": "để nhân viên dịch vụ đến nhà vào thời gian thích hợp",
+"frame": "让 + ai + làm gì",
+"note": "Cấu trúc khiến khiến, dùng để sai khiến hoặc nhờ vả ai đó làm việc gì.",
+"ex": [
+[
+"老板让我明天去公司加班。",
+"Sếp bảo tôi mai đến công ty tăng ca."
+],
+[
+"老师让我下课后去办公室找他。",
+"Thầy giáo bảo tôi sau giờ học đến văn phòng tìm thầy."
+]
+],
+"try": "Nói: “Mẹ bảo tôi cuối tuần đi siêu thị mua đồ.”"
+}
+]
+},
+{
+"line": 0,
+"s": "服务内容有上门做饭、照顾小动物、取东西等。赵女士养了一只猫，由于工作等原因，她需要经常出差，然而又很担心猫的安全。",
+"vn": "Nội dung dịch vụ bao gồm nấu ăn tại nhà, chăm sóc thú cưng, lấy đồ đạc, v.v. Cô Triệu nuôi một con mèo, do công việc và các nguyên nhân khác, cô ấy cần thường xuyên đi công tác, tuy nhiên lại rất lo lắng cho sự an toàn của con mèo.",
+"ch": [
+{
+"t": "由于工作等原因",
+"py": "yóuyú gōngzuò děng yuányīn",
+"vn": "do công việc và các nguyên nhân khác",
+"frame": "由于 + N, ……",
+"note": "Dùng để chỉ nguyên nhân, mang sắc thái trang trọng hơn '因为'.",
+"ex": [
+[
+"由于天气原因，飞机晚点了。",
+"Do nguyên nhân thời tiết, máy bay bị hoãn."
+],
+[
+"由于身体原因，他今天不能去上班。",
+"Do nguyên nhân sức khỏe, hôm nay anh ấy không thể đi làm."
+]
+],
+"try": "Nói: “Do nguyên nhân giao thông, tôi đến muộn.”"
+}
+]
+},
+{
+"line": 0,
+"s": "有了上门服务后，她觉得方便多了，不必再找亲戚帮忙。每次出差，在网上预约并支付费用后，服务人员就会按她提出的要求上门照顾小猫，大大减轻了她的压力，赵女士也特别满意。",
+"vn": "Sau khi có dịch vụ tận nơi, cô ấy cảm thấy tiện lợi hơn nhiều, không cần phải tìm người thân giúp đỡ nữa. Mỗi lần đi công tác, sau khi đặt lịch trực tuyến và thanh toán phí, nhân viên dịch vụ sẽ theo yêu cầu cô ấy đưa ra để đến nhà chăm sóc mèo, giảm bớt rất nhiều áp lực cho cô ấy, cô Triệu cũng vô cùng hài lòng.",
+"ch": [
+{
+"t": "不必再找亲戚帮忙",
+"py": "búbì zài zhǎo qīnqī bāngmáng",
+"vn": "không cần phải tìm người thân giúp đỡ nữa",
+"frame": "不必 + V",
+"note": "Biểu thị không cần thiết phải làm gì, dùng trong văn viết hoặc tình huống trang trọng.",
+"ex": [
+[
+"你不必担心，我会帮你的。",
+"Bạn không cần phải lo lắng, tôi sẽ giúp bạn."
+],
+[
+"这里离学校很近，不必坐车。",
+"Ở đây gần trường, không cần phải đi xe."
+]
+],
+"try": "Nói: “Đồ ăn còn nhiều, không cần phải nấu thêm đâu.”"
+},
+{
+"t": "大大减轻了她的压力",
+"py": "dàdà jiǎnqīng le tā de yālì",
+"vn": "giảm bớt rất nhiều áp lực cho cô ấy",
+"frame": "大大 + V",
+"note": "Dùng để nhấn mạnh mức độ của động từ tăng lên hoặc giảm xuống rất nhiều.",
+"ex": [
+[
+"这个新政策大大提高了工作效率。",
+"Chính sách mới này đã nâng cao hiệu quả công việc lên rất nhiều."
+],
+[
+"这次旅行大大改善了我的心情。",
+"Chuyến du lịch này đã cải thiện tâm trạng của tôi rất nhiều."
+]
+],
+"try": "Nói: “Phương pháp này đã giúp tôi giảm bớt rất nhiều áp lực học tập.”"
+}
+]
+},
+{
+"line": 1,
+"s": "当然，上门经济也有一些问题，特别是现有服务人员有些还不够专业，需要重新学习，提高服务质量。",
+"vn": "Đương nhiên, kinh tế tận nơi cũng có một số vấn đề, đặc biệt là nhân viên dịch vụ hiện có một số người vẫn chưa đủ chuyên nghiệp, cần học tập lại để nâng cao chất lượng dịch vụ.",
+"ch": [
+{
+"t": "特别是",
+"py": "tèbié shì",
+"vn": "đặc biệt là",
+"frame": "……，特别是……",
+"note": "Dùng để nhấn mạnh một bộ phận hoặc trường hợp tiêu biểu trong một tập thể.",
+"ex": [
+[
+"我喜欢吃水果，特别是苹果。",
+"Tôi thích ăn trái cây, đặc biệt là táo."
+],
+[
+"他有很多爱好，特别是踢足球。",
+"Anh ấy có nhiều sở thích, đặc biệt là đá bóng."
+]
+],
+"try": "Nói: “Tôi thích đi du lịch, đặc biệt là đi biển.”"
+}
+]
+}
+]
+}

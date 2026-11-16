@@ -1,0 +1,626 @@
+{
+"1": [
+{
+"line": 0,
+"s": "喂，李文，我身体不舒服。",
+"vn": "Alo, Lý Văn, tôi thấy không khỏe trong người.",
+"ch": []
+},
+{
+"line": 1,
+"s": "你怎么了？听你的声音，好像感冒了。",
+"vn": "Bạn bị sao vậy? Nghe giọng bạn, hình như bị cảm rồi.",
+"ch": []
+},
+{
+"line": 2,
+"s": "对，我还发烧，一直咳嗽，咳得很厉害。",
+"vn": "Đúng vậy, tôi còn bị sốt, ho liên tục, ho rất dữ dội.",
+"ch": [
+{
+"t": "咳得很厉害",
+"py": "ké de hěn lìhai",
+"vn": "ho rất dữ dội/nặng",
+"frame": "V + 得 + 很厉害",
+"note": "Cấu trúc bổ ngữ trạng thái dùng để mô tả mức độ nghiêm trọng của một hành động hoặc tình trạng.",
+"ex": [
+[
+"他疼得很厉害。",
+"Anh ấy đau dữ dội."
+],
+[
+"外面雨下得很厉害。",
+"Bên ngoài mưa rất to."
+]
+],
+"try": "Nói: \"Dạo này công việc bận rất dữ dội.\""
+}
+]
+},
+{
+"line": 3,
+"s": "那挺严重的，最好赶快去医院检查一下。",
+"vn": "Vậy thì khá nghiêm trọng đấy, tốt nhất nên nhanh chóng đến bệnh viện kiểm tra một chút.",
+"ch": [
+{
+"t": "最好赶快",
+"py": "zuìhǎo gǎnkuài",
+"vn": "tốt nhất nên nhanh chóng",
+"frame": "最好 + 赶快 + V",
+"note": "Cách đưa ra lời khuyên gấp rút, nhấn mạnh sự cấp thiết của hành động.",
+"ex": [
+[
+"最好赶快把作业写完。",
+"Tốt nhất nên nhanh chóng làm xong bài tập."
+],
+[
+"最好赶快去车站，车快开了。",
+"Tốt nhất nên nhanh chóng ra bến xe, xe sắp chạy rồi."
+]
+],
+"try": "Nói: \"Tốt nhất nên nhanh chóng đi ngủ để mai dậy sớm.\""
+}
+]
+},
+{
+"line": 4,
+"s": "我也这么想，不过我来中国后还没去过医院，不知道怎么在中国的医院看病。",
+"vn": "Tôi cũng nghĩ vậy, nhưng sau khi đến Trung Quốc tôi chưa từng đến bệnh viện, không biết làm thế nào để khám bệnh ở bệnh viện Trung Quốc.",
+"ch": [
+{
+"t": "我来中国后",
+"py": "wǒ lái Zhōngguó hòu",
+"vn": "sau khi tôi đến Trung Quốc",
+"frame": "S + 来 + địa điểm + 后",
+"note": "Cấu trúc chỉ thời gian sau khi thực hiện một hành động di chuyển.",
+"ex": [
+[
+"我来公司后，认识了很多朋友。",
+"Sau khi đến công ty, tôi quen được nhiều bạn."
+],
+[
+"我来图书馆后，就开始学习。",
+"Sau khi đến thư viện, tôi bắt đầu học bài."
+]
+],
+"try": "Nói: \"Sau khi đến nhà bạn, chúng tôi cùng ăn cơm.\""
+}
+]
+},
+{
+"line": 5,
+"s": "没关系，我陪你一起去，还能帮你翻译。你在家等一下，我现在就去接你。",
+"vn": "Không sao, tôi đi cùng bạn, còn có thể giúp bạn phiên dịch. Bạn đợi ở nhà một chút, tôi qua đón bạn ngay đây.",
+"ch": [
+{
+"t": "我陪你一起去",
+"py": "wǒ péi nǐ yìqǐ qù",
+"vn": "tôi đi cùng bạn",
+"frame": "陪 + ai + làm gì",
+"note": "Dùng để diễn tả việc dành thời gian ở bên cạnh ai đó khi họ làm việc gì.",
+"ex": [
+[
+"周末我陪妈妈去超市。",
+"Cuối tuần tôi đi cùng mẹ đến siêu thị."
+],
+[
+"你陪我练习口语好吗？",
+"Bạn luyện khẩu ngữ cùng tôi được không?"
+]
+],
+"try": "Nói: \"Ngày mai bạn có thể đi cùng tôi đến ngân hàng không?\""
+}
+]
+},
+{
+"line": 6,
+"s": "太好了！有你陪着，我就放心多了。",
+"vn": "Tốt quá rồi! Có bạn đi cùng, tôi yên tâm hơn nhiều.",
+"ch": [
+{
+"t": "有你陪着",
+"py": "yǒu nǐ péizhe",
+"vn": "có bạn đi cùng",
+"frame": "有 + ai + V-zhe",
+"note": "Cấu trúc nhấn mạnh sự hiện diện của ai đó đang đồng hành cùng mình.",
+"ex": [
+[
+"有你帮着，我很快就做完了。",
+"Có bạn giúp, tôi làm xong rất nhanh."
+],
+[
+"有大家支持着，我不怕困难。",
+"Có mọi người ủng hộ, tôi không sợ khó khăn."
+]
+],
+"try": "Nói: \"Có bạn dạy tôi, tôi thấy học tiếng Trung dễ hơn nhiều.\""
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "护士，您好，我的这位外国朋友生病了，第一次来这里看病，需要怎么做？",
+"vn": "Cô y tá ơi, xin chào, người bạn nước ngoài này của tôi bị ốm, lần đầu đến đây khám bệnh, cần phải làm thế nào?",
+"ch": [
+{
+"t": "第一次来这里看病",
+"py": "dì yī cì lái zhèlǐ kàn bìng",
+"vn": "lần đầu đến đây khám bệnh",
+"frame": "第一次 + V",
+"note": "Thứ tự trước sau: số thứ tự đứng trước động từ. Dùng để nhấn mạnh trải nghiệm lần đầu.",
+"ex": [
+[
+"第一次来公司上班，我很紧张。",
+"Lần đầu đến công ty đi làm, tôi rất căng thẳng."
+],
+[
+"我第一次去中国旅游。",
+"Tôi lần đầu đi du lịch Trung Quốc."
+]
+],
+"try": "Nói: “Lần đầu tham gia kỳ thi HSK, tôi có chút hồi hộp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "请在这张表上写上病人的姓名、性别、国籍、年龄、电话号码和家庭地址。",
+"vn": "Xin hãy viết họ tên, giới tính, quốc tịch, tuổi, số điện thoại và địa chỉ nhà của bệnh nhân vào tờ bảng này.",
+"ch": [
+{
+"t": "在这张表上写上",
+"py": "zài zhè zhāng biǎo shàng xiě shàng",
+"vn": "viết lên tờ bảng này",
+"frame": "在 + địa điểm + 写上 + nội dung",
+"note": "写上 dùng bổ ngữ kết quả 上 để chỉ việc viết đầy đủ, rõ ràng lên bề mặt giấy.",
+"ex": [
+[
+"请在这张纸上写上你的名字。",
+"Xin hãy viết tên của bạn lên tờ giấy này."
+],
+[
+"别忘了在作业本上写上日期。",
+"Đừng quên viết ngày tháng lên vở bài tập."
+]
+],
+"try": "Nói: “Xin hãy viết địa chỉ của bạn lên bảng này.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我写好了，您看看，这样可以吗？",
+"vn": "Tôi viết xong rồi, cô xem giúp, như thế này được không?",
+"ch": [
+{
+"t": "我写好了",
+"py": "wǒ xiě hǎo le",
+"vn": "tôi viết xong rồi",
+"frame": "V + 好了",
+"note": "好了 làm bổ ngữ kết quả chỉ trạng thái hoàn thành và sẵn sàng.",
+"ex": [
+[
+"饭做好了，快来吃吧。",
+"Cơm làm xong rồi, mau ra ăn đi."
+],
+[
+"行李收拾好了吗？",
+"Hành lý thu dọn xong chưa?"
+]
+],
+"try": "Nói: “Bài tập tiếng Trung làm xong rồi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "没问题，您拿着病人的护照去挂号吧。",
+"vn": "Không vấn đề gì, anh cầm hộ chiếu của bệnh nhân đi đăng ký khám đi.",
+"ch": [
+{
+"t": "去挂号吧",
+"py": "qù guàhào ba",
+"vn": "đi đăng ký khám bệnh đi",
+"frame": "去 + địa điểm/việc gì + 吧",
+"note": "去 đi trước hành động tiếp theo để đề nghị ai đó làm việc gì.",
+"ex": [
+[
+"下课了，我们去吃饭吧。",
+"Tan học rồi, chúng ta đi ăn cơm đi."
+],
+[
+"你先休息，我去买咖啡吧。",
+"Cậu nghỉ ngơi trước đi, để tôi đi mua cà phê nhé."
+]
+],
+"try": "Nói: “Chúng ta đi đăng ký thi HSK đi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "家月，我去排队挂号，你先在大厅休息，别着急。",
+"vn": "Gia Nguyệt, tôi đi xếp hàng đăng ký khám, cậu cứ nghỉ ngơi ở đại sảnh trước đi, đừng vội.",
+"ch": [
+{
+"t": "先在大厅休息",
+"py": "xiān zài dàtīng xiūxí",
+"vn": "nghỉ ngơi ở đại sảnh trước",
+"frame": "先 + ở đâu + V",
+"note": "先 đặt trước cụm chỉ địa điểm và hành động để biểu thị việc làm trước ở một không gian.",
+"ex": [
+[
+"你先在教室里等我一会儿。",
+"Cậu cứ đợi tôi ở trong phòng học một lát nhé."
+],
+[
+"我们先在酒店办入住吧。",
+"Chúng ta làm thủ tục nhận phòng ở khách sạn trước đi."
+]
+],
+"try": "Nói: “Bạn cứ ngồi ở phòng khách nghỉ ngơi trước đi.”"
+},
+{
+"t": "别着急",
+"py": "bié zháojí",
+"vn": "đừng vội / đừng lo lắng",
+"frame": "别着急，……",
+"note": "Cụm câu an ủi phổ biến khi thấy người khác đang sốt ruột hoặc lo lắng.",
+"ex": [
+[
+"别着急，考试时间还很多。",
+"Đừng vội, thời gian thi vẫn còn nhiều."
+],
+[
+"别着急，慢慢听我说。",
+"Đừng lo, từ từ nghe tôi nói."
+]
+],
+"try": "Nói: “Đừng lo, tìm việc từ từ rồi sẽ có.”"
+}
+]
+},
+{
+"line": 5,
+"s": "好的，真是太谢谢你了！",
+"vn": "Được, thật sự cảm ơn bạn nhiều lắm!",
+"ch": [
+{
+"t": "真是太谢谢你了",
+"py": "zhēn shì tài xièxiè nǐ le",
+"vn": "thật sự cảm ơn bạn quá",
+"frame": "真是太 + V + 了",
+"note": "Biểu thị sự cảm kích hoặc cảm xúc mạnh mẽ trong văn nói.",
+"ex": [
+[
+"真是太感谢老师了。",
+"Thật sự rất cảm ơn thầy giáo."
+],
+[
+"真是太高兴了！",
+"Thật sự vui quá đi!"
+]
+],
+"try": "Nói: “Thật sự cảm ơn sự giúp đỡ của bạn quá.”"
+}
+]
+},
+{
+"line": 6,
+"s": "你跟我有什么好客气的。",
+"vn": "Cậu với tôi có gì mà phải khách khí chứ.",
+"ch": [
+{
+"t": "有什么好客气的",
+"py": "yǒu shénme hǎo kèqi de",
+"vn": "có gì mà phải khách sáo chứ",
+"frame": "有 + gì + hǎo + V + 的",
+"note": "Dùng để đáp lại khi người khác cảm ơn, thể hiện tình cảm thân thiết, không cần khách sáo.",
+"ex": [
+[
+"朋友之间有什么好客气的？",
+"Bạn bè với nhau thì có gì mà khách sáo?"
+],
+[
+"帮这点忙，有什么好客气的？",
+"Giúp chút việc này, có gì mà khách sáo chứ?"
+]
+],
+"try": "Nói: “Chúng ta là bạn tốt, có gì mà phải khách sáo chứ.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "下午白家月去看病了，她告诉医生，自己平时身体不错，偶尔才会生一次病。这次她病得很厉害，头也一直疼，身上一点儿力气都没有。医生给她做了检查，检查结果出来后，发现她得了比较严重的流行性感冒。",
+"vn": "Buổi chiều Bạch Gia Nguyệt đi khám bệnh, cô ấy nói với bác sĩ rằng bình thường sức khỏe cô ấy tốt, thỉnh thoảng mới đổ bệnh một lần. Lần này cô ấy ốm rất nặng, đầu cũng đau suốt, trên người không còn chút sức lực nào. Bác sĩ đã khám cho cô ấy, sau khi kết quả khám ra, phát hiện cô ấy bị cảm cúm khá nặng.",
+"ch": [
+{
+"t": "一点儿力气都没有",
+"py": "yīdiǎnr lìqì dōu méiyǒu",
+"vn": "không còn chút sức lực nào",
+"frame": "一点儿 + Danh từ + 都没有",
+"note": "Nhấn mạnh sự phủ định hoàn toàn. Dùng thay thế Danh từ ở giữa là được.",
+"ex": [
+[
+"我累得一点儿力气都没有了。",
+"Tôi mệt đến mức không còn chút sức lực nào."
+],
+[
+"冰箱里一点儿水都没有了。",
+"Trong tủ lạnh không còn chút nước nào."
+]
+],
+"try": "Nói: “Hôm nay tôi mệt đến mức không muốn nói câu nào.”"
+}
+]
+},
+{
+"line": 1,
+"s": "医生告诉她，现在需要把体温降下来，光吃药恐怕不够，打针会更有效。医生还让她回家以后按时吃药，多喝水，多休息。",
+"vn": "Bác sĩ bảo cô ấy, hiện tại cần hạ thân nhiệt xuống, chỉ uống thuốc thôi e là không đủ, tiêm sẽ hiệu quả hơn. Bác sĩ còn dặn cô ấy sau khi về nhà uống thuốc đúng giờ, uống nhiều nước, nghỉ ngơi nhiều.",
+"ch": [
+{
+"t": "把体温降下来",
+"py": "bǎ tǐwēn jiàng xiàlái",
+"vn": "hạ thân nhiệt xuống",
+"frame": "把 + Sự vật + 降下来",
+"note": "Chữ 把 kéo theo tân ngữ lên trước động từ, 降下来 chỉ hướng vận động giảm dần.",
+"ex": [
+[
+"开空调把房间里的温度降下来。",
+"Mở điều hòa để giảm nhiệt độ trong phòng xuống."
+],
+[
+"我们要想办法把成本降下来。",
+"Chúng ta phải nghĩ cách kéo giảm chi phí xuống."
+]
+],
+"try": "Nói: “Chúng ta cần hạ giá sản phẩm này xuống.”"
+},
+{
+"t": "光吃药恐怕不够",
+"py": "guāng chī yào kǒngpà búgòu",
+"vn": "chỉ uống thuốc e là không đủ",
+"frame": "光 + V + 恐怕不够",
+"note": "光 nghĩa là “chỉ, đơn thuần”; 恐怕 biểu thị sự phỏng đoán lo ngại.",
+"ex": [
+[
+"光看书恐怕不够，还要多练习。",
+"Chỉ đọc sách e là chưa đủ, còn phải luyện tập nhiều."
+],
+[
+"光听老师说恐怕不够，自己得做。",
+"Chỉ nghe thầy cô nói e là không đủ, bản thân phải làm."
+]
+],
+"try": "Nói: “Chỉ có tiền e là không đủ, còn cần thời gian.”"
+}
+]
+},
+{
+"line": 2,
+"s": "晚上，白家月睡觉时出了一身汗。第二天醒来时，她感觉头不那么疼了，体温也低了一些，身体不那么难受了。",
+"vn": "Tối đến, khi Bạch Gia Nguyệt ngủ đã vã mồ hôi đầm đìa. Hôm sau lúc thức dậy, cô ấy cảm thấy đầu đỡ đau hơn một chút, nhiệt độ cơ thể cũng giảm đi một chút, cơ thể đỡ khó chịu hơn.",
+"ch": [
+{
+"t": "不那么疼了",
+"py": "bú nàme téng le",
+"vn": "đỡ đau hơn / không còn đau như vậy nữa",
+"frame": "不那么 + Tính từ + 了",
+"note": "Dùng để diễn tả mức độ trạng thái đã giảm nhẹ so với trước.",
+"ex": [
+[
+"吃了药，头不那么疼了。",
+"Uống thuốc xong, đầu đỡ đau hơn rồi."
+],
+[
+"今天风不那么大了。",
+"Hôm nay gió không còn lớn như thế nữa."
+]
+],
+"try": "Nói: “Sau khi nghỉ ngơi, chân không còn đau như thế nữa.”"
+},
+{
+"t": "身体不那么难受了",
+"py": "shēntǐ bú nàme nánshòu le",
+"vn": "cơ thể đỡ khó chịu hơn rồi",
+"frame": "……不那么难受了",
+"note": "Cấu trúc phản ánh sự hồi phục sức khỏe sau khi trị liệu.",
+"ex": [
+[
+"休息以后，身体不那么难受了。",
+"Nghỉ ngơi xong, cơ thể đỡ khó chịu hơn."
+],
+[
+"吃完药，胃不那么难受了。",
+"Uống thuốc xong, dạ dày đỡ khó chịu hơn."
+]
+],
+"try": "Nói: “Uống nước ấm xong, cổ họng đỡ khó chịu hơn.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "外国人第一次在中国看病，可能会担心语言不通，或者觉得看病的过程和自己的国家不同。",
+"vn": "Người nước ngoài lần đầu đi khám bệnh ở Trung Quốc có thể sẽ lo lắng bất đồng ngôn ngữ, hoặc cảm thấy quy trình khám bệnh khác với nước mình.",
+"ch": [
+{
+"t": "语言不通",
+"py": "yǔyán bùtōng",
+"vn": "bất đồng ngôn ngữ",
+"frame": "担心 + 语言不通",
+"note": "Cụm này dùng để chỉ việc không hiểu nhau do khác biệt ngôn ngữ, rất phổ biến khi đi du lịch hoặc làm việc ở nước ngoài.",
+"ex": [
+[
+"去国外旅游，我最担心语言不通。",
+"Đi du lịch nước ngoài, tôi lo nhất là bất đồng ngôn ngữ."
+],
+[
+"因为语言不通，他没能买到票。",
+"Vì bất đồng ngôn ngữ, anh ấy đã không mua được vé."
+]
+],
+"try": "Nói: “Tôi không lo lắng về việc bất đồng ngôn ngữ.”"
+}
+]
+},
+{
+"line": 0,
+"s": "其实，这些问题都有办法解决。",
+"vn": "Thực ra, những vấn đề này đều có cách giải quyết.",
+"ch": [
+{
+"t": "都有办法解决",
+"py": "dōu yǒu bànfǎ jiějué",
+"vn": "đều có cách giải quyết",
+"frame": "……都有办法解决",
+"note": "Cụm từ trấn an, dùng để khẳng định mọi khó khăn đều có hướng xử lý.",
+"ex": [
+[
+"学习中的困难都有办法解决。",
+"Khó khăn trong học tập đều có cách giải quyết."
+],
+[
+"不管遇到什么问题，我们都有办法解决。",
+"Dù gặp vấn đề gì, chúng tôi đều có cách giải quyết."
+]
+],
+"try": "Nói: “Những vấn đề này đều có cách giải quyết.”"
+}
+]
+},
+{
+"line": 1,
+"s": "有的医院有国际部，那里的医生一般会说英文，交流比较方便，但是国际部的收费比较高。",
+"vn": "Một số bệnh viện có khoa quốc tế, bác sĩ ở đó thường nói được tiếng Anh, giao tiếp khá thuận tiện, nhưng phí ở khoa quốc tế khá cao.",
+"ch": [
+{
+"t": "交流比较方便",
+"py": "jiāoliú bǐjiào fāngbiàn",
+"vn": "giao tiếp khá thuận tiện",
+"frame": "……比较方便",
+"note": "Dùng để đánh giá một môi trường hoặc công cụ giúp việc trao đổi trở nên dễ dàng hơn.",
+"ex": [
+[
+"用微信交流比较方便。",
+"Dùng WeChat giao tiếp khá thuận tiện."
+],
+[
+"住学校附近交流比较方便。",
+"Ở gần trường giao tiếp khá thuận tiện."
+]
+],
+"try": "Nói: “Học nhóm với bạn bè giao tiếp khá thuận tiện.”"
+}
+]
+},
+{
+"line": 1,
+"s": "如果没有特别需要，可以选择普通部，用简单的中文和医生交流。",
+"vn": "Nếu không có nhu cầu đặc biệt, có thể chọn khoa phổ thông, dùng tiếng Trung đơn giản để giao tiếp với bác sĩ.",
+"ch": [
+{
+"t": "如果没有特别需要",
+"py": "rúguǒ méiyǒu tèbié xūyào",
+"vn": "nếu không có nhu cầu đặc biệt",
+"frame": "如果没有特别需要，……",
+"note": "Cách nói lịch sự để đưa ra lời khuyên hoặc gợi ý lựa chọn thông thường.",
+"ex": [
+[
+"如果没有特别需要，不用买这么贵的电脑。",
+"Nếu không có nhu cầu đặc biệt, không cần mua máy tính đắt thế này."
+],
+[
+"如果没有特别需要，明天不用加班。",
+"Nếu không có nhu cầu đặc biệt, ngày mai không cần tăng ca."
+]
+],
+"try": "Nói: “Nếu không có nhu cầu đặc biệt, chúng ta đi ăn cơm bình dân thôi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "在中国看病要先挂号，然后再去找医生。",
+"vn": "Ở Trung Quốc đi khám bệnh cần phải đăng ký trước, sau đó mới đi tìm bác sĩ.",
+"ch": [
+{
+"t": "先……然后再……",
+"py": "xiān……ránhòu zài……",
+"vn": "trước tiên... sau đó mới...",
+"frame": "先 + V1，然后再 + V2",
+"note": "Khung câu dùng để chỉ trình tự thực hiện các bước trong một quy trình.",
+"ex": [
+[
+"先写作业，然后再去玩儿。",
+"Làm bài tập trước, sau đó mới đi chơi."
+],
+[
+"先看说明书，然后再安装。",
+"Xem hướng dẫn sử dụng trước, sau đó mới lắp đặt."
+]
+],
+"try": "Nói: “Trước tiên phải đăng ký thi, sau đó mới đóng tiền.”"
+}
+]
+},
+{
+"line": 2,
+"s": "医生会问病人的情况，有时还会做一些检查，好给出合适的治疗方法。",
+"vn": "Bác sĩ sẽ hỏi tình trạng của bệnh nhân, đôi khi còn làm một số kiểm tra, để đưa ra phương pháp điều trị phù hợp.",
+"ch": [
+{
+"t": "好给出合适的治疗方法",
+"py": "hǎo gěichū héshì de zhìliáo fāngfǎ",
+"vn": "để đưa ra phương pháp điều trị phù hợp",
+"frame": "……好 + V",
+"note": "好 ở đây mang nghĩa là “để cho”, “nhằm mục đích”, dùng để nối mục đích phía sau.",
+"ex": [
+[
+"你要多练习，好提高口语水平。",
+"Bạn phải luyện tập nhiều, để nâng cao trình độ khẩu ngữ."
+],
+[
+"请把门打开，好让空气进来。",
+"Hãy mở cửa ra, để không khí vào."
+]
+],
+"try": "Nói: “Tôi phải học bài chăm chỉ để đạt kết quả tốt.”"
+}
+]
+},
+{
+"line": 2,
+"s": "只要按照医生说的一步一步来，一般都可以顺利得到治疗。",
+"vn": "Chỉ cần làm theo từng bước bác sĩ nói, thông thường đều có thể được điều trị thuận lợi.",
+"ch": [
+{
+"t": "只要……都……",
+"py": "zhǐyào……dōu……",
+"vn": "chỉ cần... đều...",
+"frame": "只要 + điều kiện，……都 + kết quả",
+"note": "Cấu trúc điều kiện cần, nhấn mạnh chỉ cần đạt được một yếu tố là sẽ có kết quả như ý.",
+"ex": [
+[
+"只要努力学习，都能考过HSK4级。",
+"Chỉ cần nỗ lực học tập, đều có thể thi đỗ HSK4."
+],
+[
+"只要多听多练，听力水平都能提高。",
+"Chỉ cần nghe nhiều luyện nhiều, trình độ nghe đều có thể nâng cao."
+]
+],
+"try": "Nói: “Chỉ cần bạn đi đúng giờ, đều có thể gặp được giám đốc.”"
+}
+]
+}
+]
+}

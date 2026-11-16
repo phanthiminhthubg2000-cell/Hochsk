@@ -1,0 +1,1034 @@
+{
+"1": [
+{
+"line": 0,
+"s": "礼拜天有空儿吗？陪我去逛街怎么样？我想去给丈夫买个生日礼物。",
+"vn": "Chủ nhật có rảnh không? Đi dạo phố với tớ thế nào? Tớ muốn đi mua quà sinh nhật cho chồng.",
+"ch": [
+{
+"t": "有空儿",
+"py": "yǒu kòngr",
+"vn": "có rảnh",
+"frame": "……时/天 + 有空儿",
+"note": "Hỏi thời gian rảnh rỗi của ai đó để hẹn gặp. Nhớ uốn lưỡi chữ 空儿.",
+"ex": [
+[
+"你明天下午有空儿吗？",
+"Cậu có rảnh chiều mai không?"
+],
+[
+"周末你有空儿陪我去买书吗？",
+"Cuối tuần cậu có rảnh đi mua sách cùng tớ không?"
+]
+],
+"try": "Nói: “Tối nay cậu có rảnh đi ăn cơm không?”"
+},
+{
+"t": "陪我去逛街怎么样",
+"py": "péi wǒ qù guàngjiē zěnmeyàng",
+"vn": "đi dạo phố với tớ thế nào",
+"frame": "陪 + ai + làm gì + 怎么样",
+"note": "Mẫu câu rủ rê ai đó làm việc gì cùng mình. 陪 có nghĩa là đi cùng, đồng hành.",
+"ex": [
+[
+"陪我去医院怎么样？",
+"Cùng tôi đi bệnh viện thế nào?"
+],
+[
+"陪我去看电影怎么样？",
+"Đi xem phim với tôi thế nào?"
+]
+],
+"try": "Nói: “Cùng tôi đi siêu thị thế nào?”"
+}
+]
+},
+{
+"line": 1,
+"s": "我可能去不了，最近事情多。",
+"vn": "Tớ có lẽ không đi được, dạo này nhiều việc quá.",
+"ch": [
+{
+"t": "去不了",
+"py": "qù bù liǎo",
+"vn": "không đi được",
+"frame": "V + 不了",
+"note": "Biểu thị không thể làm được việc gì do khách quan hoặc không có thời gian.",
+"ex": [
+[
+"今天雨太大，我出门不了。",
+"Hôm nay mưa to quá, tôi không ra ngoài được."
+],
+[
+"太忙了，明天开会我去不了。",
+"Bận quá, buổi họp ngày mai tôi không đi được."
+]
+],
+"try": "Nói: “Tối nay tôi không đến được.”"
+}
+]
+},
+{
+"line": 2,
+"s": "你最近是不是工作特别忙？",
+"vn": "Dạo này cậu có phải công việc đặc biệt bận không?",
+"ch": []
+},
+{
+"line": 3,
+"s": "我现在上有老、下有小。除了工作以外，家里还有母亲和儿子需要照顾。",
+"vn": "Bây giờ trên có già, dưới có trẻ. Ngoài công việc ra, trong nhà còn có mẹ và con trai cần chăm sóc.",
+"ch": [
+{
+"t": "上有老、下有小",
+"py": "shàng yǒu lǎo, xià yǒu xiǎo",
+"vn": "trên có già, dưới có trẻ",
+"frame": "上有老、下有小",
+"note": "Thành ngữ chỉ gánh nặng gia đình phải nuôi dưỡng cha mẹ già và con cái nhỏ.",
+"ex": [
+[
+"像我们这样的人，上有老、下有小，压力很大。",
+"Những người như chúng tôi, trên có già dưới có trẻ, áp lực rất lớn."
+],
+[
+"虽然上有老、下有小，但他每天都过得很开心。",
+"Mặc dù trên có già dưới có trẻ, nhưng anh ấy ngày nào cũng sống rất vui vẻ."
+]
+],
+"try": "Nói: “Người trưởng thành trên có già, dưới có trẻ nên rất bận.”"
+}
+]
+},
+{
+"line": 4,
+"s": "真是辛苦啊！你最近脸色不太好，是不是哪儿不舒服？要注意身体啊。",
+"vn": "Thật vất vả quá! Sắc mặt dạo này của cậu không tốt lắm, có phải chỗ nào không thoải mái không? Phải chú ý sức khỏe đấy.",
+"ch": [
+{
+"t": "脸色不太好",
+"py": "liǎnsè bú tài hǎo",
+"vn": "sắc mặt không tốt lắm",
+"frame": "……脸色不太好",
+"note": "Dùng để quan sát trạng thái mệt mỏi hoặc ốm đau qua khuôn mặt.",
+"ex": [
+[
+"你昨天没睡好吧？脸色不太好。",
+"Hôm qua cậu ngủ không ngon à? Sắc mặt không tốt lắm."
+],
+[
+"他生病了，今天脸色不太好。",
+"Anh ấy ốm rồi, hôm nay sắc mặt không tốt lắm."
+]
+],
+"try": "Nói: “Hôm nay trông cậu sắc mặt không tốt lắm.”"
+}
+]
+},
+{
+"line": 5,
+"s": "没事儿，谢谢！不过现在我很幸福，因为在母亲面前我可以做一个永远长不大的孩子；在孩子面前我又是个能照顾他的母亲，这让我有了努力的方向。",
+"vn": "Không sao đâu, cảm ơn nhé! Nhưng bây giờ tớ rất hạnh phúc, bởi vì trước mặt mẹ, tớ có thể làm một đứa trẻ mãi không lớn; trước mặt con, tớ lại là một người mẹ có thể chăm sóc nó, điều này cho tớ phương hướng để nỗ lực.",
+"ch": [
+{
+"t": "永远长不大的孩子",
+"py": "yǒngyuǎn zhǎng bú dà de háizi",
+"vn": "đứa trẻ mãi không lớn",
+"frame": "永远 + V",
+"note": "永远 thể hiện trạng thái kéo dài mãi mãi. Khung này dùng để hình dung sự cưng chiều của gia đình.",
+"ex": [
+[
+"在父母眼里，我们永远是长不大的孩子。",
+"Trong mắt bố mẹ, chúng ta mãi là đứa trẻ không lớn."
+],
+[
+"希望我们的友谊永远不变。",
+"Hy vọng tình bạn của chúng ta mãi mãi không thay đổi."
+]
+],
+"try": "Nói: “Trong lòng tôi, cậu ấy mãi mãi là người bạn tốt.”"
+},
+{
+"t": "这让我有了努力的方向",
+"py": "zhè ràng wǒ yǒule nǔlì de fāngxiàng",
+"vn": "điều này làm tôi có phương hướng nỗ lực",
+"frame": "这让 + ai + có + N",
+"note": "Dùng sự việc phía trước làm nguyên nhân mang lại động lực hoặc mục tiêu phía sau.",
+"ex": [
+[
+"老师的一句话，让我有了学习的方向。",
+"Một câu của thầy giáo đã làm tôi có phương hướng học tập."
+],
+[
+"这次失败让我有了努力的方向。",
+"Lần thất bại này làm tôi có phương hướng nỗ lực."
+]
+],
+"try": "Nói: “Lời khuyên của cô ấy làm tôi có hướng đi trong công việc.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "你看人家王老师，刚来这儿工作三年就当了教授，",
+"vn": "Anh nhìn thầy giáo Vương nhà người ta kìa, mới đến đây làm việc ba năm đã làm giáo sư rồi,",
+"ch": [
+{
+"t": "刚来这儿工作三年就当了教授",
+"py": "gāng lái zhèr gōngzuò sān nián jiù dāng le jiàoshòu",
+"vn": "mới đến đây làm việc ba năm đã làm giáo sư rồi",
+"frame": "刚 + V + thời gian + 就 + V",
+"note": "Dùng 就 để nhấn mạnh hành động diễn ra nhanh và sớm hơn dự kiến.",
+"ex": [
+[
+"他刚来公司半年就当了经理。",
+"Anh ấy mới đến công ty nửa năm đã làm giám đốc."
+],
+[
+"我刚学汉语一年就能跟中国人聊天了。",
+"Tôi mới học tiếng Trung một năm đã có thể nói chuyện với người Trung Quốc rồi."
+]
+],
+"try": "Nói: “Anh ấy mới đến trường này một năm đã làm lớp trưởng rồi.”"
+}
+]
+},
+{
+"line": 0,
+"s": "还有个好妻子，真让人羡慕！",
+"vn": "lại còn có một người vợ tốt, thật khiến người ta ngưỡng mộ!",
+"ch": [
+{
+"t": "真让人羡慕",
+"py": "zhēn ràng rén xiànmù",
+"vn": "thật khiến người ta ngưỡng mộ",
+"frame": "真让 + ai + V",
+"note": "Cấu trúc dùng để bộc lộ cảm xúc khen ngợi hoặc ghen tị trước thành công của người khác.",
+"ex": [
+[
+"他买新车了，真让人羡慕。",
+"Anh ấy mua xe mới rồi, thật khiến người ta ngưỡng mộ."
+],
+[
+"她的汉语说得这么流利，真让人羡慕。",
+"Tiếng Trung của cô ấy nói lưu loát thế, thật khiến người ta ngưỡng mộ."
+]
+],
+"try": "Nói: “Điểm thi của cậu ấy cao thế, thật khiến người ta ngưỡng mộ.”"
+}
+]
+},
+{
+"line": 1,
+"s": "其实，你在别人眼中也是很幸福的，只是你自己没有发现。",
+"vn": "Thực ra, trong mắt người khác anh cũng rất hạnh phúc đấy, chỉ là chính anh không phát hiện ra thôi.",
+"ch": [
+{
+"t": "在别人眼中",
+"py": "zài biérén yǎnzhōng",
+"vn": "trong mắt người khác",
+"frame": "在 + ai + 眼中",
+"note": "Cách nói hình ảnh chỉ góc nhìn hoặc cảm nhận của ai đó về một vấn đề.",
+"ex": [
+[
+"在父母眼中，我们永远是孩子。",
+"Trong mắt bố mẹ, chúng ta mãi là trẻ con."
+],
+[
+"在这个问题上，在我眼中很简单。",
+"Vấn đề này, trong mắt tôi rất đơn giản."
+]
+],
+"try": "Nói: “Trong mắt giáo viên, cậu ấy là một học sinh chăm chỉ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "是吗？我哪能跟王老师比啊？",
+"vn": "Thế à? Tôi sao mà so sánh được với thầy Vương chứ?",
+"ch": []
+},
+{
+"line": 3,
+"s": "你有一个漂亮的女儿，还那么优秀，硕士毕业后就当了翻译。",
+"vn": "Anh có một cô con gái xinh đẹp, lại rất ưu tú, sau khi tốt nghiệp thạc sĩ liền làm phiên dịch.",
+"ch": [
+{
+"t": "硕士毕业后就当了翻译",
+"py": "shuòshì bìyè hòu jiù dāng le fānyì",
+"vn": "sau khi tốt nghiệp thạc sĩ liền làm phiên dịch",
+"frame": "……毕业后就 + V",
+"note": "Diễn tả hành động tiếp nối ngay sau khi hoàn thành việc học.",
+"ex": [
+[
+"大学毕业后就找到工作了。",
+"Tốt nghiệp đại học xong là tìm được việc làm luôn."
+],
+[
+"出国旅游后就开始努力工作了。",
+"Đi du lịch nước ngoài về là bắt đầu chăm chỉ làm việc."
+]
+],
+"try": "Nói: “Sau khi tốt nghiệp đại học, cô ấy liền làm giáo viên.”"
+}
+]
+},
+{
+"line": 4,
+"s": "我女儿确实不错，",
+"vn": "Con gái tôi quả thực rất được,",
+"ch": [
+{
+"t": "确实不错",
+"py": "quèshí búcuò",
+"vn": "quả thực rất được",
+"frame": "确实 + tính từ",
+"note": "Dùng 确实 để xác nhận một sự thật là đúng như vậy, không phải khen xã giao.",
+"ex": [
+[
+"这家饭馆的菜确实很好吃。",
+"Món ăn quán này quả thực rất ngon."
+],
+[
+"今天的考试确实有点儿难。",
+"Bài kiểm tra hôm nay quả thực hơi khó."
+]
+],
+"try": "Nói: “Bộ phim này quả thực rất hay.”"
+}
+]
+},
+{
+"line": 4,
+"s": "记得她刚拿到第一个月工资时，就兴奋地拉着我和她爸俩去商场，给我们买礼物，那时我和她爸心里别提多美了！",
+"vn": "nhớ lúc con bé nhận được tháng lương đầu tiên, liền phấn khởi kéo tôi và bố nó đến trung tâm thương mại, mua quà cho chúng tôi, lúc đó trong lòng tôi và bố nó vui không tả nổi!",
+"ch": [
+{
+"t": "兴奋地拉着我和她爸俩去商场",
+"py": "xīngfèn de lāzhe wǒ hé tā bà liǎ qù shāngchǎng",
+"vn": "phấn khích kéo tôi và bố nó đến trung tâm thương mại",
+"frame": "兴奋地 + V",
+"note": "Trạng từ chỉ thái độ vui mừng phấn khởi khi thực hiện hành động.",
+"ex": [
+[
+"听到好消息，大家兴奋地跳起来。",
+"Nghe tin vui, mọi người phấn khích nhảy cẫng lên."
+],
+[
+"孩子们兴奋地走进动物园。",
+"Bọn trẻ phấn khích đi vào sở thú."
+]
+],
+"try": "Nói: “Nhìn thấy tuyết rơi, các học sinh phấn khích chạy ra ngoài.”"
+},
+{
+"t": "心里别提多美了",
+"py": "xīnli biétí duō měi le",
+"vn": "trong lòng vui không tả nổi",
+"frame": "心里别提多 + tính từ + 了",
+"note": "Cấu trúc cảm thán diễn tả mức độ cực kỳ cao của cảm xúc vui sướng, thỏa mãn.",
+"ex": [
+[
+"通过HSK4级考试，我心里别提多高兴了。",
+"Đỗ kỳ thi HSK4, trong lòng tôi vui không tả nổi."
+],
+[
+"吃到妈妈做的菜，他心里别提多美了。",
+"Ăn món mẹ nấu, trong lòng anh ấy vui sướng biết bao."
+]
+],
+"try": "Nói: “Nhận được quà sinh nhật, trong lòng tôi vui không tả nổi.”"
+}
+]
+},
+{
+"line": 5,
+"s": "所以说每个人有每个人的生活，不用羡慕别人。你羡慕别人的时候，他们可能也正在羡慕你呢。",
+"vn": "Cho nên mới nói mỗi người có cuộc sống của riêng mình, không cần phải ngưỡng mộ người khác đâu. Lúc bạn ngưỡng mộ người khác, rất có thể họ cũng đang ngưỡng mộ bạn đấy.",
+"ch": [
+{
+"t": "每个人有每个人的生活",
+"py": "měi gè rén yǒu měi gè rén de shēnghuó",
+"vn": "mỗi người có cuộc sống của riêng mình",
+"frame": "……有……的……",
+"note": "Cách nói triết lý đời sống, khẳng định sự khác biệt và giá trị riêng của mỗi cá nhân.",
+"ex": [
+[
+"每个人有每个人的想法。",
+"Mỗi người có suy nghĩ của riêng mình."
+],
+[
+"每份工作有每份工作的难处。",
+"Mỗi công việc có nỗi khó khăn riêng của nó."
+]
+],
+"try": "Nói: “Mỗi đứa trẻ có tính cách của riêng mình.”"
+},
+{
+"t": "不用羡慕别人",
+"py": "búyòng xiànmù biérén",
+"vn": "không cần phải ngưỡng mộ người khác",
+"frame": "不用 + V",
+"note": "Khuyên nhủ ai đó rằng việc làm đó là không cần thiết, giúp tiết kiệm tâm sức.",
+"ex": [
+[
+"这件事情不用太着急。",
+"Việc này không cần phải quá vội vàng."
+],
+[
+"语法不懂不用害怕，多练习就行。",
+"Ngữ pháp không hiểu không cần sợ, luyện tập nhiều là được."
+]
+],
+"try": "Nói: “Học tiếng Trung không cần phải căng thẳng.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "时间过得真快，马上就要毕业了。毕业后你打算做什么？",
+"vn": "Thời gian trôi nhanh thật, sắp tốt nghiệp rồi. Sau khi tốt nghiệp cậu dự định làm gì?",
+"ch": [
+{
+"t": "时间过得真快",
+"py": "shíjiān guò de zhēn kuài",
+"vn": "thời gian trôi nhanh thật",
+"frame": "时间过得 + rất nhanh/chậm",
+"note": "Dùng cấu trúc de bổ ngữ trạng thái để miêu tả tốc độ trôi qua của thời gian.",
+"ex": [
+[
+"寒假过得真快，又要开学了。",
+"Kỳ nghỉ đông trôi nhanh thật, sắp phải khai giảng rồi."
+],
+[
+"在公司实习的时间过得真快。",
+"Thời gian thực tập ở công ty trôi nhanh thật."
+]
+],
+"try": "Nói: “Thời gian học HSK4 trôi nhanh thật.”"
+}
+]
+},
+{
+"line": 1,
+"s": "我还没想好呢，正想听听你的建议。你觉得在选择职业时，收入重要吗？",
+"vn": "Tớ vẫn chưa nghĩ kỹ nữa, đang muốn nghe gợi ý của cậu. Cậu thấy lúc chọn nghề nghiệp, thu nhập có quan trọng không?",
+"ch": [
+{
+"t": "还没想好呢",
+"py": "hái méi xiǎng hǎo ne",
+"vn": "vẫn chưa nghĩ kỹ",
+"frame": "还没 + V + 好",
+"note": "Biểu thị việc gì đó chưa được suy tính hoặc chuẩn bị hoàn tất.",
+"ex": [
+[
+"周末去哪儿玩，我还没想好呢。",
+"Cuối tuần đi đâu chơi, tớ vẫn chưa nghĩ kỹ."
+],
+[
+"这份合同的内容我还没看好呢。",
+"Nội dung hợp đồng này tớ vẫn chưa xem kỹ."
+]
+],
+"try": "Nói: “Tối nay ăn gì, tớ vẫn chưa nghĩ kỹ.”"
+},
+{
+"t": "在选择职业时",
+"py": "zài xuǎnzé zhíyè shí",
+"vn": "lúc lựa chọn nghề nghiệp",
+"frame": "在 + V/N + 时",
+"note": "Có nghĩa là “khi/lúc đang làm gì”, rất hay dùng trong văn viết và nói trang trọng.",
+"ex": [
+[
+"在找工作时，经验很重要。",
+"Khi tìm việc, kinh nghiệm rất quan trọng."
+],
+[
+"在出国留学时，要带够钱。",
+"Khi đi du học, phải mang đủ tiền."
+]
+],
+"try": "Nói: “Lúc làm bài thi, phải cẩn thận.”"
+}
+]
+},
+{
+"line": 2,
+"s": "在我看来，赚钱多少不是最重要的，兴趣才是关键。只有做自己喜欢的事，才会觉得幸福，将来也会有更好的发展。",
+"vn": "Theo tớ thấy, kiếm được nhiều hay ít tiền không phải là quan trọng nhất, hứng thú mới là then chốt. Chỉ có làm việc mình thích, mới cảm thấy hạnh phúc, tương lai cũng sẽ có sự phát triển tốt hơn.",
+"ch": [
+{
+"t": "在我看来",
+"py": "zài wǒ kànlái",
+"vn": "theo tôi thấy",
+"frame": "在 + ai + 看来",
+"note": "Dùng để đưa ra quan điểm, góc nhìn cá nhân của một người.",
+"ex": [
+[
+"在我看来，学好汉语不难。",
+"Theo tôi thấy, học tốt tiếng Trung không khó."
+],
+[
+"在经理看来，这个计划很关键。",
+"Theo giám đốc thấy, kế hoạch này rất then chốt."
+]
+],
+"try": "Nói: “Theo tôi thấy, đi du lịch rất thú vị.”"
+},
+{
+"t": "只有做自己喜欢的事，才会觉得幸福",
+"py": "zhǐyǒu zuò zìjǐ xǐhuan de shì, cái huì juéde xìngfú",
+"vn": "chỉ có làm việc mình thích, mới cảm thấy hạnh phúc",
+"frame": "只有 + A + 才 + B",
+"note": "Biểu thị điều kiện cần duy nhất để đạt được kết quả.",
+"ex": [
+[
+"只有努力工作，才能买得起房。",
+"Chỉ có nỗ lực làm việc mới mua nổi nhà."
+],
+[
+"只有多听多说，才能学好外语。",
+"Chỉ có nghe nhiều nói nhiều mới học tốt ngoại ngữ."
+]
+],
+"try": "Nói: “Chỉ có ôn tập chăm chỉ, mới thi đỗ HSK4.”"
+}
+]
+},
+{
+"line": 3,
+"s": "我也这么想。如果我带着热情去做自己喜欢的工作，就不会感到累。不过，现在什么东西都那么贵，生活压力太大了，没有钱也不会过得幸福啊！",
+"vn": "Tớ cũng nghĩ vậy. Nếu tớ mang theo sự nhiệt tình để làm công việc mình thích, thì sẽ không thấy mệt. Thế nhưng, bây giờ cái gì cũng đắt đỏ như thế, áp lực cuộc sống lớn quá, không có tiền thì cũng không sống hạnh phúc được đâu!",
+"ch": [
+{
+"t": "生活压力太大了",
+"py": "shēnghuó yālì tài dà le",
+"vn": "áp lực cuộc sống lớn quá",
+"frame": "生活压力 + rất lớn",
+"note": "Cụm từ quen thuộc phản ánh thực trạng đời sống hiện đại.",
+"ex": [
+[
+"在大城市工作，生活压力太大了。",
+"Làm việc ở thành phố lớn, áp lực cuộc sống lớn quá."
+],
+[
+"我们要学会释放生活压力。",
+"Chúng ta phải học cách giải tỏa áp lực cuộc sống."
+]
+],
+"try": "Nói: “Trước kỳ thi, áp lực học tập lớn quá.”"
+},
+{
+"t": "不会过得幸福",
+"py": "bú huì guò de xìngfú",
+"vn": "sẽ không sống hạnh phúc",
+"note": "過得 + tính từ = cuộc sống diễn ra như thế nào.",
+"ex": [
+[
+"只要天天开心，就会过得幸福。",
+"Chỉ cần vui vẻ mỗi ngày, sẽ sống hạnh phúc."
+],
+[
+"一个人在国外，她过得很孤单。",
+"Một mình ở nước ngoài, cô ấy sống rất cô đơn."
+]
+],
+"try": "Nói: “Không có tiền tiêu vặt, sẽ không sống thoải mái.”"
+}
+]
+},
+{
+"line": 4,
+"s": "幸福其实很简单，它不是只要有钱就能买到的。我觉得工作结束回家后，洗个热水澡，然后躺在床上看看书、听听音乐，困了睡睡觉，就很幸福。",
+"vn": "Hạnh phúc thực ra rất đơn giản, nó không phải cứ có tiền là mua được. Tớ thấy sau khi tan làm về nhà, tắm nước nóng, rồi nằm lên giường đọc sách một chút, nghe chút âm nhạc, buồn ngủ thì ngủ một giấc, thế là rất hạnh phúc rồi.",
+"ch": [
+{
+"t": "不是只要有钱就能买到的",
+"py": "bú shì zhǐyào yǒu qián jiù néng mǎidào de",
+"vn": "không phải cứ có tiền là mua được",
+"frame": "不是只要……就能……",
+"note": "Phủ định điều kiện tưởng chừng là duy nhất để đạt được cái gì đó.",
+"ex": [
+[
+"健康不是只要吃药就能恢复的。",
+"Sức khỏe không phải cứ uống thuốc là hồi phục được."
+],
+[
+"友谊不是只要花钱就能得到的。",
+"Tình bạn không phải cứ tiêu tiền là có được."
+]
+],
+"try": "Nói: “Thành công không phải cứ muốn là có được.”"
+},
+{
+"t": "躺在床上看看书",
+"py": "tǎng zài chuáng shàng kàn kan shū",
+"vn": "nằm trên giường đọc sách",
+"frame": "躺在 + địa điểm",
+"note": "Tǎng kết hợp với zài chỉ tư thế nằm ở một nơi nào đó.",
+"ex": [
+[
+"他喜欢躺在沙发上看电视。",
+"Cậu ấy thích nằm trên sô pha xem TV."
+],
+[
+"累了就别躺在地上了。",
+"Mệt thì đừng nằm trên sàn nhà nữa."
+]
+],
+"try": "Nói: “Tôi thích nằm trên giường nghe nhạc.”"
+}
+]
+},
+{
+"line": 5,
+"s": "你说的也对。如果能找到一份自己既感兴趣，收入又不错的工作，那就最好了。",
+"vn": "Cậu nói cũng đúng. Nếu có thể tìm được một công việc vừa có hứng thú, thu nhập lại khá, thì tốt nhất rồi.",
+"ch": [
+{
+"t": "既感兴趣，收入又不错",
+"py": "jì gǎn xìngqù, shōurù yòu búcuò",
+"vn": "vừa hứng thú, thu nhập lại khá",
+"frame": "既 A 又 B",
+"note": "Dùng để liệt kê hai ưu điểm hoặc tính chất song song cùng tồn tại.",
+"ex": [
+[
+"这家餐厅既便宜又好吃。",
+"Nhà hàng này vừa rẻ vừa ngon."
+],
+[
+"他既会汉语又会英语。",
+"Anh ấy biết cả tiếng Trung vừa biết cả tiếng Anh."
+]
+],
+"try": "Nói: “Bộ quần áo này vừa đẹp vừa rẻ.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "有的人希望穿得再好一些，房子再大一些，认为经济条件越好人就越幸福。",
+"vn": "Có người hy vọng ăn mặc đẹp hơn một chút, nhà lớn hơn một chút, cho rằng điều kiện kinh tế càng tốt con người càng hạnh phúc.",
+"ch": [
+{
+"t": "经济条件越好人就越幸福",
+"py": "jīngjì tiáojiàn yuè hǎo rén jiù yuè xìngfú",
+"vn": "điều kiện kinh tế càng tốt con người càng hạnh phúc",
+"frame": "越……越……",
+"note": "Biểu thị mức độ thay đổi đồng đều. Không cần đổi vị trí chủ ngữ, cứ đặt danh từ trước rồi đến “yuè”.",
+"ex": [
+[
+"汉语越学越有意思。",
+"Tiếng Trung càng học càng hay."
+],
+[
+"工作越忙越要照顾好身体。",
+"Công việc càng bận càng phải chăm sóc tốt sức khỏe."
+]
+],
+"try": "Nói: “Càng luyện tập nhiều thì nói càng trôi chảy.”"
+}
+]
+},
+{
+"line": 0,
+"s": "其实有很多富人过得并不愉快，而有些穷人却过得很快乐。",
+"vn": "Thực ra có rất nhiều người giàu sống không vui vẻ lắm, mà một số người nghèo lại sống rất vui vẻ.",
+"ch": [
+{
+"t": "富人过得并不愉快",
+"py": "fùrén guò de bìng bú yúkuài",
+"vn": "người giàu sống không vui vẻ lắm",
+"frame": "过得 + 并不 / 没那么 + tính từ",
+"note": "过得 dùng để chỉ trạng thái cuộc sống/cảm giác. Bìng + bù nhấn mạnh phủ định.",
+"ex": [
+[
+"一个人生活过得并不孤单。",
+"Một mình sinh hoạt nhưng cuộc sống không cô đơn lắm."
+],
+[
+"大城市的生活过得并不轻松。",
+"Cuộc sống ở thành phố lớn không hề nhàn hạ."
+]
+],
+"try": "Nói: “Công việc mới sống không áp lực lắm.”"
+}
+]
+},
+{
+"line": 1,
+"s": "有钱不一定幸福，因为很多东西都是不能用钱买到的，例如时间、感情、生活经历等。",
+"vn": "Có tiền chưa chắc đã hạnh phúc, bởi vì rất nhiều thứ là không thể dùng tiền mua được, ví dụ như thời gian, tình cảm, kinh nghiệm sống v.v.",
+"ch": [
+{
+"t": "有钱不一定幸福",
+"py": "yǒu qián bú yídìng xìngfú",
+"vn": "có tiền chưa chắc đã hạnh phúc",
+"frame": "……不一定……",
+"note": "Dùng để diễn tả khả năng có thể xảy ra hoặc không, tránh khẳng định tuyệt đối.",
+"ex": [
+[
+"贵的东西不一定好。",
+"Đồ đắt tiền chưa chắc đã tốt."
+],
+[
+"早起的人不一定能赶上车站的车。",
+"Người dậy sớm chưa chắc đã kịp chuyến xe."
+]
+],
+"try": "Nói: “Thi thử điểm cao chưa chắc thi thật đã điểm cao.”"
+}
+]
+},
+{
+"line": 2,
+"s": "但是，从另外一个方面看，如果没钱，也很难过得幸福。",
+"vn": "Nhưng, nhìn từ một phương diện khác, nếu không có tiền, thì cũng rất khó sống hạnh phúc.",
+"ch": [
+{
+"t": "从另外一个方面看",
+"py": "cóng lìngwài yí gè fāngmiàn kàn",
+"vn": "nhìn từ một phương diện khác",
+"frame": "从……来看 / 看",
+"note": "Cụm từ dùng khi muốn chuyển ý, xem xét vấn đề dưới góc độ khác.",
+"ex": [
+[
+"从另外一个方面看，失败也是一件好事。",
+"Nhìn từ một phương diện khác, thất bại cũng là một chuyện tốt."
+],
+[
+"从学习的角度看，多听多说最重要。",
+"Nhìn từ góc độ học tập, nghe nhiều nói nhiều là quan trọng nhất."
+]
+],
+"try": "Nói: “Nhìn từ phương diện công việc, đi làm sớm có lợi hơn.”"
+}
+]
+},
+{
+"line": 2,
+"s": "当你生病了，如果由于缺钱而不能及时去看医生，你的健康都很难得到保证，就更别说幸福了。",
+"vn": "Khi bạn bị ốm, nếu do thiếu tiền mà không thể kịp thời đi khám bác sĩ, sức khỏe của bạn đều rất khó được đảm bảo, huống chi là hạnh phúc.",
+"ch": [
+{
+"t": "由于缺钱而不能及时去看医生",
+"py": "yóuyú quē qián ér bùnéng jíshí qù kàn yīshēng",
+"vn": "do thiếu tiền mà không thể kịp thời đi khám bác sĩ",
+"frame": "由于 + nguyên nhân + 而 + kết quả",
+"note": "Yóuyú trang trọng hơn yīnwèi, thường dùng trong văn viết hoặc tình huống nghiêm túc.",
+"ex": [
+[
+"由于工作经验少，他没找到那份工作。",
+"Do kinh nghiệm làm việc ít, anh ấy không tìm được công việc đó."
+],
+[
+"由于塞车，我上课迟到了。",
+"Do tắc đường, tôi đi học muộn."
+]
+],
+"try": "Nói: “Do mưa to nên buổi đi chơi phải hoãn.”"
+},
+{
+"t": "就更别说幸福了",
+"py": "jiù gèng bié shuō xìngfú le",
+"vn": "huống chi là hạnh phúc",
+"frame": "……，就更别说 + N 了",
+"note": "Dùng để suy diễn tiến tới mức độ cao hơn (huống hồ là...).",
+"ex": [
+[
+"连汉字都不会写，就更别说看小说了。",
+"Ngay cả chữ Hán còn không biết viết, huống chi là đọc tiểu thuyết."
+],
+[
+"汉语课本还没看完，就更别说考试了。",
+"Sách tiếng Trung còn chưa đọc xong, huống chi là đi thi."
+]
+],
+"try": "Nói: “Đến cơm còn không kịp ăn, huống chi là nghỉ ngơi.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "什么是幸福？有的人认为，工资高、能赚钱就是幸福；有的人认为，心情放松、身体健康才是幸福；也有人认为，能帮助别人就是一种幸福。",
+"vn": "Hạnh phúc là gì? Có người cho rằng lương cao, kiếm được tiền chính là hạnh phúc; có người cho rằng tâm trạng thả lỏng, cơ thể khỏe mạnh mới là hạnh phúc; cũng có người cho rằng có thể giúp đỡ người khác chính là một loại hạnh phúc.",
+"ch": [
+{
+"t": "有的人认为",
+"py": "yǒu de rén rènwéi",
+"vn": "có người cho rằng",
+"frame": "有的人认为……，有的人认为……",
+"note": "Dùng để nêu các ý kiến khác nhau trong một vấn đề. Rất hay gặp khi thảo luận.",
+"ex": [
+[
+"有的人认为工作很重要，有的人认为健康更重要。",
+"Có người cho rằng công việc rất quan trọng, có người cho rằng sức khỏe quan trọng hơn."
+],
+[
+"有的人认为学外语很难，有的人认为很简单。",
+"Có người cho rằng học ngoại ngữ rất khó, có người cho rằng rất đơn giản."
+]
+],
+"try": "Nói: “Có người cho rằng sống ở thành phố rất thoải mái.”"
+},
+{
+"t": "身体健康才是幸福",
+"py": "shēntǐ jiànkāng cái shì xìngfú",
+"vn": "sức khỏe tốt mới là hạnh phúc",
+"frame": "……才是……",
+"note": "才 dùng để nhấn mạnh điều kiện cốt lõi phía sau. Đừng nhầm với 就是.",
+"ex": [
+[
+"努力学习才是最重要的。",
+"Học tập chăm chỉ mới là quan trọng nhất."
+],
+[
+"坚持每天锻炼才是健康的秘诀。",
+"Kiên trì tập thể dục mỗi ngày mới là bí quyết khỏe mạnh."
+]
+],
+"try": "Nói: “Hiểu được quy tắc mới là quan trọng nhất.”"
+}
+]
+},
+{
+"line": 1,
+"s": "还有人说，小时候幸福是一件东西，比如一块橡皮、一块糖，得到了就很幸福；长大后幸福是一种态度，生活的态度决定了我们幸福感的高低。",
+"vn": "Cũng có người nói, hồi nhỏ hạnh phúc là một món đồ, ví dụ như một viên tẩy, một cục kẹo, có được là rất hạnh phúc; lớn lên hạnh phúc là một thái độ, thái độ sống quyết định mức độ hạnh phúc của chúng ta.",
+"ch": [
+{
+"t": "比如一块橡皮、一块糖",
+"py": "bǐrú yí kuài xiàngpí, yí kuài táng",
+"vn": "ví dụ như một viên tẩy, một cục kẹo",
+"frame": "比如 + danh từ / cụm từ",
+"note": "Dùng để đưa ra ví dụ cụ thể cho sự việc vừa nhắc tới phía trước.",
+"ex": [
+[
+"我喜欢很多水果，比如苹果和香蕉。",
+"Tôi thích nhiều loại hoa quả, ví dụ như táo và chuối."
+],
+[
+"学好汉语有很多方法，比如多听多说。",
+"Học tốt tiếng Trung có rất nhiều cách, ví dụ như nghe nhiều nói nhiều."
+]
+],
+"try": "Nói: “Tôi thích đọc sách, ví dụ như tiểu thuyết.”"
+},
+{
+"t": "决定了我们幸福感的高低",
+"py": "juédìng le wǒmen xìngfúgǎn de gāodī",
+"vn": "quyết định mức độ hạnh phúc cao hay thấp của chúng ta",
+"frame": "……决定了 + N + 的高低 / 好坏",
+"note": "Cấu trúc cao cấp dùng để chỉ mức độ của một trạng thái trừu tượng.",
+"ex": [
+[
+"努力决定了考试成绩的高低。",
+"Sự nỗ lực quyết định điểm số thi cao hay thấp."
+],
+[
+"方法决定了工作效率的高低。",
+"Phương pháp quyết định hiệu quả công việc cao hay thấp."
+]
+],
+"try": "Nói: “Thái độ học tập quyết định kết quả cao hay thấp.”"
+}
+]
+},
+{
+"line": 2,
+"s": "那怎样才算是真正的幸福？其实，幸福并没有一个标准答案，每个人对幸福都有不同的理解。不管你认为幸福是什么，只要你用心去找，就一定能发现它。",
+"vn": "Vậy thế nào mới được coi là hạnh phúc thực sự? Thật ra, hạnh phúc vốn không có một đáp án chuẩn mực nào, mỗi người đối với hạnh phúc đều có sự thấu hiểu khác nhau. Bất kể bạn cho rằng hạnh phúc là gì, chỉ cần bạn dụng tâm đi tìm, nhất định sẽ có thể phát hiện ra nó.",
+"ch": [
+{
+"t": "每个人对幸福都有不同的理解",
+"py": "měige rén duì xìngfú dōu yǒu bùtóng de lǐjiě",
+"vn": "mỗi người đối với hạnh phúc đều có sự thấu hiểu khác nhau",
+"frame": "A 对 B 有不同的理解",
+"note": "Dùng để chỉ mỗi người có góc nhìn và cách nghĩ riêng về một vấn đề nào đó.",
+"ex": [
+[
+"每个人对成功都有不同的理解。",
+"Mỗi người đối với sự thành công đều có cách hiểu khác nhau."
+],
+[
+"同学们对这个问题有不同的理解。",
+"Các bạn học sinh đối với vấn đề này có cách hiểu khác nhau."
+]
+],
+"try": "Nói: “Mỗi người đối với âm nhạc đều có cách hiểu khác nhau.”"
+},
+{
+"t": "只要你用心去找，就一定能发现它",
+"py": "zhǐyào nǐ yòngxīn qù zhǎo, jiù yídìng néng fāxiàn tā",
+"vn": "chỉ cần bạn dụng tâm đi tìm, nhất định sẽ có thể phát hiện ra nó",
+"frame": "只要……，就一定……",
+"note": "Cấu trúc điều kiện – kết quả rất phổ biến, diễn tả chỉ cần đạt điều kiện trước thì kết quả sau chắc chắn xảy ra.",
+"ex": [
+[
+"只要你认真复习，就一定能考好。",
+"Chỉ cần bạn ôn tập nghiêm túc, nhất định sẽ thi tốt."
+],
+[
+"只要坚持下去，就一定能成功。",
+"Chỉ cần kiên trì tiếp, nhất định sẽ thành công."
+]
+],
+"try": "Nói: “Chỉ cần bạn chăm chỉ nói tiếng Trung, nhất định sẽ tiến bộ.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "中国有个成语叫“知足常乐”。",
+"vn": "Trung Quốc có một thành ngữ gọi là \"Tri túc thường lạc\" (biết đủ thường vui).",
+"ch": [
+{
+"t": "有个成语叫",
+"py": "yǒu gè chéngyǔ jiào",
+"vn": "có một thành ngữ gọi là",
+"frame": "有个成语叫 + tên thành ngữ",
+"note": "Khung câu cửa miệng khi muốn giới thiệu về một thành ngữ Trung Quốc.",
+"ex": [
+[
+"中国有个成语叫“人心齐，泰山移”。",
+"Trung Quốc có thành ngữ \"Người đồng lòng, Thái Sơn chuyển\"."
+],
+[
+"汉语里有个成语叫“马到成功”。",
+"Trong tiếng Trung có thành ngữ \"Mã đáo thành công\"."
+]
+],
+"try": "Nói: \"Tiếng Trung có một thành ngữ gọi là 'Cố gắng hết sức'.\""
+}
+]
+},
+{
+"line": 0,
+"s": "简单地说就是知道满足，才会快乐。",
+"vn": "Nói một cách đơn giản chính là biết thỏa mãn, thì mới có được niềm vui.",
+"ch": [
+{
+"t": "简单地说就是",
+"py": "jiǎndān de shuō jiù shì",
+"vn": "nói một cách đơn giản chính là",
+"frame": "简单地说就是 + nội dung giải thích",
+"note": "Dùng để tóm tắt hoặc giải thích đơn giản một vấn đề phức tạp.",
+"ex": [
+[
+"简单地说就是明天我们要加班。",
+"Nói đơn giản chính là ngày mai chúng ta phải tăng ca."
+],
+[
+"这份工作，简单地说就是多劳多得。",
+"Công việc này, nói đơn giản chính là làm nhiều hưởng nhiều."
+]
+],
+"try": "Nói: \"Học tiếng Trung, nói đơn giản chính là phải chăm chỉ nói.\""
+},
+{
+"t": "才会快乐",
+"py": "cái huì kuàilè",
+"vn": "mới có thể vui vẻ",
+"frame": "……才 + sẽ + …",
+"note": "Biểu thị điều kiện cần: phải đạt được vế trước thì vế sau mới xảy ra.",
+"ex": [
+[
+"多练习口语，才会说得流利。",
+"Luyện nói nhiều thì mới nói lưu loát được."
+],
+[
+"只有努力工作，老板才会涨工资。",
+"Chỉ có làm việc chăm chỉ thì sếp mới tăng lương."
+]
+],
+"try": "Nói: \"Đi ngủ sớm thì sáng mai mới không buồn ngủ.\""
+}
+]
+},
+{
+"line": 1,
+"s": "人生的最高境界是心情愉快，金钱并不是唯一追求的目标，还有其他更重要的东西。",
+"vn": "Cảnh giới cao nhất của cuộc đời là tâm trạng vui vẻ, tiền bạc không phải là mục tiêu theo đuổi duy nhất, vẫn còn có những thứ khác quan trọng hơn.",
+"ch": [
+{
+"t": "并不是唯一追求的目标",
+"py": "bìng bú shì wéiyī zhuīqiú de mùbiāo",
+"vn": "vốn không phải là mục tiêu theo đuổi duy nhất",
+"frame": "……并不是唯一追求的目标",
+"note": "Khung dùng để phủ định một quan niệm sai lầm về mục tiêu sống.",
+"ex": [
+[
+"考试及格并不是唯一追求的目标。",
+"Thi đỗ không phải là mục tiêu theo đuổi duy nhất."
+],
+[
+"赚钱并不是人生的唯一追求的目标。",
+"Kiếm tiền không phải là mục tiêu theo đuổi duy nhất của cuộc đời."
+]
+],
+"try": "Nói: \"Đi làm không phải là mục tiêu theo đuổi duy nhất của tôi.\""
+}
+]
+},
+{
+"line": 1,
+"s": "比如，你有一个健康的身体、一个知心的爱人、一个温暖幸福的家庭、一份自己喜爱的工作，这些都不是用金钱能买到的。",
+"vn": "Ví dụ, bạn có một cơ thể khỏe mạnh, một người bạn đời tri kỷ, một gia đình ấm áp hạnh phúc, một công việc bản thân yêu thích, những thứ này đều không thể dùng tiền để mua được.",
+"ch": [
+{
+"t": "都不是用金钱能买到的",
+"py": "dōu bú shì yòng jīnqián néng mǎidào de",
+"vn": "đều không phải dùng tiền là mua được",
+"frame": "……都不是用金钱能买到的",
+"note": "Nhấn mạnh giá trị tinh thần vượt trội hơn vật chất tiền bạc.",
+"ex": [
+[
+"真正的友情都不是用金钱能买到的。",
+"Tình bạn chân chính đều không phải dùng tiền mua được."
+],
+[
+"健康和时间都不是用金钱能买到的。",
+"Sức khỏe và thời gian đều không phải dùng tiền mua được."
+]
+],
+"try": "Nói: \"Tình cảm gia đình không phải dùng tiền là mua được.\""
+}
+]
+},
+{
+"line": 2,
+"s": "知足常乐，可以使你的生活每天都阳光灿烂，春暖花开。",
+"vn": "Tri túc thường lạc, có thể khiến cuộc sống của bạn mỗi ngày đều rực rỡ ánh dương, xuân ấm hoa nở.",
+"ch": [
+{
+"t": "可以使你的生活",
+"py": "kěyǐ shǐ nǐ de shēnghuó",
+"vn": "có thể khiến cuộc sống của bạn",
+"frame": "……可以使你的生活 + kết quả",
+"note": "使 dùng như 让, mang sắc thái trang trọng hơn một chút trong văn viết.",
+"ex": [
+[
+"运动可以使你的生活更加健康。",
+"Vận động có thể khiến cuộc sống của bạn khỏe mạnh hơn."
+],
+[
+"多读书可以使你的生活更丰富。",
+"Đọc nhiều sách có thể khiến cuộc sống của bạn phong phú hơn."
+]
+],
+"try": "Nói: \"Du lịch có thể khiến cuộc sống của bạn vui vẻ hơn.\""
+}
+]
+}
+]
+}

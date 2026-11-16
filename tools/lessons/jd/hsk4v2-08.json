@@ -1,0 +1,1029 @@
+{
+"1": [
+{
+"line": 0,
+"s": "这种巧克力味道不错，你在哪儿买的？",
+"vn": "Loại sô-cô-la này vị rất ngon, bạn mua ở đâu vậy?",
+"ch": [
+{
+"t": "味道不错",
+"py": "wèidao búcuò",
+"vn": "vị rất ngon",
+"frame": "……的 + 味道不错",
+"note": "Dùng để khen món ăn hoặc đồ uống có hương vị tuyệt vời, rất hay gặp trong đời sống.",
+"ex": [
+[
+"这家餐厅的菜味道不错。",
+"Món ăn của nhà hàng này vị rất ngon."
+],
+[
+"妈妈做的面条味道不错。",
+"Mì mẹ nấu vị rất ngon."
+]
+],
+"try": "Nói: “Cà phê ở quán này vị rất ngon.”"
+}
+]
+},
+{
+"line": 1,
+"s": "不是我买的，是我女儿给我从国外带回来的礼物。",
+"vn": "Không phải tôi mua, là con gái tôi từ nước ngoài mang về tặng tôi đấy.",
+"ch": [
+{
+"t": "给我从国外带回来的礼物",
+"py": "gěi wǒ cóng guówài dài huílái de lǐwù",
+"vn": "món quà từ nước ngoài mang về cho tôi",
+"frame": "给 + ai + từ đâu + mang về + cái gì",
+"note": "Cấu trúc chỉ phương hướng và đối tượng nhận đồ xách tay, rất hay dùng khi đi du lịch về.",
+"ex": [
+[
+"这是朋友给我从北京带回来的书。",
+"Đây là cuốn sách bạn mang từ Bắc Kinh về cho tôi."
+],
+[
+"妈妈给我从老家带回来的水果。",
+"Trái cây mẹ mang từ quê lên cho tôi."
+]
+],
+"try": "Nói: “Đây là quà bạn tôi từ Thượng Hải mang về cho tôi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "很多人出国后常常会买外国的巧克力，回来送给亲戚朋友。",
+"vn": "Rất nhiều người sau khi ra nước ngoài thường hay mua sô-cô-la ngoại, mang về tặng người thân bạn bè.",
+"ch": [
+{
+"t": "送给亲戚朋友",
+"py": "sòng gěi qīnqi péngyou",
+"vn": "tặng người thân bạn bè",
+"frame": "送给 + người nhận",
+"note": "Cụm từ cố định chỉ việc biếu tặng quà cho những người gần gũi trong gia đình và xã hội.",
+"ex": [
+[
+"过年时要送给亲戚朋友礼物。",
+"Lúc Tết phải tặng quà cho người thân bạn bè."
+],
+[
+"这些特产是送给亲戚朋友的。",
+"Mấy đặc sản này là để tặng người thân bạn bè."
+]
+],
+"try": "Nói: “Tôi mua quà lưu niệm về để tặng người thân bạn bè.”"
+}
+]
+},
+{
+"line": 3,
+"s": "是啊，因为很多人都爱吃巧克力，尤其是女性。",
+"vn": "Đúng vậy, bởi vì rất nhiều người thích ăn sô-cô-la, đặc biệt là nữ giới.",
+"ch": [
+{
+"t": "尤其是女性",
+"py": "yóuqí shì nǚxìng",
+"vn": "đặc biệt là phái nữ",
+"frame": "……，尤其是 + đối tượng",
+"note": "Dùng “尤其是” để nêu bật một trường hợp đặc biệt nhất trong một nhóm chung.",
+"ex": [
+[
+"我喜欢学习外语，尤其是汉语。",
+"Tôi thích học ngoại ngữ, đặc biệt là tiếng Trung."
+],
+[
+"大家都很累，尤其是经理。",
+"Mọi người đều rất mệt, đặc biệt là giám đốc."
+]
+],
+"try": "Nói: “Các bạn học sinh đều thích đọc sách, đặc biệt là tiểu thuyết.”"
+}
+]
+},
+{
+"line": 4,
+"s": "这是为什么呢？",
+"vn": "Tại sao lại như vậy nhỉ?",
+"ch": []
+},
+{
+"line": 5,
+"s": "巧克力大多是甜的，而很多女性都喜欢吃甜的。而且，听说伤心难过的时候吃块儿巧克力，还能使人的心情变得愉快。",
+"vn": "Sô-cô-la phần lớn có vị ngọt, mà nhiều nữ giới lại thích ăn đồ ngọt. Hơn nữa, nghe nói lúc buồn bã đau khổ ăn một miếng sô-cô-la, còn có thể khiến tâm trạng con người trở nên vui vẻ.",
+"ch": [
+{
+"t": "伤心难过的时候",
+"py": "shāngxīn nánguò de shíhou",
+"vn": "lúc đau buồn",
+"frame": "伤心难过的时候 + hành động",
+"note": "Miêu tả trạng thái tâm lý buồn chán, hụt hẫng trong cuộc sống.",
+"ex": [
+[
+"伤心难过的时候不要一个人待着。",
+"Lúc buồn bã đau khổ đừng ở một mình."
+],
+[
+"伤心难过的时候可以听听音乐。",
+"Lúc buồn bã đau khổ có thể nghe nhạc."
+]
+],
+"try": "Nói: “Lúc buồn bã đau khổ tôi thường gọi điện cho mẹ.”"
+},
+{
+"t": "使人的心情变得愉快",
+"py": "shǐ rén de xīnqíng biàn de yúkuài",
+"vn": "khiến tâm trạng con người trở nên vui vẻ",
+"frame": "使 + ai/cái gì +变得 + tính từ",
+"note": "Cấu trúc nhân quả trang trọng, “使” có nghĩa là làm cho, khiến cho.",
+"ex": [
+[
+"这个好消息使大家的的心情变得愉快。",
+"Tin tốt này khiến tâm trạng mọi người trở nên vui vẻ."
+],
+[
+"运动能使人的身体变得健康。",
+"Vận động có thể khiến cơ thể con người trở nên khỏe mạnh."
+]
+],
+"try": "Nói: “Cảnh đẹp ở đây khiến tâm trạng tôi trở nên vui vẻ.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "这里的景色真美，空气也好。",
+"vn": "Cảnh đẹp ở đây thật đẹp, không khí cũng tốt.",
+"ch": [
+{
+"t": "这里的景色真美",
+"py": "zhèlǐ de jǐngsè zhēn měi",
+"vn": "cảnh sắc ở đây thật đẹp",
+"frame": "……的景色真美",
+"note": "Dùng để khen ngợi phong cảnh của một nơi nào đó khi đi du lịch.",
+"ex": [
+[
+"我们学校的景色真美。",
+"Cảnh sắc trường chúng tôi thật đẹp."
+],
+[
+"山上的景色真美。",
+"Cảnh sắc trên núi thật đẹp."
+]
+],
+"try": "Nói: “Cảnh sắc nơi này thật đẹp.”"
+}
+]
+},
+{
+"line": 1,
+"s": "怎么样，心情好些了吗？",
+"vn": "Thế nào, tâm trạng đã khá hơn chút nào chưa?",
+"ch": [
+{
+"t": "心情好些了吗",
+"py": "xīnqíng hǎo xiē le ma",
+"vn": "tâm trạng khá hơn chút nào chưa",
+"frame": "心情 + tính từ + 些了吗",
+"note": "Dùng để hỏi han người khác khi họ đang buồn hoặc có áp lực.",
+"ex": [
+[
+"听了音乐，心情好些了吗？",
+"Nghe nhạc xong, tâm trạng khá hơn chút nào chưa?"
+],
+[
+"休息一下，心情好些了吗？",
+"Nghỉ ngơi một chút, tâm trạng khá hơn chút nào chưa?"
+]
+],
+"try": "Nói: “Uống nước xong, tâm trạng khá hơn chút nào chưa?”"
+}
+]
+},
+{
+"line": 2,
+"s": "好多了，上次足球比赛后，好久都没这么放松了。",
+"vn": "Khá hơn nhiều rồi, sau trận đấu bóng đá lần trước, đã lâu lắm rồi không được thả lỏng thế này.",
+"ch": [
+{
+"t": "好多了",
+"py": "hǎo duō le",
+"vn": "khá hơn nhiều rồi",
+"frame": "……好多了",
+"note": "Dùng để trả lời khi tình trạng sức khỏe hoặc tâm trạng đã cải thiện nhiều.",
+"ex": [
+[
+"吃了药，我的感冒好多了。",
+"Uống thuốc xong, cảm của tôi khá hơn nhiều rồi."
+],
+[
+"听了你的话，我心里好多了。",
+"Nghe lời bạn nói, trong lòng tôi khá hơn nhiều rồi."
+]
+],
+"try": "Nói: “Nghỉ ngơi xong, tôi thấy khá hơn nhiều rồi.”"
+},
+{
+"t": "好久都没这么放松了",
+"py": "hǎojiǔ dōu méi zhème fàngsōng le",
+"vn": "đã lâu lắm rồi không được thư giãn như thế này",
+"frame": "好久都没这么 + tính từ + 了",
+"note": "Biểu thị sự việc gì đó rất lâu rồi mới lại xuất hiện.",
+"ex": [
+[
+"放假了，好久都没这么放松了。",
+"Được nghỉ rồi, đã lâu lắm rồi không được thư giãn như thế này."
+],
+[
+"周末跟朋友在一起，好久都没这么高兴了。",
+"Cuối tuần ở bên bạn bè, đã lâu lắm rồi không được vui thế này."
+]
+],
+"try": "Nói: “Đã lâu lắm rồi không được ăn ngon như thế này.”"
+}
+]
+},
+{
+"line": 3,
+"s": "你不要有压力，好好儿准备下次比赛就好了。",
+"vn": "Bạn đừng có áp lực, chuẩn bị thật tốt trận đấu lần sau là được.",
+"ch": [
+{
+"t": "不要有压力",
+"py": "bú yào yǒu yālì",
+"vn": "đừng có áp lực",
+"frame": "不要有压力",
+"note": "Lời khuyên nhủ giúp người khác giải tỏa tâm lý căng thẳng.",
+"ex": [
+[
+"考试时不要有压力。",
+"Khi thi cử đừng có áp lực."
+],
+[
+"面试前不要有压力。",
+"Trước khi phỏng vấn đừng có áp lực."
+]
+],
+"try": "Nói: “Làm việc đừng có áp lực.”"
+}
+]
+},
+{
+"line": 4,
+"s": "这段时间我总是一个人坐在房间里回忆那次比赛。如果我们能再努力一点儿，就一定会多进一个球。",
+"vn": "Khoảng thời gian này tôi luôn một mình ngồi trong phòng hồi tưởng lại trận đấu đó. Nếu như chúng ta có thể nỗ lực thêm một chút nữa, nhất định sẽ vào thêm được một quả bóng.",
+"ch": [
+{
+"t": "回忆那次比赛",
+"py": "huíyì nà cì bǐsài",
+"vn": "hồi tưởng lại trận đấu đó",
+"frame": "回忆 + sự việc trong quá khứ",
+"note": "Dùng khi nhớ lại những chuyện đã xảy ra.",
+"ex": [
+[
+"回忆当年的生活。",
+"Hồi tưởng lại cuộc sống năm xưa."
+],
+[
+"每到毕业季，大家都会回忆大学时光。",
+"Mỗi độ mùa tốt nghiệp, mọi người đều hồi tưởng lại khoảng thời gian đại học."
+]
+],
+"try": "Nói: “Hồi tưởng lại lần đi du lịch đó.”"
+}
+]
+},
+{
+"line": 5,
+"s": "事情已经发生了，过去的就让它成为过去吧。只要这次你好好儿准备，一定能把比赛踢好。",
+"vn": "Sự việc đã xảy ra rồi, chuyện đã qua hãy để nó qua đi. Chỉ cần lần này bạn chuẩn bị thật tốt, nhất định có thể đá tốt trận đấu.",
+"ch": [
+{
+"t": "事情已经发生了",
+"py": "shìqing yǐjīng fāshēng le",
+"vn": "sự việc đã xảy ra rồi",
+"frame": "事情已经发生了",
+"note": "Dùng khi nhắc đến một chuyện không vui đã rồi, không thay đổi được.",
+"ex": [
+[
+"事情已经发生了，着急也没用。",
+"Sự việc đã xảy ra rồi, có sốt ruột cũng vô ích."
+],
+[
+"别想了，事情已经发生了。",
+"Đừng nghĩ nữa, sự việc đã xảy ra rồi."
+]
+],
+"try": "Nói: “Sự việc đã xảy ra rồi, chúng ta phải đối mặt.”"
+},
+{
+"t": "就让它成为过去吧",
+"py": "jiù ràng tā chéngwéi guòqù ba",
+"vn": "hãy để nó trở thành quá khứ đi",
+"frame": "……就让它成为过去吧",
+"note": "Khuyên ai đó buông bỏ chuyện buồn trong quá khứ.",
+"ex": [
+[
+"那些不愉快的事就让它成为过去吧。",
+"Những chuyện không vui đó hãy để nó trở thành quá khứ đi."
+],
+[
+"过去的误会就让它成为过去吧。",
+"Hiểu lầm đã qua hãy để nó trở thành quá khứ đi."
+]
+],
+"try": "Nói: “Chuyện buồn đó hãy để nó trở thành quá khứ đi.”"
+},
+{
+"t": "只要这次你好好儿准备",
+"py": "zhǐyào zhè cì nǐ hǎohǎor zhǔnbèi",
+"vn": "chỉ cần lần này bạn chuẩn bị thật tốt",
+"frame": "只要 + điều kiện + 就 + kết quả",
+"note": "Biểu thị điều kiện cần thiết để đạt được kết quả mong muốn.",
+"ex": [
+[
+"只要你好好儿准备，考试一定能过。",
+"Chỉ cần bạn chuẩn bị thật tốt, kỳ thi nhất định có thể qua."
+],
+[
+"只要认真听课，就能听懂。",
+"Chỉ cần nghe giảng cẩn thận là có thể nghe hiểu."
+]
+],
+"try": "Nói: “Chỉ cần bạn luyện tập nhiều, nhất định sẽ giỏi.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "师傅，我去大使馆，你是不是走错了？",
+"vn": "Sư phụ, tôi đi đại sứ quán, anh đi nhầm đường phải không?",
+"ch": [
+{
+"t": "你是不是走错了",
+"py": "nǐ shì bú shì zǒu cuò le",
+"vn": "bạn đi nhầm đường phải không",
+"frame": "是不是 + Động từ + 了",
+"note": "Dùng để xác nhận lại một việc đã xảy ra xem có đúng không, giọng điệu hỏi dò.",
+"ex": [
+[
+"你是不是买错了？",
+"Cậu mua nhầm đồ phải không?"
+],
+[
+"我是不是走错房间了？",
+"Tôi đi nhầm phòng phải không?"
+]
+],
+"try": "Nói: “Cậu làm sai bài tập này phải không?”"
+}
+]
+},
+{
+"line": 1,
+"s": "现在是上班时间，前面有点儿堵车，我们走另外一条路，距离差不多。",
+"vn": "Bây giờ là giờ đi làm, phía trước tắc đường một chút, chúng ta đi con đường khác, khoảng cách như nhau.",
+"ch": [
+{
+"t": "走另外一条路",
+"py": "zǒu lìngwài yì tiáo lù",
+"vn": "đi con đường khác",
+"frame": "走 + 另外 + Số từ + Lượng từ + 路",
+"note": "另外 đứng trước số lượng từ để chỉ sự thay thế, khác biệt.",
+"ex": [
+[
+"我们换另外一个办法吧。",
+"Chúng ta đổi phương pháp khác đi."
+],
+[
+"请坐另外一张桌子。",
+"Mời ngồi bàn khác."
+]
+],
+"try": "Nói: “Hôm nay tôi muốn đọc cuốn sách khác.”"
+}
+]
+},
+{
+"line": 2,
+"s": "那就好，堵车浪费时间，遇到堵车，心情也“堵”。",
+"vn": "Vậy thì tốt, tắc đường lãng phí thời gian, gặp tắc đường, tâm trạng cũng \"tắc\" theo.",
+"ch": [
+{
+"t": "浪费时间",
+"py": "làngfèi shíjiān",
+"vn": "lãng phí thời gian",
+"frame": "浪费 + Thời gian / Tiền bạc",
+"note": "Cụm từ cố định chỉ việc dùng lãng phí tài nguyên, thời gian của bản thân hoặc người khác.",
+"ex": [
+[
+"别在这儿浪费时间了。",
+"Đừng lãng phí thời gian ở đây nữa."
+],
+[
+"这样做好,不浪费时间。",
+"Làm thế này tốt, không lãng phí thời gian."
+]
+],
+"try": "Nói: “Xem điện thoại quá nhiều sẽ lãng phí thời gian.”"
+},
+{
+"t": "心情也“堵”",
+"py": "xīnqíng yě “dǔ”",
+"vn": "tâm trạng cũng \"tắc\" (nghẹn ngào, bức bối)",
+"frame": "心情 + 也 + Tính từ",
+"note": "Chơi chữ từ \"tắc đường\" sang \"tắc lòng\", diễn tả sự khó chịu.",
+"ex": [
+[
+"听到这个消息，心情很堵。",
+"Nghe tin này, tâm trạng rất bức bối."
+],
+[
+"遇到烦心事，心情就会堵。",
+"Gặp chuyện phiền lòng, tâm trạng sẽ thấy nghẹn."
+]
+],
+"try": "Nói: “Hôm nay không làm được bài, tâm trạng rất bức bối.”"
+}
+]
+},
+{
+"line": 3,
+"s": "可不是！上班堵车怕迟到，下班堵车怕回家晚。每天在马路上开车，要想不遇到堵车，还真难。",
+"vn": "Chuẩn luôn! Đi làm tắc đường sợ muộn, tan làm tắc đường sợ về nhà muộn. Hàng ngày lái xe trên đường lớn, muốn không gặp tắc đường, quả thực rất khó.",
+"ch": [
+{
+"t": "要想不遇到堵车，还真难",
+"py": "yào xiǎng bú yùdào dǔchē, hái zhēn nán",
+"vn": "muốn không gặp tắc đường, quả thực rất khó",
+"frame": "要想 + Động từ, 还真 + Tính từ",
+"note": "Dùng để cảm thán việc đạt được điều gì đó là rất khó khăn trong thực tế.",
+"ex": [
+[
+"要想考得好成绩，还真难。",
+"Muốn thi được điểm cao, quả thực rất khó."
+],
+[
+"要想每天早起，还真难。",
+"Muốn ngày nào cũng dậy sớm, quả thực rất khó."
+]
+],
+"try": "Nói: “Muốn nói tiếng Trung trôi chảy, quả thực rất khó.”"
+}
+]
+},
+{
+"line": 4,
+"s": "一遇到堵车，人们就容易变得没有耐心。长期这样，还会影响脾气甚至性格。但是您的心情为什么这么好呢？",
+"vn": "Hễ gặp tắc đường, mọi người rất dễ trở nên mất kiên nhẫn. Lâu dần như vậy, còn ảnh hưởng đến tính khí thậm chí tính cách. Nhưng tâm trạng của ngài tại sao lại tốt như vậy?",
+"ch": [
+{
+"t": "一遇到堵车，人们就",
+"py": "yí yùdào dǔchē, rénmen jiù",
+"vn": "hễ gặp tắc đường là mọi người",
+"frame": "一 + V1, 主语 + 就 + V2",
+"note": "Biểu thị hai hành động xảy ra liên tiếp, cái này vừa đến thì cái kia lập tức xuất hiện.",
+"ex": [
+[
+"一下课，学生们就跑出去了。",
+"Tan học một cái là học sinh chạy ra ngoài ngay."
+],
+[
+"一喝咖啡，他就睡不着。",
+"Hễ uống cà phê là anh ấy không ngủ được."
+]
+],
+"try": "Nói: “Hễ nhìn thấy thầy giáo là tôi lại căng thẳng.”"
+}
+]
+},
+{
+"line": 5,
+"s": "我们改变不了堵车，但是可以试着改变自己的心情。堵车时正好可以休息一下，还可以听听自己喜欢的音乐。",
+"vn": "Chúng ta không thể thay đổi việc tắc đường, nhưng có thể thử thay đổi tâm trạng của chính mình. Lúc tắc đường vừa hay có thể nghỉ ngơi một lát, lại còn có thể nghe bản nhạc mình thích.",
+"ch": [
+{
+"t": "试着改变自己的心情",
+"py": "shìzhe gǎibiàn zìjǐ de xīnqíng",
+"vn": "thử thay đổi tâm trạng của bản thân",
+"frame": "试着 + Động từ + Danh từ",
+"note": "Thử làm một việc gì đó để tìm hướng giải quyết tốt hơn.",
+"ex": [
+[
+"试着接受别人的意见。",
+"Thử tiếp nhận ý kiến của người khác."
+],
+[
+"试着自己独立完成工作。",
+"Thử tự mình hoàn thành công việc."
+]
+],
+"try": "Nói: “Thử thay đổi phương pháp học tập xem sao.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "草绿了，那是生命的颜色；花开了，那是大自然的礼物。",
+"vn": "Cỏ xanh rồi, đó là màu của sự sống; hoa nở rồi, đó là món quà của tự nhiên.",
+"ch": [
+{
+"t": "生命的颜色",
+"py": "shēngmìng de yánsè",
+"vn": "màu sắc của sự sống",
+"frame": "……的颜色",
+"note": "Dùng để chỉ màu đặc trưng của một sự vật, hiện tượng. Đổi danh từ phía trước là dùng được ngay.",
+"ex": [
+[
+"天空是海洋的颜色。",
+"Bầu trời có màu của đại dương."
+],
+[
+"春天是绿色的。",
+"Mùa xuân có màu xanh."
+]
+],
+"try": "Nói: “Màu sắc của mùa thu rất đẹp.”"
+}
+]
+},
+{
+"line": 0,
+"s": "生活中不缺少美，缺少的是发现美的眼睛。",
+"vn": "Trong cuộc sống không thiếu cái đẹp, cái thiếu là đôi mắt phát hiện ra cái đẹp.",
+"ch": [
+{
+"t": "不缺少美",
+"py": "bù quēshǎo měi",
+"vn": "không thiếu cái đẹp",
+"frame": "不缺少 + danh từ",
+"note": "Dùng để khẳng định cái gì đó luôn có sẵn và rất phong phú. Không cần dùng từ phủ định phức tạp.",
+"ex": [
+[
+"学校里不缺少优秀的老师。",
+"Trong trường học không thiếu giáo viên ưu tú."
+],
+[
+"班里不缺少努力的学生。",
+"Trong lớp không thiếu học sinh chăm chỉ."
+]
+],
+"try": "Nói: “Trong công ty chúng ta không thiếu người tài.”"
+},
+{
+"t": "发现美的眼睛",
+"py": "fāxiàn měi de yǎnjīng",
+"vn": "đôi mắt phát hiện cái đẹp",
+"frame": "发现 + danh từ + 的眼睛",
+"note": "Cụm từ mang tính hình tượng cao, thường dùng trong văn phong miêu tả cuộc sống.",
+"ex": [
+[
+"我们要有一双发现问题的眼睛。",
+"Chúng ta phải có một đôi mắt phát hiện vấn đề."
+],
+[
+"他有一双会说话的眼睛。",
+"Anh ấy có một đôi mắt biết nói."
+]
+],
+"try": "Nói: “Học sinh cần có đôi mắt phát hiện lỗi sai.”"
+}
+]
+},
+{
+"line": 0,
+"s": "只要有心，生活中的美到处都是。",
+"vn": "Chỉ cần có tâm, cái đẹp trong cuộc sống có ở khắp mọi nơi.",
+"ch": [
+{
+"t": "只要有心",
+"py": "zhǐyào yǒuxīn",
+"vn": "chỉ cần có tâm / có lòng",
+"frame": "只要有心，……",
+"note": "Chỉ cần có sự quan tâm, cố gắng thì việc gì cũng có thể đạt được. Rất hay dùng trong lời khuyên.",
+"ex": [
+[
+"只要有心，汉语一定能学好。",
+"Chỉ cần có tâm, tiếng Trung nhất định học giỏi."
+],
+[
+"只要有心，事情就能做好。",
+"Chỉ cần có tâm, việc gì cũng làm tốt."
+]
+],
+"try": "Nói: “Chỉ cần có tâm, thi HSK không khó.”"
+},
+{
+"t": "到处都是",
+"py": "dàochù dōushì",
+"vn": "khắp nơi đều là",
+"frame": "……到处都是……",
+"note": "Khẳng định sự xuất hiện dày đặc của một sự vật nào đó ở mọi ngóc ngách.",
+"ex": [
+[
+"秋天里，落叶到处都是。",
+"Vào mùa thu, lá rụng khắp nơi."
+],
+[
+"这家超市里到处都是人。",
+"Siêu thị này khắp nơi đều là người."
+]
+],
+"try": "Nói: “Phố mua sắm người ở đâu cũng có.”"
+}
+]
+},
+{
+"line": 1,
+"s": "生活的态度要自己选择，因此，遇到烦恼时，你应该想一些办法让自己从不高兴的心情中走出来。",
+"vn": "Thái độ sống phải do chính mình lựa chọn, vì vậy, khi gặp phiền muộn, bạn nên nghĩ một số cách để bản thân bước ra khỏi tâm trạng không vui.",
+"ch": [
+{
+"t": "生活的态度",
+"py": "shēnghuó de tàidù",
+"vn": "thái độ sống",
+"frame": "……的态度",
+"note": "Cụm danh từ cố định chỉ cách nhìn nhận và đối mặt với các vấn đề trong đời sống.",
+"ex": [
+[
+"学习的态度要认真。",
+"Thái độ học tập phải nghiêm túc."
+],
+[
+"工作的态度决定一切。",
+"Thái độ làm việc quyết định tất cả."
+]
+],
+"try": "Nói: “Thái độ đối với kỳ thi rất quan trọng.”"
+},
+{
+"t": "遇到烦恼时",
+"py": "yùdào fánnǎo shí",
+"vn": "khi gặp phiền muộn",
+"frame": "遇到 + danh từ + 时",
+"note": "Dùng để giới thiệu bối cảnh, hoàn cảnh xảy ra sự việc. Rất hay dùng trong văn nói và viết.",
+"ex": [
+[
+"遇到困难时不要害怕。",
+"Khi gặp khó khăn đừng sợ hãi."
+],
+[
+"遇到问题时应该多问老师。",
+"Khi gặp vấn đề nên hỏi thầy giáo nhiều hơn."
+]
+],
+"try": "Nói: “Khi gặp chuyện không vui hãy nói với tôi.”"
+},
+{
+"t": "从不高兴的心情中走出来",
+"py": "cóng bù gāoxìng de xīnqíng zhōng zǒu chūlái",
+"vn": "bước ra khỏi tâm trạng không vui",
+"frame": "从 + tâm trạng/khu vực + 中走出来",
+"note": "Diễn tả hành động tự giải thoát bản thân khỏi một tình huống hoặc cảm xúc tiêu cực.",
+"ex": [
+[
+"他用了三天走出了失败的阴影。",
+"Anh ấy mất ba ngày để bước ra khỏi bóng tối thất bại."
+],
+[
+"我们要快点从悲伤中走出来。",
+"Chúng ta phải nhanh chóng bước ra khỏi nỗi buồn."
+]
+],
+"try": "Nói: “Cậu ấy rất nhanh đã bước ra khỏi tâm trạng lo lắng.”"
+}
+]
+},
+{
+"line": 2,
+"s": "窗外是什么样子，我们无法改变，但我们可以选择站在哪个窗户前。",
+"vn": "Cửa sổ bên ngoài là hình dáng thế nào, chúng ta không thể thay đổi, nhưng chúng ta có thể chọn đứng trước ô cửa sổ nào.",
+"ch": [
+{
+"t": "我们无法改变",
+"py": "wǒmen wúfǎ gǎibiàn",
+"vn": "chúng ta không thể thay đổi",
+"frame": "……无法改变",
+"note": "Dùng để chỉ những sự việc khách quan, không có cách nào tác động hay xoay chuyển được.",
+"ex": [
+[
+"过去的事情无法改变。",
+"Những chuyện trong quá khứ không thể thay đổi."
+],
+[
+"历史是无法改变的。",
+"Lịch sử là thứ không thể thay đổi."
+]
+],
+"try": "Nói: “Thời tiết hôm nay chúng ta không thể thay đổi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "选择一个能够带给我们快乐的窗户，这样才能选对心情，选对生活的态度。",
+"vn": "Chọn một ô cửa sổ có thể mang lại cho chúng ta niềm vui, như vậy mới có thể chọn đúng tâm trạng, chọn đúng thái độ sống.",
+"ch": [
+{
+"t": "带给我们快乐",
+"py": "dài gěi wǒmen kuàilè",
+"vn": "mang lại niềm vui cho chúng ta",
+"frame": "带给 + ai + danh từ",
+"note": "Cấu trúc trao tặng trừu tượng, dùng để nói về cảm xúc, trải nghiệm hoặc cơ hội.",
+"ex": [
+[
+"读书带给我们很多知识。",
+"Đọc sách mang lại cho chúng ta rất nhiều kiến thức."
+],
+[
+"这次旅行带给我们美好的回忆。",
+"Chuyến du lịch này mang lại cho chúng ta hồi ức đẹp."
+]
+],
+"try": "Nói: “Học tiếng Trung mang lại cho tôi nhiều cơ hội.”"
+},
+{
+"t": "这样才能",
+"py": "zhèyàng cáinéng",
+"vn": "như vậy mới có thể",
+"frame": "这样才能 + hành động",
+"note": "Biểu thị điều kiện tất yếu để đạt được kết quả mong muốn sau khi thực hiện bước trước đó.",
+"ex": [
+[
+"这样才能按时完成工作。",
+"Như vậy mới có thể hoàn thành công việc đúng hạn."
+],
+[
+"多听多说，这样才能提高口语。",
+"Nghe nhiều nói nhiều, như vậy mới nâng cao khẩu ngữ."
+]
+],
+"try": "Nói: “Chăm chỉ luyện tập, như vậy mới thi đỗ.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "科学研究证明，女孩子对衣服颜色的选择往往与她们的性格有关。",
+"vn": "Nghiên cứu khoa học chứng minh rằng, việc các cô gái chọn màu sắc quần áo thường liên quan đến tính cách của họ.",
+"ch": [
+{
+"t": "往往与……有关",
+"py": "wǎngwǎng yǔ... yǒuguān",
+"vn": "thường liên quan đến...",
+"frame": "A 往往与 B 有关",
+"note": "Dùng để chỉ mối quan hệ mang tính quy luật, thường xuyên xảy ra.",
+"ex": [
+[
+"他的成功往往与努力有关。",
+"Sự thành công của anh ấy thường liên quan đến sự nỗ lực."
+],
+[
+"学习成绩往往与学习方法有关。",
+"Kết quả học tập thường liên quan đến phương pháp học."
+]
+],
+"try": "Nói: “Tâm trạng của tôi thường liên quan đến thời tiết.”"
+}
+]
+},
+{
+"line": 1,
+"s": "喜欢穿白色衣服的女孩子性格比较阳光，生活态度积极向上是她们的共同特点；而喜欢穿红色衣服的女孩子性格比较浪漫。",
+"vn": "Những cô gái thích mặc quần áo màu trắng thường có tính cách tươi sáng, thái độ sống tích cực là đặc điểm chung của họ; còn những cô gái thích mặc màu đỏ thì tính cách khá lãng mạn.",
+"ch": [
+{
+"t": "积极向上",
+"py": "jījí xiàngshàng",
+"vn": "tích cực, cầu tiến",
+"frame": "……态度积极向上",
+"note": "Cụm từ cố định dùng để khen ngợi tinh thần làm việc hoặc học tập.",
+"ex": [
+[
+"我们要保持积极向上的态度。",
+"Chúng ta phải giữ thái độ tích cực cầu tiến."
+],
+[
+"他是一个积极向上的学生。",
+"Cậu ấy là một học sinh tích cực cầu tiến."
+]
+],
+"try": "Nói: “Nhân viên mới này rất tích cực cầu tiến.”"
+},
+{
+"t": "共同特点",
+"py": "gòngtóng tèdiǎn",
+"vn": "đặc điểm chung",
+"frame": "……是……的共同特点",
+"note": "Dùng khi muốn tổng kết một điểm giống nhau của một nhóm người hoặc vật.",
+"ex": [
+[
+"聪明是她们的共同特点。",
+"Thông minh là đặc điểm chung của họ."
+],
+[
+"准时是优秀员工的共同特点。",
+"Đúng giờ là đặc điểm chung của nhân viên ưu tú."
+]
+],
+"try": "Nói: “Yêu thương gia đình là đặc điểm chung của chúng tôi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "颜色也会影响人的心情，不同的颜色会给我们带来不同的感情变化。",
+"vn": "Màu sắc cũng ảnh hưởng đến tâm trạng con người, những màu sắc khác nhau sẽ mang lại cho chúng ta những thay đổi cảm xúc khác nhau.",
+"ch": [
+{
+"t": "影响人的心情",
+"py": "yǐngxiǎng rén de xīnqíng",
+"vn": "ảnh hưởng đến tâm trạng con người",
+"frame": "……影响人的心情",
+"note": "Dùng để nói về tác động của môi trường hoặc sự việc lên cảm xúc.",
+"ex": [
+[
+"坏天气会影响人的心情。",
+"Thời tiết xấu sẽ ảnh hưởng đến tâm trạng con người."
+],
+[
+"工作压力会影响人的心情。",
+"Áp lực công việc sẽ ảnh hưởng đến tâm trạng con người."
+]
+],
+"try": "Nói: “Tiếng ồn ảnh hưởng đến tâm trạng của tôi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "红色让人变得热情；黄色和白色让人心情愉快；黑色却容易让人感到伤心；人们在看到蓝色时会觉得很舒服，变得安静下来；绿色让我们的眼睛得到休息。",
+"vn": "Màu đỏ khiến người ta trở nên nhiệt tình; màu vàng và trắng khiến tâm trạng vui vẻ; màu đen lại dễ khiến người ta cảm thấy buồn bã; khi nhìn thấy màu xanh lam, mọi người sẽ cảm thấy rất thoải mái, trở nên tĩnh tâm lại; màu xanh lá giúp mắt chúng ta được nghỉ ngơi.",
+"ch": [
+{
+"t": "让人变得热情",
+"py": "ràng rén biàn de rèqíng",
+"vn": "khiến người ta trở nên nhiệt tình",
+"frame": "……让人变得 + tính từ",
+"note": "Cấu trúc chỉ tác động của ngoại cảnh làm thay đổi trạng thái của con người.",
+"ex": [
+[
+"这首歌让人变得快乐。",
+"Bài hát này khiến người ta trở nên vui vẻ."
+],
+[
+"运动让人变得健康。",
+"Vận động khiến người ta trở nên khỏe mạnh."
+]
+],
+"try": "Nói: “Tin tức này khiến mọi người trở nên lo lắng.”"
+},
+{
+"t": "容易让人感到伤心",
+"py": "róngyì ràng rén gǎndào shāngxīn",
+"vn": "dễ khiến người ta cảm thấy buồn bã",
+"frame": "……容易让人感到 + tính từ",
+"note": "Dùng để cảnh báo hoặc nhận xét về một điều gì đó dễ gây ra cảm xúc tiêu cực.",
+"ex": [
+[
+"考试失败容易让人感到伤心。",
+"Thi trượt dễ khiến người ta cảm thấy buồn bã."
+],
+[
+"一个人在家容易让人感到孤独。",
+"Ở nhà một mình dễ khiến người ta cảm thấy cô đơn."
+]
+],
+"try": "Nói: “Thất bại dễ khiến người ta cảm thấy chán nản.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "红色和白色在中西方文化中有不同的意义。",
+"vn": "Màu đỏ và màu trắng có ý nghĩa khác nhau trong văn hóa Trung - Tây.",
+"ch": [
+{
+"t": "有不同的意义",
+"py": "yǒu bùtóng de yìyì",
+"vn": "có ý nghĩa khác nhau",
+"frame": "……有不同的意义",
+"note": "Dùng để so sánh sự khác biệt về ý nghĩa giữa các sự vật, hiện tượng trong các nền văn hóa khác nhau.",
+"ex": [
+[
+"每个国家的国旗都有不同的意义。",
+"Quốc kỳ của mỗi nước đều có ý nghĩa khác nhau."
+],
+[
+"这两个词在汉语中有不同的意义。",
+"Hai từ này có ý nghĩa khác nhau trong tiếng Trung."
+]
+],
+"try": "Nói: “Màu sắc ở các quốc gia khác nhau có ý nghĩa khác nhau.”"
+}
+]
+},
+{
+"line": 1,
+"s": "中国人喜欢红色，因为它象征着吉祥、喜庆，代表生活红红火火，特别是人们结婚时，家里到处都是红色，所以结婚又称为“红事儿”；",
+"vn": "Người Trung Quốc thích màu đỏ, bởi vì nó tượng trưng cho sự cát tường, hỉ khánh, đại diện cho cuộc sống hồng phát, đặc biệt là khi mọi người kết hôn, trong nhà đâu đâu cũng là màu đỏ, cho nên kết hôn còn được gọi là “hỉ sự” (việc vui mừng);",
+"ch": [
+{
+"t": "象征着吉祥、喜庆",
+"py": "xiángzhēng zhe jíxiáng, xǐqìng",
+"vn": "tượng trưng cho sự cát tường, hỉ khánh",
+"frame": "……象征着 + danh từ",
+"note": "象征 zhe diễn tả trạng thái biểu trưng cho một ý nghĩa tốt đẹp nào đó.",
+"ex": [
+[
+"这个礼物象征着友谊。",
+"Món quà này tượng trưng cho tình bạn."
+],
+[
+"在中国文化中，红色象征着吉祥。",
+"Trong văn hóa Trung Quốc, màu đỏ tượng trưng cho sự cát tường."
+]
+],
+"try": "Nói: “Loài hoa này tượng trưng cho tình yêu.”"
+},
+{
+"t": "家里到处都是红色",
+"py": "jiā lǐ dàochù dōushì hóngsè",
+"vn": "trong nhà đâu đâu cũng là màu đỏ",
+"frame": "……dàochù dōushì + danh từ",
+"note": "Khung này dùng để miêu tả không gian ngập tràn một thứ gì đó.",
+"ex": [
+[
+"春天来了，公园里到处都是花。",
+"Mùa xuân đến rồi, trong công viên đâu đâu cũng là hoa."
+],
+[
+"房间里到处都是书。",
+"Trong phòng đâu đâu cũng là sách."
+]
+],
+"try": "Nói: “Ngày Tết, trên đường phố đâu đâu cũng là đèn lồng đỏ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "白色在中国除了表示干净、纯洁的意思以外，还象征着悲伤、死亡。",
+"vn": "Màu trắng ở Trung Quốc ngoài việc biểu thị ý nghĩa sạch sẽ, thuần khiết ra, còn tượng trưng cho sự đau thương, cái chết.",
+"ch": [
+{
+"t": "除了表示干净、纯洁的意思以外，还象征着悲伤、死亡",
+"py": "chúle biǎoshì gānjìng, chúnjié de yìsi yǐwài, hái xiángzhēng zhe bēishāng, sǐwáng",
+"vn": "ngoài việc biểu thị ý nghĩa sạch sẽ, thuần khiết ra, còn tượng trưng cho sự đau thương, cái chết",
+"frame": "除了……以外，还……",
+"note": "Cấu trúc kinh điển biểu thị sự bổ sung ý nghĩa (ngoài cái này ra còn cái kia).",
+"ex": [
+[
+"除了汉语以外，我还会说英语。",
+"Ngoài tiếng Trung ra, tôi còn biết nói tiếng Anh."
+],
+[
+"除了工作以外，他还喜欢旅游。",
+"Ngoài công việc ra, anh ấy còn thích du lịch."
+]
+],
+"try": "Nói: “Ngoài việc học tập ra, tối nay tôi còn phải đi làm thêm.”"
+}
+]
+},
+{
+"line": 2,
+"s": "要是你看到有人家里到处是白色的花和布时，这说明他们家有“白事儿”，家里一定是有人去世了。",
+"vn": "Nếu bạn nhìn thấy trong nhà ai đó đâu đâu cũng là hoa và vải trắng, điều này chứng tỏ nhà họ có “tang sự”, trong nhà nhất định là có người qua đời rồi.",
+"ch": [
+{
+"t": "家里一定是有人去世了",
+"py": "jiā lǐ yídìng shì yǒurén qùshì le",
+"vn": "trong nhà nhất định là có người qua đời rồi",
+"frame": "yídìng shì + sự việc",
+"note": "一定是 dùng để phỏng đoán chắc chắn dựa trên các dấu hiệu quan sát được.",
+"ex": [
+[
+"外面下这么大雨，他一定是坐地铁来的。",
+"Ngoài trời mưa to thế này, anh ấy nhất định là đi tàu điện ngầm đến."
+],
+[
+"房间里没开灯，他一定不在家。",
+"Trong phòng không bật đèn, anh ấy chắc chắn không có nhà."
+]
+],
+"try": "Nói: “Hôm nay cô ấy không đến lớp, nhất định là bị ốm rồi.”"
+}
+]
+}
+]
+}

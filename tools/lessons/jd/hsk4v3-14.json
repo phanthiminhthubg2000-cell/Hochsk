@@ -1,0 +1,680 @@
+{
+"1": [
+{
+"line": 0,
+"s": "您要什么茶？",
+"vn": "Ông/bà muốn mua loại trà nào ạ?",
+"ch": []
+},
+{
+"line": 1,
+"s": "我先看看。这里茶叶这么多，究竟买哪种好呢？",
+"vn": "Tôi xem trước đã. Trà ở đây nhiều thế này, rốt cuộc mua loại nào thì tốt nhỉ?",
+"ch": [
+{
+"t": "究竟买哪种好呢",
+"py": "jiùjìng mǎi nǎ zhǒng hǎo ne",
+"vn": "rốt cuộc mua loại nào thì tốt nhỉ",
+"frame": "究竟 + câu hỏi",
+"note": "Dùng để nhấn mạnh sự phân vân, muốn tìm ra đáp án cuối cùng trong câu hỏi.",
+"ex": [
+[
+"你究竟想去哪儿？",
+"Rốt cuộc bạn muốn đi đâu?"
+],
+[
+"这件事究竟是谁做的？",
+"Rốt cuộc việc này là ai làm?"
+]
+],
+"try": "Nói: Rốt cuộc nên học tiếng Trung bằng cách nào?"
+}
+]
+},
+{
+"line": 2,
+"s": "茶叶主要分为红茶、绿茶等，看您喜欢喝哪种。",
+"vn": "Trà chủ yếu chia thành hồng trà, lục trà v.v., tùy xem ông/bà thích uống loại nào.",
+"ch": [
+{
+"t": "分为",
+"py": "fēnwéi",
+"vn": "chia thành",
+"frame": "A 分为 B, C, D",
+"note": "Dùng để phân loại một danh từ chung thành các nhóm nhỏ.",
+"ex": [
+[
+"这个班分为两个小组。",
+"Lớp này chia thành hai nhóm nhỏ."
+],
+[
+"考试内容分为听力和阅读。",
+"Nội dung thi chia thành nghe và đọc."
+]
+],
+"try": "Nói: Công việc của tôi chia thành ba phần."
+}
+]
+},
+{
+"line": 3,
+"s": "我想买一些自己喝，再买些送人。这种绿茶还有吗？",
+"vn": "Tôi muốn mua một ít để uống, và mua thêm một ít để tặng người khác. Loại lục trà này còn không?",
+"ch": [
+{
+"t": "买一些自己喝",
+"py": "mǎi yīxiē zìjǐ hē",
+"vn": "mua một ít để tự mình uống",
+"frame": "买 + số lượng + 自己 + V",
+"note": "Cấu trúc diễn đạt mục đích mua đồ về để tự dùng.",
+"ex": [
+[
+"我买了一些书自己看。",
+"Tôi mua một ít sách để tự đọc."
+],
+[
+"他买了一台电脑自己用。",
+"Anh ấy mua một cái máy tính để tự dùng."
+]
+],
+"try": "Nói: Tôi mua một ít trái cây để tự ăn."
+}
+]
+},
+{
+"line": 4,
+"s": "抱歉，暂时没有。如果自己喝，可以买这个绿茶，今天满二两送半两，超过半斤再送小礼物；如果送人，可以买个盒子装进去。",
+"vn": "Xin lỗi, tạm thời không còn. Nếu tự uống, có thể mua loại lục trà này, hôm nay mua đủ hai lạng tặng nửa lạng, hơn nửa cân tặng thêm quà nhỏ; nếu để tặng người khác, có thể mua một cái hộp để đựng vào.",
+"ch": [
+{
+"t": "暂时没有",
+"py": "zànshí méiyǒu",
+"vn": "tạm thời không có",
+"frame": "暂时 + V/Adj",
+"note": "Dùng cho tình huống chỉ xảy ra trong một khoảng thời gian ngắn, không kéo dài mãi.",
+"ex": [
+[
+"我暂时不想换工作。",
+"Tôi tạm thời không muốn đổi việc."
+],
+[
+"这个问题暂时解决不了。",
+"Vấn đề này tạm thời không giải quyết được."
+]
+],
+"try": "Nói: Tôi tạm thời không có tiền."
+},
+{
+"t": "满二两送半两",
+"py": "mǎn èr liǎng sòng bàn liǎng",
+"vn": "đủ hai lạng tặng nửa lạng",
+"frame": "满 + số lượng + 送 + số lượng",
+"note": "Cấu trúc khuyến mãi quen thuộc trong kinh doanh.",
+"ex": [
+[
+"满一百块送十块。",
+"Đủ 100 tệ tặng 10 tệ."
+],
+[
+"满三件送一件。",
+"Mua đủ 3 món tặng 1 món."
+]
+],
+"try": "Nói: Mua đủ 5 quyển sách tặng 1 quyển."
+}
+]
+},
+{
+"line": 5,
+"s": "嗯。那就先买六两这种绿茶吧，再买一个盒子。请帮我分着装，盒子里装半斤，剩下的用纸包一下就行。",
+"vn": "Ừ. Vậy trước tiên mua sáu lạng loại lục trà này đi, mua thêm một cái hộp. Nhờ cô chia ra đựng giúp tôi, trong hộp đựng nửa cân, phần còn lại dùng giấy gói lại là được.",
+"ch": [
+{
+"t": "分着装",
+"py": "fēnzhe zhuāng",
+"vn": "chia ra để đựng",
+"frame": "V + 着 + V",
+"note": "Trợ từ 着 biểu thị trạng thái tiếp diễn của hành động, ở đây là chia ra rồi đựng.",
+"ex": [
+[
+"请把这些水果分开装。",
+"Hãy chia những trái cây này ra để đựng."
+],
+[
+"这些衣服要分着洗。",
+"Những quần áo này cần chia ra để giặt."
+]
+],
+"try": "Nói: Hãy chia tài liệu này ra để cất."
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "各位顾客，本商场正在举办运动鞋假日低价促销活动，全场五折。",
+"vn": "Thưa quý khách, trung tâm thương mại chúng tôi đang tổ chức chương trình khuyến mãi giảm giá giày thể thao dịp lễ, toàn bộ cửa hàng giảm 50%.",
+"ch": []
+},
+{
+"line": 1,
+"s": "一飞，广播里说价格减了一半呢，咱们过去看看？",
+"vn": "Nhất Phi, trên loa nói giá giảm một nửa rồi kìa, chúng mình qua xem thử đi?",
+"ch": [
+{
+"t": "咱们过去看看",
+"py": "zánmen guòqù kànkan",
+"vn": "chúng mình qua xem thử",
+"frame": "咱们 + V + 看看",
+"note": "Cách rủ rê thân mật, nhẹ nhàng. V + 看看 giúp giảm nhẹ ngữ khí, tạo cảm giác thoải mái.",
+"ex": [
+[
+"咱们去图书馆看看吧。",
+"Chúng mình đến thư viện xem sao đi."
+],
+[
+"咱们下班去吃点东西看看。",
+"Tan làm chúng mình đi ăn gì đó xem sao."
+]
+],
+"try": "Nói: “Chúng mình qua cửa hàng mới xem thử đi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "好的。不过咱们也不能只听广告说什么，还得看质量。",
+"vn": "Được thôi. Nhưng chúng ta cũng không thể chỉ nghe quảng cáo nói gì, còn phải xem chất lượng nữa.",
+"ch": [
+{
+"t": "也不能只听……还得看……",
+"py": "yě bùnéng zhǐ tīng... háidé kàn...",
+"vn": "cũng không thể chỉ nghe... còn phải xem...",
+"frame": "不能只 + V1，还得 + V2",
+"note": "Cấu trúc phản biện, nhắc nhở không nên phiến diện mà phải xem xét nhiều mặt.",
+"ex": [
+[
+"不能只听老师说，还得自己练习。",
+"Không thể chỉ nghe thầy nói, còn phải tự luyện tập."
+],
+[
+"不能只看价格，还得看质量。",
+"Không thể chỉ nhìn giá, còn phải xem chất lượng."
+]
+],
+"try": "Nói: “Không thể chỉ nghe bạn bè nói, còn phải tự mình tìm hiểu.”"
+}
+]
+},
+{
+"line": 3,
+"s": "对，首先看样子喜不喜欢，然后再看质量怎么样、价格合适不合适。",
+"vn": "Đúng vậy, trước tiên xem kiểu dáng có thích không, sau đó mới xem chất lượng thế nào, giá cả có phù hợp không.",
+"ch": [
+{
+"t": "首先……然后再……",
+"py": "shǒuxiān... ránhòu zài...",
+"vn": "trước tiên... sau đó mới...",
+"frame": "首先 + V1，然后再 + V2",
+"note": "Dùng để liệt kê trình tự thực hiện các bước. Rất phổ biến trong văn nói và viết.",
+"ex": [
+[
+"首先要写好提纲，然后再写文章。",
+"Trước tiên phải viết đề cương, sau đó mới viết bài."
+],
+[
+"首先要复习生词，然后再做练习。",
+"Trước tiên phải ôn từ mới, sau đó mới làm bài tập."
+]
+],
+"try": "Nói: “Trước tiên phải làm xong việc, sau đó mới đi chơi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "二位看看喜欢哪双？这个牌子质量很好，今天又降价，一双减300块。",
+"vn": "Hai vị xem thích đôi nào? Thương hiệu này chất lượng rất tốt, hôm nay lại giảm giá, một đôi giảm 300 tệ.",
+"ch": []
+},
+{
+"line": 5,
+"s": "嗯，我知道这个牌子。一飞，你喜欢吗？你看，这个鞋的样式很新，价钱也不高。",
+"vn": "Ừ, tôi biết thương hiệu này. Nhất Phi, cậu thích không? Cậu xem, kiểu dáng đôi giày này rất mới, giá cũng không cao.",
+"ch": []
+},
+{
+"line": 6,
+"s": "你喜欢就买吧。我再看看别的。",
+"vn": "Cậu thích thì mua đi. Tôi xem thêm mấy cái khác.",
+"ch": [
+{
+"t": "你喜欢就买吧",
+"py": "nǐ xǐhuān jiù mǎi ba",
+"vn": "cậu thích thì mua đi",
+"frame": "……就 + V + 吧",
+"note": "Cấu trúc đưa ra quyết định dựa trên sở thích cá nhân, dùng 吧 để gợi ý.",
+"ex": [
+[
+"你喜欢就吃吧。",
+"Cậu thích thì ăn đi."
+],
+[
+"你喜欢就选这件吧。",
+"Cậu thích thì chọn cái này đi."
+]
+],
+"try": "Nói: “Cậu thích thì cứ nói với cô ấy đi.”"
+}
+]
+},
+{
+"line": 7,
+"s": "好的。请给我拿一双37号的吧。",
+"vn": "Được. Làm ơn lấy cho tôi một đôi size 37 nhé.",
+"ch": [
+{
+"t": "请给我拿……吧",
+"py": "qǐng gěi wǒ ná... ba",
+"vn": "làm ơn lấy cho tôi... nhé",
+"frame": "请给我拿 + vật + 吧",
+"note": "Câu yêu cầu lịch sự khi mua sắm, thêm 吧 để giảm nhẹ giọng điệu.",
+"ex": [
+[
+"请给我拿一杯水吧。",
+"Làm ơn lấy cho tôi một cốc nước nhé."
+],
+[
+"请给我拿那个红色的本子吧。",
+"Làm ơn lấy cho tôi cuốn sổ màu đỏ đó nhé."
+]
+],
+"try": "Nói: “Làm ơn lấy cho tôi một chiếc bút chì nhé.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "李文的朋友徐前在商业区开了家小店，专门卖年轻人喜欢的东西。",
+"vn": "Bạn của Lý Văn là Từ Tiền mở một cửa hàng nhỏ ở khu thương mại, chuyên bán những thứ giới trẻ thích.",
+"ch": [
+{
+"t": "专门卖",
+"py": "zhuānmén mài",
+"vn": "chuyên bán",
+"frame": "专门 + V",
+"note": "Dùng để nhấn mạnh mục đích hoặc tính chuyên biệt của một hành động.",
+"ex": [
+[
+"这家店专门卖中国书。",
+"Cửa hàng này chuyên bán sách Trung Quốc."
+],
+[
+"周末我专门去图书馆学习。",
+"Cuối tuần tôi dành riêng thời gian đến thư viện học."
+]
+],
+"try": "Nói: “Anh ấy chuyên làm món ăn Việt Nam.”"
+}
+]
+},
+{
+"line": 0,
+"s": "他的店里商品种类不少，既有几十年前的老游戏机，也有最近流行的盲盒等等，很吸引年轻人。",
+"vn": "Trong cửa hàng của anh ấy chủng loại hàng hóa không ít, vừa có máy chơi game cũ từ mấy chục năm trước, lại vừa có hộp mù đang thịnh hành gần đây, rất thu hút người trẻ.",
+"ch": [
+{
+"t": "既有……也有……",
+"py": "jì yǒu... yě yǒu...",
+"vn": "vừa có... lại vừa có...",
+"frame": "既有 A，也有 B",
+"note": "Cấu trúc liệt kê hai đặc điểm hoặc hai loại sự vật cùng tồn tại.",
+"ex": [
+[
+"这里既有咖啡，也有茶。",
+"Ở đây vừa có cà phê, lại vừa có trà."
+],
+[
+"他既有能力，也有经验。",
+"Anh ấy vừa có năng lực, lại vừa có kinh nghiệm."
+]
+],
+"try": "Nói: “Cửa hàng này vừa có quần áo, lại vừa có giày dép.”"
+}
+]
+},
+{
+"line": 1,
+"s": "徐前说，自己就是年轻人，知道年轻人喜欢什么。他也常和来店里的年轻顾客聊天儿，了解他们的兴趣爱好。",
+"vn": "Từ Tiền nói, bản thân cậu ấy chính là người trẻ, biết người trẻ thích cái gì. Cậu ấy cũng thường trò chuyện với các khách hàng trẻ đến cửa hàng để hiểu sở thích của họ.",
+"ch": [
+{
+"t": "和……聊天儿",
+"py": "hé... liáotiānr",
+"vn": "trò chuyện với...",
+"frame": "和 + ai + 聊天儿",
+"note": "Cụm từ thông dụng để chỉ việc giao tiếp xã giao, chú ý chữ 儿 ở cuối.",
+"ex": [
+[
+"我喜欢和朋友聊天儿。",
+"Tôi thích trò chuyện với bạn bè."
+],
+[
+"下课后，老师常和学生聊天儿。",
+"Sau giờ học, thầy giáo thường trò chuyện với học sinh."
+]
+],
+"try": "Nói: “Tôi muốn trò chuyện với sếp về công việc.”"
+}
+]
+},
+{
+"line": 1,
+"s": "前段时间刚进的盲盒很快就卖到了缺货。许多年轻人表示，在徐前的店里能感受到快乐。",
+"vn": "Hộp mù mới nhập về cách đây không lâu nhanh chóng bán đến mức cháy hàng. Nhiều người trẻ bày tỏ rằng, ở cửa hàng của Từ Tiền có thể cảm nhận được niềm vui.",
+"ch": [
+{
+"t": "卖到了缺货",
+"py": "mài dào le quēhuò",
+"vn": "bán đến mức cháy hàng",
+"frame": "V + 到了 + kết quả",
+"note": "Bổ ngữ chỉ kết quả đạt đến mức độ nào đó (ở đây là hết hàng).",
+"ex": [
+[
+"这双鞋卖到了缺货。",
+"Đôi giày này bán đến mức cháy hàng."
+],
+[
+"这种水果卖到了缺货。",
+"Loại trái cây này bán đến mức cháy hàng."
+]
+],
+"try": "Nói: “Vé xem phim bán đến mức cháy hàng.”"
+}
+]
+},
+{
+"line": 1,
+"s": "小店虽然小，但东西适合年轻人，加上店员态度友好，使得小店的生意越来越好。李文觉得自己的朋友真会做生意。",
+"vn": "Cửa hàng tuy nhỏ, nhưng đồ đạc phù hợp với người trẻ, cộng thêm thái độ của nhân viên thân thiện, khiến cho việc kinh doanh của cửa hàng ngày càng tốt. Lý Văn cảm thấy bạn mình thật biết làm ăn.",
+"ch": [
+{
+"t": "使得",
+"py": "shǐde",
+"vn": "khiến cho, làm cho",
+"frame": "……使得……",
+"note": "Dùng trong văn viết hoặc ngữ cảnh trang trọng để chỉ nguyên nhân dẫn đến kết quả.",
+"ex": [
+[
+"努力学习使得他进步很快。",
+"Nỗ lực học tập khiến cậu ấy tiến bộ rất nhanh."
+],
+[
+"天气不好使得我们不能去旅游。",
+"Thời tiết xấu khiến chúng tôi không thể đi du lịch."
+]
+],
+"try": "Nói: “Thái độ tốt khiến khách hàng rất hài lòng.”"
+},
+{
+"t": "真会做生意",
+"py": "zhēn huì zuò shēngyì",
+"vn": "thật biết làm ăn",
+"frame": "真会 + V",
+"note": "Cấu trúc khen ngợi ai đó có kỹ năng hoặc năng khiếu làm việc gì đó.",
+"ex": [
+[
+"你真会选衣服。",
+"Bạn thật biết chọn quần áo."
+],
+[
+"他真会安排时间。",
+"Anh ấy thật biết sắp xếp thời gian."
+]
+],
+"try": "Nói: “Bạn thật biết cách học tiếng Trung.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "关于购物，你是一位冷静购物者，还是不冷静购物者？",
+"vn": "Về việc mua sắm, bạn là người mua sắm lý trí hay người mua sắm thiếu lý trí?",
+"ch": [
+{
+"t": "关于购物",
+"py": "guānyú gòuwù",
+"vn": "về việc mua sắm",
+"frame": "关于 + vấn đề, ……",
+"note": "Dùng để nêu chủ đề ở đầu câu, tương đương chữ “về” hay “vấn đề” trong tiếng Việt.",
+"ex": [
+[
+"关于这个问题，我没有什么意见。",
+"Về vấn đề này, tôi không có ý kiến gì."
+],
+[
+"关于明天的活动，大家还有什么问题吗？",
+"Về hoạt động ngày mai, mọi người còn câu hỏi nào không?"
+]
+],
+"try": "Nói: “Về việc học tiếng Trung, cô ấy có rất nhiều kinh nghiệm.”"
+}
+]
+},
+{
+"line": 0,
+"s": "一般来说，冷静购物者往往是真正需要一件东西时才买。",
+"vn": "Nói chung, người mua sắm lý trí thường là khi thực sự cần một món đồ mới mua.",
+"ch": [
+{
+"t": "一般来说",
+"py": "yibān lái shuō",
+"vn": "nói chung",
+"frame": "一般来说，……",
+"note": "Cụm từ cố định dùng để mở đầu một nhận định mang tính phổ biến.",
+"ex": [
+[
+"一般来说，周末人比较多。",
+"Nói chung, cuối tuần đông người hơn."
+],
+[
+"一般来说，学好一门外语需要时间。",
+"Nói chung, học tốt một ngoại ngữ cần có thời gian."
+]
+],
+"try": "Nói: “Nói chung, bài thi HSK4 không quá khó.”"
+},
+{
+"t": "真正需要一件东西时才买",
+"py": "zhēnzhèng xūyào yijian dōngxi shí cái mǎi",
+"vn": "khi thực sự cần một món đồ mới mua",
+"frame": "……时才 + V",
+"note": "Cấu trúc “khi… mới…” nhấn mạnh điều kiện thời gian xảy ra hành động.",
+"ex": [
+[
+"遇到困难时才发现谁是真正的朋友。",
+"Khi gặp khó khăn mới phát hiện ai là bạn thực sự."
+],
+[
+"下班回家时才吃晚饭。",
+"Lúc tan làm về nhà mới ăn tối."
+]
+],
+"try": "Nói: “Khi đói bụng mới ăn cơm.”"
+}
+]
+},
+{
+"line": 0,
+"s": "购买时，还会从质量、价格等各方面仔细比较。",
+"vn": "Lúc mua, còn so sánh kỹ lưỡng từ các mặt như chất lượng, giá cả v.v.",
+"ch": [
+{
+"t": "从质量、价格等各方面",
+"py": "cóng zhìliàng, jiàgé děng gè fāngmiàn",
+"vn": "từ các mặt như chất lượng, giá cả",
+"frame": "从 + A, B + 等各方面",
+"note": "Dùng để chỉ việc xem xét một sự việc từ nhiều góc độ khác nhau.",
+"ex": [
+[
+"从学习、生活等各方面都要注意健康。",
+"Từ các mặt như học tập, sinh hoạt đều phải chú ý sức khỏe."
+],
+[
+"从工作经验等各方面来看，他很合适。",
+"Xét từ các mặt như kinh nghiệm công việc, anh ấy rất phù hợp."
+]
+],
+"try": "Nói: “Xem xét vấn đề này từ các mặt như giá cả, chất lượng.”"
+}
+]
+},
+{
+"line": 0,
+"s": "不冷静购物者看见一个东西时，只要感觉喜欢就买，不管需要不需要，结果常常买完就后悔，买的东西也成了“垃圾”，还不环保。",
+"vn": "Người mua sắm thiếu lý trí khi nhìn thấy một món đồ, chỉ cần cảm thấy thích là mua, bất kể cần hay không, kết quả thường mua xong là hối hận, đồ mua về cũng thành “rác”, lại còn không thân thiện với môi trường.",
+"ch": [
+{
+"t": "只要感觉喜欢就买",
+"py": "zhǐyào gǎnjué xǐhuan jiù mǎi",
+"vn": "chỉ cần cảm thấy thích là mua",
+"frame": "只要 + điều kiện + 就 + kết quả",
+"note": "Diễn tả điều kiện duy nhất dẫn đến hành động.",
+"ex": [
+[
+"只要努力学习就能考上大学。",
+"Chỉ cần nỗ lực học tập thì có thể đậu đại học."
+],
+[
+"只要有时间我就去旅游。",
+"Chỉ cần có thời gian là tôi đi du lịch."
+]
+],
+"try": "Nói: “Chỉ cần bạn thích thì cứ mua đi.”"
+},
+{
+"t": "不管需要不需要",
+"py": "bùguǎn xūyào bù xūyào",
+"vn": "bất kể cần hay không",
+"frame": "不管 + A不A / A hay B + 都/就……",
+"note": "Bất chấp điều kiện nào, kết quả vẫn diễn ra.",
+"ex": [
+[
+"不管天气怎么样，我都要去上班。",
+"Bất kể thời tiết thế nào, tôi cũng phải đi làm."
+],
+[
+"不管多累，他每天都坚持练习汉语。",
+"Bất kể mệt thế nào, ngày nào anh ấy cũng kiên trì luyện tiếng Trung."
+]
+],
+"try": "Nói: “Bất kể bận thế nào, tôi cũng phải hoàn thành bài tập.”"
+}
+]
+},
+{
+"line": 0,
+"s": "王一飞说，她从来不随便买东西。",
+"vn": "Vương Nhất Phi nói, cô ấy chưa bao giờ tùy tiện mua đồ.",
+"ch": []
+},
+{
+"line": 0,
+"s": "对于想买的东西，她不光看质量，还看价格。",
+"vn": "Đối với những món đồ muốn mua, cô ấy không chỉ nhìn chất lượng, mà còn nhìn giá cả.",
+"ch": [
+{
+"t": "不光看质量，还看价格",
+"py": "bùguāng kàn zhìliàng, hái kàn jiàgé",
+"vn": "không chỉ nhìn chất lượng, mà còn nhìn giá cả",
+"frame": "不光 + A，还 + B",
+"note": "Cấu trúc “không những… mà còn…” rất hay dùng trong văn nói và viết.",
+"ex": [
+[
+"学汉语不光要多听，还要多说。",
+"Học tiếng Trung không chỉ cần nghe nhiều, mà còn phải nói nhiều."
+],
+[
+"这家餐厅不光环境好，菜也很好吃。",
+"Nhà hàng này không chỉ môi trường đẹp, món ăn cũng rất ngon."
+]
+],
+"try": "Nói: “Đi du lịch không chỉ cần tiền, mà còn cần thời gian.”"
+}
+]
+},
+{
+"line": 0,
+"s": "无论是一件外套，还是一条裤子，甚至一双袜子，都是仔细比较后才决定买不买。",
+"vn": "Cho dù là một chiếc áo khoác, hay một chiếc quần, thậm chí một đôi tất, đều là sau khi so sánh kỹ lưỡng mới quyết định mua hay không.",
+"ch": [
+{
+"t": "无论是一件外套，还是一条裤子，甚至一双袜子",
+"py": "wúlùn shì yijian wàitào, háishì yì tiáo kùzi, shènzhì yì shuāng wàzi",
+"vn": "cho dù là một chiếc áo khoác, hay một chiếc quần, thậm chí một đôi tất",
+"frame": "无论 A，还是 B，甚至 C",
+"note": "Dùng 无论 và 甚至 để liệt kê từ lớn đến mức cực đoan, làm nổi bật ý.",
+"ex": [
+[
+"无论是汉语课，还是英语课，甚至数学课，他都很认真。",
+"Cho dù là lớp tiếng Trung, lớp tiếng Anh, thậm chí lớp toán, cậu ấy đều rất chăm chỉ."
+],
+[
+"无论是大HSK考试，还是小测验，甚至作业，她都很重视。",
+"Cho dù là kỳ thi HSK lớn, hay bài kiểm tra nhỏ, thậm chí bài tập, cô ấy đều rất coi trọng."
+]
+],
+"try": "Nói: “Cho dù là cà phê, hay trà, thậm chí nước lọc, tôi đều thích uống.”"
+}
+]
+},
+{
+"line": 1,
+"s": "其实，不仅是买东西，人生的很多事情都一样，选择合适的才是最好的。",
+"vn": "Thực ra, không chỉ là mua đồ, rất nhiều việc trong đời người đều giống nhau, lựa chọn cái phù hợp mới là tốt nhất.",
+"ch": [
+{
+"t": "不仅是买东西，人生的很多事情都一样",
+"py": "bùjǐn shì mǎi dōngxi, rénshēng de hěn duō shìqing dōu yíyàng",
+"vn": "không chỉ là mua đồ, rất nhiều việc trong đời người đều giống nhau",
+"frame": "不仅是 A，B 都一样",
+"note": "Dùng để suy rộng từ một việc cụ thể ra các vấn đề lớn hơn trong cuộc sống.",
+"ex": [
+[
+"不仅是学习，工作中的很多事情都一样。",
+"Không chỉ việc học, rất nhiều việc trong công việc cũng vậy."
+],
+[
+"不仅是交朋友，选工作也一样。",
+"Không chỉ kết bạn, chọn công việc cũng thế."
+]
+],
+"try": "Nói: “Không chỉ ăn uống, việc mua quần áo cũng vậy.”"
+},
+{
+"t": "选择合适的才是最好的",
+"py": "xuǎnzé héshì de cái shì zuì hǎo de",
+"vn": "lựa chọn cái phù hợp mới là tốt nhất",
+"frame": "选择……才是最好的",
+"note": "Đúc kết bài học ý nghĩa ở cuối bài, cấu trúc “mới là…”.",
+"ex": [
+[
+"找到适合自己的方法才是最好的。",
+"Tìm được phương pháp phù hợp với bản thân mới là tốt nhất."
+],
+[
+"适合自己的工作才是最好的。",
+"Công việc phù hợp với bản thân mới là tốt nhất."
+]
+],
+"try": "Nói: “Mua chiếc điện thoại phù hợp mới là tốt nhất.”"
+}
+]
+}
+]
+}

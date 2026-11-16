@@ -1,0 +1,509 @@
+{
+"1": [
+{
+"line": 0,
+"s": "家月，你来中国至少两个月了，习惯吃中餐了吗？",
+"vn": "Gia Nguyệt, bạn đến Trung Quốc ít nhất hai tháng rồi, đã quen ăn món Trung chưa?",
+"ch": [
+{
+"t": "至少",
+"py": "zhìshǎo",
+"vn": "ít nhất",
+"frame": "至少 + số lượng / thời gian",
+"note": "Dùng để nhấn mạnh con số tối thiểu. Đứng trước số lượng từ.",
+"ex": [
+[
+"我每天至少要喝两杯水。",
+"Mỗi ngày tôi ít nhất phải uống hai cốc nước."
+],
+[
+"这件衣服至少要五百块。",
+"Cái áo này ít nhất phải 500 tệ."
+]
+],
+"try": "Nói: “Tôi ít nhất phải học 1 tiếng tiếng Trung mỗi ngày.”"
+}
+]
+},
+{
+"line": 1,
+"s": "习惯了，而且我很喜欢吃中国菜。",
+"vn": "Quen rồi, hơn nữa tôi rất thích ăn món Trung Quốc.",
+"ch": []
+},
+{
+"line": 2,
+"s": "你还没吃过水煮鱼吧？这是我专门为你做的。",
+"vn": "Bạn chưa từng ăn cá nấu nước (thủy chử ngư) nhỉ? Đây là món tôi đặc biệt làm cho bạn đấy.",
+"ch": [
+{
+"t": "专门为",
+"py": "zhuānmén wèi",
+"vn": "đặc biệt vì/cho",
+"frame": "专门为 + ai + làm gì",
+"note": "Nhấn mạnh mục đích duy nhất của hành động. Đừng dịch là 'chuyên môn'.",
+"ex": [
+[
+"我是专门为你买的礼物。",
+"Tôi đặc biệt mua quà này cho bạn."
+],
+[
+"妈妈专门为我做了好吃的菜。",
+"Mẹ đặc biệt nấu món ngon cho tôi."
+]
+],
+"try": "Nói: “Tôi đặc biệt đến đây để gặp bạn.”"
+}
+]
+},
+{
+"line": 3,
+"s": "看起来不像水煮鱼，更像“油煮鱼”。",
+"vn": "Nhìn không giống cá nấu nước, giống 'cá nấu dầu' hơn.",
+"ch": [
+{
+"t": "看起来不像",
+"py": "kàn qǐlái bú xiàng",
+"vn": "nhìn trông không giống",
+"frame": "看起来不像 + A，更像 + B",
+"note": "Cấu trúc so sánh cảm quan. Dùng để đưa ra nhận xét về vẻ ngoài.",
+"ex": [
+[
+"这件衣服看起来不像新的，更像旧的。",
+"Cái áo này nhìn không giống đồ mới, giống đồ cũ hơn."
+],
+[
+"他看起来不像老师，更像学生。",
+"Anh ấy nhìn không giống giáo viên, giống học sinh hơn."
+]
+],
+"try": "Nói: “Món này nhìn không giống món Trung, giống món Việt hơn.”"
+}
+]
+},
+{
+"line": 4,
+"s": "这道菜是先用水把鱼煮熟，最后再倒上辣椒油，其实只有最上面那一层是油。你尝尝，对你来说辣不辣？",
+"vn": "Món này là dùng nước luộc chín cá trước, cuối cùng mới đổ dầu ớt lên, thực ra chỉ có lớp trên cùng là dầu thôi. Bạn nếm thử xem, với bạn thì có cay không?",
+"ch": [
+{
+"t": "把鱼煮熟",
+"py": "bǎ yú zhǔ shú",
+"vn": "luộc chín cá",
+"frame": "把 + O + V + bổ ngữ kết quả",
+"note": "Cấu trúc 把 nhấn mạnh vào sự thay đổi trạng thái của tân ngữ (cá bị nấu chín).",
+"ex": [
+[
+"请把作业写完。",
+"Hãy làm xong bài tập đi."
+],
+[
+"我把饭吃完了。",
+"Tôi ăn cơm xong rồi."
+]
+],
+"try": "Nói: “Hãy làm sạch căn phòng này.”"
+}
+]
+},
+{
+"line": 5,
+"s": "辣是辣，但是非常好吃！",
+"vn": "Cay thì có cay, nhưng mà rất ngon!",
+"ch": [
+{
+"t": "辣是辣",
+"py": "là shì là",
+"vn": "cay thì cay (thật)",
+"frame": "A 是 A，但是……",
+"note": "Cấu trúc thừa nhận một sự thật trước khi đưa ra ý kiến trái ngược (nhưng).",
+"ex": [
+[
+"贵是贵，但是质量很好。",
+"Đắt thì đắt thật, nhưng chất lượng rất tốt."
+],
+[
+"忙是忙，但我还是想去。",
+"Bận thì bận thật, nhưng tôi vẫn muốn đi."
+]
+],
+"try": "Nói: “Khó thì khó thật, nhưng tôi rất thích học tiếng Trung.”"
+}
+]
+},
+{
+"line": 6,
+"s": "那你多吃点儿，不要客气。",
+"vn": "Vậy bạn ăn nhiều chút, đừng khách sáo.",
+"ch": []
+}
+],
+"2": [
+{
+"line": 0,
+"s": "我听李文说，你现在也爱吃辣了？",
+"vn": "Tôi nghe Lý Văn nói, bây giờ bạn cũng thích ăn cay rồi à?",
+"ch": []
+},
+{
+"line": 1,
+"s": "是的，来中国以后，我越来越喜欢吃辣了。",
+"vn": "Đúng vậy, sau khi đến Trung Quốc, tôi càng ngày càng thích ăn cay.",
+"ch": [
+{
+"t": "越来越喜欢",
+"py": "yuè lái yuè xǐhuān",
+"vn": "càng ngày càng thích",
+"frame": "越来越 + tính từ/động từ tâm lý",
+"note": "Diễn tả sự thay đổi dần dần theo thời gian. Lưu ý: không dùng với động từ chỉ hành động tức thời.",
+"ex": [
+[
+"我越来越喜欢这份工作了。",
+"Tôi càng ngày càng thích công việc này."
+],
+[
+"天气越来越冷了。",
+"Thời tiết càng ngày càng lạnh rồi."
+]
+],
+"try": "Nói: “Tiếng Trung của tôi càng ngày càng tiến bộ.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我们以前不太敢吃辣，吃完可能会肚子不舒服，不过现在也慢慢适应了。",
+"vn": "Trước đây chúng tôi không dám ăn cay lắm, ăn xong có thể bị đau bụng, nhưng bây giờ cũng dần quen rồi.",
+"ch": [
+{
+"t": "不太敢",
+"py": "bú tài gǎn",
+"vn": "không dám lắm",
+"frame": "不太敢 + V",
+"note": "Dùng để diễn tả sự e ngại, chưa đủ tự tin để làm việc gì đó.",
+"ex": [
+[
+"我不太敢在很多人面前说话。",
+"Tôi không dám nói trước mặt nhiều người lắm."
+],
+[
+"他不太敢一个人去旅行。",
+"Cậu ấy không dám đi du lịch một mình lắm."
+]
+],
+"try": "Nói: “Tôi không dám hỏi thầy giáo câu hỏi này.”"
+}
+]
+},
+{
+"line": 3,
+"s": "对，我们现在都不怕辣了。家月，你是“不怕辣”还是“怕不辣”？",
+"vn": "Đúng, bây giờ chúng tôi không sợ cay nữa. Gia Nguyệt, bạn là \"không sợ cay\" hay là \"sợ không cay\"?",
+"ch": []
+},
+{
+"line": 4,
+"s": "中文真有意思，相同的字，顺序一换，意思就变了。",
+"vn": "Tiếng Trung thật thú vị, cùng những chữ đó, chỉ cần đổi thứ tự là nghĩa thay đổi ngay.",
+"ch": [
+{
+"t": "顺序一换",
+"py": "shùnxù yī huàn",
+"vn": "thứ tự vừa đổi",
+"frame": "……一 + V, ……就 + V",
+"note": "Cấu trúc diễn tả hành động vừa xảy ra thì kết quả xảy ra ngay lập tức.",
+"ex": [
+[
+"饭一做好，我们就开吃。",
+"Cơm vừa làm xong là chúng tôi ăn ngay."
+],
+[
+"他一看到我，就跑了。",
+"Cậu ấy vừa thấy tôi là chạy mất."
+]
+],
+"try": "Nói: “Vừa tan học là tôi đi thư viện ngay.”"
+}
+]
+},
+{
+"line": 5,
+"s": "你的中文水平够高的，这都听懂了！你说得对，“不怕辣”是说不怕吃辣的菜，“怕不辣”是担心菜还不够辣呢。",
+"vn": "Trình độ tiếng Trung của bạn đủ cao đấy, cái này mà cũng nghe hiểu được! Bạn nói đúng, \"không sợ cay\" là nói không sợ ăn món cay, \"sợ không cay\" là lo món ăn chưa đủ cay.",
+"ch": [
+{
+"t": "水平够高的",
+"py": "shuǐpíng gòu gāo de",
+"vn": "trình độ đủ cao",
+"frame": "……够 + tính từ + 的",
+"note": "Dùng để đánh giá mức độ đạt yêu cầu hoặc vượt mong đợi. Chữ 的 ở cuối nhấn mạnh tính chất.",
+"ex": [
+[
+"这个房间够大的。",
+"Căn phòng này đủ rộng đấy."
+],
+[
+"他跑得够快的。",
+"Cậu ấy chạy đủ nhanh đấy."
+]
+],
+"try": "Nói: “Hôm nay bài tập đủ khó đấy.”"
+}
+]
+},
+{
+"line": 6,
+"s": "我还达不到“怕不辣”的水平，甚至也不能算“不怕辣”，只是喜欢吃辣。",
+"vn": "Tôi vẫn chưa đạt đến trình độ \"sợ không cay\", thậm chí cũng không thể tính là \"không sợ cay\", chỉ là thích ăn cay thôi.",
+"ch": [
+{
+"t": "达不到……的水平",
+"py": "dá bù dào ... de shuǐpíng",
+"vn": "chưa đạt đến trình độ...",
+"frame": "达不到 + N/V + 的水平",
+"note": "Dùng để khiêm tốn hoặc đánh giá năng lực chưa chạm tới ngưỡng nào đó.",
+"ex": [
+[
+"我达不到当翻译的水平。",
+"Tôi chưa đạt đến trình độ làm phiên dịch."
+],
+[
+"他的汉语达不到母语者的水平。",
+"Tiếng Trung của cậu ấy chưa đạt đến trình độ người bản xứ."
+]
+],
+"try": "Nói: “Tôi chưa đạt đến trình độ đọc báo tiếng Trung.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "周末，白家月、陈天中、李文和安妮聚在一起吃午餐。",
+"vn": "Cuối tuần, Bạch Gia Nguyệt, Trần Thiên Trung, Lý Văn và Annie tụ tập cùng nhau ăn trưa.",
+"ch": [
+{
+"t": "聚在一起",
+"py": "jù zài yīqǐ",
+"vn": "tụ tập cùng nhau",
+"frame": "……聚在一起 + V",
+"note": "Dùng để diễn tả việc mọi người tập trung lại để làm gì đó cùng nhau.",
+"ex": [
+[
+"我们周末经常聚在一起看电影。",
+"Cuối tuần chúng tôi thường tụ tập xem phim."
+],
+[
+"大家聚在一起讨论这个问题。",
+"Mọi người tụ tập cùng nhau thảo luận vấn đề này."
+]
+],
+"try": "Nói: “Tối nay chúng tôi tụ tập cùng nhau ăn lẩu.”"
+}
+]
+},
+{
+"line": 0,
+"s": "白家月想吃辣的，要了辣子鸡；陈天中爱吃甜的，想尝尝松鼠鱼；李文更喜欢吃咸的，选了红烧羊肉和一道凉菜；安妮听说贵州酸汤很有名，点了酸汤米线。",
+"vn": "Bạch Gia Nguyệt muốn ăn đồ cay, gọi món gà cay; Trần Thiên Trung thích ăn đồ ngọt, muốn nếm thử cá sóc; Lý Văn thích ăn đồ mặn hơn, chọn thịt cừu kho và một món nguội; Annie nghe nói canh chua Quý Châu rất nổi tiếng, nên đã gọi bún canh chua.",
+"ch": [
+{
+"t": "想吃辣的",
+"py": "xiǎng chī là de",
+"vn": "muốn ăn đồ cay",
+"frame": "想吃 + adj + 的",
+"note": "Cấu trúc adj + 的 đóng vai trò như một danh từ chỉ loại đồ ăn có tính chất đó.",
+"ex": [
+[
+"我不喜欢吃甜的，我喜欢吃酸的。",
+"Tôi không thích ăn đồ ngọt, tôi thích ăn đồ chua."
+],
+[
+"这家饭店的辣的很好吃。",
+"Đồ cay của quán này rất ngon."
+]
+],
+"try": "Nói: “Tôi không muốn ăn đồ mặn, tôi muốn ăn đồ ngọt.”"
+}
+]
+},
+{
+"line": 0,
+"s": "他们边吃边聊，非常愉快。",
+"vn": "Họ vừa ăn vừa trò chuyện, vô cùng vui vẻ.",
+"ch": [
+{
+"t": "边吃边聊",
+"py": "biān chī biān liáo",
+"vn": "vừa ăn vừa trò chuyện",
+"frame": "边 + V1 + 边 + V2",
+"note": "Dùng để diễn tả hai hành động xảy ra đồng thời.",
+"ex": [
+[
+"他喜欢边听音乐边做作业。",
+"Cậu ấy thích vừa nghe nhạc vừa làm bài tập."
+],
+[
+"我们边走边说吧。",
+"Chúng ta vừa đi vừa nói chuyện đi."
+]
+],
+"try": "Nói: “Tôi thường vừa uống cà phê vừa đọc sách.”"
+}
+]
+},
+{
+"line": 1,
+"s": "结账时，李文想请客，但大家觉得还是各付各的更合适。",
+"vn": "Lúc thanh toán, Lý Văn muốn mời, nhưng mọi người thấy tự trả tiền phần mình thì hợp lý hơn.",
+"ch": [
+{
+"t": "各付各的",
+"py": "gè fù gè de",
+"vn": "mỗi người tự trả phần mình",
+"frame": "各 + V + 各的",
+"note": "Cấu trúc này nhấn mạnh việc mỗi cá nhân tự thực hiện hành động của riêng mình.",
+"ex": [
+[
+"我们各走各的路吧。",
+"Chúng ta mỗi người đi một đường đi."
+],
+[
+"大家各做各的工作。",
+"Mọi người mỗi người làm việc của mình."
+]
+],
+"try": "Nói: “Đi du lịch, chúng tôi quyết định mỗi người tự trả tiền của mình.”"
+}
+]
+},
+{
+"line": 1,
+"s": "于是，李文付完钱后，大家把钱转给了他，还笑着说下次再一起聚餐。",
+"vn": "Thế là, sau khi Lý Văn trả tiền xong, mọi người chuyển khoản tiền cho anh ấy, còn cười nói lần sau lại cùng nhau tụ tập ăn uống.",
+"ch": [
+{
+"t": "付完钱后",
+"py": "fù wán qián hòu",
+"vn": "sau khi trả tiền xong",
+"frame": "V + 完 + (tân ngữ) + 后",
+"note": "Diễn tả một hành động đã hoàn thành xong xuôi rồi mới đến hành động tiếp theo.",
+"ex": [
+[
+"做完作业后，我就去睡觉。",
+"Làm xong bài tập, tôi sẽ đi ngủ."
+],
+[
+"看完电影后，我们去吃饭。",
+"Xem xong phim, chúng tôi đi ăn."
+]
+],
+"try": "Nói: “Sau khi ăn xong, chúng ta đi dạo nhé.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "今天吃饭的时候，大家坐得比较随意。李文告诉白家月，在中国，正式聚餐和普通聚餐不同，正式聚餐时人们比较重视座位的安排，",
+"vn": "Hôm nay lúc ăn cơm, mọi người ngồi khá tùy ý. Lý Văn nói với Bạch Gia Nguyệt rằng, ở Trung Quốc, ăn uống chính thức và ăn uống bình thường khác nhau, khi ăn uống chính thức mọi người khá coi trọng việc sắp xếp chỗ ngồi,",
+"ch": [
+{
+"t": "比较重视",
+"py": "bǐjiào zhòngshì",
+"vn": "khá coi trọng",
+"frame": "A 比较重视 B",
+"note": "Dùng để diễn tả mức độ quan tâm đến một việc gì đó. Đừng dịch word-by-word là 'so sánh nặng', hãy hiểu là 'đặt nặng/coi trọng'.",
+"ex": [
+[
+"公司比较重视员工的经验。",
+"Công ty khá coi trọng kinh nghiệm của nhân viên."
+],
+[
+"老师比较重视学生们的练习。",
+"Thầy giáo khá coi trọng bài tập của học sinh."
+]
+],
+"try": "Nói: 'Gia đình tôi khá coi trọng việc ăn cơm cùng nhau.'"
+}
+]
+},
+{
+"line": 0,
+"s": "比如可以按照年龄大小来安排，年龄比较大的客人往往会坐在中间或者面对门口的座位。大家坐下时，主人会请客人先坐。",
+"vn": "ví dụ có thể sắp xếp theo độ tuổi lớn nhỏ, khách lớn tuổi hơn thường sẽ ngồi ở giữa hoặc chỗ ngồi đối diện cửa ra vào. Khi mọi người ngồi xuống, chủ nhà sẽ mời khách ngồi trước.",
+"ch": [
+{
+"t": "按照年龄大小来安排",
+"py": "ànzhào niánlíng dàxiǎo lái ānpái",
+"vn": "sắp xếp theo độ tuổi lớn nhỏ",
+"frame": "按照 + tiêu chí + 来 + V",
+"note": "Khung này dùng để chỉ cách thức thực hiện hành động dựa trên một quy tắc nào đó.",
+"ex": [
+[
+"按照时间顺序来安排工作。",
+"Sắp xếp công việc theo thứ tự thời gian."
+],
+[
+"按照能力大小来分配任务。",
+"Phân chia nhiệm vụ theo năng lực lớn nhỏ."
+]
+],
+"try": "Nói: 'Chúng ta hãy sắp xếp các từ mới theo thứ tự chữ cái.'"
+}
+]
+},
+{
+"line": 0,
+"s": "如果聚餐时有老人，年轻人要等老人坐下后再坐。",
+"vn": "Nếu khi ăn uống có người già, người trẻ phải đợi người già ngồi xuống rồi mới ngồi.",
+"ch": [
+{
+"t": "等……后再……",
+"py": "děng... hòu zài...",
+"vn": "đợi... sau đó mới...",
+"frame": "等 + đối tượng + V1 + 后再 + V2",
+"note": "Cấu trúc kinh điển để nói về thứ tự ưu tiên trong hành động. Rất hay dùng trong văn hóa ứng xử.",
+"ex": [
+[
+"等老师说完后再提问。",
+"Đợi thầy nói xong rồi hãy đặt câu hỏi."
+],
+[
+"等大家都到了后再开始吃饭。",
+"Đợi mọi người đến đủ rồi mới bắt đầu ăn."
+]
+],
+"try": "Nói: 'Đợi tôi làm xong bài tập rồi mới đi chơi.'"
+}
+]
+},
+{
+"line": 1,
+"s": "白家月听后觉得很有意思，她认为这么做是照顾客人、尊重老人的表现。",
+"vn": "Bạch Gia Nguyệt nghe xong cảm thấy rất thú vị, cô ấy cho rằng làm như vậy là biểu hiện của việc chăm sóc khách, tôn trọng người già.",
+"ch": [
+{
+"t": "是……的表现",
+"py": "shì... de biǎoxiàn",
+"vn": "là biểu hiện của...",
+"frame": "……是……的表现",
+"note": "Dùng để nhận xét hoặc đánh giá một hành động là biểu hiện của một phẩm chất hay thái độ nào đó.",
+"ex": [
+[
+"准时是尊重别人的表现。",
+"Đúng giờ là biểu hiện của việc tôn trọng người khác."
+],
+[
+"努力学习是好学生的表现。",
+"Nỗ lực học tập là biểu hiện của học sinh giỏi."
+]
+],
+"try": "Nói: 'Giúp đỡ người khác là biểu hiện của lòng tốt.'"
+}
+]
+}
+]
+}

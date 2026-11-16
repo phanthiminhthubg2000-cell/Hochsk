@@ -1,0 +1,520 @@
+{
+"1": [
+{
+"line": 0,
+"s": "请问，花园小区怎么走？",
+"vn": "Xin hỏi, đi đến khu chung cư Hoa Viên thế nào?",
+"ch": [
+{
+"t": "怎么走",
+"py": "zěnme zǒu",
+"vn": "đi thế nào",
+"frame": "……怎么走？",
+"note": "Cấu trúc hỏi đường phổ biến nhất. Dùng để hỏi cách đi đến một địa điểm.",
+"ex": [
+[
+"去火车站怎么走？",
+"Đi đến nhà ga xe lửa thế nào?"
+],
+[
+"去这家饭店怎么走？",
+"Đi đến nhà hàng này thế nào?"
+]
+],
+"try": "Nói: \"Xin hỏi, đi đến thư viện thế nào?\""
+}
+]
+},
+{
+"line": 1,
+"s": "你往前走，到十字路口不要过马路，直接右转就到小区门口了。正好我也去那边，一起走吧。",
+"vn": "Bạn đi thẳng, đến ngã tư đừng qua đường, rẽ phải là đến cổng khu chung cư rồi. Thật trùng hợp tôi cũng đi hướng đó, đi cùng nhau đi.",
+"ch": [
+{
+"t": "直接右转",
+"py": "zhíjiē yòuzhuǎn",
+"vn": "rẽ phải ngay",
+"frame": "直接 + V",
+"note": "直接 dùng để chỉ hành động làm ngay, không thông qua bước trung gian.",
+"ex": [
+[
+"有事请直接告诉我。",
+"Có việc gì hãy nói thẳng với tôi."
+],
+[
+"到了机场，我直接去酒店。",
+"Đến sân bay, tôi đi thẳng đến khách sạn."
+]
+],
+"try": "Nói: \"Đừng suy nghĩ nhiều, hãy trực tiếp trả lời câu hỏi của tôi.\""
+},
+{
+"t": "正好",
+"py": "zhènghǎo",
+"vn": "thật trùng hợp/vừa vặn",
+"frame": "正好 + chủ ngữ + V",
+"note": "Dùng khi sự việc xảy ra một cách ngẫu nhiên hoặc đúng lúc cần thiết.",
+"ex": [
+[
+"我正好有两张电影票。",
+"Tôi vừa vặn có hai vé xem phim."
+],
+[
+"你来得正好，帮我一下。",
+"Bạn đến thật đúng lúc, giúp tôi một chút."
+]
+],
+"try": "Nói: \"Tôi đang định đi siêu thị, thật trùng hợp bạn cũng đi.\""
+}
+]
+},
+{
+"line": 2,
+"s": "好的。我刚来中国，不熟悉路。北京真是太大了。",
+"vn": "Được. Tôi mới đến Trung Quốc, không quen đường. Bắc Kinh thật là quá lớn.",
+"ch": [
+{
+"t": "不熟悉路",
+"py": "bù shúxī lù",
+"vn": "không quen đường",
+"frame": "不熟悉 + N",
+"note": "Dùng để diễn tả việc chưa hiểu rõ hoặc chưa có kinh nghiệm về một địa điểm hay sự vật.",
+"ex": [
+[
+"我不熟悉这个城市的交通。",
+"Tôi không quen giao thông của thành phố này."
+],
+[
+"我不熟悉这里的环境。",
+"Tôi không quen môi trường ở đây."
+]
+],
+"try": "Nói: \"Tôi mới vào công ty nên chưa quen công việc.\""
+}
+]
+},
+{
+"line": 3,
+"s": "北京大是大，不过这边的路基本上都是正南正北、正东正西的，很好找。你也可以用手机地图，很容易就能找到目的地。",
+"vn": "Bắc Kinh thì đúng là lớn, nhưng đường ở đây cơ bản đều là hướng chính Nam chính Bắc, chính Đông chính Tây, rất dễ tìm. Bạn cũng có thể dùng bản đồ điện thoại, rất dễ dàng là tìm được đích đến.",
+"ch": [
+{
+"t": "大是大",
+"py": "dà shì dà",
+"vn": "lớn thì đúng là lớn",
+"frame": "A 是 A，不过……",
+"note": "Cấu trúc khẳng định một đặc điểm rồi chuyển ý bằng '不过'. Nhấn mạnh sự thừa nhận.",
+"ex": [
+[
+"贵是贵，不过质量很好。",
+"Đắt thì đắt thật, nhưng chất lượng rất tốt."
+],
+[
+"累是累，不过学到了很多。",
+"Mệt thì mệt thật, nhưng học được rất nhiều."
+]
+],
+"try": "Nói: \"Tiếng Trung khó thì đúng là khó, nhưng rất thú vị.\""
+},
+{
+"t": "很容易就能找到",
+"py": "hěn róngyì jiù néng zhǎodào",
+"vn": "rất dễ dàng là tìm được",
+"frame": "很容易就能 + V",
+"note": "Cấu trúc nhấn mạnh khả năng thực hiện hành động một cách đơn giản.",
+"ex": [
+[
+"用这个软件，很容易就能学好汉语。",
+"Dùng phần mềm này, rất dễ dàng học tốt tiếng Trung."
+],
+[
+"只要努力，很容易就能通过考试。",
+"Chỉ cần nỗ lực, rất dễ dàng vượt qua kỳ thi."
+]
+],
+"try": "Nói: \"Chỉ cần nhìn bản đồ là rất dễ tìm được khách sạn.\""
+}
+]
+},
+{
+"line": 4,
+"s": "嗯，不过很多中文地名我还不认识。",
+"vn": "Ừ, nhưng nhiều địa danh tiếng Trung tôi vẫn chưa biết.",
+"ch": []
+},
+{
+"line": 5,
+"s": "没关系，你很快就会熟悉的。",
+"vn": "Không sao, bạn sẽ sớm quen thôi.",
+"ch": [
+{
+"t": "很快就会",
+"py": "hěn kuài jiù huì",
+"vn": "rất nhanh sẽ",
+"frame": "很快就会 + V",
+"note": "Dùng để dự đoán một sự việc sẽ xảy ra trong tương lai gần.",
+"ex": [
+[
+"你很快就会习惯这里的生活。",
+"Bạn sẽ sớm quen với cuộc sống ở đây."
+],
+[
+"他很快就会到办公室。",
+"Anh ấy sẽ sớm đến văn phòng thôi."
+]
+],
+"try": "Nói: \"Đừng lo, bạn sẽ sớm nói tiếng Trung giỏi thôi.\""
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "前两天和李文喝咖啡时，他帮我下载了微信和支付宝，教我认识里边的汉字，还教我用手机进行支付。",
+"vn": "Hôm trước đi uống cà phê với Lý Văn, anh ấy giúp tôi tải WeChat và Alipay, dạy tôi nhận biết chữ Hán bên trong, còn dạy tôi dùng điện thoại để thanh toán.",
+"ch": [
+{
+"t": "帮我下载了",
+"py": "bāng wǒ xiàzài le",
+"vn": "giúp tôi tải",
+"frame": "帮 + ai + V",
+"note": "Cấu trúc nhờ vả hoặc hỗ trợ, rất phổ biến trong đời sống.",
+"ex": [
+[
+"你能帮我买一张票吗？",
+"Bạn có thể giúp tôi mua một tấm vé không?"
+],
+[
+"他帮我练习汉语口语。",
+"Anh ấy giúp tôi luyện khẩu ngữ tiếng Trung."
+]
+],
+"try": "Nói: “Bạn có thể giúp tôi cài đặt phần mềm này không?”"
+}
+]
+},
+{
+"line": 1,
+"s": "他也教了我怎么用这两个软件。",
+"vn": "Anh ấy cũng dạy tôi cách dùng hai phần mềm này.",
+"ch": []
+},
+{
+"line": 2,
+"s": "现在我不仅会扫码结账，还会用手机在网上购物了。昨天我就在网上订了一台电脑，今天下午一点送到。",
+"vn": "Bây giờ tôi không chỉ biết quét mã thanh toán, mà còn biết mua sắm online bằng điện thoại rồi. Hôm qua tôi đặt một chiếc máy tính trên mạng, chiều nay một giờ sẽ giao đến.",
+"ch": [
+{
+"t": "不仅会……还会……",
+"py": "bùjǐn huì... hái huì...",
+"vn": "không chỉ biết... còn biết...",
+"frame": "不仅 + V1, 还 + V2",
+"note": "Dùng để liệt kê hai khả năng hoặc hành động cùng lúc, nhấn mạnh sự tiến bộ.",
+"ex": [
+[
+"他不仅会说汉语，还会写汉字。",
+"Anh ấy không chỉ biết nói tiếng Trung, còn biết viết chữ Hán."
+],
+[
+"这个软件不仅能购物，还能订票。",
+"Phần mềm này không chỉ mua sắm được, còn đặt vé được."
+]
+],
+"try": "Nói: “Tôi không chỉ biết nấu món Việt, còn biết nấu món Trung.”"
+}
+]
+},
+{
+"line": 3,
+"s": "学会了这些，我们在中国生活真是方便了不少。",
+"vn": "Học được những thứ này, cuộc sống của chúng ta ở Trung Quốc thực sự tiện lợi hơn nhiều.",
+"ch": [
+{
+"t": "方便了不少",
+"py": "fāngbiàn le bùshǎo",
+"vn": "tiện lợi hơn nhiều",
+"frame": "V/Adj + 了不少",
+"note": "不少 nghĩa là “không ít”, tương đương với “rất nhiều” hoặc “nhiều hơn đáng kể”.",
+"ex": [
+[
+"学了汉语，工作机会多了不少。",
+"Học tiếng Trung xong, cơ hội việc làm nhiều hơn hẳn."
+],
+[
+"今天天气凉快了不少。",
+"Hôm nay thời tiết mát mẻ hơn nhiều rồi."
+]
+],
+"try": "Nói: “Sau khi tập thể dục, tôi khỏe hơn nhiều.”"
+}
+]
+},
+{
+"line": 4,
+"s": "对。快递员要到了，我得马上回去！家月，明天见！",
+"vn": "Đúng vậy. Nhân viên giao hàng sắp đến rồi, tôi phải về ngay đây! Gia Nguyệt, mai gặp nhé!",
+"ch": [
+{
+"t": "我得马上",
+"py": "wǒ děi mǎshàng",
+"vn": "tôi phải ngay lập tức",
+"frame": "得 + V + 马上",
+"note": "得 (děi) chỉ sự bắt buộc, dùng trong tình huống khẩn cấp hoặc cần thiết.",
+"ex": [
+[
+"我得马上出发去学校。",
+"Tôi phải xuất phát đi trường ngay."
+],
+[
+"天黑了，我得马上回家。",
+"Trời tối rồi, tôi phải về nhà ngay."
+]
+],
+"try": "Nói: “Sắp đến giờ thi rồi, tôi phải vào phòng thi ngay.”"
+}
+]
+},
+{
+"line": 5,
+"s": "好的，天中，再见。",
+"vn": "Được, Thiên Trung, tạm biệt.",
+"ch": []
+}
+],
+"3": [
+{
+"line": 0,
+"s": "白家月和陈天中刚到北京时就发现，中国人在饭馆或超市结账时，几乎都用手机支付，只有他们用现金结账。",
+"vn": "Khi Bạch Gia Nguyệt và Trần Thiên Trung mới đến Bắc Kinh, họ phát hiện ra rằng người Trung Quốc khi thanh toán ở nhà hàng hay siêu thị hầu như đều dùng thanh toán di động, chỉ có họ là dùng tiền mặt.",
+"ch": [
+{
+"t": "刚到北京时",
+"py": "gāng dào Běijīng shí",
+"vn": "khi mới đến Bắc Kinh",
+"frame": "刚 + V + (địa điểm) + 时",
+"note": "Dùng để chỉ thời điểm vừa mới làm gì hoặc đến đâu. Lưu ý: 刚 là trạng từ chỉ thời gian, đặt trước động từ.",
+"ex": [
+[
+"刚到公司时，我不认识任何人。",
+"Khi mới đến công ty, tôi không quen ai cả."
+],
+[
+"刚到学校时，我很不习惯。",
+"Khi mới đến trường, tôi rất không quen."
+]
+],
+"try": "Nói: “Khi mới đến Việt Nam, tôi thấy đồ ăn rất ngon.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在李文的帮助下，白家月和陈天中也都学会了用手机支付、网购、寄快递等等。",
+"vn": "Dưới sự giúp đỡ của Lý Văn, Bạch Gia Nguyệt và Trần Thiên Trung cũng đều đã học được cách thanh toán di động, mua sắm online, gửi chuyển phát nhanh, vân vân.",
+"ch": [
+{
+"t": "在李文的帮助下",
+"py": "zài Lǐ Wén de bāngzhù xià",
+"vn": "dưới sự giúp đỡ của Lý Văn",
+"frame": "在……的帮助下",
+"note": "Cấu trúc này dùng để chỉ một kết quả đạt được nhờ sự hỗ trợ của ai đó.",
+"ex": [
+[
+"在老师的帮助下，我通过了HSK4级。",
+"Dưới sự giúp đỡ của thầy giáo, tôi đã đỗ HSK4."
+],
+[
+"在朋友的帮助下，我找到了工作。",
+"Dưới sự giúp đỡ của bạn bè, tôi đã tìm được việc làm."
+]
+],
+"try": "Nói: “Nhờ sự giúp đỡ của đồng nghiệp, tôi đã hoàn thành báo cáo.”"
+}
+]
+},
+{
+"line": 1,
+"s": "在中国网购，不仅选择多、价格不高，而且送货很快，很多留学生甚至改变了自己的购物习惯。",
+"vn": "Mua sắm online ở Trung Quốc không những lựa chọn nhiều, giá không cao, mà còn giao hàng rất nhanh, nhiều lưu học sinh thậm chí đã thay đổi thói quen mua sắm của mình.",
+"ch": [
+{
+"t": "不仅……而且……",
+"py": "bùjǐn... érqiě...",
+"vn": "không những... mà còn...",
+"frame": "不仅 + A，而且 + B",
+"note": "Dùng để nối hai đặc điểm hoặc hành động cùng chiều. A và B thường là tính từ hoặc cụm động từ.",
+"ex": [
+[
+"这家饭馆不仅便宜，而且很好吃。",
+"Nhà hàng này không những rẻ mà còn rất ngon."
+],
+[
+"他不仅会说汉语，而且会写汉字。",
+"Anh ấy không những biết nói tiếng Trung mà còn biết viết chữ Hán."
+]
+],
+"try": "Nói: “Học tiếng Trung không những giúp tôi có công việc tốt, mà còn giúp tôi hiểu văn hóa Trung Quốc.”"
+}
+]
+},
+{
+"line": 1,
+"s": "不过，由于网购太方便了，动动手指就能买到想要的东西，他们也开始担心自己在网购时会乱花钱。怎么才能管住自己不乱花钱呢？",
+"vn": "Tuy nhiên, vì mua sắm online quá tiện lợi, chỉ cần động ngón tay là mua được thứ mình muốn, họ cũng bắt đầu lo lắng bản thân sẽ tiêu xài hoang phí khi mua sắm online. Làm sao để kiểm soát bản thân không tiêu xài hoang phí đây?",
+"ch": [
+{
+"t": "怎么才能……呢",
+"py": "zěnme cáinéng... ne",
+"vn": "làm sao mới có thể... đây",
+"frame": "怎么才能 + V + 呢",
+"note": "Dùng để hỏi về cách thức giải quyết một vấn đề khó khăn hoặc mong muốn đạt được mục tiêu.",
+"ex": [
+[
+"怎么才能学好汉语呢？",
+"Làm sao mới có thể học tốt tiếng Trung đây?"
+],
+[
+"怎么才能早点儿起床呢？",
+"Làm sao mới có thể dậy sớm hơn đây?"
+]
+],
+"try": "Nói: “Làm sao mới có thể tiết kiệm tiền đây?”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "网上购物或者订票时，我们经常需要提供姓名、手机号、身份证号等个人信息。",
+"vn": "Khi mua sắm trực tuyến hoặc đặt vé, chúng ta thường cần cung cấp thông tin cá nhân như tên, số điện thoại, số căn cước.",
+"ch": [
+{
+"t": "网上购物或者订票时",
+"py": "wǎngshàng gòuwù huòzhě dìngpiào shí",
+"vn": "khi mua sắm online hoặc đặt vé",
+"frame": "……时",
+"note": "Cấu trúc chỉ thời điểm, dùng để giới thiệu bối cảnh trước khi nói đến hành động chính.",
+"ex": [
+[
+"学习汉语时，我喜欢听音乐。",
+"Khi học tiếng Trung, tôi thích nghe nhạc."
+],
+[
+"工作时，请不要玩手机。",
+"Khi làm việc, xin đừng nghịch điện thoại."
+]
+],
+"try": "Nói: \"Khi đi du lịch, tôi thường mang theo máy ảnh.\""
+}
+]
+},
+{
+"line": 0,
+"s": "在提供这些信息时，我们也会担心：我的个人信息能否得到保护？",
+"vn": "Khi cung cấp những thông tin này, chúng ta cũng sẽ lo lắng: thông tin cá nhân của tôi có được bảo vệ hay không?",
+"ch": [
+{
+"t": "能否得到保护",
+"py": "néngfǒu dédào bǎohù",
+"vn": "có được bảo vệ hay không",
+"frame": "……能否得到……",
+"note": "能否 là cách nói trang trọng của 能不能, thường dùng trong câu hỏi hoặc văn viết để thể hiện sự nghi vấn.",
+"ex": [
+[
+"我们能否得到这个机会？",
+"Chúng ta có thể nhận được cơ hội này không?"
+],
+[
+"他能否得到老师的帮助？",
+"Cậu ấy có thể nhận được sự giúp đỡ của thầy giáo không?"
+]
+],
+"try": "Nói: \"Tôi lo lắng không biết mình có thể nhận được kết quả tốt hay không.\""
+}
+]
+},
+{
+"line": 0,
+"s": "于是，有人在网上说出了自己的担心，很快就有人给出了一些建议。",
+"vn": "Thế là, có người đã nói ra nỗi lo của mình trên mạng, rất nhanh sau đó đã có người đưa ra một vài lời khuyên.",
+"ch": [
+{
+"t": "于是",
+"py": "yúshì",
+"vn": "thế là/do đó",
+"frame": "……，于是……",
+"note": "Dùng để nối hai vế câu, vế sau là kết quả hoặc hành động tiếp nối của vế trước.",
+"ex": [
+[
+"他没带伞，于是他打车回家了。",
+"Anh ấy không mang ô, thế là anh ấy bắt taxi về nhà."
+],
+[
+"今天太累了，于是我决定早点休息。",
+"Hôm nay mệt quá, thế là tôi quyết định nghỉ ngơi sớm."
+]
+],
+"try": "Nói: \"Trời mưa rồi, thế là chúng tôi không đi dạo nữa.\""
+}
+]
+},
+{
+"line": 0,
+"s": "比如，别把密码随便告诉别人，不在网上发自己的车票、机票信息……",
+"vn": "Ví dụ, đừng tùy tiện nói mật khẩu cho người khác, không đăng thông tin vé xe, vé máy bay của mình lên mạng...",
+"ch": [
+{
+"t": "别把密码随便告诉别人",
+"py": "bié bǎ mìmǎ suíbiàn gàosù biérén",
+"vn": "đừng tùy tiện nói mật khẩu cho người khác",
+"frame": "别把 + O + 随便 + V",
+"note": "Cấu trúc 把 nhấn mạnh hành động tác động lên đối tượng, 随便 bổ sung ý nghĩa \"tùy tiện/không suy nghĩ\".",
+"ex": [
+[
+"别把作业随便借给别人抄。",
+"Đừng tùy tiện cho người khác mượn bài tập để chép."
+],
+[
+"别把自己的电话号码随便告诉陌生人。",
+"Đừng tùy tiện nói số điện thoại của mình cho người lạ."
+]
+],
+"try": "Nói: \"Đừng tùy tiện vứt rác ra đường.\""
+}
+]
+},
+{
+"line": 1,
+"s": "现在，很多国家也通过技术、法律等手段来保证个人信息安全。",
+"vn": "Hiện nay, nhiều quốc gia cũng thông qua các biện pháp như kỹ thuật, pháp luật để đảm bảo an toàn thông tin cá nhân.",
+"ch": [
+{
+"t": "通过技术、法律等手段",
+"py": "tōngguò jìshù, fǎlǜ děng shǒuduàn",
+"vn": "thông qua các biện pháp như kỹ thuật, pháp luật",
+"frame": "通过 + N + 手段 + V",
+"note": "Dùng để diễn tả phương thức hoặc cách thức thực hiện một mục tiêu nào đó.",
+"ex": [
+[
+"我们要通过努力学习来提高成绩。",
+"Chúng ta phải thông qua việc học tập chăm chỉ để cải thiện thành tích."
+],
+[
+"他通过各种手段解决了这个问题。",
+"Anh ấy đã thông qua nhiều biện pháp khác nhau để giải quyết vấn đề này."
+]
+],
+"try": "Nói: \"Chúng ta nên thông qua việc luyện tập để giỏi tiếng Trung.\""
+}
+]
+},
+{
+"line": 1,
+"s": "比如中国的网络安全法、个人信息保护法等就很好地保护了人们的个人信息。",
+"vn": "Ví dụ, Luật An ninh mạng, Luật Bảo vệ thông tin cá nhân của Trung Quốc đã bảo vệ tốt thông tin cá nhân của mọi người.",
+"ch": []
+}
+]
+}

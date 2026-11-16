@@ -1,0 +1,604 @@
+{
+"1": [
+{
+"line": 0,
+"s": "终于上车了，刚刚路上堵车，差点儿晚了。",
+"vn": "Cuối cùng cũng lên xe rồi, vừa nãy trên đường tắc xe, suýt chút nữa là muộn.",
+"ch": [
+{
+"t": "差点儿",
+"py": "chàdiǎnr",
+"vn": "suýt chút nữa",
+"frame": "差点儿 + V (kết quả không tốt)",
+"note": "Dùng để diễn tả một sự việc suýt xảy ra nhưng may mắn là chưa xảy ra.",
+"ex": [
+[
+"我差点儿忘了带护照。",
+"Tôi suýt nữa quên mang hộ chiếu."
+],
+[
+"刚才差点儿迟到了。",
+"Vừa nãy suýt chút nữa thì muộn giờ."
+]
+],
+"try": "Nói: \"Suýt chút nữa tôi đã bỏ lỡ chuyến tàu.\""
+}
+]
+},
+{
+"line": 1,
+"s": "没关系，晚了就改乘下一趟。天中，你坐哪儿？",
+"vn": "Không sao, muộn thì đổi sang chuyến sau. Thiên Trung, cậu ngồi đâu?",
+"ch": [
+{
+"t": "没关系，晚了就改乘下一趟",
+"py": "méiguānxì, wǎnle jiù gǎichéng xià yí tàng",
+"vn": "không sao, muộn thì đổi sang chuyến sau",
+"frame": "……就改 + V + ……",
+"note": "Cấu trúc đưa ra phương án thay thế khi kế hoạch ban đầu gặp trở ngại.",
+"ex": [
+[
+"今天不去，就改明天去。",
+"Hôm nay không đi thì đổi sang ngày mai đi."
+],
+[
+"这件衣服太小，就改买大号的。",
+"Áo này nhỏ quá, đổi sang mua size lớn hơn."
+]
+],
+"try": "Nói: \"Nếu không hiểu bài này, thì đổi sang hỏi giáo viên.\""
+}
+]
+},
+{
+"line": 1,
+"s": "看你一直不坐下，我还在想，难道你买的是无座票吗？",
+"vn": "Thấy cậu cứ không chịu ngồi xuống, tôi còn đang nghĩ, chẳng lẽ cậu mua vé đứng à?",
+"ch": [
+{
+"t": "难道……吗",
+"py": "nándào... ma",
+"vn": "chẳng lẽ... sao",
+"frame": "难道 + [câu nghi vấn] + 吗？",
+"note": "Dùng để nhấn mạnh sự ngạc nhiên hoặc hoài nghi, dùng trong câu hỏi tu từ.",
+"ex": [
+[
+"难道你不知道这件事吗？",
+"Chẳng lẽ cậu không biết việc này sao?"
+],
+[
+"难道他还没来吗？",
+"Chẳng lẽ anh ấy vẫn chưa đến sao?"
+]
+],
+"try": "Nói: \"Chẳng lẽ cậu quên lịch thi rồi sao?\""
+}
+]
+},
+{
+"line": 2,
+"s": "我的座位就在前边，我想先站这儿跟你们说说话。",
+"vn": "Chỗ ngồi của tôi ở ngay phía trước, tôi muốn đứng đây nói chuyện với các cậu một lát.",
+"ch": [
+{
+"t": "跟你们说说话",
+"py": "gēn nǐmen shuō shuō huà",
+"vn": "nói chuyện với các cậu một chút",
+"frame": "跟 + ai + V + V (lặp lại động từ)",
+"note": "Lặp lại động từ (AABB hoặc ABAB) để diễn tả hành động diễn ra trong thời gian ngắn, nhẹ nhàng.",
+"ex": [
+[
+"我想休息休息。",
+"Tôi muốn nghỉ ngơi một chút."
+],
+[
+"我跟老师商量商量。",
+"Tôi bàn bạc với thầy giáo một chút."
+]
+],
+"try": "Nói: \"Tôi muốn xem xem tài liệu này.\""
+}
+]
+},
+{
+"line": 3,
+"s": "动车车速也挺快啊！对了，这列车晚上七点多到杭州，咱们在车上吃晚餐，到站后就先去西湖吧，夜里的西湖更美。",
+"vn": "Tốc độ tàu cao tốc cũng khá nhanh đấy! Đúng rồi, chuyến tàu này hơn 7 giờ tối đến Hàng Châu, chúng ta ăn tối trên tàu, đến ga rồi thì đi Tây Hồ trước nhé, Tây Hồ ban đêm đẹp hơn.",
+"ch": [
+{
+"t": "到站后就先去",
+"py": "dàozhàn hòu jiù xiān qù",
+"vn": "đến ga rồi thì đi trước",
+"frame": "……后 + 就先 + V",
+"note": "Cấu trúc chỉ trình tự thời gian: sau khi làm xong việc A thì ưu tiên làm việc B.",
+"ex": [
+[
+"下班后就先回家。",
+"Tan làm xong thì về nhà trước."
+],
+[
+"考完试后就先去旅游。",
+"Thi xong thì đi du lịch trước."
+]
+],
+"try": "Nói: \"Sau khi đến trường thì đi thư viện trước.\""
+}
+]
+},
+{
+"line": 4,
+"s": "好！后天我们坐大巴去苏州，看苏州园林。",
+"vn": "Được! Ngày kia chúng ta đi xe khách đến Tô Châu, xem vườn cảnh Tô Châu.",
+"ch": []
+},
+{
+"line": 5,
+"s": "嗯。中国太大了！真是看也看不完啊。",
+"vn": "Ừ. Trung Quốc rộng quá! Đúng là xem mãi cũng không xem hết được.",
+"ch": [
+{
+"t": "看也看不完",
+"py": "kàn yě kàn bù wán",
+"vn": "xem mãi không hết",
+"frame": "V + 也 + V + 不 + bổ ngữ kết quả",
+"note": "Cấu trúc nhấn mạnh sự vô tận hoặc không thể hoàn thành dù có cố gắng đến đâu.",
+"ex": [
+[
+"这些书读也读不完。",
+"Những cuốn sách này đọc mãi không hết."
+],
+[
+"这些工作做也做不完。",
+"Công việc này làm mãi không hết."
+]
+],
+"try": "Nói: \"Đồ ăn nhiều quá, ăn mãi không hết.\""
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "安检完就等着登机了。",
+"vn": "Kiểm tra an ninh xong là chờ lên máy bay rồi.",
+"ch": [
+{
+"t": "安检完就等着登机了",
+"py": "ānjiǎn wán jiù děngzhe dēngjī le",
+"vn": "kiểm tra an ninh xong là chờ lên máy bay rồi",
+"frame": "……完就 + V",
+"note": "Cấu trúc chỉ trình tự thời gian sát nút, hành động này vừa xong là hành động kia diễn ra ngay.",
+"ex": [
+[
+"下课完就去图书馆了。",
+"Tan học xong là đi thư viện ngay."
+],
+[
+"吃完饭就去散步吧。",
+"Ăn cơm xong thì đi dạo thôi."
+]
+],
+"try": "Nói: “Làm bài tập xong là đi ngủ ngay.”"
+}
+]
+},
+{
+"line": 0,
+"s": "你们在看什么？",
+"vn": "Các bạn đang đọc gì thế?",
+"ch": []
+},
+{
+"line": 1,
+"s": "我在读老舍的小说。",
+"vn": "Tôi đang đọc tiểu thuyết của Lão Xá.",
+"ch": []
+},
+{
+"line": 2,
+"s": "我读的是一本中国历史书。",
+"vn": "Tôi đang đọc là một cuốn sách lịch sử Trung Quốc.",
+"ch": []
+},
+{
+"line": 3,
+"s": "我读唐诗呢。几千年的中国文化，真是读也读不完。",
+"vn": "Tôi đang đọc thơ Đường đây. Văn hóa Trung Quốc mấy nghìn năm, thật sự là đọc mãi không hết.",
+"ch": [
+{
+"t": "读也读不完",
+"py": "dú yě dú bù wán",
+"vn": "đọc mãi không hết",
+"frame": "V + 也 + V + 不 + bổ ngữ kết quả",
+"note": "Cấu trúc nhấn mạnh sự không thể hoàn thành hoặc không thể đạt đến giới hạn.",
+"ex": [
+[
+"这本字典太厚，看也看不完。",
+"Từ điển này dày quá, xem mãi không hết."
+],
+[
+"工作太多，做也做不完。",
+"Việc nhiều quá, làm mãi không hết."
+]
+],
+"try": "Nói: “Từ mới nhiều quá, học mãi không hết.”"
+}
+]
+},
+{
+"line": 4,
+"s": "谁说不是呢？不过，现在咱们得去排队，航班的值机员在叫大家登机呢。",
+"vn": "Ai bảo không phải chứ? Nhưng mà, bây giờ chúng ta phải đi xếp hàng, nhân viên làm thủ tục chuyến bay đang gọi mọi người lên máy bay rồi.",
+"ch": [
+{
+"t": "谁说不是呢",
+"py": "shéi shuō búshì ne",
+"vn": "ai bảo không phải chứ (đúng vậy/đồng ý)",
+"frame": "谁说不是呢？",
+"note": "Câu hỏi tu từ dùng để đồng tình mạnh mẽ với ý kiến của người đối diện.",
+"ex": [
+[
+"A:今天天气真好。B:谁说不是呢？",
+"A: Hôm nay thời tiết đẹp thật. B: Ai bảo không phải chứ."
+],
+[
+"A:学习汉语很难。B:谁说不是呢？",
+"A: Học tiếng Trung khó thật. B: Ai bảo không phải chứ."
+]
+],
+"try": "Nói: “A: Đồ ăn ở đây ngon quá. B: Ai bảo không phải chứ.”"
+}
+]
+},
+{
+"line": 5,
+"s": "去西安的旅客开始登机，请拿好登机牌按顺序排队。",
+"vn": "Hành khách đi Tây An bắt đầu lên máy bay, vui lòng cầm chắc thẻ lên máy bay xếp hàng theo thứ tự.",
+"ch": []
+},
+{
+"line": 6,
+"s": "终于上来了，我的座位靠窗户。",
+"vn": "Cuối cùng cũng lên rồi, chỗ ngồi của tôi gần cửa sổ.",
+"ch": [
+{
+"t": "靠窗户",
+"py": "kào chuānghù",
+"vn": "gần cửa sổ/tựa vào cửa sổ",
+"frame": "靠 + danh từ vị trí",
+"note": "Dùng để chỉ vị trí ngồi hoặc đồ vật nằm sát bên cạnh cái gì đó.",
+"ex": [
+[
+"我喜欢坐靠窗户的位置。",
+"Tôi thích ngồi vị trí gần cửa sổ."
+],
+[
+"他坐在靠门的地方。",
+"Anh ấy ngồi ở chỗ gần cửa."
+]
+],
+"try": "Nói: “Tôi muốn đổi chỗ ngồi gần cửa sổ.”"
+}
+]
+},
+{
+"line": 7,
+"s": "我在最外边。这么多人，是不是跟咱们一样，都是去感受泼水节的啊？",
+"vn": "Tôi ở ngoài cùng. Nhiều người thế này, có phải giống chúng ta, đều đi cảm nhận lễ hội té nước không?",
+"ch": []
+},
+{
+"line": 8,
+"s": "应该不是。很多人的目的地是西安，你别忘了，咱们是在西安转机，然后再飞西双版纳。",
+"vn": "Chắc là không phải. Điểm đến của nhiều người là Tây An, bạn đừng quên, chúng ta là quá cảnh ở Tây An, sau đó mới bay đi Tây Song Bản Nạp.",
+"ch": [
+{
+"t": "你别忘了",
+"py": "nǐ bié wàngle",
+"vn": "bạn đừng quên",
+"frame": "你别忘了 + V/câu",
+"note": "Dùng để nhắc nhở ai đó về một sự thật hoặc một việc cần làm.",
+"ex": [
+[
+"你别忘了明天有考试。",
+"Bạn đừng quên ngày mai có bài thi."
+],
+[
+"你别忘了带护照。",
+"Bạn đừng quên mang hộ chiếu."
+]
+],
+"try": "Nói: “Bạn đừng quên hôm nay phải nộp báo cáo.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "来中国留学后，白家月、安妮和陈天中常外出旅行，从中了解中国。他们还总结出几点旅行经验：",
+"vn": "Sau khi sang Trung Quốc du học, Bạch Gia Nguyệt, Annie và Trần Thiên Trung thường xuyên đi du lịch, từ đó tìm hiểu về Trung Quốc. Họ còn đúc kết ra vài kinh nghiệm du lịch:",
+"ch": [
+{
+"t": "从中了解中国",
+"py": "cóngzhōng liǎojiě Zhōngguó",
+"vn": "từ đó tìm hiểu về Trung Quốc",
+"frame": "从中 + V",
+"note": "从中 (từ trong đó) dùng để chỉ việc rút ra kết quả từ một quá trình hoặc một sự việc đã nêu trước đó.",
+"ex": [
+[
+"我看了很多书，从中学习到很多知识。",
+"Tôi đọc nhiều sách, từ đó học được nhiều kiến thức."
+],
+[
+"他在工作中遇到困难，从中积累了经验。",
+"Anh ấy gặp khó khăn trong công việc, từ đó tích lũy được kinh nghiệm."
+]
+],
+"try": "Nói: \"Tôi xem phim Trung Quốc, từ đó học được nhiều từ mới.\""
+},
+{
+"t": "总结出",
+"py": "zǒngjié chū",
+"vn": "đúc kết ra",
+"frame": "总结出 + N",
+"note": "Kết quả của việc tổng kết, rút ra được một cái gì đó cụ thể.",
+"ex": [
+[
+"老师总结出了学习汉语的三个方法。",
+"Thầy giáo đúc kết ra ba phương pháp học tiếng Trung."
+],
+[
+"我们总结出了这次比赛失败的原因。",
+"Chúng tôi đúc kết ra nguyên nhân thất bại của cuộc thi lần này."
+]
+],
+"try": "Nói: \"Bạn đã đúc kết ra kinh nghiệm gì khi đi làm thêm?\""
+}
+]
+},
+{
+"line": 1,
+"s": "第一，好计划是成功的一半。旅行前，要了解目的地天气、道路交通特点等，安排好每天的活动，保证所有人对计划都没意见。准备越细，烦恼越少。",
+"vn": "Thứ nhất, kế hoạch tốt là một nửa thành công. Trước khi đi du lịch, cần tìm hiểu thời tiết, đặc điểm giao thông đường bộ tại điểm đến, sắp xếp hoạt động mỗi ngày, đảm bảo tất cả mọi người đều không có ý kiến gì với kế hoạch. Chuẩn bị càng kỹ, phiền não càng ít.",
+"ch": [
+{
+"t": "保证所有人对计划都没意见",
+"py": "bǎozhèng suǒyǒu rén duì jìhuà dōu méi yìjiàn",
+"vn": "đảm bảo tất cả mọi người đều không có ý kiến gì với kế hoạch",
+"frame": "保证 + ai + không có ý kiến gì",
+"note": "Dùng để khẳng định sự đồng thuận trong nhóm hoặc công việc.",
+"ex": [
+[
+"我们要保证大家对这个方案都没意见。",
+"Chúng ta phải đảm bảo mọi người đều không có ý kiến gì về phương án này."
+],
+[
+"开会前，先保证大家对时间都没意见。",
+"Trước khi họp, hãy đảm bảo mọi người không có ý kiến gì về thời gian."
+]
+],
+"try": "Nói: \"Trước khi đi ăn, hãy đảm bảo mọi người đều không có ý kiến gì về món ăn.\""
+},
+{
+"t": "准备越细，烦恼越少",
+"py": "zhǔnbèi yuè xì, fánnǎo yuè shǎo",
+"vn": "chuẩn bị càng kỹ, phiền não càng ít",
+"frame": "越 + A, 越 + B",
+"note": "Cấu trúc càng... càng... biểu thị sự thay đổi của B phụ thuộc vào sự thay đổi của A.",
+"ex": [
+[
+"汉语越学越有意思。",
+"Tiếng Trung càng học càng thấy thú vị."
+],
+[
+"天气越冷，我越想喝热咖啡。",
+"Thời tiết càng lạnh, tôi càng muốn uống cà phê nóng."
+]
+],
+"try": "Nói: \"Tiếng Trung càng luyện tập càng giỏi.\""
+}
+]
+},
+{
+"line": 2,
+"s": "第二，节假日早点儿订机票、酒店和各种门票，否则很难订到。",
+"vn": "Thứ hai, vào dịp lễ tết nên đặt vé máy bay, khách sạn và các loại vé tham quan sớm một chút, nếu không sẽ rất khó đặt được.",
+"ch": [
+{
+"t": "早点儿",
+"py": "zǎodiǎn er",
+"vn": "sớm một chút",
+"frame": "V + 早点儿",
+"note": "Dùng để đưa ra lời khuyên nên làm việc gì đó sớm hơn dự định để tránh rủi ro.",
+"ex": [
+[
+"明天有考试，你早点儿休息吧。",
+"Mai có bài thi, bạn nghỉ ngơi sớm một chút đi."
+],
+[
+"为了不迟到，你应该早点儿出门。",
+"Để không bị muộn, bạn nên ra ngoài sớm một chút."
+]
+],
+"try": "Nói: \"Sắp đến kỳ thi HSK rồi, bạn nên ôn tập sớm một chút.\""
+}
+]
+},
+{
+"line": 3,
+"s": "第三，转机会比直飞更便宜。此次去西双版纳，在西安转机，机票价格比直飞便宜了百分之四十多。虽然有些累，但累就累点儿吧，花更少的钱去看更多的地方，很值得，节省下来的钱就当是给自己的大“红包”了。",
+"vn": "Thứ ba, quá cảnh sẽ rẻ hơn bay thẳng. Lần đi Tây Song Bản Nạp này, quá cảnh ở Tây An, giá vé máy bay rẻ hơn bay thẳng hơn 40%. Tuy có hơi mệt, nhưng mệt thì cứ mệt một chút vậy, tiêu ít tiền hơn để đi được nhiều nơi hơn, rất đáng, số tiền tiết kiệm được coi như là một chiếc \"lì xì\" lớn cho bản thân.",
+"ch": [
+{
+"t": "累就累点儿吧",
+"py": "lèi jiù lèi diǎn er ba",
+"vn": "mệt thì cứ mệt một chút vậy",
+"frame": "X 就 X 吧",
+"note": "Cấu trúc thể hiện sự chấp nhận một điều không hoàn hảo để đạt được mục đích khác.",
+"ex": [
+[
+"虽然贵，但贵就贵点儿吧，质量好就行。",
+"Tuy đắt, nhưng đắt thì đắt một chút vậy, chất lượng tốt là được."
+],
+[
+"虽然远，但远就远点儿吧，风景很美。",
+"Tuy xa, nhưng xa thì xa một chút vậy, phong cảnh rất đẹp."
+]
+],
+"try": "Nói: \"Tuy bài tập khó, nhưng khó thì cứ làm một chút vậy.\""
+},
+{
+"t": "就当是",
+"py": "jiù dàng shì",
+"vn": "coi như là",
+"frame": "就当是 + N",
+"note": "Dùng để gán cho một sự việc một ý nghĩa hoặc vai trò khác trong tâm tưởng.",
+"ex": [
+[
+"这次失败就当是一次教训吧。",
+"Lần thất bại này coi như là một bài học đi."
+],
+[
+"这顿饭就当是我请你的生日礼物。",
+"Bữa cơm này coi như là quà sinh nhật tôi mời bạn."
+]
+],
+"try": "Nói: \"Số tiền này coi như là phần thưởng cho bản thân.\""
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "王一飞常对她的学生说：“读万卷书，行万里路。你们要是想多了解中国，就不能只通过读书，还要多出门旅行，否则只能认识课本里的中国。”",
+"vn": "Vương Nhất Phi thường nói với học sinh của mình rằng: \"Đọc vạn cuốn sách, đi vạn dặm đường. Nếu các em muốn hiểu nhiều hơn về Trung Quốc, thì không thể chỉ thông qua việc đọc sách, mà còn phải đi du lịch nhiều hơn, nếu không thì chỉ có thể biết về một Trung Quốc trong sách giáo khoa mà thôi.\"",
+"ch": [
+{
+"t": "要是想多了解中国",
+"py": "yàoshi xiǎng duō liǎojiě Zhōngguó",
+"vn": "nếu muốn hiểu nhiều hơn về Trung Quốc",
+"frame": "要是 + chủ ngữ + 想 + V + O",
+"note": "Cấu trúc giả định “Nếu như…”, dùng trong văn nói rất phổ biến để đưa ra lời khuyên hoặc điều kiện.",
+"ex": [
+[
+"要是想学好汉语，就得多练习。",
+"Nếu muốn học tốt tiếng Trung thì phải luyện tập nhiều."
+],
+[
+"要是想去旅游，就得提前订票。",
+"Nếu muốn đi du lịch thì phải đặt vé trước."
+]
+],
+"try": "Nói: \"Nếu muốn hiểu về văn hóa Việt Nam, bạn phải đi nhiều nơi.\""
+},
+{
+"t": "不能只通过读书",
+"py": "bùnéng zhǐ tōngguò dúshū",
+"vn": "không thể chỉ thông qua việc đọc sách",
+"frame": "不能只 + V + O",
+"note": "Khung câu dùng để phủ định một cách làm duy nhất, nhấn mạnh cần phải có thêm hành động khác.",
+"ex": [
+[
+"学习不能只靠老师，还要靠自己。",
+"Học tập không thể chỉ dựa vào thầy giáo, còn phải dựa vào bản thân."
+],
+[
+"工作不能只看工资，还要看发展。",
+"Công việc không thể chỉ nhìn lương, còn phải nhìn sự phát triển."
+]
+],
+"try": "Nói: \"Học ngoại ngữ không thể chỉ học ngữ pháp.\""
+}
+]
+},
+{
+"line": 1,
+"s": "旅行，不仅能看到自然美景，还能近距离感受不同的历史文化。比如，白家月等人想了解少数民族泼水节，就去了西双版纳。泼水节上，导游向他们解释说，被泼的水越多，新的一年就会越健康、幸福。安妮喜欢唐诗，就来到了西安，在那里遇到身穿唐装的“对诗人”，对诗人说上句，游客就能流利地说出下句。安妮觉得在西安，唐诗活了。",
+"vn": "Du lịch, không những có thể ngắm cảnh đẹp thiên nhiên, mà còn có thể cảm nhận lịch sử văn hóa khác biệt ở khoảng cách gần. Ví dụ, Bạch Gia Nguyệt và những người bạn muốn tìm hiểu về lễ hội té nước của dân tộc thiểu số, nên đã đến Tây Song Bản Nạp. Tại lễ hội, hướng dẫn viên giải thích với họ rằng, càng bị té nhiều nước, năm mới sẽ càng khỏe mạnh, hạnh phúc. Annie thích thơ Đường, nên đã đến Tây An, ở đó gặp những \"nhà thơ đối đáp\" mặc trang phục đời Đường, nhà thơ nói câu trên, du khách có thể đối lại câu dưới một cách lưu loát. Annie cảm thấy ở Tây An, thơ Đường như sống lại.",
+"ch": [
+{
+"t": "不仅能……还能……",
+"py": "bùjǐn néng... hái néng...",
+"vn": "không những có thể... mà còn có thể...",
+"frame": "不仅 + A + 而且 / 还能 + B",
+"note": "Cấu trúc tăng tiến, dùng để liệt kê nhiều ưu điểm hoặc lợi ích của một sự vật, sự việc.",
+"ex": [
+[
+"这份工作不仅能赚钱，还能学到很多经验。",
+"Công việc này không những kiếm được tiền, mà còn học được nhiều kinh nghiệm."
+],
+[
+"他不仅能说流利的汉语，还能写汉字。",
+"Anh ấy không những nói tiếng Trung lưu loát, mà còn viết được chữ Hán."
+]
+],
+"try": "Nói: \"Đi du lịch không những vui mà còn mở rộng kiến thức.\""
+},
+{
+"t": "导游向他们解释说",
+"py": "dǎoyóu xiàng tāmen jiěshì shuō",
+"vn": "hướng dẫn viên giải thích với họ rằng",
+"frame": "A 向 B 解释说 + nội dung",
+"note": "Dùng khi cần giải thích một vấn đề gì đó cho người khác hiểu rõ.",
+"ex": [
+[
+"老师向学生解释说这个语法很难。",
+"Thầy giáo giải thích với học sinh rằng ngữ pháp này rất khó."
+],
+[
+"他向我解释说为什么迟到了。",
+"Anh ấy giải thích với tôi tại sao lại đến muộn."
+]
+],
+"try": "Nói: \"Bạn ấy giải thích với tôi tại sao không đi thi.\""
+}
+]
+},
+{
+"line": 2,
+"s": "虽然已经去了很多地方，但是白家月他们觉得还不够。他们也认为，美丽中国，不只是在书中，更是在脚下。",
+"vn": "Mặc dù đã đi rất nhiều nơi, nhưng Bạch Gia Nguyệt và các bạn cảm thấy vẫn chưa đủ. Họ cũng cho rằng, Trung Quốc tươi đẹp, không chỉ nằm trong sách vở, mà còn nằm dưới những bước chân.",
+"ch": [
+{
+"t": "虽然……但是……",
+"py": "suīrán... dànshì...",
+"vn": "mặc dù... nhưng...",
+"frame": "虽然 + sự thật, 但是 + kết quả trái ngược",
+"note": "Cấu trúc nhượng bộ cơ bản, dùng để nêu lên một sự thật rồi đưa ra đánh giá hoặc kết quả khác biệt.",
+"ex": [
+[
+"虽然我很累，但是还要完成作业。",
+"Mặc dù tôi rất mệt, nhưng vẫn phải hoàn thành bài tập."
+],
+[
+"虽然汉语很难，但是很有意思。",
+"Mặc dù tiếng Trung rất khó, nhưng rất thú vị."
+]
+],
+"try": "Nói: \"Mặc dù trời mưa, nhưng chúng tôi vẫn đi học.\""
+},
+{
+"t": "不只是……更是在……",
+"py": "bù zhǐshì... gèng shì zài...",
+"vn": "không chỉ là... mà còn là ở...",
+"frame": "不只是 A，更是 B",
+"note": "Dùng để nhấn mạnh ý nghĩa của vế B quan trọng hơn hoặc sâu sắc hơn vế A.",
+"ex": [
+[
+"学习不只是为了考试，更是为了应用。",
+"Học tập không chỉ để thi cử, mà còn để ứng dụng."
+],
+[
+"朋友不只是在一起玩，更是互相帮助。",
+"Bạn bè không chỉ là chơi cùng nhau, mà còn là giúp đỡ lẫn nhau."
+]
+],
+"try": "Nói: \"Hạnh phúc không chỉ là tiền bạc, mà còn là sức khỏe.\""
+}
+]
+}
+]
+}

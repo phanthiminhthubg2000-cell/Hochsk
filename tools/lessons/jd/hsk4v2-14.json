@@ -1,0 +1,1080 @@
+{
+"1": [
+{
+"line": 0,
+"s": "这是明天你出差要带的毛巾、牙膏和牙刷，把它们放到箱子里吧。",
+"vn": "Đây là khăn mặt, kem đánh răng và bàn chải đánh răng ngày mai anh đi công tác phải mang, cho chúng vào vali đi em.",
+"ch": [
+{
+"t": "明天你出差要带的",
+"py": "míngtiān nǐ chūchāi yào dài de",
+"vn": "ngày mai anh đi công tác phải mang",
+"frame": "……要带的 + đồ vật",
+"note": "Dùng định ngữ dạng “……的” để chỉ rõ đồ cần chuẩn bị cho việc gì đó.",
+"ex": [
+[
+"这是去旅游要带的衣服。",
+"Đây là quần áo phải mang khi đi du lịch."
+],
+[
+"这是明天考试要带的笔。",
+"Đây là bút phải mang trong kỳ thi ngày mai."
+]
+],
+"try": "Nói: “Đây là tài liệu phải mang khi đi họp ngày mai.”"
+},
+{
+"t": "把它们放到箱子里吧",
+"py": "bǎ tāmen fàng dào xiāngzi lǐ ba",
+"vn": "cho chúng vào trong vali đi",
+"frame": "把 + đồ vật + 放到 + nơi chốn + 吧",
+"note": "Cấu trúc chữ 把 nhấn mạnh việc dịch chuyển đồ vật đến vị trí mới.",
+"ex": [
+[
+"把书放到桌子上吧。",
+"Đặt sách lên bàn đi."
+],
+[
+"把手机放到包里吧。",
+"Cho điện thoại vào túi đi."
+]
+],
+"try": "Nói: “Cho quần áo vào vali đi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "不用拿这些，宾馆都会免费提供的。再说，箱子已经够重的了！",
+"vn": "Không cần mang những thứ này, khách sạn đều cung cấp miễn phí mà. Hơn nữa, vali đã đủ nặng rồi!",
+"ch": [
+{
+"t": "宾馆都会免费提供的",
+"py": "bīnguǎn dōu huì miǎnfèigòngtí de",
+"vn": "khách sạn đều sẽ cung cấp miễn phí",
+"frame": "……都会免费提供的",
+"note": "Nhấn mạnh tiện ích miễn phí tại nơi lưu trú.",
+"ex": [
+[
+"这家酒店的早餐都是免费提供的。",
+"Bữa sáng của khách sạn này đều được cung cấp miễn phí."
+],
+[
+"房间里的水都是免费提供的。",
+"Nước trong phòng đều được cung cấp miễn phí."
+]
+],
+"try": "Nói: “Đồ uống ở đây đều được cung cấp miễn phí.”"
+},
+{
+"t": "箱子已经够重的了",
+"py": "xiāngzi yǐjīng gòu zhòng de le",
+"vn": "vali đã đủ nặng rồi",
+"frame": "……已经够 + tính từ + 的了",
+"note": "Biểu thị mức độ đã quá mức chịu đựng hoặc đạt giới hạn.",
+"ex": [
+[
+"作业已经够多的了。",
+"Bài tập đã đủ nhiều rồi."
+],
+[
+"今天的工作已经够累的了。",
+"Công việc hôm nay đã đủ mệt rồi."
+]
+],
+"try": "Nói: “Thời gian đã đủ gấp rồi.”"
+}
+]
+},
+{
+"line": 2,
+"s": "我当然知道宾馆里有。你不是一直说要保护环境吗？现在就从身边的小事做起吧。",
+"vn": "Em đương nhiên biết khách sạn có. Chẳng phải anh vẫn luôn nói muốn bảo vệ môi trường sao? Bây giờ hãy bắt đầu làm từ những việc nhỏ quanh mình đi.",
+"ch": [
+{
+"t": "你不是一直说要",
+"py": "nǐ búshì yìzhí shuō yào",
+"vn": "chẳng phải anh vẫn luôn nói muốn",
+"frame": "你不是一直说 + việc gì + 吗",
+"note": "Dùng để nhắc nhở người khác về điều họ từng nói trước đây.",
+"ex": [
+[
+"你不是一直说要学汉语吗？",
+"Chẳng phải bạn vẫn luôn nói muốn học tiếng Trung sao?"
+],
+[
+"你不是一直说要减肥吗？",
+"Chẳng phải bạn vẫn luôn nói muốn giảm cân sao?"
+]
+],
+"try": "Nói: “Chẳng phải bạn vẫn luôn nói muốn đi du lịch sao?”"
+},
+{
+"t": "从身边的小事做起吧",
+"py": "cóng shēnbiān de xiǎoshì zuò qǐ ba",
+"vn": "bắt đầu làm từ những việc nhỏ quanh mình đi",
+"frame": "从身边的小事做起",
+"note": "Khuyên nhủ bắt đầu hành động thiết thực từ những việc nhỏ nhất gần gũi.",
+"ex": [
+[
+"保护环境要从身边的小事做起。",
+"Bảo vệ môi trường phải bắt đầu từ những việc nhỏ xung quanh."
+],
+[
+"学好外语要从身边的小事做起。",
+"Học giỏi ngoại ngữ phải bắt đầu từ những việc nhỏ xung quanh."
+]
+],
+"try": "Nói: “Yêu thương gia đình phải bắt đầu từ những việc nhỏ quanh mình.”"
+}
+]
+},
+{
+"line": 3,
+"s": "行，没问题。我明天上午10点的飞机，你能开车把我送到机场吗？",
+"vn": "Được, không vấn đề gì. Tôi ngày mai lúc 10 giờ sáng có chuyến bay, bạn có thể lái xe đưa tôi ra sân bay không?",
+"ch": [
+{
+"t": "行，没问题",
+"py": "xíng, méi wèntí",
+"vn": "được, không vấn đề gì",
+"frame": "行，没问题",
+"note": "Cụm từ cửa miệng dùng để đồng ý nhanh chóng, sảng khoái.",
+"ex": [
+[
+"行，没问题，我帮你。",
+"Được, không vấn đề gì, tôi giúp bạn."
+],
+[
+"行，没问题，下午见。",
+"Được, không vấn đề gì, chiều gặp."
+]
+],
+"try": "Nói: “Được, không vấn đề gì, tôi đi cùng bạn.”"
+},
+{
+"t": "你能开车把我送到机场吗",
+"py": "nǐ néng kāichē bǎ wǒ sòng dào jīchǎng ma",
+"vn": "bạn có thể lái xe đưa tôi ra sân bay không",
+"frame": "能开车把我送到 + địa điểm + 吗",
+"note": "Nhờ vả ai đó lái xe chở đến một nơi nào đó.",
+"ex": [
+[
+"你能开车把我送到公司吗？",
+"Bạn có thể lái xe đưa tôi đến công ty không?"
+],
+[
+"你能开车把我送到学校吗？",
+"Bạn có thể lái xe đưa tôi đến trường không?"
+]
+],
+"try": "Nói: “Bạn có thể lái xe đưa tôi về nhà không?”"
+}
+]
+},
+{
+"line": 4,
+"s": "那个时间路上堵车多严重啊！你还是坐地铁去机场吧。这样不仅省油钱，而且还不会污染空气。",
+"vn": "Thời gian đó trên đường tắc xe nghiêm trọng biết bao! Anh vẫn nên đi tàu điện ngầm ra sân bay đi. Làm như vậy không chỉ tiết kiệm tiền xăng, mà lại còn không ô nhiễm không khí.",
+"ch": [
+{
+"t": "路上堵车多严重啊",
+"py": "lùshang dǔchē duō yánzhòng a",
+"vn": "đường tắc xe nghiêm trọng biết bao",
+"frame": "路上堵车多 + tính từ + 啊",
+"note": "Câu cảm thán nhấn mạnh tình trạng giao thông tồi tệ.",
+"ex": [
+[
+"下班的时候路上堵车多严重啊！",
+"Lúc tan làm đường tắc xe nghiêm trọng biết bao!"
+],
+[
+"过节的时候路上堵车多严重啊！",
+"Lúc nghỉ lễ đường tắc xe nghiêm trọng biết bao!"
+]
+],
+"try": "Nói: “Trời mưa đường ngập nước nghiêm trọng biết bao!”"
+},
+{
+"t": "不仅省油钱，而且还不会污染空气",
+"py": "bùjǐn shěng yóuqián, érqiě hái bú huì wūrǎn kōngqì",
+"vn": "không chỉ tiết kiệm tiền xăng, hơn nữa còn không ô nhiễm không khí",
+"frame": "不仅 + A，而且还 + B",
+"note": "Cấu trúc song hành thể hiện lợi ích kép của một hành động.",
+"ex": [
+[
+"坐地铁不仅省钱，而且还很快。",
+"Đi tàu điện ngầm không chỉ tiết kiệm tiền, mà lại còn rất nhanh."
+],
+[
+"多吃水果不仅身体好，而且还美容。",
+"Ăn nhiều hoa quả không chỉ tốt cho cơ thể, mà còn đẹp da."
+]
+],
+"try": "Nói: “Đi bộ không chỉ rèn sức khỏe, mà còn bảo vệ môi trường.”"
+}
+]
+},
+{
+"line": 5,
+"s": "好，那就听你的。",
+"vn": "Được, vậy thì nghe theo em.",
+"ch": [
+{
+"t": "那就听你的",
+"py": "nà jiù tīng nǐ de",
+"vn": "vậy thì nghe theo bạn/anh/em",
+"frame": "那就听 + ai + 的",
+"note": "Thể hiện sự nhượng bộ, đồng tình với ý kiến của người đối thoại.",
+"ex": [
+[
+"好，那就听老师的。",
+"Được, vậy thì nghe theo thầy giáo."
+],
+[
+"行，那就听大家的。",
+"Được, vậy thì nghe theo mọi người."
+]
+],
+"try": "Nói: “Được, vậy thì nghe theo bạn đi.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "小王，卫生间怎么那么脏啊？",
+"vn": "Tiểu Vương, sao nhà vệ sinh bẩn thế?",
+"ch": [
+{
+"t": "卫生间怎么那么脏啊",
+"py": "wèishēngjiān zěnme nàme zāng a",
+"vn": "sao nhà vệ sinh lại bẩn thế",
+"frame": "……怎么那么 + tính từ + 啊",
+"note": "Dùng để biểu thị sự chê trách hoặc ngạc nhiên khi thấy tình trạng gì đó không vừa ý.",
+"ex": [
+[
+"今天的天气怎么那么冷啊？",
+"Thời tiết hôm nay sao lạnh thế?"
+],
+[
+"这件衣服怎么那么贵啊？",
+"Bộ quần áo này sao đắt thế?"
+],
+[
+"Nói:“Phòng học sao bẩn thế?”"
+]
+],
+"try": "Nói: “Phòng học sao bẩn thế?”"
+}
+]
+},
+{
+"line": 0,
+"s": "这会给客人留下不好的印象，快去打扫一下。",
+"vn": "Điều này sẽ để lại ấn tượng không tốt cho khách hàng, mau đi dọn dẹp một chút đi.",
+"ch": [
+{
+"t": "给客人留下不好的印象",
+"py": "gěi kèrén liúxià bù hǎo de yìnxiàng",
+"vn": "để lại ấn tượng không tốt cho khách hàng",
+"frame": "给 + ai + 留下 + tính từ + 印象",
+"note": "Cấu trúc cửa miệng để nói về việc tạo ấn tượng tốt hoặc xấu cho người khác.",
+"ex": [
+[
+"这次面试给我留下了深刻的印象。",
+"Lần phỏng vấn này đã để lại cho tôi ấn tượng sâu sắc."
+],
+[
+"他给老师留下了好印象。",
+"Cậu ấy đã để lại ấn tượng tốt cho thầy giáo."
+],
+[
+"Nói:“Thái độ của bạn ấy để lại ấn tượng tốt cho khách hàng.”"
+]
+],
+"try": "Nói: “Thái độ của bạn ấy để lại ấn tượng tốt cho khách hàng.”"
+}
+]
+},
+{
+"line": 1,
+"s": "经理，实在抱歉。今天店里太忙了，我还没来得及打扫。",
+"vn": "Giám đốc, thực sự xin lỗi. Hôm nay cửa hàng quá bận, tôi vẫn chưa kịp dọn dẹp.",
+"ch": [
+{
+"t": "还没来得及打扫",
+"py": "hái méi láidéjí dǎsǎo",
+"vn": "vẫn chưa kịp dọn dẹp",
+"frame": "还没来得及 + V",
+"note": "Biểu thị vì chưa có thời gian nên chưa làm việc gì đó kịp.",
+"ex": [
+[
+"我还没来得及吃饭呢。",
+"Tôi vẫn chưa kịp ăn cơm nữa."
+],
+[
+"下班前我还没来得及回复邮件。",
+"Trước giờ tan làm tôi vẫn chưa kịp trả lời email."
+],
+[
+"Nói:“Tôi vẫn chưa kịp xem bài tập ngày mai.”"
+]
+],
+"try": "Nói: “Tôi vẫn chưa kịp xem bài tập ngày mai.”"
+}
+]
+},
+{
+"line": 2,
+"s": "那张桌子下面还有一些空饮料瓶子和纸盒子。",
+"vn": "Dưới cái bàn kia vẫn còn mấy cái vỏ chai nước ngọt và hộp giấy.",
+"ch": [
+{
+"t": "空饮料瓶子和纸盒子",
+"py": "kōng yǐnliào píngzi hé zhǐ hézi",
+"vn": "vỏ chai đồ uống và hộp giấy",
+"frame": "空 + N + 和 + N",
+"note": "Dùng từ “空” đứng trước danh từ để chỉ đồ vật rỗng, đã dùng hết.",
+"ex": [
+[
+"桌子上chỉ có một个空杯子。",
+"Trên bàn chỉ có một cái cốc không."
+],
+[
+"别把空盒子扔了。",
+"Đừng vứt hộp giấy trống đi."
+],
+[
+"Nói:“Xin hãy vứt chai nước ngọt rỗng này đi.”"
+]
+],
+"try": "Nói: “Xin hãy vứt chai nước ngọt rỗng này đi.”"
+}
+]
+},
+{
+"line": 3,
+"s": "好的，我马上就去把它们扔掉。",
+"vn": "Vâng, tôi lập tức đi vứt chúng đi đây.",
+"ch": [
+{
+"t": "把它们扔掉",
+"py": "bǎ tāmen rēngdiào",
+"vn": "vứt chúng đi",
+"frame": "把 + O + 扔掉",
+"note": "Cấu trúc câu chữ 把 thường dùng khi xử lý, vứt bỏ một vật gì đó.",
+"ex": [
+[
+"这些旧衣服快扔掉吧。",
+"Mấy bộ quần áo cũ này vứt đi thôi."
+],
+[
+"别把垃圾乱扔。",
+"Đừng vứt rác bừa bãi."
+],
+[
+"Nói:“Tôi đã vứt chiếc hộp giấy đó đi rồi.”"
+]
+],
+"try": "Nói: “Tôi đã vứt chiếc hộp giấy đó đi rồi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "以后你一定得注意这个问题，不管客人多多，生意多忙，我们都要保证餐厅干净卫生。",
+"vn": "Sau này anh nhất định phải chú ý vấn đề này, dù khách có đông đến đâu, buôn bán có bận thế nào, chúng ta cũng phải bảo đảm nhà hàng sạch sẽ vệ sinh.",
+"ch": [
+{
+"t": "不管客人多少，生意多忙，我们都要",
+"py": "bùguǎn kèrén duōshǎo, shēngyì duō máng, wǒmen dōu yào",
+"vn": "dù khách đông hay ít, kinh doanh bận thế nào, chúng ta đều phải",
+"frame": "不管 + điều kiện 1, điều kiện 2, 主语 + 都 + V",
+"note": "Dùng “不管……都……” để nhấn mạnh kết quả không thay đổi trong mọi hoàn cảnh.",
+"ex": [
+[
+"不管工作多累，我都坚持学习汉语。",
+"Dù công việc mệt thế nào, tôi cũng kiên trì học tiếng Trung."
+],
+[
+"不管遇到什么问题，我们都要冷静。",
+"Dù gặp vấn đề gì, chúng ta cũng phải bình tĩnh."
+],
+[
+"Nói:“Dù thời tiết thế nào, chúng ta cũng phải đi học.”"
+]
+],
+"try": "Nói: “Dù thời tiết thế nào, chúng ta cũng phải đi học.”"
+}
+]
+},
+{
+"line": 5,
+"s": "经理您放心，我一定以最快的速度完成。不过咱们真的应该再多招聘几个服务员了。",
+"vn": "Giám đốc cứ yên tâm, tôi nhất định sẽ hoàn thành với tốc độ nhanh nhất. Nhưng chúng ta thực sự nên tuyển thêm vài nhân viên phục vụ nữa.",
+"ch": [
+{
+"t": "以最快的速度完成",
+"py": "yǐ zuì kuài de sùdù wánchéng",
+"vn": "hoàn thành với tốc độ nhanh nhất",
+"frame": "以 + 最 + tính từ + 的速度 + V",
+"note": "Cách nói trang trọng và quyết tâm để chỉ phương thức thực hiện hành động.",
+"ex": [
+[
+"我们要以最快的速度解决这个问题。",
+"Chúng ta phải giải quyết vấn đề này với tốc độ nhanh nhất."
+],
+[
+"他以最快的速度跑回了家。",
+"Cậu ấy chạy về nhà với tốc độ nhanh nhất."
+],
+[
+"Nói:“Tôi sẽ hoàn thành bài thi này với tốc độ nhanh nhất.”"
+]
+],
+"try": "Nói: “Tôi sẽ hoàn thành bài thi này với tốc độ nhanh nhất.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "早上听新闻说明天有一个叫“地球一小时”的活动，你对这个活动了解吗？",
+"vn": "Sáng nay nghe tin tức nói ngày mai có một hoạt động gọi là \"Giờ Trái Đất\", bạn có hiểu biết gì về hoạt động này không?",
+"ch": [
+{
+"t": "你对这个活动了解吗",
+"py": "nǐ duì zhège huódòng liǎojiě ma",
+"vn": "bạn có hiểu biết về hoạt động này không",
+"frame": "对 + đối tượng + 了解吗",
+"note": "Cấu trúc hỏi về mức độ hiểu biết/kiến thức của ai đó về một vấn đề cụ thể.",
+"ex": [
+[
+"你对中国文化了解吗？",
+"Bạn có hiểu biết về văn hóa Trung Quốc không?"
+],
+[
+"我对这个新项目不太了解。",
+"Tôi không hiểu rõ lắm về dự án mới này."
+]
+],
+"try": "Nói: \"Bạn có hiểu biết về quy định mới của công ty không?\""
+}
+]
+},
+{
+"line": 1,
+"s": "这个活动年年都有，最早是从2007年开始的。明天晚上很多人都会关灯一小时，支持这个活动。你没看到门口的通知吗？我们公司也参加。",
+"vn": "Hoạt động này năm nào cũng có, sớm nhất là bắt đầu từ năm 2007. Tối mai rất nhiều người sẽ tắt đèn một tiếng để ủng hộ hoạt động này. Bạn không thấy thông báo ở cửa sao? Công ty chúng ta cũng tham gia.",
+"ch": [
+{
+"t": "最早是从2007年开始的",
+"py": "zuìzǎo shì cóng 2007 nián kāishǐ de",
+"vn": "sớm nhất là bắt đầu từ năm 2007",
+"frame": "最早是从 + thời gian/địa điểm + 开始的",
+"note": "Dùng để nhấn mạnh nguồn gốc thời gian hoặc địa điểm khởi đầu của một sự việc.",
+"ex": [
+[
+"这个习惯最早是从我爷爷那儿开始的。",
+"Thói quen này bắt đầu từ thời ông tôi."
+],
+[
+"我们的友谊最早是从大学开始的。",
+"Tình bạn của chúng ta bắt đầu từ thời đại học."
+]
+],
+"try": "Nói: \"Lớp học tiếng Trung này bắt đầu từ tháng 9.\""
+}
+]
+},
+{
+"line": 2,
+"s": "真的吗？太好了！既然明天晚上公司会关灯停电，那么我们肯定不用加班了。",
+"vn": "Thật sao? Tốt quá rồi! Nếu đã là tối mai công ty tắt đèn mất điện, vậy thì chắc chắn chúng ta không phải tăng ca rồi.",
+"ch": [
+{
+"t": "既然明天晚上公司会关灯停电，那么我们肯定不用加班了",
+"py": "jìrán míngtiān wǎnshàng gōngsī huì guāndēng tíngdiàn, nàme wǒmen kěndìng búyòng jiābān le",
+"vn": "nếu đã là tối mai công ty tắt đèn mất điện, vậy thì chắc chắn chúng ta không phải tăng ca rồi",
+"frame": "既然 + nguyên nhân đã biết, 那么 + kết quả",
+"note": "Dùng để suy luận từ một sự thật đã rõ ràng. 既然 thường đi với 那么/就.",
+"ex": [
+[
+"既然你不喜欢，那就别买了。",
+"Nếu đã không thích thì đừng mua nữa."
+],
+[
+"既然大家都到了，那么我们开始吧。",
+"Vì mọi người đều đã đến rồi, vậy chúng ta bắt đầu thôi."
+]
+],
+"try": "Nói: \"Vì đã muộn rồi, vậy chúng ta về thôi.\""
+}
+]
+},
+{
+"line": 3,
+"s": "看你得意的样子！还以为你高兴是为了支持环保，原来是因为不用加班啊！",
+"vn": "Nhìn cái vẻ đắc ý của cậu kìa! Cứ tưởng cậu vui là vì ủng hộ bảo vệ môi trường, hóa ra là vì không phải tăng ca!",
+"ch": [
+{
+"t": "原来是因为不用加班啊",
+"py": "yuánlái shì yīnwèi búyòng jiābān a",
+"vn": "hóa ra là vì không phải tăng ca",
+"frame": "原来是因为 + nguyên nhân",
+"note": "Dùng khi nhận ra sự thật sau khi đã hiểu lầm hoặc không biết trước đó.",
+"ex": [
+[
+"原来是因为下雨，他才没来。",
+"Hóa ra là vì trời mưa nên anh ấy mới không đến."
+],
+[
+"原来是因为太忙，他忘了回信。",
+"Hóa ra là vì quá bận nên anh ấy quên trả lời thư."
+]
+],
+"try": "Nói: \"Hóa ra là vì cậu ấy bị ốm nên mới nghỉ học.\""
+}
+]
+},
+{
+"line": 4,
+"s": "环境保护我当然也支持了！对了，为什么会有这么一个活动啊？",
+"vn": "Bảo vệ môi trường tôi đương nhiên cũng ủng hộ! Đúng rồi, tại sao lại có một hoạt động như vậy nhỉ?",
+"ch": []
+},
+{
+"line": 5,
+"s": "其实目的挺简单的，就是提醒人们节约用电，希望引起人们对气候变暖问题的关注。",
+"vn": "Thực ra mục đích khá đơn giản, chính là nhắc nhở mọi người tiết kiệm điện, hy vọng khơi gợi sự quan tâm của mọi người đối với vấn đề biến đổi khí hậu.",
+"ch": [
+{
+"t": "引起人们对气候变暖问题的关注",
+"py": "yǐnqǐ rénmen duì qìhòu biànnuǎn wèntí de guānzhù",
+"vn": "khơi gợi sự quan tâm của mọi người đối với vấn đề biến đổi khí hậu",
+"frame": "引起 + đối tượng + 对 + vấn đề + 的关注",
+"note": "Cụm từ trang trọng, dùng để nói về việc làm cho ai đó chú ý đến vấn đề gì.",
+"ex": [
+[
+"这个新闻引起了大家对环保的关注。",
+"Tin tức này đã khơi gợi sự quan tâm của mọi người về bảo vệ môi trường."
+],
+[
+"老师的话引起了我对学习的关注。",
+"Lời thầy giáo làm tôi chú ý hơn đến việc học."
+]
+],
+"try": "Nói: \"Hoạt động này giúp khơi gợi sự quan tâm của mọi người đối với vấn đề sức khỏe.\""
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "塑料袋给人们的生活带来方便，受到人们的普遍欢迎，可是，它的大量使用也带来了严重的环境污染问题。",
+"vn": "Túi ni-lông mang lại sự tiện lợi cho cuộc sống con người, được mọi người chào đón phổ biến, thế nhưng, việc sử dụng số lượng lớn của nó cũng mang lại vấn đề ô nhiễm môi trường nghiêm trọng.",
+"ch": [
+{
+"t": "给人们的生活带来方便",
+"py": "gěi rénmen de shēnghuó dài lái fāngbiàn",
+"vn": "mang lại sự tiện lợi cho cuộc sống con người",
+"frame": "给……带来方便",
+"note": "Cấu trúc phổ biến khi nói về việc ai hoặc cái gì đem lại sự thuận tiện.",
+"ex": [
+[
+"互联网给人们的生活带来方便。",
+"Mạng Internet mang lại sự tiện lợi cho cuộc sống con người."
+],
+[
+"移动支付给我们的生活带来方便。",
+"Thanh toán di động mang lại sự tiện lợi cho cuộc sống của chúng ta."
+]
+],
+"try": "Nói: “Học tiếng Trung mang lại sự tiện lợi cho công việc của tôi.”"
+},
+{
+"t": "带来了严重的环境污染问题",
+"py": "dài lái le yánzhòng de huánjìng wūrǎn wèntí",
+"vn": "mang lại vấn đề ô nhiễm môi trường nghiêm trọng",
+"frame": "带来 + vấn đề/hậu quả gì",
+"note": "Dùng để diễn tả tác động tiêu cực hoặc hệ quả phát sinh.",
+"ex": [
+[
+"经常熬夜带来了严重的健康问题。",
+"Thường xuyên thức đêm mang lại vấn đề sức khỏe nghiêm trọng."
+],
+[
+"过度消费带来了不必要的麻烦。",
+"Tiêu dùng quá mức mang lại phiền phức không cần thiết."
+]
+],
+"try": "Nói: “Việc vứt rác bừa bãi mang lại vấn đề ô nhiễm môi trường nghiêm trọng.”"
+}
+]
+},
+{
+"line": 0,
+"s": "于是，一些国家规定，超市、商场不能为顾客提供免费塑料袋，并且鼓励大家购买可以多次使用的购物袋。",
+"vn": "Thế là, một số quốc gia quy định, siêu thị, trung tâm thương mại không được cung cấp túi ni-lông miễn phí cho khách hàng, đồng thời khuyến khích mọi người mua túi đựng sắm có thể sử dụng nhiều lần.",
+"ch": [
+{
+"t": "不能为顾客提供免费",
+"py": "bù néng wèi gùkè tígōng miǎnfèi",
+"vn": "không thể cung cấp miễn phí cho khách hàng",
+"frame": "为……提供免费……",
+"note": "为 chỉ đối tượng nhận dịch vụ, phía sau là nội dung cung cấp.",
+"ex": [
+[
+"公司为员工提供免费午餐。",
+"Công ty cung cấp bữa trưa miễn phí cho nhân viên."
+],
+[
+"酒店为客人提供免费停车。",
+"Khách sạn cung cấp chỗ đỗ xe miễn phí cho khách."
+]
+],
+"try": "Nói: “Siêu thị không thể cung cấp túi miễn phí cho khách hàng.”"
+},
+{
+"t": "鼓励大家购买",
+"py": "gǔlì dàjiā gǒumǎi",
+"vn": "khuyến khích mọi người mua",
+"frame": "鼓励 + ai + làm gì",
+"note": "Động từ khuyến khích luôn đi kèm đối tượng và hành động được cổ vũ.",
+"ex": [
+[
+"老师鼓励大家多说汉语。",
+"Thầy giáo khuyến khích mọi người nói nhiều tiếng Trung."
+],
+[
+"经理鼓励员工努力工作。",
+"Giám đốc khuyến khích nhân viên làm việc chăm chỉ."
+]
+],
+"try": "Nói: “Nhà trường khuyến khích học sinh đọc nhiều sách.”"
+}
+]
+},
+{
+"line": 1,
+"s": "我们每个人都有责任保护环境，因此，请大家节约使用塑料袋，或者购物时自备购物袋，甚至拒绝使用塑料袋。",
+"vn": "Mỗi người chúng ta đều có trách nhiệm bảo vệ môi trường, vì vậy, xin mọi người hãy tiết kiệm sử dụng túi ni-lông, hoặc khi mua sắm tự chuẩn bị túi mua sắm, thậm chí từ chối sử dụng túi ni-lông.",
+"ch": [
+{
+"t": "有责任保护环境",
+"py": "yǒu zérèn bǎohù huánjìng",
+"vn": "có trách nhiệm bảo vệ môi trường",
+"frame": "有责任 + động từ",
+"note": "Diễn tả nghĩa vụ thuộc về cá nhân hay tập thể.",
+"ex": [
+[
+"我们每个人都有责任学好汉语。",
+"Mỗi người chúng ta đều có trách nhiệm học tốt tiếng Trung."
+],
+[
+"年轻人有责任照顾父母。",
+"Người trẻ tuổi có trách nhiệm chăm sóc cha mẹ."
+]
+],
+"try": "Nói: “Nhân viên có trách nhiệm hoàn thành công việc.”"
+},
+{
+"t": "节约使用塑料袋",
+"py": "jiéyuē shǐyòng sùliàodài",
+"vn": "tiết kiệm sử dụng túi ni-lông",
+"frame": "节约使用 + danh từ",
+"note": "Kết hợp phó từ chỉ mức độ tiết kiệm đứng trước động từ sử dụng.",
+"ex": [
+[
+"我们要节约使用水电。",
+"Chúng ta phải tiết kiệm sử dụng điện nước."
+],
+[
+"公司要求员工节约使用纸张。",
+"Công ty yêu cầu nhân viên tiết kiệm sử dụng giấy."
+]
+],
+"try": "Nói: “Học sinh phải tiết kiệm sử dụng thời gian.”"
+}
+]
+},
+{
+"line": 1,
+"s": "虽然这是一件很小的事，但这样做可以减少塑料袋的使用数量，对环境保护有很大的作用。",
+"vn": "Mặc dù đây là một việc rất nhỏ, nhưng làm như vậy có thể giảm bớt số lượng sử dụng túi ni-lông, có tác dụng rất lớn đối với việc bảo vệ môi trường.",
+"ch": [
+{
+"t": "对环境保护有很大的作用",
+"py": "duì huánjìng bǎohù yǒu hěn dà de zuòyòng",
+"vn": "có tác dụng rất lớn đối với việc bảo vệ môi trường",
+"frame": "对……有很大的作用",
+"note": "Khung câu cực kỳ hay để đánh giá mức độ ảnh hưởng, hiệu quả.",
+"ex": [
+[
+"多运动对身体健康有很大的作用。",
+"Vận động nhiều đối với sức khỏe cơ thể có tác dụng rất lớn."
+],
+[
+"认真听课对提高汉语水平有很大的作用。",
+"Nghe giảng cẩn thận đối với việc nâng cao trình độ tiếng Trung có tác dụng rất lớn."
+]
+],
+"try": "Nói: “Đọc sách nhiều đối với việc học tập có tác dụng rất lớn.”"
+}
+]
+}
+],
+"5": [
+{
+"line": 0,
+"s": "保护地球环境，并不是一件离我们很远、很难做到的事情。",
+"vn": "Bảo vệ môi trường Trái Đất không phải là việc gì ở rất xa chúng ta hay khó làm được.",
+"ch": [
+{
+"t": "并不是一件……的事情",
+"py": "bìng bú shì yí jiàn …… de shìqing",
+"vn": "cũng không phải là một việc...",
+"frame": "并 + 不是 + 一件 + [adj] + 的事情",
+"note": "并 dùng trước 不是 để nhấn mạnh sự phủ định. Đổi tính từ ở giữa là dùng được ngay.",
+"ex": [
+[
+"学汉语并并不是一件很难的事情。",
+"Học tiếng Trung không phải là một việc rất khó."
+],
+[
+"找工作并并不是一件容易的事情。",
+"Tìm việc không phải là một việc dễ dàng."
+]
+],
+"try": "Nói: “Thi HSK không phải là một việc không thể làm được.”"
+}
+]
+},
+{
+"line": 0,
+"s": "实际上，我们只需注意一下身边的小事就可以。",
+"vn": "Thực ra, chúng ta chỉ cần chú ý những việc nhỏ quanh mình là được.",
+"ch": [
+{
+"t": "只需……就可以",
+"py": "zhǐ xū …… jiù kěyǐ",
+"vn": "chỉ cần... là được",
+"frame": "只需 + [hành động] + 就可以",
+"note": "Chỉ một điều kiện đơn giản là đạt được kết quả. Thường dùng trong văn viết hoặc diễn đạt trang trọng.",
+"ex": [
+[
+"买票时只需出示身份证就可以。",
+"Khi mua thẻ chỉ cần xuất trình căn cước là được."
+],
+[
+"遇到不懂的词只需查一下字典就可以。",
+"Gặp từ không hiểu chỉ cần tra từ điển là được."
+]
+],
+"try": "Nói: “Làm bài này chỉ cần đọc kỹ đề bài là được.”"
+}
+]
+},
+{
+"line": 1,
+"s": "例如，夏天把空调的温度开得高一些，出门时记得关空调和电脑，这样可以节约用电；少开车，多骑车或者乘坐地铁和公共汽车，这样能降低空气污染；还有养成把垃圾丢进垃圾桶的习惯什么的。",
+"vn": "Ví dụ, mùa hè để nhiệt độ điều hòa cao hơn một chút, lúc ra ngoài nhớ tắt điều hòa và máy tính, như vậy có thể tiết kiệm điện; ít lái xe, đi xe đạp nhiều hơn hoặc đi tàu điện ngầm và xe buýt, như vậy có thể giảm ô nhiễm không khí; lại còn hình thành thói quen vứt rác vào thùng rác v.v.",
+"ch": [
+{
+"t": "把空调的温度开得高一些",
+"py": "bǎ kōngtiáo de wēndù kāi de gāo yìxiē",
+"vn": "để nhiệt độ điều hòa cao hơn một chút",
+"frame": "把 + [vật] + 的温度/声音等 + 开得 + [adj] + 一些",
+"note": "Cấu trúc chữ 把 kết hợp bổ ngữ trạng thái (开得高一些). Dùng để chỉ mức độ điều chỉnh.",
+"ex": [
+[
+"请把电视的声音开小一些。",
+"Xin hãy vặn nhỏ âm lượng ti vi lại một chút."
+],
+[
+"夏天不要把空调的温度开得太低。",
+"Mùa hè đừng bật nhiệt độ điều hòa thấp quá."
+]
+],
+"try": "Nói: “Vào phòng hãy bật điều hòa thấp hơn một chút.”"
+},
+{
+"t": "养成……的习惯",
+"py": "yǎngchéng …… de xíguàn",
+"vn": "hình thành thói quen...",
+"frame": "养成 + [hành vi tốt] + 的习惯",
+"note": "Cụm từ rất hay đi thi HSK4, dùng để chỉ việc rèn luyện nề nếp sinh hoạt hoặc học tập.",
+"ex": [
+[
+"我们要养成早睡早起的好习惯。",
+"Chúng ta phải hình thành thói quen ngủ sớm dậy sớm tốt."
+],
+[
+"他养成了每天记50个生词的习惯。",
+"Cậu ấy đã hình thành thói quen mỗi ngày nhớ 50 từ mới."
+]
+],
+"try": "Nói: “Học sinh nên hình thành thói quen đọc sách mỗi ngày.”"
+}
+]
+},
+{
+"line": 2,
+"s": "这些是我们每个人都能够做到的小事，但却有实实在在的效果。",
+"vn": "Những điều này là việc nhỏ mà mỗi chúng ta đều có thể làm được, nhưng lại có hiệu quả thiết thực.",
+"ch": []
+},
+{
+"line": 2,
+"s": "地球是我们共同的家，只有大家共同努力，减少污染、保护环境，才能使我们的家变得更美丽。",
+"vn": "Trái Đất là ngôi nhà chung của chúng ta, chỉ có mọi người cùng nhau nỗ lực, giảm ô nhiễm, bảo vệ môi trường, mới có thể khiến ngôi nhà của chúng ta trở nên tươi đẹp hơn.",
+"ch": [
+{
+"t": "只有……才……",
+"py": "zhǐyǒu …… cái ……",
+"vn": "chỉ có... mới...",
+"frame": "只有 + [điều kiện] + 才 + [kết quả]",
+"note": "Biểu thị điều kiện duy nhất. Điều kiện đi sau 只有, kết quả đi sau 才.",
+"ex": [
+[
+"只有努力学习，才能通过考试。",
+"Chỉ có nỗ lực học tập mới có thể qua kỳ thi."
+],
+[
+"只有多跟中国人交流，口语才能进步。",
+"Chỉ có giao tiếp nhiều với người Trung Quốc thì khẩu ngữ mới tiến bộ."
+]
+],
+"try": "Nói: “Chỉ có bảo vệ môi trường thì cuộc sống mới tốt đẹp hơn.”"
+}
+]
+}
+],
+"cu": [
+{
+"line": 0,
+"s": "“天人合一”是中国哲学中关于人与自然关系的一种观点，意思是人与大自然要“合一”，要和平共处。",
+"vn": "“Thiên nhân hợp nhất” là một quan điểm trong triết học Trung Quốc về mối quan hệ giữa con người và tự nhiên, có nghĩa là con người và đại tự nhiên phải “hợp nhất”, phải chung sống hòa bình.",
+"ch": [
+{
+"t": "关于人与自然关系",
+"py": "guānyú rén yǔ zìrán guānxi",
+"vn": "về mối quan hệ giữa con người và tự nhiên",
+"frame": "关于……的…… / 关于……关系",
+"note": "Dùng “关于” để dẫn dắt chủ đề hoặc lĩnh vực mà câu chuyện đang nhắc tới.",
+"ex": [
+[
+"老师给我们讲了关于环境保护的故事。",
+"Thầy giáo kể cho chúng tôi nghe câu chuyện về bảo vệ môi trường."
+],
+[
+"这是关于公司发展的一个计划。",
+"Đây là một kế hoạch về sự phát triển của công ty."
+]
+],
+"try": "Nói: “Hôm nay chúng ta thảo luận về quan hệ giữa học tập và cuộc sống.”"
+},
+{
+"t": "和平共处",
+"py": "hépíng gòngchǔ",
+"vn": "chung sống hòa bình",
+"frame": "……要和平共处",
+"note": "Thường dùng trong các chủ đề ngoại giao, xã hội hoặc quan hệ giữa người với người.",
+"ex": [
+[
+"邻居之间应该和平共处。",
+"Hàng xóm với nhau nên chung sống hòa bình."
+],
+[
+"不同国家的人民希望和平共处。",
+"Nhân dân các nước khác nhau mong muốn chung sống hòa bình."
+]
+],
+"try": "Nói: “Chúng ta nên học cách chung sống hòa bình với các bạn cùng phòng.”"
+}
+]
+},
+{
+"line": 0,
+"s": "它最早是由庄子（公元前369—公元前286）提出的。",
+"vn": "Nó lần đầu tiên được Trang Tử (369 TCN - 286 TCN) đưa ra.",
+"ch": []
+},
+{
+"line": 0,
+"s": "当代著名学者季羡林先生将其解释为：天，就是大自然；人，就是人类；合，就是互相理解，结成友谊。",
+"vn": "Học giả nổi tiếng đương thời Tịch Tiễn Lâm tiên sinh đã giải thích nó là: trời, chính là đại tự nhiên; người, chính là loài người; hợp, chính là hiểu biết lẫn nhau, kết thành tình hữu nghị.",
+"ch": [
+{
+"t": "将其解释为",
+"py": "jiāng qí jiěshì wéi",
+"vn": "đem nó giải thích thành",
+"frame": "将 + A + 解释为 + B",
+"note": "Cấu trúc chữ “把/将” trang trọng, dùng khi dịch nghĩa hoặc định nghĩa một khái niệm.",
+"ex": [
+[
+"老师将这个词解释得很清楚。",
+"Thầy giáo giải thích từ này rất rõ ràng."
+],
+[
+"我们不能将别人的好意解释为坏事。",
+"Chúng ta không thể xem ý tốt của người khác thành việc xấu."
+]
+],
+"try": "Nói: “Cô ấy đem câu nói đó giải thích thành một câu đùa.”"
+},
+{
+"t": "互相理解",
+"py": "hùxiāng lǐjiě",
+"vn": "hiểu biết lẫn nhau",
+"frame": "互相 + V (理解/帮助/支持)",
+"note": "Biểu thị hành động qua lại hai chiều giữa các bên trong cuộc sống hoặc công việc.",
+"ex": [
+[
+"同事之间需要互相理解和支持。",
+"Đồng nghiệp với nhau cần phải hiểu biết và ủng hộ lẫn nhau."
+],
+[
+"朋友交往要互相理解。",
+"Bạn bè giao tiếp phải hiểu nhau."
+]
+],
+"try": "Nói: “Thành viên trong gia đình nên hiểu biết lẫn nhau.”"
+}
+]
+},
+{
+"line": 1,
+"s": "古人告诉我们，人类只是天地万物中的一个部分，人与自然是息息相通的一体。",
+"vn": "Người xưa bảo chúng ta rằng, loài người chỉ là một phần trong vạn vật đất trời, con người và tự nhiên là một thể gắn kết mật thiết với nhau.",
+"ch": [
+{
+"t": "只是",
+"py": "zhǐ shì",
+"vn": "chỉ là",
+"frame": "……只是……",
+"note": "Dùng để thu hẹp phạm vi hoặc đánh giá mức độ khiêm nhường.",
+"ex": [
+[
+"这只是我的个人意见。",
+"Đây chỉ là ý kiến cá nhân của tôi."
+],
+[
+"他并不是不想去，只是太忙了。",
+"Cậu ấy không phải không muốn đi, chỉ là quá bận thôi."
+]
+],
+"try": "Nói: “Đây chỉ là một bước khởi đầu nhỏ thôi.”"
+},
+{
+"t": "息息相通",
+"py": "xīxī xiāngtōng",
+"vn": "gắn kết mật thiết",
+"frame": "……是息息相通的",
+"note": "Thành ngữ chỉ mối liên hệ chặt chẽ, không thể tách rời.",
+"ex": [
+[
+"人们的健康与环境息息相通。",
+"Sức khỏe của con người gắn liền với môi trường."
+],
+[
+"经济发展与每个人的生活息息相通。",
+"Phát triển kinh tế gắn kết mật thiết với cuộc sống của mỗi người."
+]
+],
+"try": "Nói: “Học ngôn ngữ và văn hóa gắn kết mật thiết với nhau.”"
+}
+]
+},
+{
+"line": 1,
+"s": "随着经济的发展，环境保护问题也越来越引起人们的重视。",
+"vn": "Cùng với sự phát triển của kinh tế, vấn đề bảo vệ môi trường cũng ngày càng thu hút sự coi trọng của mọi người.",
+"ch": [
+{
+"t": "随着经济的发展",
+"py": "suízhe jīngjì de fāzhǎn",
+"vn": "cùng với sự phát triển của kinh tế",
+"frame": "随着 + danh từ (发展/进步/变化)",
+"note": "Cụm mở đầu quen thuộc ở HSK4 khi nêu bối cảnh thay đổi của xã hội.",
+"ex": [
+[
+"随着科技的发展，我们的生活越来越方便了。",
+"Cùng với sự phát triển của khoa học công nghệ, cuộc sống của chúng ta ngày càng thuận tiện hơn."
+],
+[
+"随着汉语水平的提高，他找到了好工作。",
+"Cùng với việc trình độ tiếng Trung nâng cao, anh ấy đã tìm được công việc tốt."
+]
+],
+"try": "Nói: “Cùng với sự tiến bộ của xã hội, áp lực công việc cũng lớn hơn.”"
+},
+{
+"t": "引起人们的重视",
+"py": "yǐnqǐ rénmen de zhòngshì",
+"vn": "gây ra sự coi trọng của mọi người",
+"frame": "引起 + ai đó + 的重视",
+"note": "Dùng để nhấn mạnh một vấn đề cần được quan tâm đúng mức.",
+"ex": [
+[
+"这个问题已经引起了经理的重视。",
+"Vấn đề này đã thu hút sự quan tâm của giám đốc."
+],
+[
+"食品安全问题应该引起每个人的重视。",
+"Vấn đề an toàn thực phẩm nên thu hút sự coi trọng của mỗi người."
+]
+],
+"try": "Nói: “Lỗi sai này đã thu hút sự chú ý của giáo viên.”"
+}
+]
+},
+{
+"line": 1,
+"s": "世界环境日为每年的6月5日，它的确立反映了世界各国人民对环境问题的认识和态度，表达了人类对美好环境的向往和追求。",
+"vn": "Ngày Môi trường Thế giới là ngày 5 tháng 6 hàng năm, việc xác lập nó phản ánh nhận thức và thái độ của nhân dân các nước trên thế giới đối với vấn đề môi trường, đồng thời thể hiện sự hướng tới và theo đuổi của loài người đối với một môi trường tươi đẹp.",
+"ch": [
+{
+"t": "世界各国人民",
+"py": "shìjiè gèguó rénmín",
+"vn": "nhân dân các nước trên thế giới",
+"frame": "世界各国 + danh từ (人民/经济/文化)",
+"note": "Cụm từ trang trọng, hay gặp trong các bài đọc chủ đề xã hội và toàn cầu.",
+"ex": [
+[
+"世界各国文化有很多不同之处。",
+"Văn hóa các nước trên thế giới có rất nhiều điểm khác biệt."
+],
+[
+"世界各国经济联系越来越紧密。",
+"Kinh tế các nước trên thế giới liên hệ ngày càng khăng khít."
+]
+],
+"try": "Nói: “Nhân dân các nước trên thế giới đều mong muốn hòa bình.”"
+},
+{
+"t": "向往和追求",
+"py": "xiàngwǎng hé zhuīqiú",
+"vn": "hướng tới và theo đuổi",
+"frame": "向往和追求 + (美好生活/理想)",
+"note": "Dùng để diễn tả ước mơ, khát vọng vươn lên những điều tốt đẹp.",
+"ex": [
+[
+"每个人对未来都有美好的向往和追求。",
+"Mỗi người đối với tương lai đều có niềm hướng tới và theo đuổi tốt đẹp."
+],
+[
+"他对大学生活充满了向往和追求。",
+"Cậu ấy tràn đầy sự hướng tới và theo đuổi đối với cuộc sống đại học."
+]
+],
+"try": "Nói: “Chúng ta đều có khát vọng theo đuổi công việc mơ ước.”"
+}
+]
+}
+]
+}

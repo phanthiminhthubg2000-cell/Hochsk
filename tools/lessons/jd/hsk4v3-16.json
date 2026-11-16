@@ -1,0 +1,689 @@
+{
+"1": [
+{
+"line": 0,
+"s": "家月，周末你还打算去南京旅游吗？我去年去过那里，可以给你介绍一下。",
+"vn": "Gia Nguyệt, cuối tuần này cậu vẫn định đi Nam Kinh du lịch à? Tớ từng đến đó năm ngoái, có thể giới thiệu cho cậu một chút.",
+"ch": [
+{
+"t": "打算去",
+"py": "dǎsuàn qù",
+"vn": "định đi",
+"frame": "打算 + V",
+"note": "Dùng để diễn đạt dự định, kế hoạch cá nhân trong tương lai gần.",
+"ex": [
+[
+"我打算下个月去中国学习。",
+"Tôi định tháng sau đi Trung Quốc học tập."
+],
+[
+"你周末打算做什么？",
+"Cuối tuần này cậu định làm gì?"
+]
+],
+"try": "Nói: “Tôi định tối nay đi xem phim.”"
+}
+]
+},
+{
+"line": 1,
+"s": "本来都计划好了，可是昨天突然接到通知，下周学校要安排一次考试，所以周末只好在家复习了。",
+"vn": "Vốn dĩ đã lên kế hoạch xong xuôi rồi, nhưng hôm qua đột nhiên nhận được thông báo, tuần sau trường sắp xếp một kỳ thi, nên cuối tuần đành phải ở nhà ôn tập rồi.",
+"ch": [
+{
+"t": "本来都计划好了",
+"py": "běnlái dōu jìhuà hǎo le",
+"vn": "vốn dĩ đã lên kế hoạch xong xuôi",
+"frame": "本来 + trạng thái/hành động",
+"note": "Dùng để nói về dự định ban đầu trước khi có sự thay đổi.",
+"ex": [
+[
+"本来我想去跑步，可是下雨了。",
+"Vốn dĩ tôi định đi chạy bộ, nhưng trời mưa rồi."
+],
+[
+"本来我们打算明天出发。",
+"Vốn dĩ chúng tôi định ngày mai xuất phát."
+]
+],
+"try": "Nói: “Vốn dĩ tôi định đi làm sớm.”"
+},
+{
+"t": "只好",
+"py": "zhǐhǎo",
+"vn": "đành phải",
+"frame": "只好 + V",
+"note": "Dùng khi không còn lựa chọn nào khác, mang sắc thái bất đắc dĩ.",
+"ex": [
+[
+"没车了，我只好走路回家。",
+"Không có xe nữa, tôi đành phải đi bộ về nhà."
+],
+[
+"他不来，我只好一个人去。",
+"Cậu ấy không đến, tôi đành phải đi một mình."
+]
+],
+"try": "Nói: “Hôm nay không có tiền, tôi đành phải ở nhà.”"
+}
+]
+},
+{
+"line": 2,
+"s": "真是计划赶不上变化啊！看来你的旅行计划只能推迟了。",
+"vn": "Đúng là kế hoạch không theo kịp thay đổi mà! Xem ra kế hoạch du lịch của cậu chỉ có thể hoãn lại thôi.",
+"ch": [
+{
+"t": "计划赶不上变化",
+"py": "jìhuà gǎnbushàng biànhuà",
+"vn": "kế hoạch không theo kịp thay đổi",
+"frame": "真是 + cụm từ + 啊",
+"note": "Câu cảm thán dùng khi mọi việc diễn ra không như dự tính ban đầu.",
+"ex": [
+[
+"真是太麻烦了啊！",
+"Thật là phiền phức quá đi!"
+],
+[
+"真是让人高兴啊！",
+"Thật là khiến người ta vui mừng quá!"
+]
+],
+"try": "Nói: “Thật là đáng tiếc quá!”"
+}
+]
+},
+{
+"line": 3,
+"s": "是的，我已经把机票和酒店取消了。虽然有点儿可惜，但学习更重要。",
+"vn": "Đúng vậy, tớ đã hủy vé máy bay và khách sạn rồi. Tuy hơi đáng tiếc một chút, nhưng việc học quan trọng hơn.",
+"ch": [
+{
+"t": "把机票和酒店取消了",
+"py": "bǎ jīpiào hé jiǔdiàn qǔxiāo le",
+"vn": "đã hủy vé máy bay và khách sạn",
+"frame": "把 + O + V + 了",
+"note": "Cấu trúc chữ 把 dùng để nhấn mạnh sự tác động lên đối tượng, khiến đối tượng thay đổi trạng thái.",
+"ex": [
+[
+"请把门关上。",
+"Hãy đóng cửa lại."
+],
+[
+"我把作业写完了。",
+"Tôi đã viết xong bài tập rồi."
+]
+],
+"try": "Nói: “Tôi đã hủy cuộc họp rồi.”"
+}
+]
+},
+{
+"line": 4,
+"s": "学习确实要放在第一位。等到考试结束后，你再找个时间去。",
+"vn": "Việc học quả thực cần đặt lên hàng đầu. Đợi sau khi thi xong, cậu hãy tìm thời gian đi sau.",
+"ch": [
+{
+"t": "等到考试结束后",
+"py": "děngdào kǎoshì jiéshù hòu",
+"vn": "đợi sau khi thi xong",
+"frame": "等到 + thời điểm/sự việc + 以后/后",
+"note": "Dùng để chỉ một mốc thời gian trong tương lai khi một việc gì đó hoàn thành.",
+"ex": [
+[
+"等到下班以后，我们去吃饭。",
+"Đợi sau khi tan làm, chúng ta đi ăn cơm."
+],
+[
+"等到周末以后，我再告诉你。",
+"Đợi sau cuối tuần, tôi sẽ nói cho bạn biết."
+]
+],
+"try": "Nói: “Đợi sau khi tốt nghiệp, tôi sẽ đi làm.”"
+}
+]
+},
+{
+"line": 5,
+"s": "我也是这么想的，以后肯定还有很多机会。",
+"vn": "Tớ cũng nghĩ như vậy, sau này chắc chắn vẫn còn nhiều cơ hội.",
+"ch": [
+{
+"t": "我也是这么想的",
+"py": "wǒ yě shì zhème xiǎng de",
+"vn": "tớ cũng nghĩ như vậy",
+"frame": "我也是这么想的",
+"note": "Câu cửa miệng dùng để đồng tình với ý kiến của người đối diện.",
+"ex": [
+[
+"A:我们先休息一下吧。B:我也是这么想的。",
+"A: Chúng ta nghỉ ngơi một chút đi. B: Tớ cũng nghĩ vậy."
+],
+[
+"A:应该多练习听力。B:我也是这么想的。",
+"A: Nên luyện nghe nhiều hơn. B: Tớ cũng nghĩ vậy."
+]
+],
+"try": "Nói: “Tôi cũng nghĩ như vậy, chúng ta nên học chăm chỉ hơn.”"
+}
+]
+}
+],
+"2": [
+{
+"line": 0,
+"s": "刚接到通知，明天早晨的会议，时间改到下周了。",
+"vn": "Vừa nhận được thông báo, cuộc họp sáng mai đã đổi sang tuần sau rồi.",
+"ch": [
+{
+"t": "刚接到通知",
+"py": "gāng jiēdào tōngzhī",
+"vn": "vừa nhận được thông báo",
+"frame": "刚接到……",
+"note": "Dùng để diễn tả hành động vừa mới xảy ra xong. Có thể thay bằng các danh từ chỉ thông tin khác.",
+"ex": [
+[
+"刚接到电话，他已经在路上了。",
+"Vừa nhận được điện thoại, anh ấy đang trên đường rồi."
+],
+[
+"刚接到通知，明天休息。",
+"Vừa nhận được thông báo, ngày mai nghỉ."
+]
+],
+"try": "Nói: “Tôi vừa nhận được thông báo kết quả thi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "啊？时间都安排好了，怎么说变就变了？",
+"vn": "Hả? Thời gian đã sắp xếp xong xuôi rồi, sao lại nói đổi là đổi thế?",
+"ch": [
+{
+"t": "说变就变",
+"py": "shuō biàn jiù biàn",
+"vn": "nói đổi là đổi",
+"frame": "说 + V1 + 就 + V1",
+"note": "Cấu trúc nhấn mạnh sự thay đổi đột ngột hoặc tính khí thất thường, không theo kế hoạch.",
+"ex": [
+[
+"天气说变就变，刚才还晴天呢。",
+"Thời tiết nói đổi là đổi, lúc nãy còn trời nắng mà."
+],
+[
+"他脾气不好，说生气就生气。",
+"Tính khí anh ấy không tốt, nói giận là giận."
+]
+],
+"try": "Nói: “Anh ấy nói đi là đi, không đợi ai cả.”"
+}
+]
+},
+{
+"line": 2,
+"s": "是啊，没想到忽然要改时间。",
+"vn": "Đúng vậy, không ngờ đột nhiên lại phải đổi thời gian.",
+"ch": []
+},
+{
+"line": 3,
+"s": "好吧，那再看看有没有新的安排，或者增加的会议内容。",
+"vn": "Được rồi, vậy xem lại xem có sắp xếp mới nào không, hoặc nội dung họp cần bổ sung.",
+"ch": []
+},
+{
+"line": 4,
+"s": "好的。会议材料还需要调整吗？",
+"vn": "Được ạ. Tài liệu cuộc họp còn cần điều chỉnh không?",
+"ch": []
+},
+{
+"line": 5,
+"s": "再检查一下有没有细节上的错误，并且试着增加一些例子，把内容准备得更全一些。",
+"vn": "Kiểm tra lại xem có lỗi chi tiết nào không, và thử thêm vài ví dụ, chuẩn bị nội dung đầy đủ hơn chút.",
+"ch": [
+{
+"t": "把内容准备得更全一些",
+"py": "bǎ nèiróng zhǔnbèi de gèng quán yīxiē",
+"vn": "chuẩn bị nội dung đầy đủ hơn chút",
+"frame": "把 + O + V + 得 + bổ ngữ mức độ",
+"note": "Cấu trúc chữ 把 dùng để nhấn mạnh kết quả của hành động lên đối tượng. Đuôi “一些” làm câu nhẹ nhàng hơn.",
+"ex": [
+[
+"请把房间打扫得干净一些。",
+"Hãy dọn phòng sạch sẽ hơn một chút."
+],
+[
+"我们要把作业写得认真一些。",
+"Chúng ta phải viết bài tập cẩn thận hơn một chút."
+]
+],
+"try": "Nói: “Hãy làm cho món ăn ngon hơn một chút.”"
+}
+]
+},
+{
+"line": 6,
+"s": "没问题，这样效果肯定会更好。",
+"vn": "Không vấn đề gì, như vậy hiệu quả chắc chắn sẽ tốt hơn.",
+"ch": []
+},
+{
+"line": 7,
+"s": "看来有时候变化不一定是坏事，关键是我们怎么去适应变化。",
+"vn": "Xem ra đôi khi thay đổi không hẳn là chuyện xấu, quan trọng là chúng ta thích nghi với thay đổi thế nào.",
+"ch": [
+{
+"t": "关键是",
+"py": "guānjiàn shì",
+"vn": "quan trọng là",
+"frame": "关键是 + V/cụm từ",
+"note": "Dùng để nêu lên yếu tố then chốt, quyết định kết quả của một vấn đề.",
+"ex": [
+[
+"关键是我们要有信心。",
+"Quan trọng là chúng ta phải có lòng tin."
+],
+[
+"关键是你要多练习。",
+"Quan trọng là bạn phải luyện tập nhiều."
+]
+],
+"try": "Nói: “Quan trọng là chúng ta phải học cách giải quyết vấn đề.”"
+}
+]
+}
+],
+"3": [
+{
+"line": 0,
+"s": "在生活和工作中，有的人喜欢做计划，他们会提前安排好每天要做的事情，",
+"vn": "Trong cuộc sống và công việc, có người thích làm kế hoạch, họ sẽ sắp xếp trước những việc phải làm mỗi ngày,",
+"ch": [
+{
+"t": "有的人喜欢",
+"py": "yǒu de rén xǐhuan",
+"vn": "có người thích",
+"frame": "有的人……，有的人……",
+"note": "Dùng để kể ra các nhóm người có sở thích hoặc thói quen khác nhau.",
+"ex": [
+[
+"有的人喜欢喝茶，有的人喜欢喝咖啡。",
+"Có người thích uống trà, có người thích uống cà phê."
+],
+[
+"有的人喜欢周末宅在家，有的人喜欢出去旅游。",
+"Có người thích cuối tuần ở nhà, có người thích đi du lịch."
+]
+],
+"try": "Nói: “Có người thích học tiếng Trung buổi sáng.”"
+}
+]
+},
+{
+"line": 0,
+"s": "然后按照详细的时间表去完成任务，觉得这样做更有把握。相反，也有一部分人不爱做计划，",
+"vn": "sau đó dựa theo thời gian biểu chi tiết để hoàn thành nhiệm vụ, cảm thấy làm như vậy có sự nắm bắt (chắc chắn) hơn. Ngược lại, cũng có một bộ phận người không thích làm kế hoạch,",
+"ch": [
+{
+"t": "按照详细的时间表",
+"py": "ànzhào xiángxì de shíjiāobiǎo",
+"vn": "dựa theo thời gian biểu chi tiết",
+"frame": "按照 + danh từ + V",
+"note": "按照 chỉ phương châm, quy tắc hoặc lịch trình để hành động.",
+"ex": [
+[
+"按照公司的规定上班。",
+"Đi làm theo quy định của công ty."
+],
+[
+"按照老师的要求复习。",
+"Ôn tập theo yêu cầu của giáo viên."
+]
+],
+"try": "Nói: “Làm bài tập theo hướng dẫn.”"
+},
+{
+"t": "一部分人",
+"py": "yībùfen rén",
+"vn": "một bộ phận người / một số người",
+"frame": "一部分人 + V",
+"note": "Chỉ một nhóm nhỏ trong tổng thể.",
+"ex": [
+[
+"一部分人觉得这门课很难。",
+"Một số người cảm thấy môn học này rất khó."
+],
+[
+"一部分学生选择去国外留学。",
+"Một số học sinh chọn đi du học nước ngoài."
+]
+],
+"try": "Nói: “Một bộ phận nhân viên thích làm việc ở nhà.”"
+}
+]
+},
+{
+"line": 0,
+"s": "他们认为随意一些也很好，想到什么就去做什么，感觉这样比较轻松。",
+"vn": "họ cho rằng tùy ý một chút cũng rất tốt, nghĩ đến cái gì thì làm cái đó, cảm giác như vậy tương đối nhẹ nhàng.",
+"ch": [
+{
+"t": "想到什么就去做什么",
+"py": "xiǎngdào shénme jiù qù zuò shénme",
+"vn": "nghĩ đến cái gì thì làm cái đó",
+"frame": "想 / 想到 + gì + 就 + V gì",
+"note": "Cấu trúc “muốn gì làm nấy”, thể hiện sự tự do, không gò bó.",
+"ex": [
+[
+"买东西时，她看到什么就买什么。",
+"Khi mua đồ, cô ấy thấy cái gì là mua cái đó."
+],
+[
+"周末在家，我常常想吃什么就做什么。",
+"Cuối tuần ở nhà, tôi thường thích ăn gì là làm cái đó."
+]
+],
+"try": "Nói: “Đi siêu thị, nghĩ đến cái gì thì mua cái đó.”"
+}
+]
+},
+{
+"line": 1,
+"s": "其实，事前做计划是好是坏没有标准答案。严格按照计划做事，",
+"vn": "Thực ra, làm kế hoạch trước sự việc là tốt hay xấu không có đáp án chuẩn. Nghiêm ngặt làm việc theo kế hoạch,",
+"ch": [
+{
+"t": "是好是坏",
+"py": "shì hǎo shì huài",
+"vn": "là tốt hay xấu",
+"frame": "……是……是……",
+"note": "Dùng để nêu hai mặt đối lập của một vấn đề.",
+"ex": [
+[
+"这件事是真是假还不清楚。",
+"Việc này là thật hay giả vẫn chưa rõ."
+],
+[
+"考试成绩是高是低不重要，努力就行。",
+"Điểm thi cao hay thấp không quan trọng, cố gắng là được."
+]
+],
+"try": "Nói: “Phương pháp này là đúng hay sai?”"
+},
+{
+"t": "严格按照计划",
+"py": "yángé ànzhào jìhuà",
+"vn": "nghiêm ngặt theo kế hoạch",
+"frame": "严格 + V / 严格按照 + N",
+"note": "Biểu thị sự tuân thủ quy tắc một cách chặt chẽ.",
+"ex": [
+[
+"老师对我们的要求很严格。",
+"Thầy giáo yêu cầu chúng tôi rất nghiêm khắc."
+],
+[
+"我们必须严格按照时间交作业。",
+"Chúng tôi phải nộp bài tập đúng thời gian nghiêm ngặt."
+]
+],
+"try": "Nói: “Phải tuân thủ nghiêm ngặt quy định phòng thi.”"
+}
+]
+},
+{
+"line": 1,
+"s": "常常能取得不错的效果；而不做计划，说不定也会带来新的发现。",
+"vn": "thường có thể đạt được hiệu quả khá tốt; mà không làm kế hoạch, biết đâu cũng sẽ mang lại phát hiện mới.",
+"ch": [
+{
+"t": "取得不错的效果",
+"py": "qǔdé búcuò de xiàoguǒ",
+"vn": "đạt được hiệu quả không tồi",
+"frame": "取得 + kết quả/thành tích",
+"note": "取得 đi với các danh từ trừu tượng như thành tích, kinh nghiệm, hiệu quả.",
+"ex": [
+[
+"经过努力，他取得了很好的成绩。",
+"Qua nỗ lực, cậu ấy đã đạt được thành tích rất tốt."
+],
+[
+"这次汉语比赛，我取得了第一名。",
+"Cuộc thi tiếng Trung lần này, tôi đạt giải nhất."
+]
+],
+"try": "Nói: “Học chăm chỉ sẽ đạt được hiệu quả tốt.”"
+},
+{
+"t": "说不定也会",
+"py": "shuōbudìng yě huì",
+"vn": "biết đâu cũng sẽ",
+"frame": "说不定 + tình huống",
+"note": "Biểu thị khả năng xảy ra nhưng không chắc chắn (có thể có, có thể không).",
+"ex": [
+[
+"下午说不定会下雨，你带把伞吧。",
+"Chiều biết đâu sẽ mưa, bạn mang ô theo đi."
+],
+[
+"明天说不定老板会给我们放假。",
+"Ngày mai biết đâu sếp sẽ cho chúng ta nghỉ."
+]
+],
+"try": "Nói: “Cuối tuần này biết đâu tôi sẽ đi du lịch.”"
+}
+]
+},
+{
+"line": 1,
+"s": "无论做不做计划，只要既能按时完成任务，又能根据情况灵活调整，就是适合自己的方式。",
+"vn": "Dù làm hay không làm kế hoạch, miễn là vừa có thể hoàn thành nhiệm vụ đúng giờ, vừa có thể điều chỉnh linh hoạt theo tình hình, thì đó là phương thức phù hợp với bản thân.",
+"ch": [
+{
+"t": "根据情况灵活调整",
+"py": "gēnjù qíngkuàng línghuó tiáojiě",
+"vn": "điều chỉnh linh hoạt theo tình hình",
+"frame": "根据 + tình hình + V",
+"note": "Cụm từ hay trong công việc, thể hiện sự ứng biến tốt không rập khuôn.",
+"ex": [
+[
+"我们要根据天气情况安排活动。",
+"Chúng ta phải sắp xếp hoạt động theo tình hình thời tiết."
+],
+[
+"遇到生词时，要根据上下文猜意思。",
+"Gặp từ mới, phải đoán nghĩa dựa vào ngữ cảnh."
+]
+],
+"try": "Nói: “Làm việc nhóm phải điều chỉnh kế hoạch theo tình hình.”"
+}
+]
+}
+],
+"4": [
+{
+"line": 0,
+"s": "人们常说“计划赶不上变化”。有时候，你准备好了一切，却突然出现了新情况，让你不得不改变计划。比如准备出去旅行，可能因为有事而取消；约好见朋友，可能因为天气不好而推迟。",
+"vn": "Mọi người thường nói \"kế hoạch không theo kịp sự biến đổi\". Có lúc, bạn đã chuẩn bị sẵn sàng mọi thứ, nhưng đột nhiên xuất hiện tình huống mới, khiến bạn buộc phải thay đổi kế hoạch. Ví dụ chuẩn bị đi du lịch, có thể vì có việc mà phải hủy; hẹn gặp bạn bè, có thể vì thời tiết xấu mà hoãn lại.",
+"ch": [
+{
+"t": "准备好了一切",
+"py": "zhǔnbèi hǎo le yīqiè",
+"vn": "chuẩn bị sẵn sàng mọi thứ",
+"frame": "准备好了 + tân ngữ",
+"note": "Cấu trúc V + 好了 biểu thị trạng thái đã hoàn thành và sẵn sàng.",
+"ex": [
+[
+"我已经准备好了明天开会的资料。",
+"Tôi đã chuẩn bị sẵn sàng tài liệu họp ngày mai."
+],
+[
+"行李都准备好了。",
+"Hành lý đã chuẩn bị xong hết rồi."
+]
+],
+"try": "Nói: “Tôi đã chuẩn bị sẵn sàng mọi thứ cho buổi phỏng vấn.”"
+},
+{
+"t": "不得不改变计划",
+"py": "bùdébù gǎibiàn jìhuà",
+"vn": "buộc phải thay đổi kế hoạch",
+"frame": "不得不 + V",
+"note": "不(得)不 biểu thị ý nghĩa khách quan ép buộc, đành phải làm gì.",
+"ex": [
+[
+"下大雨了，我们不得不取消活动。",
+"Mưa lớn rồi, chúng tôi đành phải hủy hoạt động."
+],
+[
+"今天车坏了，我不得不坐地铁去上班。",
+"Hôm nay xe hỏng, tôi buộc phải đi tàu điện ngầm đi làm."
+]
+],
+"try": "Nói: “Hôm nay có việc bận, tôi buộc phải hoãn buổi hẹn.”"
+},
+{
+"t": "约好见朋友",
+"py": "yuē hǎo jiàn péngyou",
+"vn": "hẹn trước gặp bạn bè",
+"frame": "约好 + V / danh từ",
+"note": "约好 dùng khi hai bên đã có thỏa thuận thời gian, địa điểm từ trước.",
+"ex": [
+[
+"我们约好八点在咖啡馆见面。",
+"Chúng tôi hẹn 8 giờ gặp nhau ở quán cà phê."
+],
+[
+"我和同事约好周末去爬山。",
+"Tôi và đồng nghiệp hẹn cuối tuần đi leo núi."
+]
+],
+"try": "Nói: “Chúng tôi đã hẹn đi siêu thị vào tối thứ Bảy.”"
+}
+]
+},
+{
+"line": 1,
+"s": "虽然变化经常打乱计划，给我们带来不便，甚至让人感到失望，但这些变化也许会给生活带来新的可能。比如没去成旅行，于是在家门口的小公园逛了逛，发现那里也很有趣；没见到朋友，于是在家观看了一部电影，心情也变得很愉快。",
+"vn": "Mặc dù sự thay đổi thường làm đảo lộn kế hoạch, mang lại sự bất tiện cho chúng ta, thậm chí khiến người ta cảm thấy thất vọng, nhưng những thay đổi này có lẽ sẽ mang lại cho cuộc sống những khả năng mới. Ví dụ không đi du lịch thành công, thế là đi dạo ở công viên nhỏ ngay cửa nhà, phát hiện ra nơi đó cũng rất thú vị; không gặp được bạn bè, thế là ở nhà xem một bộ phim, tâm trạng cũng trở nên rất vui vẻ.",
+"ch": [
+{
+"t": "给我们带来不便",
+"py": "gěi wǒmen dàilái búbiàn",
+"vn": "mang lại sự bất tiện cho chúng ta",
+"frame": "给 + ai + 带来 + kết quả/danh từ",
+"note": "Dùng để diễn tả tác động (tốt hoặc xấu) mà một sự việc mang lại cho ai đó.",
+"ex": [
+[
+"这次堵车给我们带来很多不便。",
+"Lần tắc đường này mang lại rất nhiều bất tiện cho chúng tôi."
+],
+[
+"互联网给我们的生活带来了很大的便利。",
+"Internet mang lại sự tiện lợi rất lớn cho cuộc sống của chúng ta."
+]
+],
+"try": "Nói: “Việc sửa đường mang lại sự bất tiện cho việc đi lại của chúng tôi.”"
+},
+{
+"t": "让人感到失望",
+"py": "ràng rén gǎndào shīwàng",
+"vn": "khiến người ta cảm thấy thất vọng",
+"frame": "让 + ai + 感到 + tính từ",
+"note": "感到 đi sau 让 giúp biểu thị trạng thái tâm lý, cảm xúc rõ hơn.",
+"ex": [
+[
+"考试没考好，让他感到很失望。",
+"Thi không tốt khiến cậu ấy cảm thấy rất thất vọng."
+],
+[
+"这部电影的结局让人感到意外。",
+"Kết cục của bộ phim này khiến người ta cảm thấy bất ngờ."
+]
+],
+"try": "Nói: “Kết quả công việc không tốt khiến sếp cảm thấy thất vọng.”"
+},
+{
+"t": "逛了逛",
+"py": "guàng le guàng",
+"vn": "đi dạo một chút",
+"frame": "V + 了 + V (lặp lại dạng A-ch-A)",
+"note": "Động từ lặp lại biểu thị hành động diễn ra trong thời gian ngắn hoặc thử làm gì.",
+"ex": [
+[
+"吃完饭后，我们在操场上走了走。",
+"Ăn cơm xong, chúng tôi đi dạo ở sân thể dục một lát."
+],
+[
+"周末我想去商场看看。",
+"Cuối tuần tôi muốn ra trung tâm thương mại xem xem."
+]
+],
+"try": "Nói: “Tan làm xong, tôi đi dạo ở siêu thị một lúc.”"
+}
+]
+},
+{
+"line": 2,
+"s": "生活中很多变化是无法提前知道的，我们要做的就是学会接受变化、适应变化，在变化中找到新的解决办法。这样不仅能锻炼自己在面对不同情况时解决问题的能力，也能让我们的生活更轻松。",
+"vn": "Rất nhiều thay đổi trong cuộc sống là không thể biết trước được, việc chúng ta cần làm chính là học cách chấp nhận sự thay đổi, thích nghi với sự thay đổi, tìm ra phương pháp giải quyết mới trong sự thay đổi. Như thế không chỉ có thể rèn luyện năng lực giải quyết vấn đề của bản thân khi đối mặt với các tình huống khác nhau, mà còn có thể khiến cuộc sống của chúng ta nhẹ nhàng hơn.",
+"ch": [
+{
+"t": "无法提前知道的",
+"py": "wúfǎ tíqián zhīdào de",
+"vn": "không thể biết trước được",
+"frame": "无法 + V + de",
+"note": "无法 đồng nghĩa với 部能 nhưng mang sắc thái trang trọng hơn trong văn viết HSK4.",
+"ex": [
+[
+"这项工作太复杂，我一个人无法完成。",
+"Công việc này quá phức tạp, một mình tôi không thể hoàn thành."
+],
+[
+"由于堵车，我无法按时到达。",
+"Vì tắc đường, tôi không thể đến nơi đúng giờ."
+]
+],
+"try": "Nói: “Có những việc xảy ra mà chúng ta không thể phòng tránh trước được.”"
+},
+{
+"t": "我们要做的就是",
+"py": "wǒmen yào zuò de jiù shì",
+"vn": "việc chúng ta cần làm chính là",
+"frame": "……要做(s)就是 + danh từ/việc gì",
+"note": "Mẫu câu nhấn mạnh dùng nhiều khi đưa ra lời khuyên hoặc kết luận.",
+"ex": [
+[
+"现在我们要做的就是好好复习。",
+"Bây giờ việc chúng ta cần làm chính là ôn tập thật tốt."
+],
+[
+"遇到困难，我们要做的就是冷静下来。",
+"Gặp khó khăn, việc chúng ta cần làm chính là bình tĩnh lại."
+]
+],
+"try": "Nói: “Việc bạn cần làm bây giờ chính là điền vào đơn này.”"
+},
+{
+"t": "解决问题",
+"py": "jiějué wèntí",
+"vn": "giải quyết vấn đề",
+"frame": "解决 + 问题/困难",
+"note": "Cố định động-tân rất phổ biến trong cả học tập lẫn công việc.",
+"ex": [
+[
+"经理正在和客户商量怎么解决这个问题。",
+"Giám đốc đang bàn với khách hàng cách giải quyết vấn đề này."
+],
+[
+"遇到问题时，要想办法解决。",
+"Khi gặp vấn đề, phải nghĩ cách giải quyết."
+]
+],
+"try": "Nói: “Chúng ta cùng nhau thảo luận để giải quyết vấn đề này nhé.”"
+}
+]
+}
+]
+}

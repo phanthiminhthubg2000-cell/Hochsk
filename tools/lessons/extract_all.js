@@ -154,7 +154,9 @@ for (const S of SETS) {
   const files = fs.readdirSync(path.join(LDIR, S.dir)).filter((f) => /^LESSON_\d+\.html$/.test(f)).sort();
   for (const f of files) {
     const rel = `/lectures/${S.dir}/${f}`;
-    const r = load(path.join(LDIR, S.dir, f));
+    // HSK4 3.0: bài giảng đã chuyển sang khuôn slide 2.0; dữ liệu gốc (dạng B) giữ ở tools/lessons/src/hsk4-3
+    const srcB = path.join(__dirname, "src", S.dir, "B" + /(\d+)/.exec(f)[1] + ".json");
+    const r = fs.existsSync(srcB) ? { fmt: "B", L: JSON.parse(fs.readFileSync(srcB, "utf8")) } : load(path.join(LDIR, S.dir, f));
     if (!r) { console.log("bỏ qua", rel); continue; }
     const fileNum = +/(\d+)/.exec(f)[1];
     const nm = (names[rel] || "").replace(/^Bài\s*\d+\s*[·–-]\s*/, "");
