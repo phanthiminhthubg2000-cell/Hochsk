@@ -6,7 +6,7 @@
 //  - KHÔNG lưu: phòng thi (/hsk-exam, /hsk2-exam, /hskk-exam…), /api (trừ /api/tts), đăng nhập, Firebase
 // Đổi VERSION khi cần xoá bộ nhớ đệm cũ.
 // ============================================================
-const VERSION = "shtv-v1";
+const VERSION = "shtv-v2";
 const STATIC = `${VERSION}-static`, PAGES = `${VERSION}-pages`, DATA = `${VERSION}-data`, MEDIA = `${VERSION}-media`;
 const PRECACHE = ["/offline.html", "/icons/icon-192.png", "/icons/icon-512.png"];
 const NO_CACHE = /^\/(hsk-exam|hsk2-exam|hsk3-exam|hskk-exam|de-thi-hsk|api(?!\/tts)|sign-in|sign-up|teacher)(\/|$)/;
@@ -56,7 +56,7 @@ self.addEventListener("fetch", (e) => {
   if (NO_CACHE.test(p) || req.headers.has("range")) return;   // phòng thi luôn lấy mới; audio tua (range) không chặn
   if (req.mode === "navigate") return e.respondWith(networkFirst(req));
   if (p.startsWith("/_next/static/") || p.startsWith("/icons/") || /\.(woff2?|ttf)$/.test(p)) return e.respondWith(cacheFirst(req, STATIC));
-  if (p.startsWith("/api/tts") || p.startsWith("/audio/")) return e.respondWith(cacheFirst(req, MEDIA, 400));
+  if ((p.startsWith("/api/tts") || p.startsWith("/audio/")) && !p.endsWith(".json")) return e.respondWith(cacheFirst(req, MEDIA, 400));
   if (/\.(png|jpe?g|webp|svg|gif)$/.test(p)) return e.respondWith(cacheFirst(req, MEDIA, 400));
   if (p.startsWith("/data/") || p.startsWith("/lectures/") || p.endsWith(".json")) return e.respondWith(staleWhileRevalidate(req, DATA, 300));
 });
