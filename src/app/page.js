@@ -989,7 +989,7 @@ export default function HomePage() {
     ...(realm.peak && quest.done && kiepAvail ? { "do-kiep": { text: "sẵn sàng độ kiếp", tone: "red" } } : {}),
   };
   const mapLock = isSignedIn && !(realm.peak && quest.done) && realm.idx > 0 ? { "do-kiep": "cần Đỉnh phong" } : {};
-  const SuPhuCard = () => (
+  const SuPhuCard = () => (isSignedIn && realm?.provisional) ? null : (
     <section className="tt-card p-4 flex gap-3 items-start" aria-label="Sư phụ chỉ điểm">
       <span className="w-12 h-12 shrink-0 rounded-full bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[24px] border-2 border-[#D9A23A]" aria-hidden="true">师</span>
       <div className="flex-1 min-w-0 flex flex-col gap-1.5">
@@ -1050,7 +1050,8 @@ export default function HomePage() {
 
   // Thẻ linh căn: chưa đo → mời đo; đã đo → tên linh căn + tâm ma + công pháp đề cử
   const LinhCanCard = () => {
-    if (!linhCan?.scores) return (
+    if (!linhCan?.scores) return null;
+    if (false) return (
       <section className="tt-card p-5 flex flex-wrap sm:flex-nowrap items-center gap-4 self-start">
         <span className="font-brush text-[34px] sm:text-[40px] leading-none text-[#9E2F22] shrink-0" aria-hidden="true">灵根</span>
         <span className="flex-1 min-w-[180px]">
@@ -1226,12 +1227,6 @@ export default function HomePage() {
               <div className="flex flex-col gap-5 md:gap-6">
                 <div className="flex flex-col gap-3">
                   <TongMonMap tags={mapTags} lock={mapLock} glow={tip.glow} onTab={goTab} />
-                  <nav aria-label="Lối tắt tông môn" className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {[["/the-gioi", "舆图", "Thế giới"], ["/luyen-dan", "炼丹", "Luyện đan"], ["/tam-ma", "心魔", "Tâm ma"], ["/ma-vuong", "魔王", "Ma Vương"], ["/?tab=practice", "秘境", "Bí cảnh"], ["/tong-mon", "宗门", "Tông môn"]].map(([h, z, v]) => (
-                      h.startsWith("/?tab=") ? <button key={h} onClick={() => goTab(h.slice(6))} className="tt-plank"><span className="zh" aria-hidden="true">{z}</span><span className="vn">{v}</span></button>
-                        : <Link key={h} href={h} className="tt-plank"><span className="zh" aria-hidden="true">{z}</span><span className="vn">{v}</span></Link>
-                    ))}
-                  </nav>
                 </div>
                 <div className="grid grid-cols-1 gap-5 md:gap-6 lg:grid-cols-[1fr_1fr_1.15fr] items-stretch">
                   <PondCard />
@@ -1414,27 +1409,27 @@ export default function HomePage() {
                   <Link href={weakest.href} className="tt-btn hidden sm:inline-flex shrink-0">Vào bí cảnh</Link>
                 </div>
               )}
-              <section aria-label="Đan phòng và ma vực" className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <section aria-label="Đan phòng và ma vực" className="grid grid-cols-3 gap-2.5 md:gap-4">
                 {[
                   { href: "/luyen-dan", img: "/tt/luyendan.jpg", zh: "炼丹房", vn: "Luyện Đan Phòng", sub: ldStat?.due ? `${ldStat.due} từ đến hạn ôn` : "Ôn từ vựng ngắt quãng, luyện thành đan", pos: "50% 55%" },
                   { href: "/tam-ma", img: null, zh: "心魔洞", vn: "Tâm Ma Động", sub: ldStat?.tamMa ? `${ldStat.tamMa} tâm ma đang ẩn nấp` : "Trảm những từ hay sai", pos: "" },
                   { href: "/ma-vuong", img: "/tt/mavuong.jpg", zh: "魔王", vn: "Ma Vương", sub: `Khiêu chiến Ma Vương ${realm.vn}`, pos: "30% 40%" },
                 ].map((x) => (
-                  <Link key={x.href} href={x.href} className="group relative h-[150px] rounded-[6px] overflow-hidden border border-[#C9A24E] shadow-[0_0_0_3px_#1C1A17] text-[#F6EBD2]">
+                  <Link key={x.href} href={x.href} className="group relative h-[112px] md:h-[150px] rounded-[6px] overflow-hidden border border-[#C9A24E] shadow-[0_0_0_2px_#1C1A17] md:shadow-[0_0_0_3px_#1C1A17] text-[#F6EBD2]">
                     {x.img ? <img src={x.img} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: x.pos }} />
                       : <span className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 30%, rgba(122,90,166,.75), transparent 60%), #17141C" }} />}
-                    <span className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(18,16,14,.85), rgba(18,16,14,.35) 70%, transparent)" }} />
-                    <span className="relative h-full p-4 flex flex-col justify-end gap-0.5">
-                      <span className="font-brush text-[34px] leading-none text-[#E6B656]">{x.zh}</span>
-                      <b className="font-serif-vn text-[18px]">{x.vn}</b>
-                      <span className="text-[13px] text-[#E9DFC8]">{x.sub}</span>
+                    <span className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(18,16,14,.9), rgba(18,16,14,.45) 65%, rgba(18,16,14,.15))" }} />
+                    <span className="relative h-full p-2.5 md:p-4 flex flex-col justify-end gap-0.5">
+                      <span className="font-brush text-[24px] md:text-[34px] leading-none text-[#E6B656]">{x.zh}</span>
+                      <b className="font-serif-vn text-[13px] md:text-[18px] leading-tight">{x.vn}</b>
+                      <span className="text-[11px] md:text-[13px] text-[#E9DFC8] leading-tight line-clamp-2">{x.sub}</span>
                     </span>
                   </Link>
                 ))}
               </section>
               <section aria-label="Ngũ hành bí cảnh" className="flex flex-col gap-3">
                 <div className="flex items-baseline gap-2"><span className="font-brush text-[26px] text-[#2F6E5A]">五行秘境</span><h2 className="font-serif-vn text-[18px] font-extrabold">Ngũ hành bí cảnh</h2><span className="text-sm text-[#6B6253]">mỗi bí cảnh nuôi một hệ linh căn</span></div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-5">
                   {skills.map((s) => {
                     const hot = s.key === weakest?.key; const e = elementOf(s.el);
                     return (
@@ -1442,7 +1437,7 @@ export default function HomePage() {
                         <Link href={s.href} className="absolute inset-0 rounded-[6px]" aria-label={`Vào ${s.bc}`} />
                         <div className="flex items-center gap-2">
                           <span className="w-11 h-11 rounded-full grid place-items-center bg-[#1C1A17] text-[#E6B656] font-brush text-[24px] leading-none border border-[#C9A24E]" aria-hidden="true">{e.zh}</span>
-                          <span className="flex flex-col leading-tight min-w-0"><b className="font-serif-vn text-[15px] truncate">{s.bc}</b><span className="text-xs text-[#6B6253]" style={{ fontFamily: '"Noto Serif SC",serif' }}>{s.bcZh} · hệ {e.vn}</span></span>
+                          <span className="flex flex-col leading-tight min-w-0"><b className="font-serif-vn text-[15px] leading-tight">{s.bc}</b><span className="text-xs font-bold text-[#2F6E5A]">{s.label}</span></span>
                         </div>
                         <p className="text-[13px] text-[#4A4238] leading-snug">{s.sub}</p>
                         <div className="flex items-center gap-2 mt-auto">
