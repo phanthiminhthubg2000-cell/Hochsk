@@ -202,10 +202,50 @@ const GAME_STYLE = {
   "trieu-phu": { ink: "#1D47B8", soft: "#E6EDFC", badge: "🏆 10 câu", meta: "1 máy chiếu · cả lớp" },
   "bom": { ink: "#C2410C", soft: "#FDEBDD", badge: "📱 Nhiều máy", meta: "Mỗi HS 1 điện thoại" },
   "duoi-hinh": { ink: "#6D3FD1", soft: "#F1EAFF", badge: "🧩 32 câu", meta: "Cả lớp chia đội · hoặc tự chơi" },
-  "keo-co": { badge: "📱 Nhiều máy · 2 đội" },
-  "dua": { badge: "📱 Nhiều máy" },
-  "nhanh": { badge: "📱 Nhiều máy" },
+  "keo-co": { badge: "📱 Nhiều máy · 2 đội", meta: "Mỗi HS 1 điện thoại · 2 đội" },
+  "dua": { badge: "📱 Nhiều máy", meta: "Mỗi HS 1 điện thoại" },
+  "nhanh": { badge: "📱 Nhiều máy", meta: "Mỗi HS 1 điện thoại" },
 };
+
+// Cách chơi của từng trò — để lọc ở Giang hồ
+const GAME_MODE = { "nghieng-dau": ["lop"], "trieu-phu": ["lop"], "san-bo-thu": ["tu"], "doan-thanh-ngu": ["lop", "tu"], "duoi-hinh": ["lop", "tu"], "bom": ["may"], "keo-co": ["may", "lop"], dua: ["may", "lop"], nhanh: ["may", "lop"] };
+const GAME_FILTERS = [["all", "Tất cả"], ["lop", "Cả lớp · máy chiếu"], ["may", "Mỗi bạn 1 điện thoại"], ["tu", "Tự chơi"]];
+function GameGrid() {
+  const [f, setF] = useState("all");
+  const list = GAMES.filter(g => f === "all" || (GAME_MODE[g.key] || []).includes(f));
+  return (
+    <section className="flex flex-col gap-3" aria-label="Trò chơi">
+      <div className="flex items-baseline gap-2"><span className="font-brush text-[26px] text-[#9E2F22]" aria-hidden="true">游艺</span><h2 className="font-serif-vn text-[18px] font-extrabold">Trò chơi trên lớp</h2></div>
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" role="tablist">
+        {GAME_FILTERS.map(([k, v]) => (
+          <button key={k} role="tab" aria-selected={f === k} onClick={() => setF(k)}
+            className={`shrink-0 h-9 px-3.5 rounded-full text-sm font-bold border ${f === k ? "bg-[#1C1A17] text-[#F3EEE2] border-[#1C1A17]" : "bg-[#FBF8F1] text-[#4A4238] border-[#D8CBAE]"}`}>{v}</button>
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-2.5 md:gap-4 lg:grid-cols-3">
+        {list.map(g => {
+          const st = GAME_STYLE[g.key] || {}; const [ch, alias] = GAME_SEAL[g.key] || [g.face?.[0] || "戏", ""];
+          return (
+            <a key={g.key} href={g.href} target="_blank" rel="noopener" className="group tt-card p-3 md:p-4 flex flex-col gap-2 hover:-translate-y-0.5 transition-transform">
+              <div className="flex items-center gap-2.5">
+                <span className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-[6px] grid place-items-center font-brush text-[30px] md:text-[34px] leading-none text-[#E6B656]" style={{ background: "linear-gradient(160deg,#24201B,#121014)" }} aria-hidden="true">{ch}</span>
+                <span className="min-w-0 flex flex-col leading-tight">
+                  <b className="font-extrabold text-[15px] md:text-[17px]">{g.title}</b>
+                  <span className="text-[11px] md:text-xs text-[#6B6253]">{alias}</span>
+                </span>
+              </div>
+              <p className="text-[12.5px] md:text-sm text-[#4A4238] leading-snug line-clamp-3">{g.desc}</p>
+              <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+                <span className="text-[11px] md:text-xs font-semibold text-[#7A2218] leading-tight">{st.meta || ((GAME_MODE[g.key] || []).includes("tu") ? "Tự chơi" : "")}</span>
+                <span className="text-sm font-extrabold text-[#9E2F22] whitespace-nowrap">Chơi ›</span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 
 const GAME_COVERS = ["nghieng-dau", "trieu-phu", "san-bo-thu", "doan-thanh-ngu", "duoi-hinh", "bom", "keo-co", "dua", "nhanh"];
 
@@ -1480,35 +1520,7 @@ export default function HomePage() {
                 </Link>
                 <ThienBang n={5} me={userId} compact tabs />
               </div>
-              <div className="grid grid-cols-1 gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {GAMES.map(g => (
-                  <a key={g.key} href={g.href} target="_blank" rel="noopener"
-                    className="group tt-card overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col">
-                    <GameCover g={g} />
-                    <div className="p-5 flex flex-col gap-2 flex-1">
-                      <div className="flex items-baseline gap-2 flex-wrap">
-                        <h3 className="font-extrabold text-lg">{g.title}</h3>
-                        <span className="zh text-sm text-[#6B6253]">{g.zh}</span>
-                      </div>
-                      <p className="text-sm text-[#4A4238] leading-snug">{g.desc}</p>
-                      <div className="flex flex-wrap gap-1.5 mt-1">
-                        {g.tags.map(t => <span key={t} className="text-xs font-semibold px-2 py-0.5 rounded-[3px] border border-[#CDBF9F] text-[#4A4238] bg-[#F6F0E2]">{t}</span>)}
-                      </div>
-                      <div className="mt-auto pt-4 flex items-center gap-3">
-                        <span className="tt-btn !h-10 !text-sm">
-                          <Icon name="play" className="w-4 h-4" />Vào chơi
-                        </span>
-                        <span className="text-xs font-semibold text-[#6B6253]">{GAME_STYLE[g.key]?.meta}</span>
-                      </div>
-                    </div>
-                  </a>
-                ))}
-                <div className="rounded-[6px] border-2 border-dashed border-[#CDBF9F] p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[220px] text-[#6B6253]">
-                  <span className="font-brush text-[34px] text-[#9E2F22]" aria-hidden="true">待</span>
-                  <div className="font-bold text-[#4A4238] font-serif-vn">Trò chơi mới đang luyện thành…</div>
-                  <div className="text-sm">Sắp có thêm trò để cả lớp cùng chơi.</div>
-                </div>
-              </div>
+              <GameGrid />
             </div>
           )}
 
