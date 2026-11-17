@@ -1053,18 +1053,30 @@ export default function TeacherDashboard() {
   );
 
   const pendingPhoneticCount = phoneticSubs.filter(s => s.status === "pending_teacher").length;
+  // Xuất bảng học viên ra CSV (mở bằng Excel; có BOM để giữ dấu tiếng Việt / chữ Hán)
+  const exportStudentsCsv = () => {
+    const q = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const skillNames = (studentsProgress[0]?.skills || []).map(k => k.name);
+    const head = ["Hạng", "Họ tên", "Email", "Cấp độ", "Tu vi (XP)", "Chuỗi ngày", ...skillNames.map(n => n + " (%)")];
+    const rows = studentsProgress.map((st, i) => [i + 1, st.name, st.email, st.level, st.xp, st.streak, ...st.skills.map(k => k.val)]);
+    const csv = "\uFEFF" + [head, ...rows].map(r => r.map(q).join(",")).join("\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    a.download = `hoc-vien-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
 
   if (!isLoaded) return <div className="min-h-screen bg-[#F7FAF8]"></div>;
 
   return (
-    <div className="flex min-h-screen font-sans text-[#142033] bg-[#F7FAF8] selection:bg-[#10B981]/20">
+    <div className="tl-theme flex min-h-screen font-sans text-[#142033] bg-[#F7FAF8] selection:bg-[#10B981]/20">
       
       {/* SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-[#E2E8F0] bg-white transition-all duration-300 md:flex ${isSidebarCollapsed ? "w-[76px]" : "w-[240px]"}`}>
         <div className="flex h-full flex-col">
           <div className={`flex items-center px-6 py-6 ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-white shadow-sm">🛡️</div>
-            {!isSidebarCollapsed && <h2 className="truncate text-base font-black tracking-tight text-[#142033]">Admin Panel</h2>}
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-[#9E2F22] text-[#FBF3E4] font-brush text-[20px] -rotate-3">长</div>
+            {!isSidebarCollapsed && <h2 className="truncate text-base font-black tracking-tight text-[#142033] font-serif-vn">Trưởng lão các</h2>}
           </div>
 
           <nav className="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar">
@@ -1140,7 +1152,7 @@ export default function TeacherDashboard() {
       <main className={`min-h-screen transition-all duration-300 relative w-full flex flex-col ${isSidebarCollapsed ? "md:pl-[76px]" : "md:pl-[240px]"}`}>
         <header className="sticky top-0 z-30 h-16 border-b border-[#E2E8F0] bg-white/90 px-6 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h2 className="font-black text-lg hidden sm:block text-[#142033]">Bảng Điều Khiển Admin (Teacher Dashboard)</h2>
+            <Link href="/" className="md:hidden flex h-9 w-9 items-center justify-center rounded-[6px] bg-[#9E2F22] text-[#FBF3E4] font-brush text-[20px]" aria-label="Về Động phủ">长</Link><h2 className="font-black text-lg text-[#142033] font-serif-vn">Trưởng lão các <span className="hidden sm:inline font-sans font-semibold text-sm text-[#64748B]">· khu giáo viên</span></h2>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 shadow-sm"><span className="text-sm">⭐</span><span className="text-xs font-black text-[#F4B740]">{hskXp}</span></div>
@@ -1148,9 +1160,17 @@ export default function TeacherDashboard() {
           </div>
         </header>
 
-        <div className="flex-1 p-6 md:p-8 max-w-[1400px] mx-auto w-full">
+        <nav aria-label="Các mục giáo viên" className="md:hidden sticky top-16 z-20 bg-[#F7FAF8]/95 backdrop-blur border-b border-[#E2E8F0] px-3 py-2 flex gap-2 overflow-x-auto">
+          {[["students", "Học viên"], ["hsk3_grading", "Chấm HSK 3.0", pendingHsk3Submissions.length], ["grading", "Chấm HSKK", pendingExams.length], ["grading_test", "Chấm Test", pendingTests.length], ["phonetics_grading", "Ngữ âm", pendingPhoneticCount], ["review_manager", "Bài cũ"], ["hsk3_exam_manager", "Đề HSK 3.0"], ["lecture_manager", "Bài giảng"]].map(([k, v, n]) => (
+            <button key={k} onClick={() => setActiveTab(k)} className={`shrink-0 h-9 px-3 rounded-full text-[13px] font-bold border inline-flex items-center gap-1.5 ${activeTab === k ? "bg-[#1C1A17] text-[#F3EEE2] border-[#1C1A17]" : "bg-white text-[#4A4238] border-[#E2E8F0]"}`}>
+              {v}{n > 0 && <span className="bg-[#9E2F22] text-white text-[10px] px-1.5 rounded-full">{n}</span>}
+            </button>
+          ))}
+          <Link href="/truong-lao" className="shrink-0 h-9 px-3 rounded-full text-[13px] font-bold border bg-[#1C1A17] text-[#E6B656] border-[#1C1A17] inline-flex items-center">长老 Trưởng lão</Link>
+        </nav>
+        <div className="flex-1 p-4 md:p-8 max-w-[1400px] mx-auto w-full">
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-[#142033] tracking-tight">Khu vực Quản trị</h1>
+            <h1 className="text-2xl md:text-3xl font-black text-[#142033] tracking-tight font-serif-vn">{({ students: "Tiến độ học viên", grading: "Chấm thi HSKK", grading_test: "Chấm bài Test", hsk3_exam_manager: "Quản lý đề HSK 3.0", hsk3_grading: "Chấm bài HSK 3.0", phonetics_grading: "Chấm bài Ngữ âm", review_manager: "Kiểm tra bài cũ", lecture_manager: "Kho bài giảng" })[activeTab] || "Khu giáo viên"}</h1>
             <p className="text-[#64748B] font-medium mt-1">
               {activeTab === 'students' ? "Quản lý dữ liệu và theo dõi tiến độ của toàn bộ học viên trong hệ thống." : 
                activeTab === 'grading' ? "Đánh giá kết quả phần thi kỹ năng nói (HSKK) của học viên." : 
@@ -1171,10 +1191,33 @@ export default function TeacherDashboard() {
                   <h3 className="text-xl font-black text-[#142033]">Danh sách Học Viên</h3>
                   <p className="text-sm font-medium text-[#64748B] mt-1">Bảng tổng hợp xếp hạng và mức độ hoàn thiện của từng module kỹ năng.</p>
                 </div>
-                <button onClick={fetchAllStudentsProgress} className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center shadow-sm text-lg hover:bg-slate-50 transition" title="Làm mới dữ liệu">🔄</button>
+                <button onClick={exportStudentsCsv} disabled={!studentsProgress.length} className="h-10 px-3 mr-2 rounded-xl bg-[#9E2F22] text-white text-sm font-bold disabled:opacity-40 shrink-0" title="Tải bảng học viên dạng Excel (CSV)">⬇ Excel</button>
+                <button onClick={fetchAllStudentsProgress} className="w-10 h-10 shrink-0 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center shadow-sm text-lg hover:bg-slate-50 transition" title="Làm mới dữ liệu">🔄</button>
               </div>
 
-              <div className="p-0 overflow-x-auto custom-scrollbar">
+              <ul className="md:hidden divide-y divide-[#E2E8F0]">
+                {isLoadingStudents ? <li className="p-8 text-center text-slate-500">Đang tải…</li>
+                  : studentsProgress.length === 0 ? <li className="p-8 text-center text-slate-500">Chưa có dữ liệu học viên trong hệ thống.</li>
+                  : studentsProgress.map((st, index) => (
+                    <li key={st.id} className="p-4 flex flex-col gap-2.5">
+                      <div className="flex items-center gap-3">
+                        <span className="w-8 text-center font-black text-sm text-[#64748B]">{index < 3 ? ["🥇", "🥈", "🥉"][index] : `#${index + 1}`}</span>
+                        <img src={st.avatar} alt="" className="w-10 h-10 rounded-full bg-slate-100 shrink-0" />
+                        <div className="min-w-0 flex-1"><p className="font-bold truncate">{st.name}</p><p className="text-[11px] text-[#94A3B8] truncate">{st.email}</p></div>
+                        <div className="text-right text-xs font-bold leading-tight shrink-0"><div className="text-[#F59E0B]">{st.xp.toLocaleString()} ⭐</div><div className="text-rose-500">{st.streak} 🔥</div></div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 pl-11">
+                        {st.skills.map((sk, i) => (
+                          <div key={i} className="flex flex-col gap-0.5">
+                            <div className="flex justify-between text-[10px]"><span className="font-bold text-[#64748B] truncate">{sk.name}</span><span className="font-black">{sk.val}%</span></div>
+                            <div className="h-1 bg-[#F1F5F9] rounded-full overflow-hidden"><div className={`h-full ${sk.val > 0 ? sk.color : ""}`} style={{ width: `${sk.val}%` }} /></div>
+                          </div>
+                        ))}
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+              <div className="hidden md:block p-0 overflow-x-auto custom-scrollbar">
                 <table className="w-full min-w-[1000px] text-left">
                   <thead className="bg-slate-50 border-b border-[#E2E8F0]">
                     <tr>

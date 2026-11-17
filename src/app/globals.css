@@ -78,3 +78,25 @@
   .tt-btn.ghost { background: transparent; color: #1C1A17; box-shadow: inset 0 0 0 1.5px #1C1A17 }
   .tt-btn.ghost:hover { background: #EFE7D6 }
 }
+
+/* ===== Trưởng lão các (trang giáo viên): phủ màu Sơn Hải lên giao diện xanh-xám cũ ===== */
+.tl-theme { --tl-paper: #EFE7D6; --tl-card: #FBF8F1; --tl-line: #D8CBAE; --tl-ink: #1C1A17; --tl-mute: #6B6253; --tl-red: #9E2F22; --tl-red-d: #7A2218; --tl-red-soft: #F3E3D2; }
+.tl-theme.bg-\[\#F7FAF8\], .tl-theme .bg-\[\#F7FAF8\], .tl-theme .bg-\[\#F7FAF8\]\/95 { background-color: var(--tl-paper) !important; }
+.tl-theme .bg-white, .tl-theme .bg-white\/90 { background-color: var(--tl-card) !important; }
+.tl-theme .bg-\[\#F8FAFC\], .tl-theme .bg-slate-50, .tl-theme .bg-\[\#F1F5F9\], .tl-theme .bg-slate-100 { background-color: #F4EEE1 !important; }
+.tl-theme .border-\[\#E2E8F0\] { border-color: var(--tl-line) !important; }
+.tl-theme .divide-\[\#E2E8F0\] > :not(:last-child) { border-color: var(--tl-line) !important; }
+.tl-theme .text-\[\#142033\] { color: var(--tl-ink) !important; }
+.tl-theme .text-\[\#64748B\], .tl-theme .text-slate-500, .tl-theme .text-slate-600 { color: var(--tl-mute) !important; }
+.tl-theme .text-\[\#94A3B8\], .tl-theme .text-slate-400 { color: #8A7F6B !important; }
+/* xanh lá chủ đạo → đỏ son */
+.tl-theme .text-\[\#10B981\], .tl-theme .text-\[\#059669\], .tl-theme .text-\[\#047857\], .tl-theme .text-\[\#065F46\] { color: var(--tl-red) !important; }
+.tl-theme .border-\[\#10B981\], .tl-theme .border-\[\#A7F3D0\] { border-color: #D9A9A0 !important; }
+.tl-theme .bg-\[\#10B981\], .tl-theme .bg-\[\#059669\] { background-color: var(--tl-red) !important; }
+.tl-theme .hover\:bg-\[\#059669\]:hover { background-color: var(--tl-red-d) !important; }
+.tl-theme .bg-\[\#ECFDF5\] { background-color: var(--tl-red-soft) !important; }
+.tl-theme .bg-\[\#142033\] { background-color: var(--tl-ink) !important; }
+/* bo góc tròn to → góc vuông nhẹ kiểu thẻ tre */
+.tl-theme .rounded-\[32px\], .tl-theme .rounded-3xl, .tl-theme .rounded-\[24px\] { border-radius: 10px !important; }
+.tl-theme .rounded-2xl { border-radius: 8px !important; }
+.tl-theme h1, .tl-theme h2, .tl-theme h3 { font-family: "Noto Serif", "Be Vietnam Pro", serif; }
