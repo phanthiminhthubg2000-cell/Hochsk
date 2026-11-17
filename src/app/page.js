@@ -1534,9 +1534,9 @@ export default function HomePage() {
               )}
               <section aria-label="Đan phòng và ma vực" className="grid grid-cols-3 gap-2.5 md:gap-4">
                 {[
-                  { href: "/luyen-dan", img: "/tt/luyendan.jpg", zh: "炼丹房", vn: "Luyện Đan Phòng", sub: ldStat?.due ? `${ldStat.due} từ đến hạn ôn` : "Ôn từ vựng ngắt quãng, luyện thành đan", pos: "50% 55%" },
+                  { href: "/luyen-dan", img: "/tt/luyendan.webp", zh: "炼丹房", vn: "Luyện Đan Phòng", sub: ldStat?.due ? `${ldStat.due} từ đến hạn ôn` : "Ôn từ vựng ngắt quãng, luyện thành đan", pos: "50% 55%" },
                   { href: "/tam-ma", img: null, zh: "心魔洞", vn: "Tâm Ma Động", sub: ldStat?.tamMa ? `${ldStat.tamMa} tâm ma đang ẩn nấp` : "Trảm những từ hay sai", pos: "" },
-                  { href: "/ma-vuong", img: "/tt/mavuong.jpg", zh: "魔王", vn: "Ma Vương", sub: `Khiêu chiến Ma Vương ${realm.vn}`, pos: "30% 40%" },
+                  { href: "/ma-vuong", img: "/tt/mavuong.webp", zh: "魔王", vn: "Ma Vương", sub: `Khiêu chiến Ma Vương ${realm.vn}`, pos: "30% 40%" },
                 ].map((x) => (
                   <Link key={x.href} href={x.href} className="group relative h-[112px] md:h-[150px] rounded-[6px] overflow-hidden border border-[#C9A24E] shadow-[0_0_0_2px_#1C1A17] md:shadow-[0_0_0_3px_#1C1A17] text-[#F6EBD2]">
                     {x.img ? <img src={x.img} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: x.pos }} />

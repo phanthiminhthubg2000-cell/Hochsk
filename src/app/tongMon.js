@@ -49,7 +49,7 @@ export function TongMonMap({ tags = {}, lock = {}, glow, onTab, className = "" }
 .tm-tag{font-size:clamp(8.5px,1.8cqw,11.5px)}
 @container (max-width:520px){.tm-plate b{display:none}}
 @media (prefers-reduced-motion:reduce){.tm-anim{animation:none!important}}`}</style>
-      <img src="/tt/tong-mon.jpg" alt="Tông môn Sơn Hải Thư Viện: điện chính dưới trăng tròn, bậc đá lớn giữa thác nước, Tàng Kinh Các bên trái, động tím góc trái, đài lơ lửng trên mây" className="absolute inset-0 w-full h-full object-cover" />
+      <img src="/tt/tong-mon.webp" alt="Tông môn Sơn Hải Thư Viện: điện chính dưới trăng tròn, bậc đá lớn giữa thác nước, Tàng Kinh Các bên trái, động tím góc trái, đài lơ lửng trên mây" className="absolute inset-0 w-full h-full object-cover" />
       <div aria-hidden="true" className="tm-anim absolute pointer-events-none mix-blend-screen" style={{ left: "74%", top: "0%", width: "20%", height: "24%", background: "radial-gradient(closest-side, rgba(170,210,255,.8), transparent)", animation: "tmFlash 5s linear infinite" }} />
       <div aria-hidden="true" className="tm-anim absolute pointer-events-none mix-blend-screen" style={{ left: "4%", top: "66%", width: "20%", height: "28%", background: "radial-gradient(closest-side, rgba(150,90,220,.7), transparent)", animation: "tmGlow 2.6s ease-in-out infinite" }} />
       <div aria-hidden="true" className="tm-anim absolute pointer-events-none" style={{ left: "20%", top: "84%", width: "60%", height: "16%", background: "radial-gradient(closest-side, rgba(240,244,248,.45), transparent)", animation: "tmDrift 22s ease-in-out infinite" }} />
@@ -98,7 +98,7 @@ export function WorldMap({ realmIdx = 0, onPick, picked, unplaced = false, class
 .wm-card .cn{font-family:"Noto Serif SC",serif;letter-spacing:.15em}
 @container (max-width:420px){.wm-card .cn,.wm-card .hk{display:none}}
 @media (prefers-reduced-motion:reduce){.wm-anim{animation:none!important}}`}</style>
-      <img src="/tt/the-gioi.jpg" alt="Sơn Hải Dư Đồ: bảy cung điện trên các vách núi giữa đêm, nối nhau bằng cầu đá và dải sáng vàng, cung điện dưới trăng ở góc phải" className="absolute inset-0 w-full h-full object-cover" />
+      <img src="/tt/the-gioi.webp" alt="Sơn Hải Dư Đồ: bảy cung điện trên các vách núi giữa đêm, nối nhau bằng cầu đá và dải sáng vàng, cung điện dưới trăng ở góc phải" className="absolute inset-0 w-full h-full object-cover" />
       {REGIONS.map((r) => {
         const locked = Math.min(...r.realms) > realmIdx; if (!locked) return null; const [l, t, rr, d] = r.box;
         return <div key={`f${r.key}`} aria-hidden="true" className="absolute pointer-events-none rounded-full" style={{ left: `${l - 4}%`, top: `${t - 4}%`, width: `${rr - l + 8}%`, height: `${d - t + 8}%`, backdropFilter: "grayscale(.85) brightness(.7) blur(1px)", WebkitBackdropFilter: "grayscale(.85) brightness(.7) blur(1px)", maskImage: "radial-gradient(closest-side,#000 55%,transparent)", WebkitMaskImage: "radial-gradient(closest-side,#000 55%,transparent)" }} />;

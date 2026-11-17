@@ -48,7 +48,7 @@ export default function ThienThuPage() {
     <div className="min-h-screen bg-[#15141A] text-[#EFE7D6] flex flex-col" style={{ fontFamily: '"Be Vietnam Pro","Noto Sans SC",system-ui,sans-serif' }}>
       <style>{`@keyframes ttFall{0%{transform:translateY(-80px);opacity:0}20%{opacity:1}100%{transform:translateY(220px);opacity:0}}@keyframes ttIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.tt-a{animation:none!important}}`}</style>
       <div className="relative w-full max-w-[560px] mx-auto aspect-[499/420] overflow-hidden">
-        <img src="/tt/thienthu.jpg" alt="Cuốn thiên thư phát sáng lơ lửng trên tế đàn đá, trang giấy bay tán loạn" className="absolute inset-0 w-full h-full object-cover object-[50%_30%]" />
+        <img src="/tt/thienthu.webp" alt="Cuốn thiên thư phát sáng lơ lửng trên tế đàn đá, trang giấy bay tán loạn" className="absolute inset-0 w-full h-full object-cover object-[50%_30%]" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#15141A]" style={{ background: "linear-gradient(transparent 55%, #15141A)" }} />
         {["山", "水", "心", "道", "人", "火"].map((c, i) => <span key={i} aria-hidden="true" className="tt-a absolute font-bold text-[#F2D58C]" style={{ left: `${12 + i * 14}%`, top: "40%", fontSize: `${20 + (i % 3) * 6}px`, fontFamily: '"Noto Serif SC",serif', textShadow: "0 0 10px #E6B656", animation: `ttFall ${4.5 + (i % 3)}s linear ${i * 0.7}s infinite` }}>{c}</span>)}
       </div>

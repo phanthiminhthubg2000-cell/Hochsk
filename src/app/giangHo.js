@@ -99,7 +99,7 @@ export function ThienBang({ n = 10, me, compact = false, tabs = false, board: fi
   );
 }
 
-// ---------- Bục vinh danh Đấu Pháp Đài (khung ảnh /tt/dauphap-khung.png, toạ độ theo % khung 1024×1536) ----------
+// ---------- Bục vinh danh Đấu Pháp Đài (khung ảnh /tt/dauphap-khung.webp, toạ độ theo % khung 1024×1536) ----------
 export function DauPhapPodium({ me, onFind, board = "luan-vo" }) {
   const { all } = useGiangHo();
   const [b, setB] = useState(board);
@@ -113,7 +113,7 @@ export function DauPhapPodium({ me, onFind, board = "luan-vo" }) {
   const B = BOARDS.find((x) => x.key === b);
   return (
     <section className="relative w-full max-w-[460px] mx-auto aspect-[1024/1536] [container-type:inline-size]" aria-label={`Bục vinh danh Đấu Pháp Đài · ${B.vn}`}>
-      <img src="/tt/dauphap-khung.png" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full" />
+      <img src="/tt/dauphap-khung.webp" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full" />
       <div role="tablist" aria-label="Loại bảng" className="absolute left-0 right-0 -top-1 flex justify-center gap-1 flex-wrap">
         {BOARDS.filter((x) => x.key !== "bang-chien").map((x) => <button key={x.key} role="tab" aria-selected={b === x.key} onClick={() => setB(x.key)} className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${b === x.key ? "bg-[#9E2F22] text-white" : "bg-[#FBF8F1]/90 text-[#1C1A17] border border-[#CDBF9F]"}`}>{x.vn}</button>)}
       </div>

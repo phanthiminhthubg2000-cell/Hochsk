@@ -76,7 +76,7 @@ export default function LuyenDanPage() {
       <style>{`@keyframes ldFlick{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:1}}@media (prefers-reduced-motion:reduce){.ld-a{animation:none!important}}`}</style>
       <main className="max-w-[720px] mx-auto px-4 pt-5 pb-28 md:pb-16 flex flex-col gap-4">
         <div className="relative rounded-[16px] overflow-hidden aspect-[765/360] max-h-[320px]">
-          <img src="/tt/luyendan.jpg" alt="Lò luyện đan bằng đồng có hai rồng, lửa vàng bốc lên trong phòng đan" className="absolute inset-0 w-full h-full object-cover" />
+          <img src="/tt/luyendan.webp" alt="Lò luyện đan bằng đồng có hai rồng, lửa vàng bốc lên trong phòng đan" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0" style={{ background: "linear-gradient(rgba(42,31,26,.55), transparent 35%, transparent 65%, #2A1F1A)" }} />
           <div aria-hidden="true" className="ld-a absolute left-[42%] top-[38%] w-[16%] aspect-square rounded-full mix-blend-screen" style={{ background: "radial-gradient(closest-side, rgba(255,214,120,.75), transparent)", animation: "ldFlick 1.3s ease-in-out infinite" }} />
           <div className="absolute left-4 top-3 flex items-baseline gap-2"><span className="font-brush text-[34px] text-[#E6B656] leading-none">炼丹房</span><span className="font-serif-vn text-[18px] font-extrabold">Luyện Đan Phòng</span></div>

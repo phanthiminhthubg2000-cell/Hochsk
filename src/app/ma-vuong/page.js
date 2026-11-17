@@ -81,7 +81,7 @@ function MaVuong() {
         <span className="absolute inset-0 grid place-items-center text-[11px] font-extrabold">HP {st ? st.hp : B.hp} / {B.hp}</span>
       </div>
       <div key={hit} className="mv-a relative rounded-[14px] overflow-hidden aspect-[761/420]" style={{ animation: hit ? "mvShake .35s ease-in-out" : undefined }}>
-        <img src="/tt/mavuong.jpg" alt={`Ma Vương ${B.vn}`} className="absolute inset-0 w-full h-full object-cover object-[30%_50%]" style={{ filter: `hue-rotate(${B.hue}deg)${end?.win ? " grayscale(1) brightness(.6)" : ""}` }} />
+        <img src="/tt/mavuong.webp" alt={`Ma Vương ${B.vn}`} className="absolute inset-0 w-full h-full object-cover object-[30%_50%]" style={{ filter: `hue-rotate(${B.hue}deg)${end?.win ? " grayscale(1) brightness(.6)" : ""}` }} />
         <div className="absolute inset-0" style={{ background: "linear-gradient(transparent 65%, #1A1420)" }} />
         {hit > 0 && st?.lastDmg > 0 && <>
           <span aria-hidden="true" className="mv-a absolute left-[20%] right-[10%] top-[45%] h-1.5 rounded-full bg-[#FFF3C4] shadow-[0_0_18px_6px_rgba(230,182,86,.7)] -rotate-[20deg]" style={{ animation: "mvSlash .5s ease-out forwards" }} />

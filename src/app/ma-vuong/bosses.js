@@ -1,5 +1,5 @@
 // Ma Vương mỗi cảnh giới — kiểm tra tổng hợp có thanh HP (v2 · giai đoạn C)
-// hue: xoay màu ảnh /tt/mavuong.jpg để mỗi Ma Vương một sắc
+// hue: xoay màu ảnh /tt/mavuong.webp để mỗi Ma Vương một sắc
 export const BOSSES = [
   { idx: 0, vn: "Âm Luật Tiểu Yêu", zh: "音律小妖", lv: "hsk1", modes: ["am", "nghia"], hp: 600, hue: 120, line: "Ngươi còn chưa đọc nổi một thanh điệu!" },
   { idx: 1, vn: "Độc Nhãn Hổ · Hán Tự Ma Vương", zh: "汉字魔王", lv: "hsk1", modes: ["nghia", "han", "am"], hp: 1000, hue: 0, line: "Một con mắt của ta đủ thấy ngươi quên chữ." },
