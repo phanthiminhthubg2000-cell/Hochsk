@@ -66,9 +66,11 @@ export default function GameFrame() {
 
   if (g === null) return null;
   if (!g) {
+    // mở /tro-choi không kèm tên trò → đưa về danh sách trò chơi
+    if (typeof window !== "undefined") window.location.replace("/?tab=play");
     return (
       <div style={{ padding: 24, fontFamily: "system-ui" }}>
-        Không tìm thấy trò chơi. <Link href="/?tab=play">Về khu Chơi</Link>
+        Đang chuyển về danh sách trò chơi… <Link href="/?tab=play">Bấm vào đây nếu không tự chuyển</Link>
       </div>
     );
   }

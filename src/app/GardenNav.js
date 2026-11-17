@@ -56,6 +56,7 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
   useUser();
   const [streak, setStreak] = useState(0);
   const [leaves, setLeaves] = useState(0);
+  const [help, setHelp] = useState(false); // bấm vào bộ đếm → giải thích ngắn
   const [u, setU] = useState(null); // hồ sơ thư sinh (đọc trực tiếp, cập nhật khi trang con cộng tu vi)
   const [toast, setToast] = useState(null);
   const path = usePathname() || "";
@@ -117,16 +118,22 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
             {GARDEN_TABS.map((t) => <Tab key={t.key} t={t} />)}
           </nav>
           <div className="ml-auto flex items-center gap-1.5 shrink-0">
-            <span className="tt-chip" title={`Tu luyện liên tục ${streak} ngày`}>
-              <GIcon name="flame" className="w-4 h-4 text-[#E0614A]" />{streak}<span className="hidden 2xl:inline font-semibold">&nbsp;ngày</span>
-            </span>
+            <button type="button" onClick={() => setHelp(h => !h)} className="tt-chip" title={`Tu luyện liên tục ${streak} ngày`} aria-expanded={help}>
+              <GIcon name="flame" className="w-4 h-4 text-[#E0614A]" />{streak}<span className="font-semibold text-[11px] opacity-80">&nbsp;ngày</span>
+            </button>
             {tv && !isTeacher && (
               <Link href={tv.provisional ? "/linh-can" : "/de-tu"} className="tt-chip hidden xl:inline-flex" title={tv.provisional ? "Chưa định cảnh giới — lên Trắc Linh Đài" : `${tv.vn} · ${tv.stage} · tu vi ${tv.tv}/${tv.need}`}>
                 <span className="zh" aria-hidden="true">{tv.provisional ? "未定" : tv.zh}</span><span className="text-[#E6B656]">{tv.provisional ? "chưa định cảnh giới" : tv.stage}</span>
               </Link>
             )}
-            <span className="tt-chip gold relative" title="Tu vi">
-              <GIcon name="qi" className="w-4 h-4" />{fmt(leaves)}<span className="hidden 2xl:inline font-semibold">&nbsp;tu vi</span>
+            <span className="tt-chip gold relative cursor-pointer" title="Tu vi" onClick={() => setHelp(h => !h)} role="button" tabIndex={0}>
+              <GIcon name="qi" className="w-4 h-4" />{fmt(leaves)}<span className="font-semibold text-[11px] opacity-80">&nbsp;tu vi</span>
+              {help && (
+                <span role="dialog" className="absolute right-0 top-[calc(100%+10px)] z-50 w-[260px] rounded-md bg-[#1C1A17] border border-[#C9A24E] text-[#F3EEE2] p-3 shadow-lg text-[13px] leading-snug font-normal whitespace-normal text-left">
+                  <b className="text-[#E0614A]">🔥 Ngày liên tục</b> — số ngày liền nhau bạn có học. Bỏ một ngày là chuỗi về 0 (trừ khi có Hồi Xuân Đan).<br />
+                  <b className="text-[#E6B656]">✧ Tu vi</b> — điểm tích luỹ khi học bài, ôn từ, làm đề. Đủ tu vi thì lên tầng, lên cảnh giới.
+                </span>
+              )}
               {toast && (
                 <span key={toast.k} role="status" className="absolute right-0 top-[calc(100%+10px)] z-50 flex items-center gap-2 rounded-md bg-[#1C1A17] border border-[#C9A24E] text-[#F3EEE2] pl-2 pr-3 py-1.5 shadow-lg whitespace-nowrap" style={{ animation: "hgNavPop .35s ease-out" }}>
                   <span className="font-brush text-[20px] text-[#E6B656] leading-none" aria-hidden="true">{el ? elementOf(el).zh : "修"}</span>
