@@ -53,6 +53,9 @@ const COURSE_STDS = [
 // "HSK4.1 2.0" → { n: 4, book: 1, std: "2.0", key: "HSK4 2.0" }
 const parseLv = (lv) => { const m = /HSK\s*(\d)(?:\.(\d))?\s*(2\.0|3\.0)/i.exec(lv || ""); return m ? { n: +m[1], book: m[2] ? +m[2] : 0, std: m[3], key: `HSK${m[1]} ${m[3]}` } : null; };
 const BOOK_NAME = { 0: "", 1: "Quyển 上", 2: "Quyển 下" };
+// Bài ngữ âm (phát âm, pinyin) tách thành nhóm riêng, đứng trước các bài học chính
+const partOf = (l) => /ngữ âm/i.test(l?.lectureName || "") ? 0 : 1;
+const PART_NAME = ["Phần ngữ âm · 语音", "Bài học · 课文"];
 
 // Đề HSKK dự phòng khi không đọc được /public/hskk-exam/exams.json
 const HSKK_EXAMS_FALLBACK = [
@@ -750,7 +753,7 @@ export default function HomePage() {
   const courseLessons = useMemo(() => lecturesBankList
     .map((l, i) => ({ l, i, p: parseLv(l.level) }))
     .filter(x => x.p?.key === currentCourse)
-    .sort((a, b) => a.p.book - b.p.book || a.i - b.i)
+    .sort((a, b) => a.p.book - b.p.book || partOf(a.l) - partOf(b.l) || a.i - b.i)
     .map(x => x.l), [lecturesBankList, currentCourse]);
   const courseDone = courseLessons.filter(l => lessonsDone.includes(l.id)).length;
   const coursePct = courseLessons.length ? Math.round((courseDone / courseLessons.length) * 100) : 0;
@@ -1296,7 +1299,7 @@ export default function HomePage() {
                     const lessonVN = (lec) => cdIndex[lec.fileUrl]?.vn || "";
                     const cdOf = (lec) => { const c = cdIndex[lec.fileUrl]; if (!c) return null; const d = Object.keys(cdProg[c.id] || {}).length; return { ...c, done: Math.min(d, c.nodes || d) }; };
                     const nxt = nextLesson && courseLessons.some(l => l.id === nextLesson.id) ? nextLesson : null;
-                    let lastBook = -1;
+                    let lastBook = -1, lastPart = -1, numInPart = 0;
                     return (
                       <>
                         <div className="flex flex-col gap-3">
@@ -1363,16 +1366,21 @@ export default function HomePage() {
                               const done = lessonsDone.includes(lec.id);
                               const current = nxt?.id === lec.id;
                               const pb = parseLv(lec.level)?.book || 0;
-                              const head = pb !== lastBook && BOOK_NAME[pb]; lastBook = pb;
+                              const bookChanged = pb !== lastBook;
+                              const head = bookChanged && BOOK_NAME[pb]; lastBook = pb;
+                              const pt = partOf(lec); const hasParts = courseLessons.some(l => partOf(l) === 0) && courseLessons.some(l => partOf(l) === 1);
+                              const partHead = hasParts && (pt !== lastPart || bookChanged) ? PART_NAME[pt] : null;
+                              if (pt !== lastPart || bookChanged) numInPart = 0; lastPart = pt; numInPart += 1;
                               const inBook = courseLessons.filter(l => (parseLv(l.level)?.book || 0) === pb);
                               const cd = cdOf(lec);
                               const status = (() => { const m = masteryOf(lessonQi[lec.id], done); const rv = reviewOf(lessonQi[lec.id], done); if (rv.crack) return ["裂 Lâu chưa ôn", "text-[#9E2F22]"]; if (rv.due) return [`${m.zh} ${m.vn} · đến hạn ôn`, "text-[#8A5A00]"]; if (done) return [m.n >= 2 ? `Đã lĩnh ngộ · ${m.vn}` : "Đã lĩnh ngộ", "text-[#2F6E5A]"]; if (cd?.done) return [`Đang học · ải ${cd.done}/${cd.nodes}`, "text-[#7A2218]"]; return [current ? "Học tiếp" : "Chưa học", current ? "text-[#7A2218]" : "text-[#8C7F68]"]; })();
                               return (
                                 <li key={lec.id} className="flex flex-col gap-2">
                                   {head && <div className="mt-2 flex items-center gap-3 text-xs font-bold tracking-[0.12em] text-[#6B6253] uppercase"><span>{head}</span><span className="normal-case font-semibold tracking-normal">{inBook.filter(l => lessonsDone.includes(l.id)).length}/{inBook.length} đã lĩnh ngộ</span><span className="flex-1 h-px bg-[#D8CBAE]" /></div>}
+                                  {partHead && <div className="mt-2 flex items-center gap-2 text-[13px] font-extrabold text-[#7A2218]"><span className="w-1.5 h-4 rounded-full bg-[#9E2F22]" aria-hidden="true" />{partHead}<span className="flex-1 h-px bg-[#D8CBAE]" /></div>}
                                   <div className={`flex items-center gap-3 p-3 rounded-[6px] ${current ? "bg-white border-2 border-[#9E2F22]" : "bg-white border border-[#D8CBAE]"}`}>
                                     <button onClick={() => openLecture(lec)} className="flex-1 min-w-0 flex items-center gap-3 text-left">
-                                      <span className={`w-11 h-11 rounded-[6px] grid place-items-center shrink-0 font-extrabold ${done ? "bg-[#FDE3EC]" : current ? "bg-[#F3E3D2] text-[#7A2218]" : "bg-[#ECE3D0] text-[#7A6F5C]"}`}>{done ? <LotusMark className="w-6 h-6" /> : i + 1}</span>
+                                      <span className={`w-11 h-11 rounded-[6px] grid place-items-center shrink-0 font-extrabold ${done ? "bg-[#FDE3EC]" : current ? "bg-[#F3E3D2] text-[#7A2218]" : "bg-[#ECE3D0] text-[#7A6F5C]"}`}>{done ? <LotusMark className="w-6 h-6" /> : numInPart}</span>
                                       <span className="flex-1 min-w-0">
                                         <span className="block font-bold text-[15px] leading-snug truncate" lang="zh-CN">{lec.lectureName}</span>
                                         {lessonVN(lec) && <span className="block text-[13px] text-[#4A4238] truncate">{lessonVN(lec)}</span>}
@@ -1383,7 +1391,11 @@ export default function HomePage() {
                                       <Link href={aiOf(lec)} title="Tự học bài này theo chuỗi ải" className="h-10 px-3 rounded-[6px] bg-[#9E2F22] hover:bg-[#7A2218] text-white text-sm font-bold inline-flex items-center gap-1.5 shrink-0">
                                         <span className="font-brush font-normal text-[17px]" aria-hidden="true">关</span><span className="hidden sm:inline">Vào ải</span>
                                       </Link>
-                                    ) : <Icon name="chevron" className="w-5 h-5 text-[#A89C84] shrink-0" />}
+                                    ) : (
+                                      <button onClick={() => openLecture(lec)} title="Mở bài giảng" className="h-10 px-3 rounded-[6px] border border-[#9E2F22] text-[#9E2F22] hover:bg-[#F3E3D2] text-sm font-bold inline-flex items-center gap-1.5 shrink-0">
+                                        <span className="font-brush font-normal text-[17px]" aria-hidden="true">读</span><span className="hidden sm:inline">Đọc bài</span>
+                                      </button>
+                                    )}
                                   </div>
                                 </li>
                               );
