@@ -1,7 +1,10 @@
+import { guard } from "@/lib/apiGuard";
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(request) {
+  const blocked = await guard("shadowing", 80);
+  if (blocked) return blocked;
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return NextResponse.json({ error: "Thiếu API Key." }, { status: 500 });

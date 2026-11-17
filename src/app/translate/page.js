@@ -169,6 +169,10 @@ export default function TranslatePage() {
       let aiResult;
       if (response.ok) {
         aiResult = await response.json();
+      } else if (response.status === 401 || response.status === 429) {
+        const j = await response.json().catch(() => ({}));
+        alert(j.error || "Bạn cần đăng nhập để dùng chấm bằng AI.");
+        throw new Error(j.error || "blocked");
       } else {
         throw new Error("API Route not found or failed");
       }

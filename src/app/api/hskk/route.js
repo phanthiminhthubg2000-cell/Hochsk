@@ -1,3 +1,4 @@
+import { guard } from "@/lib/apiGuard";
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
@@ -13,6 +14,8 @@ const shuffleArray = (array) => {
 };
 
 export async function POST(req) {
+  const blocked = await guard("hskk", 40);
+  if (blocked) return blocked;
   try {
     const body = await req.json();
 

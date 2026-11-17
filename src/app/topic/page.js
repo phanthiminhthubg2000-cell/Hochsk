@@ -313,6 +313,7 @@ export default function TopicFlashcardPage() {
               body: JSON.stringify({ targetText, audioBase64: reader.result })
             });
             const data = await res.json();
+            if (!res.ok) { alert(data.error || "Lỗi chấm điểm AI!"); setShadowingResult(null); return; }
             setShadowingResult(data);
           } catch (e) {
             alert("Lỗi chấm điểm AI!");

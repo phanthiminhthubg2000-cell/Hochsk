@@ -1,7 +1,10 @@
+import { guard } from "@/lib/apiGuard";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
+  const blocked = await guard("check-sentence", 120);
+  if (blocked) return blocked;
   try {
     const { targetWord, userSentence } = await req.json();
 

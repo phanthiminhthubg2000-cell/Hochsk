@@ -1,6 +1,9 @@
+import { guard } from "@/lib/apiGuard";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req) {
+  const blocked = await guard("ask-ai", 60);
+  if (blocked) return blocked;
   try {
     const { prompt } = await req.json();
 

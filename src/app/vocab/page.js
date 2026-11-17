@@ -171,6 +171,7 @@ export default function FlashcardPage() {
       });
       
       if (!res.ok) {
+        if (res.status === 401 || res.status === 429) { const j = await res.json().catch(() => ({})); if (j.error) { setAiError(j.error); return; } }
         if (res.status === 429) throw new Error("sư phụ đang trả lời quá nhiều bạn cùng lúc, đợi vài giây rồi thử lại nhé! 💦");
         throw new Error("Lỗi kết nối đến não bộ của sư phụ. Vui lòng thử lại! 师");
       }

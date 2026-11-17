@@ -1,9 +1,12 @@
+import { guard } from "@/lib/apiGuard";
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req) {
+  const blocked = await guard("evaluate-translation", 80);
+  if (blocked) return blocked;
   try {
     const body = await req.json();
     const { vietnamese, targetChinese, userTranslation } = body;
