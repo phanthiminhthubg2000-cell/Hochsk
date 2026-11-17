@@ -1063,7 +1063,7 @@ export default function HomePage() {
             <>
               <h3 className="font-serif-vn text-[22px] font-extrabold leading-tight">Chưa định cảnh giới</h3>
               <p className="text-[13px] text-[#CFC3A8] leading-snug">{currentCourse ? `Bạn đang học công pháp ${currentCourse}. ` : ""}Lên Trắc Linh Đài làm bài định cảnh (khoảng 8 phút) để được xếp đúng cảnh giới theo trình độ thật.</p>
-              <Link href="/linh-can" className="self-start mt-1 tt-btn !h-10 !text-sm">Lên Trắc Linh Đài</Link>
+              {(onbHide || !isSignedIn) && <Link href="/linh-can" className="self-start mt-1 tt-btn !h-10 !text-sm">Lên Trắc Linh Đài</Link>}
             </>
           ) : (
             <>
@@ -1209,6 +1209,75 @@ export default function HomePage() {
     );
   };
 
+  // Nhập môn 3 bước — hiện cho người mới đến khi làm đủ (hoặc bấm ẩn)
+  const [onbHide, setOnbHide] = useState(false);
+  useEffect(() => { try { setOnbHide(localStorage.getItem("shtv_onb_hide") === "1"); } catch (_) {} }, []);
+  const OnboardCard = () => {
+    const steps = [
+      { done: !!(realm && !realm.provisional) || !!linhCan?.scores, t: "Lên Trắc Linh Đài", d: "Bài đo khoảng 8 phút để xếp đúng trình độ.", go: () => { window.location.href = "/linh-can"; } },
+      { done: !!lastLecture, t: "Chọn giáo trình", d: "Vào Công pháp, chọn HSK đang học trên lớp.", go: () => goTab("learn") },
+      { done: lessonsDone.length > 0, t: "Học xong bài đầu tiên", d: "Đọc bài giảng hoặc vượt chuỗi ải tự học.", go: () => nextLesson ? openLecture(nextLesson) : goTab("learn") },
+    ];
+    const n = steps.filter(x => x.done).length;
+    if (!isSignedIn || onbHide || n === steps.length) return null;
+    return (
+      <section className={`${card} p-4 md:p-5 flex flex-col gap-3 !border-[#9E2F22]`} aria-label="Nhập môn">
+        <div className="flex items-baseline justify-between gap-2">
+          <h2 className="tt-card-title"><span className="zh" aria-hidden="true">入门</span>Nhập môn · 3 bước đầu</h2>
+          <button onClick={() => { setOnbHide(true); try { localStorage.setItem("shtv_onb_hide", "1"); } catch (_) {} }} className="text-xs text-[#6B6253] underline">Ẩn</button>
+        </div>
+        <ol className="grid gap-2 md:grid-cols-3">
+          {steps.map((x, i) => (
+            <li key={i}>
+              <button onClick={x.go} disabled={x.done} className={`w-full h-full text-left flex gap-3 items-start p-3 rounded-[6px] border ${x.done ? "bg-[#F4EEE1] border-[#E3D8C2] opacity-70" : i === n ? "bg-white border-[#9E2F22] shadow-[0_0_0_1px_#9E2F22]" : "bg-white border-[#D8CBAE]"}`}>
+                <span className={`w-8 h-8 shrink-0 rounded-full grid place-items-center font-extrabold ${x.done ? "bg-[#2F6E5A] text-white" : "bg-[#9E2F22] text-white"}`}>{x.done ? "✓" : i + 1}</span>
+                <span className="min-w-0"><b className="block text-[15px]">{x.t}</b><span className="block text-[13px] text-[#4A4238] leading-snug">{x.d}</span></span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </section>
+    );
+  };
+  // Tiến độ của bạn — bài đã học, từ đang nhớ / hay sai, điểm các bài thi gần đây
+  const ProgressCard = () => {
+    if (!isSignedIn) return null;
+    const graded = results.filter(r => r.graded && r.score != null).slice(0, 8).reverse();
+    const pct = (r) => Math.max(0, Math.min(100, Math.round(r.max ? (r.score / r.max) * 100 : r.score)));
+    const tiles = [
+      [lessonsDone.length, "bài đã học", "课"],
+      [ldStat?.learned ?? "—", "từ đang nhớ", "词"],
+      [ldStat?.due ?? 0, "từ đến hạn ôn", "温"],
+      [ldStat?.tamMa ?? 0, "từ hay sai", "魔"],
+    ];
+    return (
+      <section className={`${card} p-5 flex flex-col gap-3 min-w-0`} aria-label="Tiến độ của bạn">
+        <h3 className="tt-card-title"><span className="zh" aria-hidden="true">进度</span>Tiến độ của bạn</h3>
+        <div className="grid grid-cols-4 gap-2">
+          {tiles.map(([v, l, z]) => (
+            <div key={l} className="rounded-[6px] bg-[#F4EEE1] border border-[#E3D8C2] p-2 text-center">
+              <div className="font-brush text-[16px] text-[#9E2F22] leading-none" aria-hidden="true">{z}</div>
+              <div className="font-extrabold text-[20px] tabular-nums leading-tight">{v}</div>
+              <div className="text-[11px] text-[#6B6253] leading-tight">{l}</div>
+            </div>
+          ))}
+        </div>
+        <div>
+          <div className="text-[13px] font-bold text-[#4A4238] mb-1.5">Điểm các bài thi gần đây <span className="font-normal text-[#6B6253]">(% điểm tối đa)</span></div>
+          {graded.length === 0 ? <p className="text-[13px] text-[#6B6253]">Chưa có bài nào được chấm. Vào Độ kiếp làm một đề để bắt đầu theo dõi.</p> : (
+            <div className="flex items-end gap-1.5 h-[92px]" role="img" aria-label={`Điểm: ${graded.map(pct).join(", ")}`}>
+              {graded.map((r, i) => (
+                <button key={i} onClick={() => openResult(r)} title={`${r.title} · ${r.score}${r.max ? "/" + r.max : ""}`} className="flex-1 flex flex-col items-center justify-end gap-1 h-full min-w-0">
+                  <span className="text-[10px] font-bold tabular-nums">{pct(r)}</span>
+                  <span className={`w-full rounded-t-[3px] ${pct(r) >= 60 ? "bg-[#2F6E5A]" : "bg-[#C2410C]"}`} style={{ height: `${Math.max(6, pct(r) * 0.7)}px` }} />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  };
   const ResultsCard = ({ limit = 3 }) => {
     const pending = results.filter(r => !r.graded).length;
     return (
@@ -1256,6 +1325,7 @@ export default function HomePage() {
                 <p className="tt-eyebrow">{greet}, thư sinh</p>
                 <h1 className="font-serif-vn text-2xl md:text-[28px] font-extrabold tracking-tight">{isSignedIn ? firstName : "Thư sinh mới nhập môn"}{isSignedIn && realm && !realm.provisional ? <span className="ml-3 text-[15px] font-bold text-[#9E2F22] align-middle">{realm.zh} {realm.vn} · {realm.stage}</span> : null}</h1>
               </div>
+              <OnboardCard />
               {newResults.length > 0 && (
                 <button onClick={() => openResult(newResults[0])} className="flex items-center gap-4 rounded-[6px] bg-[#1C1A17] text-[#F3EEE2] border border-[#C9A24E] p-4 text-left hover:bg-[#2A2622] transition-colors">
                   <span className="w-12 h-12 shrink-0 rounded-[4px] bg-[#9E2F22] text-[#FBF3E4] grid place-items-center font-brush text-[24px] -rotate-3" aria-hidden="true">批</span>
@@ -1281,6 +1351,7 @@ export default function HomePage() {
                 <LinhCanCard />
                 <MissionsCard />
                 <StreakCard />
+                <ProgressCard />
                 <ResultsCard />
               </div>
             </div>
