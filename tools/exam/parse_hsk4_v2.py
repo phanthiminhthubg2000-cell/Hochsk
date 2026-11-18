@@ -307,6 +307,11 @@ if __name__ == "__main__":
         dst = os.path.join(OUT, "audio", code + ".mp3")
         if os.path.exists(mp3) and not os.path.exists(dst):
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", mp3, "-ac", "1", "-b:a", "32k", dst], check=True)
+        KEYS = json.load(open(os.path.join(os.path.dirname(__file__), "hsk4_keys.json"), encoding="utf-8"))
+        if P["id"] in KEYS:
+            for u in P["units"]:
+                for q in u["qs"]: q.update(KEYS[P["id"]].get(str(q["n"]), {}))
+            probs = [x for x in probs if "đáp án" not in x and "trang đáp án" not in x] + ["(đáp án tự giải, lấy từ hsk4_keys.json)"]
         if not os.path.exists(dst): P["hidden"] = True; probs.append("chưa có file nghe → ẩn")
         print(P["id"], "câu:", sum(len(u["qs"]) for u in P["units"]), "| lỗi:", len(probs))
         for p in probs[:14]: print("   ", p)
