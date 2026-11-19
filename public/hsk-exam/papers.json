@@ -88,5 +88,17 @@
   "level": 5,
   "name": "全真模拟试卷 2",
   "file": "papers/hsk5-02.json"
+ },
+ {
+  "id": "hsk6-01",
+  "level": 6,
+  "name": "模拟试卷 1",
+  "file": "papers/hsk6-01.json"
+ },
+ {
+  "id": "hsk6-02",
+  "level": 6,
+  "name": "模拟试卷 2",
+  "file": "papers/hsk6-02.json"
  }
 ]

@@ -123,6 +123,7 @@ button{font-family:inherit;cursor:pointer}
 .orow .qn{background:var(--g);color:#fff;min-width:34px;display:grid;place-items:center;font-size:16px}
 .orow label{flex:1;display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;font-size:16px}
 .orow input{width:18px;height:18px;accent-color:#1677ff;margin:0}
+.rdbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:8px 32px;padding:8px 12px;background:#fff7e0;border:1px solid #e4c66a;font-size:15px}.rdtext p{text-indent:2em;line-height:1.9}
 .wprompt{padding:40px 30px 10px 36px;font-size:calc(var(--fs) + 1px);line-height:1.7;text-indent:2em}
 .wimg{display:block;margin:6px auto 12px;width:min(100%,430px);border:1px solid #333}
 .wta{display:block;width:calc(100% - 64px);margin:6px 32px 8px;min-height:240px;border:1px solid #888;padding:10px 12px;font-size:17px;line-height:1.8;font-family:inherit;resize:vertical}
@@ -419,7 +420,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     lang: "zh",
     cand: { name: "", email: "", gender: "女", nat: "Vietnam", level: "", paperId: "" },
     list: [], P: null, U: [], Q: [],
-    ans: {}, wr: {}, bld: {}, mark: {},
+    ans: {}, wr: {}, bld: {}, mark: {}, rd: {},
     sec: null, cur: 0, deadline: 0, secDur: 0,
     fs: 15, audio: null, audioUrl: null, lastPlaying: -1, timed: false,
     started: 0, finished: false, result: null, sent: false,
@@ -571,7 +572,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     S.Q = [];
     S.U.forEach((u, i) => u.qs.forEach((q) => S.Q.push({ ...q, u: i, sec: u.sec })));
     S.timed = S.U.filter((u) => u.sec === "L").every((u) => Array.isArray(u.t));
-    S.ans = {}; S.wr = {}; S.bld = {}; S.mark = {};
+    S.ans = {}; S.wr = {}; S.bld = {}; S.mark = {}; S.rd = {};
     document.title = `${P.subject} · ${P.name || meta.name} · HSK GARDEN`;
   }
   const secUnits = (k) => S.U.map((u, i) => (u.sec === k ? i : -1)).filter((i) => i >= 0);
@@ -852,6 +853,23 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     const line = sel.length ? sel.map((wi, j) => `<span class="w" data-unb="${q.n}" data-j="${j}">${esc(q.w[wi])}</span>`).join("") : `<span class="ph">点击下面的词语，组成句子 · Bấm các từ bên dưới để xếp thành câu</span>`;
     return `<div class="q" data-q="${q.n}"><div class="qh"><span class="qn">${q.n}</span><span class="qs">${q.head ? zh(q.head) : "完成句子"}</span></div><div class="qbody"><div class="bline">${line}</div><div class="chips">${q.w.map((w, i) => `<button type="button" class="${sel.includes(i) ? "used" : ""}" data-bw="${q.n}" data-i="${i}" ${sel.includes(i) ? "disabled" : ""}>${esc(w)}</button>`).join("")}</div><div class="btools"><button type="button" data-bclr="${q.n}">重做 · Làm lại</button></div></div></div>`;
   }
+  // 缩写 (HSK6 2.0 câu 101): q.read = đoạn văn đọc trước trong q.readSec giây, sau đó ẩn hẳn rồi mới viết
+  function readLeft(q) { const r = S.rd[q.n]; if (!r) return q.readSec || 600; if (r.done) return 0; return Math.max(0, (q.readSec || 600) - Math.floor((Date.now() - r.t0) / 1000)); }
+  function qRead(q) {
+    if (!S.rd[q.n]) S.rd[q.n] = { t0: Date.now() };
+    const left = readLeft(q);
+    if (left > 0 && !S.rd[q.n].done) {
+      return `<div class="wprompt" style="text-indent:0"><b>${esc(q.prompt || "")}</b></div><div class="rdbar"><span>阅读时间 · Thời gian đọc: <b id="rdLeft">${fmtT(left)}</b></span><button type="button" class="btn sm g" data-rdgo="${q.n}">开始写作 · Bắt đầu viết</button></div><div class="passage rdtext">${q.read.map((t) => `<p>${esc(t)}</p>`).join("")}</div>`;
+    }
+    return qWrite({ ...q, prompt: q.prompt2 || "请将这篇文章缩写成一篇短文（约400字）。标题自拟，只需复述文章内容，不需加入自己的观点。" }, true, true);
+  }
+  function fmtT(s) { return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
+  setInterval(() => {
+    const el = document.getElementById("rdLeft"); if (!el || !S.U) return;
+    const u = S.U[S.cur], q = u && u.qs[0]; if (!q || !q.read) return;
+    const left = readLeft(q); el.textContent = fmtT(left);
+    if (left <= 0) { S.rd[q.n].done = true; drawUnit(); }
+  }, 1000);
   function qWrite(q, big) {
     const v = esc(S.wr[q.n] || ""), c = cnt(S.wr[q.n]);
     if (big) return `${q.prompt ? `<div class="wprompt">${esc(q.prompt)}</div>` : ""}${q.img ? `<img class="wimg" src="${esc((S.P.img || {})[q.img] || q.img)}" alt="">` : ""}<textarea class="wta" data-w="${q.n}" spellcheck="false" placeholder="请在此处作答（使用中文输入法）">${v}</textarea><div class="wct"><span>${q.min ? `要求：不少于 ${q.min} 字` : ""}</span><span>已输入 <b id="wc${q.n}" class="${q.min && c >= q.min ? "ok" : ""}">${c}</b> 字</span></div>`;
@@ -866,7 +884,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     if (u.order) {
       h += `<div class="passage">${u.order.map((t, j) => `<p class="para"><span class="lt">${LET[j]}</span><span>${esc(t)}</span></p>`).join("")}<div class="seq">${u.qs.map((q, j) => `${j ? '<span class="ar">→</span>' : ""}<span class="bx"><b>${S.ans[q.n] || ""}</b><small>${q.n}.</small></span>`).join("")}</div></div>`;
     } else if (bigWrite) {
-      h += qWrite(u.qs[0], true);
+      h += u.qs[0].read ? qRead(u.qs[0]) : qWrite(u.qs[0], true);
     } else {
       h += drawRef(u) + drawPassage(u);
       if (!u.ex && !u.ref && !u.passage) h += '<div style="height:38px"></div>';
@@ -1034,6 +1052,8 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
       const us = secUnits(S.sec);
       if (e.target.closest("[data-prev]")) go(us[us.indexOf(S.cur) - 1]);
       else if (e.target.closest("[data-next]")) go(us[us.indexOf(S.cur) + 1]);
+      const rg = e.target.closest("[data-rdgo]");
+      if (rg && confirm("开始写作后，文章将不再显示。确定吗？\nBắt đầu viết thì bài đọc sẽ ẩn hẳn. Chắc chắn chứ?")) { S.rd[+rg.dataset.rdgo] = { ...(S.rd[+rg.dataset.rdgo] || {}), done: true }; drawUnit(); }
       const st = e.target.closest("[data-star]");
       if (st) { const i = +st.dataset.star; S.mark[i] = !S.mark[i]; st.classList.toggle("on", !!S.mark[i]); drawNav(); }
       const bw = e.target.closest("[data-bw]");
