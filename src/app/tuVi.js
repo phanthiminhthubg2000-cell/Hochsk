@@ -110,6 +110,6 @@ export function nextStreak(st, today, dayNum) {
 // Ngũ hành của từng trang con (hiện trên thông báo tu vi)
 export const PAGE_ELEMENT = {
   "/vocab": "moc", "/topic": "moc", "/luan-vo": "moc", "/dictation": "kim", "/translate": "thuy", "/test": "thuy",
-  "/arrange": "tho", "/roleplay": "hoa", "/hskk": "hoa",
+  "/arrange": "tho", "/roleplay": "hoa", "/hskk": "hoa", "/hskk-cao": "hoa",
   "/luyen-dan": "moc", "/tam-ma": "moc", "/ma-vuong": "moc",
 };

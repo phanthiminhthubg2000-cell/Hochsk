@@ -568,6 +568,13 @@ export default function HskkPage() {
         <div className="w-full max-w-5xl animate-fade-in">
           
           {examPhase === "idle" && (
+            <Link href="/hskk-cao" className="mb-6 flex items-center gap-3 rounded-[20px] border border-[#D8CBAE] bg-[#FBF8F1] px-5 py-4 hover:border-[#1C1A17]">
+              <span className="text-2xl" lang="zh-CN">高</span>
+              <span className="flex-1"><b className="block text-slate-900">Luyện HSKK Cao cấp</b><span className="text-sm text-slate-600">Luyện riêng từng phần: nghe kể lại (đề thật, audio gốc) · trả lời câu hỏi (123 câu, có bài mẫu) · đọc to</span></span>
+              <span className="text-slate-500">→</span>
+            </Link>
+          )}
+          {examPhase === "idle" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
               <div className="lg:col-span-5 bg-white/95 backdrop-blur-xl p-8 rounded-[32px] shadow-sm border border-white sticky top-28">

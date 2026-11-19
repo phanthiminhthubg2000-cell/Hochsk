@@ -813,7 +813,7 @@ export default function HomePage() {
     { key: "grammar", label: "Ngữ pháp", bc: "Thiên Cơ Trận", bcZh: "天机阵", el: "tho", sub: "Sắp xếp câu cho đúng trận pháp", href: "/arrange" },
     { key: "listening", label: "Nghe", bc: "Thiên Âm Cốc", bcZh: "天音谷", el: "kim", sub: "Nghe và chép lại", href: "/dictation" },
     { key: "translation", label: "Đọc · dịch", bc: "Văn Tự Tháp", bcZh: "文字塔", el: "thuy", sub: "Dịch Việt ⇄ Trung, đọc hiểu", href: "/translate" },
-    { key: "speaking", label: "Nói", bc: "Khẩu Ngữ Đài", bcZh: "口语台", el: "hoa", sub: "Nhập vai hội thoại theo tình huống", href: "/roleplay", extra: { href: "/hskk", label: "Thiên Ngôn Điện · thi nói HSKK" } },
+    { key: "speaking", label: "Nói", bc: "Khẩu Ngữ Đài", bcZh: "口语台", el: "hoa", sub: "Nhập vai hội thoại theo tình huống", href: "/roleplay", extra: { href: "/hskk", label: "Thiên Ngôn Điện · thi nói HSKK" }, extra2: { href: "/hskk-cao", label: "Luyện HSKK Cao cấp · nghe kể lại, trả lời câu hỏi" } },
   ].map(s => ({ ...s, value: Math.round(Math.min(skillMap[s.key] || 0, 100)) }));
   const weakest = [...skills].sort((a, b) => a.value - b.value)[0];
 
@@ -1569,6 +1569,7 @@ export default function HomePage() {
                         </div>
                         {hot && <span className="absolute -top-2.5 right-3 text-[11px] font-bold text-white bg-[#9E2F22] px-2 py-0.5 rounded-[3px] shadow">nên luyện</span>}
                         {s.extra && <Link href={s.extra.href} className="relative z-10 self-start text-xs font-semibold text-[#7A2218] underline underline-offset-2">{s.extra.label}</Link>}
+                        {s.extra2 && <Link href={s.extra2.href} className="relative z-10 self-start text-xs font-semibold text-[#7A2218] underline underline-offset-2">{s.extra2.label}</Link>}
                       </div>
                     );
                   })}
