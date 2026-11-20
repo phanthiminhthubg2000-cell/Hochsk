@@ -24,6 +24,7 @@
 /* ===== Sơn Hải Thư Viện 山海书院 — chữ thư pháp & hiệu ứng tu tiên ===== */
 .font-brush { font-family: "Ma Shan Zheng", "Noto Serif SC", serif; font-weight: 400 }
 .font-serif-vn { font-family: "Noto Serif", "Noto Serif SC", serif }
+.font-zh { font-family: "Noto Serif SC", "Noto Sans SC", serif }
 @keyframes tt-pulse { 0%,100% { opacity: .55 } 50% { opacity: 1 } }
 @keyframes tt-breathe { 0%,100% { transform: scale(.88) } 50% { transform: scale(1.12) } }
 @keyframes tt-spin { to { transform: rotate(360deg) } }

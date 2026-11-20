@@ -1342,6 +1342,11 @@ export default function HomePage() {
                 <span className="flex-1 min-w-0"><b className="block font-serif-vn">Thời khoá biểu</b><span className="block text-sm text-[#6B6253]">Lịch học các lớp · bấm vào buổi học để mở đúng bài giảng</span></span>
                 <span className="text-[#6B6253]">›</span>
               </Link>
+              <Link href="/huyen-hoc" className="flex items-center gap-4 rounded-[6px] bg-white border border-[#D8CBAE] p-3.5 hover:border-[#9E2F22]">
+                <span className="w-11 h-11 shrink-0 rounded-[4px] bg-[#1C1A17] text-[#E6B656] grid place-items-center font-brush text-[24px]" aria-hidden="true">玄</span>
+                <span className="flex-1 min-w-0"><b className="block font-serif-vn">Huyền học 玄学</b><span className="block text-sm text-[#6B6253]">Ngũ hành · Can chi · Kinh Dịch · Bát tự · Phong thuỷ · Hoàng lịch — học từ vựng qua văn hoá</span></span>
+                <span className="text-[#6B6253]">›</span>
+              </Link>
               {newResults.length > 0 && (
                 <button onClick={() => openResult(newResults[0])} className="flex items-center gap-4 rounded-[6px] bg-[#1C1A17] text-[#F3EEE2] border border-[#C9A24E] p-4 text-left hover:bg-[#2A2622] transition-colors">
                   <span className="w-12 h-12 shrink-0 rounded-[4px] bg-[#9E2F22] text-[#FBF3E4] grid place-items-center font-brush text-[24px] -rotate-3" aria-hidden="true">批</span>
