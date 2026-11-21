@@ -460,6 +460,21 @@ export default function HomePage() {
   const newResults = results.filter(r => r.graded && !seenIds.has(r.type + r.id));
   const markSeen = (keys) => setSeenIds(prev => { const n = new Set(prev); keys.forEach(k => n.add(k)); try { localStorage.setItem("hg_seen_results", JSON.stringify([...n].slice(-300))); } catch (_) {} return n; });
   const openResult = (r) => { setSelectedResult(r); if (r.graded) markSeen([r.type + r.id]); };
+  // Mở lại bài đã nộp trong phòng thi ở chế độ chữa đề (đáp án của học viên + đáp án đúng + nghe lại + bài mẫu)
+  const openReview = (r) => {
+    const [dir, paper] = String(r.examId || "").split("/");
+    let ans = {};
+    try { ans = JSON.parse(r.review?.answersJson || "{}") || {}; } catch (_) { ans = {}; }
+    if (!Object.keys(ans).length) {
+      // bài nộp cũ chưa lưu đáp án đầy đủ: dựng lại từ chuỗi chấm tự động "12:B✓ 13:C✗A"
+      String(r.review?.briefs || "").split(/\s+/).forEach((x) => { const m = x.match(/^(\d+):(.*?)(✓|✗)/); if (m && m[2] !== "-") ans[m[1]] = m[2]; });
+      (r.review?.writing || []).forEach(([n, t]) => { if (n && t) ans[n] = t; });
+    }
+    try { localStorage.setItem("hsk_review", JSON.stringify({ paper, ans, name: user?.fullName || "", min: r.review?.min || 0 })); } catch (_) {}
+    setSelectedResult(null);
+    const base = dir === "hsk2-exam" ? EXAM_CENTER_2 : EXAM_CENTER;
+    setActiveHskExamView({ ...base, review: true, examName: `Chữa đề · ${r.title}`, fileUrl: `/${dir}/index.html?paper=${encodeURIComponent(paper)}&review=1` });
+  };
 
   // --- BÀI GIẢNG ---
   const [lecturesBankList, setLecturesBankList] = useState([]);
@@ -599,6 +614,8 @@ export default function HomePage() {
           writing71Count: d.writing?.c71 ?? 0,
           writing72Count: d.writing?.c72 ?? 0,
           durationMin: d.durationMin ?? null,
+          // toàn bộ đáp án đã chọn — để học viên mở lại và chữa đề sau này
+          answersJson: (() => { try { return JSON.stringify(d.answers || {}).slice(0, 60000); } catch (_) { return ""; } })(),
           submittedAt: serverTimestamp()
         });
         hsk3SavedRef.current = ref.id;
@@ -721,6 +738,7 @@ export default function HomePage() {
           await grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) }));
           await grab("hsk3_submissions", "userId", (h, id) => ({
             id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback, examId: h.examId || "",
+            review: { answersJson: h.answersJson || "", briefs: [h.listeningDetail, h.readingDetail, h.writingAutoDetail].filter(Boolean).join(" "), writing: (h.writingItems || []).map((x) => [x.n, x.text]), min: h.durationMin || 0 },
             autoPct: (() => { const c = (h.listeningCorrect || 0) + (h.readingCorrect || 0) + (h.writingAutoCorrect || 0), t = (h.listeningTotal || 0) + (h.readingTotal || 0) + (h.writingAutoTotal || 0); return t ? Math.round((c / t) * 100) : null; })(),
             parts: [["Nghe", h.listeningCorrect, h.listeningTotal], ["Đọc", h.readingCorrect, h.readingTotal], ["Viết (tự chấm)", h.writingAutoCorrect, h.writingAutoTotal]].filter(x => x[2]),
             time: ms(h.gradedAt) || ms(h.submittedAt)
@@ -1873,6 +1891,9 @@ export default function HomePage() {
               <h3 className="font-bold text-[15px] truncate">{activeHskExamView.examName}</h3>
               <p className="text-xs text-[#E2C3AC] truncate">Thí sinh: {user?.fullName || "Học viên"} · {activeHskExamView.level}</p>
             </div>
+            {activeHskExamView.review ? (
+              <button onClick={() => setActiveHskExamView(null)} className="h-10 px-4 rounded-xl bg-[#9E2F22] hover:bg-[#C9962F] text-white text-sm font-bold inline-flex items-center gap-1.5 shrink-0"><Icon name="close" className="w-4 h-4" />Đóng chữa đề</button>
+            ) : (<>
             <button
               onClick={async () => {
                 if (activeHskExamView.center) {
@@ -1939,6 +1960,7 @@ export default function HomePage() {
             >
               <Icon name="close" className="w-5 h-5" />
             </button>
+            </>)}
           </div>
           <div className="flex-1 bg-[#EFE7D6] relative overflow-hidden">
             <iframe
@@ -2030,6 +2052,9 @@ export default function HomePage() {
                   <h4 className={eyebrow}>Lộ trình gợi ý</h4>
                   <div className="mt-2 rounded-xl bg-[#FFF8EA] border border-[#F6D99A] p-4 text-sm leading-relaxed whitespace-pre-wrap">{selectedResult.recommendation}</div>
                 </div>
+              )}
+              {selectedResult.type === "hsk" && /^(hsk-exam|hsk2-exam)\/./.test(selectedResult.examId || "") && (
+                <button onClick={() => openReview(selectedResult)} className="h-12 rounded-[6px] bg-[#1C1A17] hover:bg-[#2A2622] text-[#F2D58C] font-bold inline-flex items-center justify-center gap-2">📝 Xem lại bài làm & chữa đề</button>
               )}
               <button onClick={() => setSelectedResult(null)} className="h-12 rounded-[6px] bg-[#9E2F22] hover:bg-[#7A2218] text-white font-bold">Đã hiểu</button>
             </div>

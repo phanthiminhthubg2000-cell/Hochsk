@@ -130,6 +130,30 @@ button{font-family:inherit;cursor:pointer}
 .wct{margin:0 32px 18px;color:#777;font-size:13px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .wct b{color:#1a6fd6;font-weight:600}.wct b.ok{color:#2b8a3e}
 .mnav{display:flex;justify-content:center;gap:34px;padding:26px 0 10px}
+/* chế độ chữa đề */
+.rv .opt,.rv .iopt,.rv .mrow label,.rv .orow label{cursor:default}
+.rv .opt:hover{background:transparent}
+.opt.rok,.orow label.rok{background:#e6f5d9;box-shadow:inset 3px 0 0 #3f9a1c}
+.opt.rno,.orow label.rno{background:#fde8e6;box-shadow:inset 3px 0 0 #d9363e}
+.iopt.rok,.mrow label.rok{border-color:#3f9a1c;background:#e6f5d9}
+.iopt.rno,.mrow label.rno{border-color:#d9363e;background:#fde8e6}
+.rvl{margin:4px 14px 12px;padding:7px 12px;border-radius:3px;font-size:14px;line-height:1.6;text-indent:0}
+.rvl.ok{background:#eef8e6;color:#2f7a12}.rvl.no{background:#fdf0ee;color:#b3261e}.rvl.na{background:#f4f4f4;color:#666}
+.rvl b{font-weight:700}
+.passage .bl.rok{color:#2f7a12;border-color:#3f9a1c}.passage .bl.rno{color:#b3261e;border-color:#d9363e;text-decoration:line-through}
+.passage .bl .fix{color:#2f7a12;text-decoration:none;display:inline-block;margin-left:4px;font-weight:700}
+.seq .bx b.rok{border-color:#3f9a1c;color:#2f7a12}.seq .bx b.rno{border-color:#d9363e;color:#b3261e}
+.seq .bx em{font-style:normal;color:#2f7a12;font-weight:700;font-size:13px}
+.nav .it .rk{margin-left:auto;font-size:12px;font-weight:700}.nav .it .rk.ok{color:#3f9a1c}.nav .it .rk.no{color:#d9363e}.nav .it .rk.na{color:#999}
+.nav .sh.rvsh{cursor:pointer}
+.rvbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;padding:10px 12px;background:#f3f8ec;border:1px solid #dfe9cf;border-radius:3px;font-size:14px;text-indent:0}
+.rvbar audio{height:34px;max-width:100%;flex:1 1 260px}
+.rvref{margin:10px 0 0;padding:12px 14px;background:#fffbea;border:1px solid #f0dfa8;border-radius:3px;white-space:pre-wrap;line-height:1.9;font-size:var(--fs);text-indent:0}
+.rvref h4{margin:0 0 6px;font-size:14px;color:#8a6d3b}
+.rvmine{white-space:pre-wrap;background:#fff;border:1px solid #e3ead6;padding:10px 12px;line-height:1.9;min-height:60px}
+.rvtop{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rvtop .btn{padding:6px 12px}
+
 .side{align-self:start;position:sticky;top:10px}
 .cand{background:linear-gradient(180deg,#7ab81f,#6aab14);color:#fff;border-radius:3px;padding:14px 12px 18px;font-size:12.5px;line-height:1.35}
 .cand .av{width:60px;height:60px;border-radius:50%;margin:0 auto 10px;background:#fff;overflow:hidden;display:block}
@@ -382,7 +406,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
   <div class="res"><div class="panel"><span class="ptag" style="font-size:15px;padding:5px 18px">作答结果（客观题）</span>
     <div class="tip">仅判断客观题作答，主观题系统不自动阅卷。</div>
     <table class="rt" id="resTbl"></table>
-    <div style="display:flex;justify-content:center;gap:30px;margin-top:22px"><button class="btn sm" type="button" id="btnCand">考生信息</button><button class="btn sm g hide" type="button" id="btnScript">听力文本</button><button class="btn sm g" type="button" id="btnConfirm">确认</button></div>
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px 30px;margin-top:22px"><button class="btn sm" type="button" id="btnCand">考生信息</button><button class="btn sm g hide" type="button" id="btnScript">听力文本</button><button class="btn sm g" type="button" id="btnReview">📝 查看解析 · Xem lại &amp; chữa đề</button><button class="btn sm g" type="button" id="btnConfirm">确认</button></div>
     <p class="sent" id="sentMsg"></p>
   </div></div>
   <div class="foot">HSK GARDEN · 新版HSK（3.0）模拟考试</div>
@@ -423,7 +447,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     ans: {}, wr: {}, bld: {}, mark: {}, rd: {},
     sec: null, cur: 0, deadline: 0, secDur: 0,
     fs: 15, audio: null, audioUrl: null, lastPlaying: -1, timed: false,
-    started: 0, finished: false, result: null, sent: false,
+    started: 0, finished: false, result: null, sent: false, review: false, onlyWrong: false,
   };
   window.__HSK = S;
 
@@ -760,7 +784,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
       }
     }
   }
-  setInterval(() => { if (S.sec && S.sec !== "done" && S.sec !== "_") tick(); }, 250);
+  setInterval(() => { if (S.sec && S.sec !== "done" && S.sec !== "_" && !S.review) tick(); }, 250);
 
   // ---------- thanh điều hướng trái ----------
   const PNAME = ["", "第一部分", "第二部分", "第三部分", "第四部分", "第五部分"];
@@ -768,6 +792,10 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     let h = "";
     for (const k of secOrder()) {
       const open = S.sec === k;
+      if (S.review) {
+        const qs = S.Q.filter((q) => q.sec === k && !isOpen(q)), ok = qs.filter((q) => keyOk(q).ok).length;
+        h += `<div class="sh rvsh" data-rvsec="${k}"><span class="ic">${SECI[k]}</span>${SECN[k]}${qs.length ? ` <small style="margin-left:6px;font-weight:400">${ok}/${qs.length}</small>` : ""}<span class="pm">${open ? "-" : "+"}</span></div>`;
+      } else
       h += `<div class="sh ${open ? "" : "lock"}"><span class="ic">${SECI[k]}</span>${SECN[k]}<span class="pm">${open ? "-" : "+"}</span></div>`;
       if (!open) continue;
       const us = secUnits(k);
@@ -777,6 +805,11 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
         h += `<div class="pt ${pu.includes(S.cur) ? "cur" : ""}"><span class="arr">▸</span>${PNAME[p] || "第" + p + "部分"}</div>`;
         h += pu.map((i) => {
           const u = S.U[i], done = u.qs.some(answered);
+          if (S.review) {
+            const st = unitState(u);
+            if (S.onlyWrong && st.cls !== "no") return "";
+            return `<div class="it ${i === S.cur ? "cur" : ""}" data-go="${i}"><span class="arr">▸</span>${esc(u.label)}<span class="rk ${st.cls}">${st.txt}</span></div>`;
+          }
           return `<div class="it ${i === S.cur ? "cur" : ""}" data-go="${i}"><span class="arr">▸</span>${esc(u.label)}<span class="pen">${done ? "✏️" : ""}</span><span class="st ${S.mark[i] ? "on" : ""}">★</span></div>`;
         }).join("");
       }
@@ -856,6 +889,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
   // 缩写 (HSK6 2.0 câu 101): q.read = đoạn văn đọc trước trong q.readSec giây, sau đó ẩn hẳn rồi mới viết
   function readLeft(q) { const r = S.rd[q.n]; if (!r) return q.readSec || 600; if (r.done) return 0; return Math.max(0, (q.readSec || 600) - Math.floor((Date.now() - r.t0) / 1000)); }
   function qRead(q) {
+    if (S.review) S.rd[q.n] = { done: true };
     if (!S.rd[q.n]) S.rd[q.n] = { t0: Date.now() };
     const left = readLeft(q);
     if (left > 0 && !S.rd[q.n].done) {
@@ -866,7 +900,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
   function fmtT(s) { return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
   setInterval(() => {
     const el = document.getElementById("rdLeft"); if (!el || !S.U) return;
-    const u = S.U[S.cur], q = u && u.qs[0]; if (!q || !q.read) return;
+    const u = S.U[S.cur], q = u && u.qs[0]; if (!q || !q.read || S.review) return;
     const left = readLeft(q); el.textContent = fmtT(left);
     if (left <= 0) { S.rd[q.n].done = true; drawUnit(); }
   }, 1000);
@@ -895,12 +929,112 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     } else if (!bigWrite) {
       h += u.qs.map((q) => q.t === "m" ? qMatch(q, u) : q.t === "i" ? qInput(q) : q.t === "b" ? qBuild(q) : q.t === "w" ? qWrite(q, false) : qChoice(q, u)).join("");
     }
+    if (S.review) { $("#mBody").innerHTML = h; reviewDecor(u, i); return; }
     const us = secUnits(u.sec), pos = us.indexOf(i);
     h += `<div class="mnav">${pos > 0 ? '<button type="button" class="btn sm" data-prev>上一题</button>' : ""}${pos < us.length - 1 ? '<button type="button" class="btn sm g" data-next>下一题</button>' : ""}</div>`;
     $("#mBody").innerHTML = h;
   }
+
+  // ---------- CHỮA ĐỀ: xem lại bài làm, đáp án đúng, nghe lại, bài mẫu ----------
+  function unitState(u) {
+    const qs = u.qs.filter((q) => !isOpen(q));
+    if (!qs.length) return { cls: "na", txt: "✍" };
+    const ok = qs.filter((q) => keyOk(q).ok).length;
+    return ok === qs.length ? { cls: "ok", txt: "✓" } : { cls: "no", txt: `${ok}/${qs.length}` };
+  }
+  const allUnits = () => secOrder().flatMap((k) => secUnits(k));
+  const rvLine = (q) => {
+    const r = keyOk(q), your = r.your;
+    if (r.ok) return `<div class="rvl ok">✓ Đúng · 正确${q.t === "b" || q.t === "i" ? `：<b>${esc(your)}</b>` : ""}</div>`;
+    const ans = [].concat(q.a).map(esc).join(" / ");
+    return `<div class="rvl ${your ? "no" : "na"}">${your ? `✗ Bạn trả lời · 你的答案：<b>${esc(your)}</b>　` : "○ Bỏ trống · 未作答　"}Đáp án đúng · 正确答案：<b style="color:#2f7a12">${ans}</b></div>`;
+  };
+  function reviewDecor(u, i) {
+    const mb = $("#mBody");
+    mb.classList.add("rv");
+    $$("input,textarea", mb).forEach((x) => { x.disabled = true; });
+    $$("[data-bw],[data-unb],[data-bclr],[data-rdgo],[data-star]", mb).forEach((x) => x.remove());
+    $$(".bline", mb).forEach((b) => { if (b.querySelector(".ph")) b.remove(); });
+    $$(".chips,.btools", mb).forEach((b) => { if (!b.children.length) b.remove(); });
+    // thanh nghe lại cho phần nghe
+    const card = $(".qcard", mb);
+    if (u.sec === "L" && card) {
+      const bar = document.createElement("div"); bar.className = "rvbar";
+      const t = Array.isArray(u.t) ? u.t : null;
+      bar.innerHTML = (t ? `<button type="button" class="btn sm g" data-rvplay="${i}">▶ Nghe lại đoạn ${esc(u.label)}</button><button type="button" class="btn sm" data-rvstop>■ Dừng</button>` : "") +
+        `<audio controls preload="none" src="${esc(S.audioUrl || (S.P.audio || [])[0] || "")}"></audio>` +
+        (S.P.script ? `<button type="button" class="btn sm" data-rvscript>📄 Bản chép lời</button>` : "");
+      const tag = card.querySelector(".qtag"); bar.style.marginTop = "34px";
+      if (tag) card.insertBefore(bar, tag.nextSibling); else card.prepend(bar);
+    }
+    // từng câu
+    for (const q of u.qs) {
+      const box = mb.querySelector(`.q[data-q="${q.n}"], .orow[data-q="${q.n}"]`);
+      if (isOpen(q)) {
+        const mine = S.wr[q.n] || "";
+        const ta = mb.querySelector(`[data-w="${q.n}"]`);
+        const html = `<div class="rvmine">${esc(mine) || '<span style="color:#aaa">（未作答 · bỏ trống）</span>'}</div><div style="font-size:12.5px;color:#888;margin:4px 0 0">Bài của bạn · ${cnt(mine)} 字 — phần viết do giáo viên chấm.</div>` +
+          (q.read ? `<div class="rvref" style="background:#f6f8f2;border-color:#dfe7d3"><h4>📖 Bài đọc gốc · 阅读材料</h4>${q.read.map(esc).join("\n\n")}</div>` : "") +
+          (q.ref ? `<div class="rvref"><h4>💡 Bài mẫu tham khảo · 参考范文</h4>${esc(q.ref)}</div>` : "");
+        if (ta) { const w = document.createElement("div"); w.innerHTML = html; ta.replaceWith(w); const wc = w.nextElementSibling; if (wc && wc.classList.contains("wct")) wc.remove(); }
+        else if (box) box.insertAdjacentHTML("beforeend", html);
+        continue;
+      }
+      const r = keyOk(q), A = [].concat(q.a);
+      // tô phương án
+      if (box) {
+        $$("label", box).forEach((lb) => {
+          const inp = lb.querySelector("input"); if (!inp) return;
+          if (A.includes(inp.value)) lb.classList.add("rok");
+          else if (inp.checked) lb.classList.add("rno");
+        });
+        if (u.order) box.insertAdjacentHTML("afterend", rvLine(q));
+        else box.insertAdjacentHTML("beforeend", rvLine(q));
+      }
+      // chỗ trống trong đoạn văn
+      const bl = mb.querySelector(`.passage [data-bl="${q.n}"]`);
+      if (bl) { bl.classList.add(r.ok ? "rok" : "rno"); if (!r.ok) bl.insertAdjacentHTML("afterend", `<span class="fix">→ ${esc(A[0])}</span>`); }
+    }
+    if (u.order) $$(".seq .bx", mb).forEach((b, j) => { const q = u.qs[j]; if (!q) return; const r = keyOk(q); const e = b.querySelector("b"); e.classList.add(r.ok ? "rok" : "rno"); if (!r.ok) b.insertAdjacentHTML("beforeend", `<em>${esc(q.a)}</em>`); });
+    // điều hướng toàn đề
+    const all = allUnits(), pos = all.indexOf(i);
+    const nextWrong = all.slice(pos + 1).find((k) => unitState(S.U[k]).cls === "no");
+    mb.insertAdjacentHTML("beforeend", `<div class="mnav" style="flex-wrap:wrap;gap:14px">${pos > 0 ? `<button type="button" class="btn sm" data-rvgo="${all[pos - 1]}">上一题</button>` : ""}${pos < all.length - 1 ? `<button type="button" class="btn sm g" data-rvgo="${all[pos + 1]}">下一题</button>` : ""}${nextWrong != null ? `<button type="button" class="btn sm" style="border-color:#d9363e;color:#b3261e" data-rvgo="${nextWrong}">Câu sai tiếp theo ›</button>` : ""}</div>`);
+  }
+  let rvStopAt = null;
+  function rvPlay(i) {
+    const u = S.U[i]; if (!u || !Array.isArray(u.t)) return;
+    if (!S.audio) useAudio((S.P.audio || [])[0]);
+    const a = S.audio; a.onpause = null; a.onended = null;
+    $$("#mBody audio").forEach((x) => x.pause());
+    a.currentTime = u.t[0]; rvStopAt = u.t[1];
+    const p = a.play(); p && p.catch && p.catch(() => {});
+  }
+  setInterval(() => { if (rvStopAt != null && S.audio && S.audio.currentTime >= rvStopAt) { S.audio.pause(); rvStopAt = null; } }, 200);
+  function startReview() {
+    S.review = true; S.onlyWrong = false;
+    if (S.audio) { S.audio.onpause = null; S.audio.onended = null; S.audio.pause(); }
+    if (!S.audioUrl && (S.P.audio || [])[0]) S.audioUrl = S.P.audio[0];
+    const r = S.result, sc = (x) => (x && x.total ? `${x.correct}/${x.total}` : null);
+    $("#tmLbl").innerHTML = `<span class="rvtop">📝 Chữa đề · 解析　${[["听力", sc(r.listening)], ["阅读", sc(r.reading)], ["书写", sc(r.writing.auto)]].filter((x) => x[1]).map((x) => `${x[0]} <b>${x[1]}</b>`).join("　")}</span>`;
+    $("#tmPg").style.display = "none";
+    $("#bSubmit").textContent = "返回成绩 · Bảng điểm";
+    $("#bCard").textContent = "答题卡 · Đúng/sai";
+    $("#bWrong") || $("#bSubmit").insertAdjacentHTML("beforebegin", '<button type="button" id="bWrong">只看错题 · Chỉ câu sai</button>');
+    $("#bWrong").onclick = () => { S.onlyWrong = !S.onlyWrong; $("#bWrong").style.background = S.onlyWrong ? "#fde8e6" : ""; drawNav(); };
+    show("sExam");
+    const first = allUnits().find((k) => unitState(S.U[k]).cls === "no");
+    S.cur = first != null ? first : allUnits()[0]; S.sec = S.U[S.cur].sec;
+    drawNav(); drawUnit();
+  }
+  function rvCard() {
+    const m = modal("答题卡 · Đúng / sai", `<div class="leg"><span><i style="background:#3f9a1c;border-color:#3f9a1c"></i>Đúng</span><span><i style="background:#d9363e;border-color:#d9363e"></i>Sai</span><span><i></i>Bỏ trống / tự luận</span></div>` +
+      secOrder().map((k) => `<p style="margin:14px 0 6px;font-weight:700">${SECN[k]}</p><div class="card">${S.Q.filter((q) => q.sec === k).map((q) => { const r = isOpen(q) ? null : keyOk(q); const st = !r ? "" : r.ok ? "background:#3f9a1c;border-color:#3f9a1c;color:#fff" : r.your ? "background:#d9363e;border-color:#d9363e;color:#fff" : ""; return `<button type="button" style="${st}" data-cq="${q.u}">${q.n}</button>`; }).join("")}</div>`).join(""), []);
+    m.el.addEventListener("click", (e) => { const b = e.target.closest("[data-cq]"); if (b) { m.close(); go(+b.dataset.cq); } });
+  }
   function go(i) {
-    if (S.U[i].sec !== S.sec) return;
+    if (S.review) S.sec = S.U[i].sec;
+    else if (S.U[i].sec !== S.sec) return;
     S.cur = i; drawNav(); drawUnit();
     window.scrollTo(0, 0);
   }
@@ -919,12 +1053,14 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
   // ---------- thẻ trả lời, cỡ chữ, nộp ----------
   function secDone(k) { return S.Q.filter((q) => q.sec === k && answered(q)).length; }
   function submitSec() {
+    if (S.review) { if (S.audio) S.audio.pause(); $$("#mBody audio").forEach((x) => x.pause()); show("sRes"); return; }
     const k = S.sec; if (!["L", "R", "W"].includes(k)) return;
     const left = S.Q.filter((q) => q.sec === k).length - secDone(k), nx = nextSecOf(k);
     const msg = nx ? `确定提交<b>${SECN[k]}</b>部分吗？${k === "L" ? "提交后录音将停止，" : ""}提交后将进入${SECN[nx]}部分，不能再返回修改。` : "确定<b>交卷</b>吗？交卷后将不能再修改答案。";
     modal("提交", msg + (left ? `<br><span class="no">本部分还有 ${left} 题未作答。</span>` : ""), [{ t: "取消" }, { t: "确定提交", g: 1, f: () => { if (k === "L") endListening(); else if (nx) { S.sec = "_"; enterSec(nx); } else finish(); } }]);
   }
   function card() {
+    if (S.review) return rvCard();
     const k = S.sec; if (!["L", "R", "W"].includes(k)) return;
     const qs = S.Q.filter((q) => q.sec === k);
     const m = modal("答题卡", `<div class="leg"><span><i style="background:#7ab81f;border-color:#7ab81f"></i>已作答</span><span><i></i>未作答</span><span><i style="box-shadow:inset 0 -3px 0 #f0a020"></i>已标记</span></div><div class="card">${qs.map((q) => `<button type="button" class="${answered(q) ? "done" : ""} ${S.mark[q.u] ? "mk" : ""}" data-cq="${q.u}">${q.n}</button>`).join("")}</div><p style="margin:16px 0 0;color:#666;font-size:13px">已作答 ${secDone(k)} / ${qs.length}</p>`, []);
@@ -991,10 +1127,11 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     const list = k === "L" ? r.listening.detail : k === "R" ? r.reading.detail : r.writing.auto.detail;
     modal("查看详情", `<table class="rt"><tr><th>题号</th><th>对错</th><th>你的答案</th><th>正确答案</th></tr>${list.map((x) => `<tr><td>${x.n}</td><td class="${x.ok ? "ok" : "no"}">${x.ok ? "✓" : "×"}</td><td>${esc(x.your) || "—"}</td><td>${esc(x.ans)}</td></tr>`).join("")}</table>`, [], { w: 560 });
   }
+  function builtText() { const o = {}; for (const n in S.bld) { const q = S.Q.find((x) => x.n === +n); if (q && S.bld[n].length) o[n] = S.bld[n].map((i) => q.w[i]).join(""); } return o; }
   function send() {
     if (window.parent === window) { $("#sentMsg").textContent = ""; return; }
     const r = S.result;
-    const msg = { source: "hsk-garden-hsk3", type: "HSK3_SUBMIT", center: true, examId: S.P.id, exam: S.P.name, level: `HSK 3.0 - Cấp độ ${S.P.level}`, name: S.cand.name, email: S.cand.email, gender: S.cand.gender, nationality: S.cand.nat, listening: r.listening, reading: r.reading, writing: r.writing, durationMin: r.durationMin, answers: Object.assign({}, S.ans, S.wr) };
+    const msg = { source: "hsk-garden-hsk3", type: "HSK3_SUBMIT", center: true, examId: S.P.id, exam: S.P.name, level: `HSK 3.0 - Cấp độ ${S.P.level}`, name: S.cand.name, email: S.cand.email, gender: S.cand.gender, nationality: S.cand.nat, listening: r.listening, reading: r.reading, writing: r.writing, durationMin: r.durationMin, answers: Object.assign({}, S.ans, S.wr, builtText()) };
     try { window.parent.postMessage(msg, "*"); $("#sentMsg").innerHTML = "⏳ Đang gửi bài cho giáo viên…"; } catch (e) {}
     setTimeout(() => { if (!S.sent) $("#sentMsg").innerHTML = "Bấm <b>📤 Nộp bài &amp; Thoát</b> ở thanh phía trên để gửi bài cho giáo viên."; }, 5000);
   }
@@ -1063,7 +1200,15 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
       const bc = e.target.closest("[data-bclr]");
       if (bc) { S.bld[+bc.dataset.bclr] = []; const y = window.scrollY; drawUnit(); window.scrollTo(0, y); drawNav(); }
     });
-    mb.addEventListener("change", (e) => { const t = e.target; if (t.type === "radio") setAns(+t.name.slice(1), t.value); });
+    mb.addEventListener("change", (e) => { const t = e.target; if (S.review) return; if (t.type === "radio") setAns(+t.name.slice(1), t.value); });
+    mb.addEventListener("click", (e) => {
+      if (!S.review) return;
+      const g = e.target.closest("[data-rvgo]"); if (g) { go(+g.dataset.rvgo); return; }
+      const p = e.target.closest("[data-rvplay]"); if (p) { rvPlay(+p.dataset.rvplay); return; }
+      if (e.target.closest("[data-rvstop]")) { S.audio && S.audio.pause(); rvStopAt = null; return; }
+      if (e.target.closest("[data-rvscript]")) scriptView();
+    });
+    $("#nav").addEventListener("click", (e) => { const h = e.target.closest("[data-rvsec]"); if (h && S.review) { const k = h.dataset.rvsec; const us = secUnits(k); if (us.length) go(us[0]); } });
     mb.addEventListener("input", (e) => {
       const w = e.target.closest("[data-w]");
       if (w) {
@@ -1084,6 +1229,7 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
     $("#btnCand").onclick = candInfo;
     $("#btnScript").onclick = scriptView;
     $("#btnConfirm").onclick = () => show("sEnd");
+    $("#btnReview").onclick = startReview;
     $$(".av").forEach((a) => (a.innerHTML = AV));
     clock();
     try {
@@ -1094,10 +1240,37 @@ table.rt td:first-child,table.rt a{white-space:nowrap}
       if (q.get("paper")) S.cand.paperId = q.get("paper");
     } catch (e) {}
     if (window.parent !== window) { try { window.parent.postMessage({ source: "hsk-garden-hsk3", type: "HSK3_READY" }, "*"); } catch (e) {} }
+    let rv = null;
+    try { if (new URLSearchParams(location.search).get("review")) rv = JSON.parse(localStorage.getItem("hsk_review") || "null"); } catch (e) {}
+    if (rv && rv.paper) { openReview(rv); return; }
     loadList();
     show("sLang");
   });
-  window.__HSK_fn = { enterSec, finish, endListening, go };
+  // Mở lại một bài đã nộp để chữa: localStorage.hsk_review = { paper, ans: {số câu: đáp án/chữ}, name }
+  async function openReview(rv) {
+    show("sDl"); $("#dlMsg").textContent = "Đang mở bài làm để chữa…";
+    try {
+      await loadList();
+      const meta = S.list.find((p) => p.id === rv.paper) || { id: rv.paper, file: "papers/" + rv.paper + ".json", level: 0, name: rv.paper };
+      const r = await fetch(meta.file, { cache: "no-store" }); if (!r.ok) throw new Error("HTTP " + r.status);
+      setPaper(await r.json(), meta);
+    } catch (e) { $("#dlMsg").textContent = "Không mở được đề: " + (e.message || e); return; }
+    S.cand.name = rv.name || S.cand.name || "—";
+    $("#cName").textContent = S.cand.name; $("#cMail").textContent = S.cand.email || "—"; $("#cGender").textContent = S.cand.gender; $("#cNat").textContent = S.cand.nat; $("#cSubj").textContent = S.P.subject;
+    const A = rv.ans || {};
+    for (const q of S.Q) {
+      const v = A[q.n]; if (v == null || v === "") continue;
+      if (q.t === "w") S.wr[q.n] = String(v); else S.ans[q.n] = String(v);
+    }
+    S.started = Date.now() - (rv.min || 0) * 60000; S.finished = true; S.sec = "done";
+    const det = (k) => S.Q.filter((q) => q.sec === k && !isOpen(q)).map((q) => { const x = keyOk(q); return { n: q.n, your: x.your, ans: x.ans, ok: x.ok }; });
+    const Wa = det("W");
+    S.result = { listening: sum(det("L")), reading: sum(det("R")), writing: { items: S.Q.filter(isOpen).map((q) => ({ n: q.n, text: S.wr[q.n] || "", word: q.word || "" })), auto: Wa.length ? sum(Wa) : null }, durationMin: rv.min || 0 };
+    drawResult(); $("#sentMsg").textContent = "";
+    $("#btnConfirm").classList.add("hide");
+    startReview();
+  }
+  window.__HSK_fn = { enterSec, finish, endListening, go, startReview };
 })();
 </script>
 </body></html>
