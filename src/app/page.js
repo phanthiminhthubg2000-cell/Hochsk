@@ -436,10 +436,14 @@ export default function HomePage() {
     try {
       const t = new URLSearchParams(window.location.search).get("tab");
       if (t && ["home", "learn", "practice", "exam", "play"].includes(t)) setActiveTab(t);
+      // /?tab=exam&lv=6&src=hskkc → mở thẳng đúng cấp và nguồn đề
+      const q = new URLSearchParams(window.location.search);
+      if (+q.get("lv") >= 1 && +q.get("lv") <= 6) setExamLv(+q.get("lv"));
+      if (q.get("src")) setExamSrc(q.get("src"));
     } catch (_) {}
   }, []);
   const [examLv, setExamLv] = useState(null);     // Khảo Thí Điện: cấp đang xem (null = theo cảnh giới)
-  const [examSrc, setExamSrc] = useState("all");  // all | v3 | real | book | hskk | gv
+  const [examSrc, setExamSrc] = useState("all");  // all | v3 | real | book | hskk | hskkc | gv
   const [papers3, setPapers3] = useState([]);     // /hsk-exam/papers.json
   const [papers2, setPapers2] = useState([]);     // /hsk2-exam/papers.json
 
@@ -1682,7 +1686,7 @@ export default function HomePage() {
                 <div className="flex flex-col gap-5 min-w-0">
               {(() => {
                 // ---------- KHẢO THÍ ĐIỆN: mọi đề gộp theo cấp độ, bấm là vào phòng thi thật ----------
-                const SRC = { v3: ["新", "Chuẩn 3.0"], real: ["真", "Đề thật 2.0"], book: ["书", "Sách luyện 2.0"], hskk: ["口", "Khẩu ngữ HSKK"], gv: ["师", "Giáo viên giao"] };
+                const SRC = { v3: ["新", "Chuẩn 3.0"], real: ["真", "Đề thật 2.0"], book: ["书", "Sách luyện 2.0"], hskk: ["口", "Khẩu ngữ HSKK"], hskkc: ["高", "HSKK Cao cấp"], gv: ["师", "Giáo viên giao"] };
                 const att = {};
                 results.filter((r) => r.type === "hsk" && r.examId).forEach((r) => { const o = att[r.examId] || (att[r.examId] = { n: 0, best: null, pending: false }); o.n++; if (r.autoPct != null) o.best = Math.max(o.best ?? 0, r.autoPct); if (!r.graded) o.pending = true; });
                 const items = [
@@ -1690,7 +1694,7 @@ export default function HomePage() {
                   ...papers2.map((p) => ({ key: `hsk2-exam/${p.id}`, lv: +p.level, src: /^(h[456]\d|zt\d)/.test(p.id) ? "real" : "book", name: p.name.replace(/^HSK[四五六]级/, ""), meta: +p.level === 4 ? "100 câu · 105 phút" : +p.level === 6 ? "101 câu · 140 phút" : "100 câu · 125 phút", open: () => setActiveHskExamView({ ...EXAM_CENTER_2, examName: `HSK ${p.level} 2.0 · ${p.name}`, fileUrl: `/hsk2-exam/index.html?level=${p.level}&paper=${encodeURIComponent(p.id)}` }) })),
                   // đề lẻ static-* đã có trong phòng thi 3.0 → chỉ lấy đề giáo viên tải lên
                   ...hsk3ExamsList.filter((e) => !String(e.id).startsWith("static-")).map((e) => ({ key: e.id, lv: +((String(e.level || "").match(/(\d)\s*$/) || [])[1] || 0), src: String(e.id).startsWith("static-") ? "v3" : "gv", name: e.examName, meta: e.level || "", open: () => setActiveHskExamView(e) })),
-                  ...hskkExams.map((e) => ({ key: "hskk:" + e.file, lv: +e.level, src: "hskk", name: e.name || e.label, meta: `${e.questions || "–"} câu · ${e.minutes || "–"} phút`, isNew: e.isNew, open: () => setActiveHskkExam(e) })),
+                  ...hskkExams.map((e) => ({ key: "hskk:" + e.file, lv: +e.level, src: e.tier === "cao" ? "hskkc" : "hskk", name: e.name || e.label, meta: `${e.questions || "–"} câu · ${e.minutes || "–"} phút`, isNew: e.isNew, open: () => setActiveHskkExam(e) })),
                 ].filter((x) => x.lv >= 1 && x.lv <= 6);
                 const lvs = [1, 2, 3, 4, 5, 6];
                 const own = realm.provisional ? 0 : Math.min(6, Math.max(1, realm.idx));
@@ -1701,7 +1705,7 @@ export default function HomePage() {
                 const shown = inLv.filter((x) => src === "all" || x.src === src);
                 const done = inLv.filter((x) => att[x.key]);
                 const best = done.reduce((m, x) => Math.max(m, att[x.key].best ?? 0), 0);
-                const next = inLv.find((x) => x.src !== "hskk" && !att[x.key]);
+                const next = inLv.find((x) => !x.src.startsWith("hskk") && !att[x.key]);
                 return (
                   <section className="flex flex-col gap-4" aria-label="Khảo Thí Điện">
                     <div className="flex items-end justify-between gap-3 flex-wrap">
@@ -1744,7 +1748,7 @@ export default function HomePage() {
                         return (
                           <li key={x.key}>
                             <button onClick={x.open} className="w-full h-full tt-card p-4 flex gap-3 text-left hover:-translate-y-0.5 hover:shadow-[4px_4px_0_rgba(158,47,34,.35)] transition">
-                              <span className={`w-12 h-12 shrink-0 rounded-[5px] grid place-items-center font-brush text-[26px] border ${x.src === "real" ? "bg-[#9E2F22] text-[#FBF3E4] border-[#7A2218]" : x.src === "hskk" ? "bg-[#2F6E5A] text-[#F3EEE2] border-[#1E4A3C]" : "bg-[#1C1A17] text-[#E6B656] border-[#C9A24E]"}`} aria-hidden="true">{glyph}</span>
+                              <span className={`w-12 h-12 shrink-0 rounded-[5px] grid place-items-center font-brush text-[26px] border ${x.src === "real" ? "bg-[#9E2F22] text-[#FBF3E4] border-[#7A2218]" : x.src === "hskk" ? "bg-[#2F6E5A] text-[#F3EEE2] border-[#1E4A3C]" : x.src === "hskkc" ? "bg-[#1E4A3C] text-[#E6B656] border-[#C9A24E]" : "bg-[#1C1A17] text-[#E6B656] border-[#C9A24E]"}`} aria-hidden="true">{glyph}</span>
                               <span className="flex-1 min-w-0 flex flex-col gap-0.5">
                                 <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#7A2218]">{label}{x.isNew ? " · mới" : ""}</span>
                                 <span className="font-serif-vn font-extrabold text-[16px] leading-snug" lang="zh-CN">{x.name}</span>

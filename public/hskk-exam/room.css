@@ -379,3 +379,7 @@ table.st3 th{background:#eef6e2}
   .phase .st{font-size:13px}
   .rv audio{width:150px}
 }
+
+/* HSKK cao cấp · 朗读 */
+.rtext{max-width:880px;margin:12px auto 4px;padding:16px 22px;background:#fff;border:1px solid var(--line);border-radius:4px;text-align:left;font-size:calc(var(--fs) + 5px);line-height:2.05;color:#222}
+.rtext p{margin:0 0 6px;text-indent:2em}

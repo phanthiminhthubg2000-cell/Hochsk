@@ -7,7 +7,8 @@
   const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const mmss = t => { t = Math.max(0, Math.ceil(t)); return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); };
   const CN = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
-  const SUBJ = `HSK（${CN[E.level]}级）口语`;
+  const SUBJ = E.subj || `HSK（${CN[E.level]}级）口语`;
+  const subjOf = e => e.subj || `HSK（${CN[Number(e.level)]}级）口语`;
   const PAPER = E.sub || "样卷";
   const URLQ = new URLSearchParams(location.search);
   const EMBED = window.parent !== window;
@@ -149,16 +150,17 @@
   (function subjects() {
     const self = (E.file || location.pathname.split("/").pop().replace(/\.html$/, ""));
     const fill = list => {
-      const levels = [...new Set(list.map(e => Number(e.level)))].sort((a, b) => a - b);
-      $("#fSubj").innerHTML = levels.map(l => `<option value="${l}" ${l === E.level ? "selected" : ""}>HSK（${CN[l]}级）口语</option>`).join("");
-      const papers = lv => list.filter(e => Number(e.level) === lv);
+      const order = e => Number(e.level) + (e.subj ? 0.5 : 0);
+      const levels = [...new Set([...list].sort((a, b) => order(a) - order(b)).map(subjOf))];
+      $("#fSubj").innerHTML = levels.map(l => `<option value="${esc(l)}" ${l === SUBJ ? "selected" : ""}>${esc(l)}</option>`).join("");
+      const papers = lv => list.filter(e => subjOf(e) === lv);
       const fillP = lv => { $("#fPaper").innerHTML = papers(lv).map(e => { const f = e.file.split("/").pop().replace(/\.html$/, ""); return `<option value="${esc(e.file)}" ${f === self ? "selected" : ""}>${esc(e.title.split("·").pop().trim())}</option>`; }).join(""); };
-      fillP(E.level);
+      fillP(SUBJ);
       const go = file => { if (!file) return; const f = file.split("/").pop().replace(/\.html$/, ""); if (f === self) return; const q = new URLSearchParams(location.search); q.set("name", $("#fName").value.trim()); q.set("email", $("#fMail").value.trim()); location.href = file + "?" + q.toString(); };
-      $("#fSubj").onchange = () => { fillP(Number($("#fSubj").value)); go($("#fPaper").value); };
+      $("#fSubj").onchange = () => { fillP($("#fSubj").value); go($("#fPaper").value); };
       $("#fPaper").onchange = () => go($("#fPaper").value);
     };
-    const own = [{ level: E.level, title: SUBJ + " · " + PAPER, file: location.pathname }];
+    const own = [{ level: E.level, subj: E.subj, title: SUBJ + " · " + PAPER, file: location.pathname }];
     fill(own);
     if (/\/hskk-exam\//.test(location.pathname)) fetch("exams.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(l => { if (Array.isArray(l) && l.length) fill(l); }).catch(() => { });
   })();
@@ -224,7 +226,8 @@
     $("#nav").innerHTML = h;
     const cur = $("#nav .it.cur"); if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (_) { } }
   }
-  function kindOf(p) { return p.ask ? "ask" : p.imgs ? (p.story ? "story" : "pic") : "listen"; }
+  function kindOf(p) { return p.read ? "read" : p.ask ? "ask" : p.imgs ? (p.story ? "story" : "pic") : "listen"; }
+  const askHTML = (p, q, isPrep) => `<div class="qtext">${p.ask.map(a => `<div class="${!isPrep && a[0] === q ? "cur" : ""}"><b>${a[0]}.</b>${esc(a[1])} <small>（${esc(a[2])}）</small></div>`).join("")}</div>`;
   function renderCard(s) {
     const p = E.parts[s.part], kind = kindOf(p), w = s.win || {}, isPrep = w.k === "prep", q = w.q;
     const qs = partQs(s.part);
@@ -234,8 +237,13 @@
     if (kind === "listen") { const rep = /复述/.test(p.title); ins = rep ? "请听一段话，然后复述你听到的内容。" : "请听录音，然后重复你听到的句子。"; mid = `<div class="ear">🎧</div>`; }
     else if (kind === "pic") { const idx = (p.qs || []).indexOf(q); ins = "请看图，用一两句话说一说图片的内容。"; mid = idx >= 0 ? `<img class="pic" src="${esc(p.imgs[idx])}" alt="">` : ""; }
     else if (kind === "story") { ins = isPrep ? "请看图片，准备按顺序讲一个完整的故事。可以在草稿区写下要点。" : "请看图片，按顺序讲一个完整的故事。"; mid = `<div class="pics">${p.imgs.map((src, i) => `<figure><span class="no">${CIRC[i] || i + 1}</span><img src="${esc(src)}" alt=""></figure>`).join("")}</div>`; }
-    else { ins = isPrep ? "请阅读下面的问题，准备回答。可以在草稿区写下要点。" : `请回答第${q}题。`; mid = `<div class="qtext">${p.ask.map(a => `<div class="${!isPrep && a[0] === q ? "cur" : ""}"><b>${a[0]}.</b>${esc(a[1])} <small>（${esc(a[2])}）</small></div>`).join("")}</div>`; }
-    const draft = p.draft && (kind === "ask" || kind === "story") ? `<div class="draftbox" data-dp="${s.part}"><div class="dhead"><b>草稿区</b><span>（不计分 · không chấm điểm）</span><span class="sp"></span><button type="button" data-dt="type" class="on">打字</button><button type="button" data-dt="draw">手写</button><button type="button" class="dclear">清除</button></div><textarea class="draft" placeholder="写下要点、关键词……"></textarea><canvas class="dcan hide"></canvas></div>` : "";
+    else if (kind === "read") {
+      const nx = p.also != null ? E.parts[p.also] : null;
+      ins = isPrep ? `现在开始准备${nx ? "第二部分和第三部分" : ""}。请阅读下面的短文${nx ? "和问题" : ""}，可以在草稿区写下要点。` : "请朗读下面的短文。";
+      mid = `<div class="rtext">${String(p.read).split(/\n+/).map(x => `<p>${esc(x)}</p>`).join("")}</div>` + (isPrep && nx && nx.ask ? `<div class="ins" style="margin-top:14px">${esc(nx.cn)}：${esc(nx.title.split("：").pop())}</div>` + askHTML(nx, 0, true) : "");
+    }
+    else { ins = isPrep ? "请阅读下面的问题，准备回答。可以在草稿区写下要点。" : `请回答第${q}题。`; mid = askHTML(p, q, isPrep); }
+    const draft = p.draft && (kind === "ask" || kind === "story" || (kind === "read" && isPrep)) ? `<div class="draftbox" data-dp="${p.draftOf != null ? p.draftOf : s.part}"><div class="dhead"><b>草稿区</b><span>（不计分 · không chấm điểm）</span><span class="sp"></span><button type="button" data-dt="type" class="on">打字</button><button type="button" data-dt="draw">手写</button><button type="button" class="dclear">清除</button></div><textarea class="draft" placeholder="写下要点、关键词……"></textarea><canvas class="dcan hide"></canvas></div>` : "";
     $("#mBody").innerHTML = `<div class="qcard"><span class="qtag">${tag}</span><div class="oral"><div class="qno">${qno}</div><div class="ins">${ins}</div>${mid}<div class="phase" id="phase"></div><div id="stat"></div><p class="hint" id="hint"></p>${draft}</div></div>`;
     $("#mTtl").textContent = `${p.title.replace("：", "　")}（${cnTime(s.part)}）`.replace("（）", "");
     initDraft();
