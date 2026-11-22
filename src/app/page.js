@@ -438,7 +438,8 @@ export default function HomePage() {
       if (t && ["home", "learn", "practice", "exam", "play"].includes(t)) setActiveTab(t);
       // /?tab=exam&lv=6&src=hskkc → mở thẳng đúng cấp và nguồn đề
       const q = new URLSearchParams(window.location.search);
-      if (+q.get("lv") >= 1 && +q.get("lv") <= 6) setExamLv(+q.get("lv"));
+      if (q.get("lv") === "hskk") setExamLv("hskk");
+      else if (+q.get("lv") >= 1 && +q.get("lv") <= 6) setExamLv(+q.get("lv"));
       if (q.get("src")) setExamSrc(q.get("src"));
     } catch (_) {}
   }, []);
@@ -1694,15 +1695,22 @@ export default function HomePage() {
                   ...papers2.map((p) => ({ key: `hsk2-exam/${p.id}`, lv: +p.level, src: /^(h[456]\d|zt\d)/.test(p.id) ? "real" : "book", name: p.name.replace(/^HSK[四五六]级/, ""), meta: +p.level === 4 ? "100 câu · 105 phút" : +p.level === 6 ? "101 câu · 140 phút" : "100 câu · 125 phút", open: () => setActiveHskExamView({ ...EXAM_CENTER_2, examName: `HSK ${p.level} 2.0 · ${p.name}`, fileUrl: `/hsk2-exam/index.html?level=${p.level}&paper=${encodeURIComponent(p.id)}` }) })),
                   // đề lẻ static-* đã có trong phòng thi 3.0 → chỉ lấy đề giáo viên tải lên
                   ...hsk3ExamsList.filter((e) => !String(e.id).startsWith("static-")).map((e) => ({ key: e.id, lv: +((String(e.level || "").match(/(\d)\s*$/) || [])[1] || 0), src: String(e.id).startsWith("static-") ? "v3" : "gv", name: e.examName, meta: e.level || "", open: () => setActiveHskExamView(e) })),
-                  ...hskkExams.map((e) => ({ key: "hskk:" + e.file, lv: +e.level, src: e.tier === "cao" ? "hskkc" : e.tier === "zhong" ? "hskkz" : "hskk", name: e.name || e.label, meta: `${e.questions || "–"} câu · ${e.minutes || "–"} phút`, isNew: e.isNew, open: () => setActiveHskkExam(e) })),
-                ].filter((x) => x.lv >= 1 && x.lv <= 6);
+                ].filter((x) => x.lv >= 1 && x.lv <= 6).map((x) => ({ ...x, f: x.src }));
+                // ô HSKK riêng: khẩu ngữ 3.0 (HSKK 3–6) + HSKK trung cấp / cao cấp 2.0
+                const KG = { "k3": "HSKK 3 · 3.0", "k4": "HSKK 4 · 3.0", "k5": "HSKK 5 · 3.0", "k6": "HSKK 6 · 3.0", zhong: "Trung cấp 2.0", cao: "Cao cấp 2.0" };
+                const kItems = hskkExams.map((e) => {
+                  const f = e.tier === "cao" ? "cao" : e.tier === "zhong" ? "zhong" : "k" + e.level;
+                  return { key: "hskk:" + e.file, lv: "hskk", f, src: e.tier === "cao" ? "hskkc" : e.tier === "zhong" ? "hskkz" : "hskk", tag: e.tier ? `HSKK ${e.tier === "cao" ? "Cao cấp" : "Trung cấp"} · Đề thật 2.0` : `HSKK ${e.level} · Chuẩn 3.0`, name: e.name || e.label, meta: `${e.questions || "–"} câu · ${e.minutes || "–"} phút${e.parts ? " · " + e.parts : ""}`, isNew: e.isNew, open: () => setActiveHskkExam(e) };
+                }).sort((a, b) => Object.keys(KG).indexOf(a.f) - Object.keys(KG).indexOf(b.f));
                 const lvs = [1, 2, 3, 4, 5, 6];
                 const own = realm.provisional ? 0 : Math.min(6, Math.max(1, realm.idx));
-                const lv = examLv || (items.some((x) => x.lv === own) ? own : (items[0]?.lv || 1));
-                const inLv = items.filter((x) => x.lv === lv);
-                const srcs = Object.keys(SRC).filter((k) => inLv.some((x) => x.src === k));
+                const isK = examLv === "hskk";
+                const lv = isK ? "hskk" : examLv || (items.some((x) => x.lv === own) ? own : (items[0]?.lv || 1));
+                const inLv = isK ? kItems : items.filter((x) => x.lv === lv);
+                const FL = isK ? KG : Object.fromEntries(Object.entries(SRC).map(([k, v]) => [k, v[1]]));
+                const srcs = Object.keys(FL).filter((k) => inLv.some((x) => x.f === k));
                 const src = srcs.includes(examSrc) ? examSrc : "all";
-                const shown = inLv.filter((x) => src === "all" || x.src === src);
+                const shown = inLv.filter((x) => src === "all" || x.f === src);
                 const done = inLv.filter((x) => att[x.key]);
                 const best = done.reduce((m, x) => Math.max(m, att[x.key].best ?? 0), 0);
                 const next = inLv.find((x) => !x.src.startsWith("hskk") && !att[x.key]);
@@ -1715,7 +1723,7 @@ export default function HomePage() {
                       </div>
                       <p className="text-sm text-[#4A4238]">{items.length} đề · bấm đề nào là vào phòng thi thật của đề đó</p>
                     </div>
-                    <div role="tablist" aria-label="Cấp độ" className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                    <div role="tablist" aria-label="Cấp độ" className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
                       {lvs.map((n) => {
                         const c = items.filter((x) => x.lv === n).length; const on = n === lv;
                         return (
@@ -1727,13 +1735,18 @@ export default function HomePage() {
                           </button>
                         );
                       })}
+                      <button role="tab" aria-selected={isK} disabled={!kItems.length} onClick={() => { setExamLv("hskk"); setExamSrc("all"); }}
+                        className={`relative rounded-[6px] px-2 py-2.5 text-left border transition-colors disabled:opacity-40 ${isK ? "bg-[#1E4A3C] text-[#F3EEE2] border-[#1E4A3C] shadow-[3px_3px_0_#C9A24E]" : "bg-[#EEF4EF] border-[#9DBFAE] hover:border-[#1E4A3C]"}`}>
+                        <span className="block font-serif-vn font-extrabold text-[15px]">HSKK <span className="font-brush font-normal">口语</span></span>
+                        <span className={`block text-[11px] ${isK ? "text-[#CFE0D6]" : "text-[#4A6B5C]"}`}>Khẩu ngữ · {kItems.length} đề</span>
+                      </button>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Lọc nguồn đề">
-                      {[["all", "Tất cả", inLv.length], ...srcs.map((k) => [k, SRC[k][1], inLv.filter((x) => x.src === k).length])].map(([k, l, c]) => (
+                      {[["all", "Tất cả", inLv.length], ...srcs.map((k) => [k, FL[k], inLv.filter((x) => x.f === k).length])].map(([k, l, c]) => (
                         <button key={k} onClick={() => setExamSrc(k)} aria-pressed={src === k}
                           className={`h-9 px-3 rounded-full text-sm font-semibold border ${src === k ? "bg-[#9E2F22] text-white border-[#9E2F22]" : "bg-[#FBF8F1] border-[#D8CBAE] text-[#4A4238] hover:border-[#9E2F22]"}`}>{l} <span className="opacity-70">{c}</span></button>
                       ))}
-                      <span className="ml-auto text-sm text-[#4A4238]">{done.length ? <>Đã thi <b>{done.length}</b>/{inLv.length} đề HSK {lv} · cao nhất <b>{best}%</b></> : `Chưa thi đề HSK ${lv} nào`}</span>
+                      <span className="ml-auto text-sm text-[#4A4238]">{isK ? "Thi nói: ghi âm trong phòng thi, nộp cho giáo viên chấm" : done.length ? <>Đã thi <b>{done.length}</b>/{inLv.length} đề HSK {lv} · cao nhất <b>{best}%</b></> : `Chưa thi đề HSK ${lv} nào`}</span>
                     </div>
                     {next && (
                       <button onClick={next.open} className="tt-card px-4 py-3 flex items-center gap-3 text-left hover:border-[#9E2F22]">
@@ -1750,7 +1763,7 @@ export default function HomePage() {
                             <button onClick={x.open} className="w-full h-full tt-card p-4 flex gap-3 text-left hover:-translate-y-0.5 hover:shadow-[4px_4px_0_rgba(158,47,34,.35)] transition">
                               <span className={`w-12 h-12 shrink-0 rounded-[5px] grid place-items-center font-brush text-[26px] border ${x.src === "real" ? "bg-[#9E2F22] text-[#FBF3E4] border-[#7A2218]" : x.src === "hskk" ? "bg-[#2F6E5A] text-[#F3EEE2] border-[#1E4A3C]" : x.src === "hskkc" || x.src === "hskkz" ? "bg-[#1E4A3C] text-[#E6B656] border-[#C9A24E]" : "bg-[#1C1A17] text-[#E6B656] border-[#C9A24E]"}`} aria-hidden="true">{glyph}</span>
                               <span className="flex-1 min-w-0 flex flex-col gap-0.5">
-                                <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#7A2218]">{label}{x.isNew ? " · mới" : ""}</span>
+                                <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#7A2218]">{x.tag || label}{x.isNew ? " · mới" : ""}</span>
                                 <span className="font-serif-vn font-extrabold text-[16px] leading-snug" lang="zh-CN">{x.name}</span>
                                 <span className="text-xs text-[#6B6253]">{x.meta}</span>
                                 <span className={`text-xs font-bold mt-1 ${a ? (a.pending ? "text-[#B36B00]" : "text-[#2F6E5A]") : "text-[#8C7F68]"}`}>{a ? `${a.pending ? "Đang chờ chấm viết" : "Đã thi"} · ${a.n} lần${a.best != null ? ` · tự chấm ${a.best}%` : ""}` : "Chưa thi"}</span>

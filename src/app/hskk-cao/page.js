@@ -476,7 +476,7 @@ export default function HskkCaoCap() {
           <h1 className="font-brush text-[40px] leading-none" style={{ color: C.red }}>高级口语</h1>
           <span className="font-serif-vn text-[22px] font-extrabold">Luyện HSKK Cao cấp</span>
         </div>
-        <a href="/?tab=exam&lv=6&src=hskkc" className="rounded-[10px] border px-4 py-3 flex items-center gap-3" style={{ background: "#1E4A3C", borderColor: "#C9A24E", color: "#F3EEE2" }}>
+        <a href="/?tab=exam&lv=hskk&src=cao" className="rounded-[10px] border px-4 py-3 flex items-center gap-3" style={{ background: "#1E4A3C", borderColor: "#C9A24E", color: "#F3EEE2" }}>
           <span className="font-brush text-[28px] leading-none" style={{ color: "#E6B656" }} aria-hidden="true">劫</span>
           <span className="flex-1 min-w-0"><b className="block">Thi thử đề thật HSKK Cao cấp ở Độ Kiếp Đài</b><span className="text-xs opacity-80">9 đề Hanban (H90000–H91416) · chạy theo file nghe gốc · ghi âm và nộp cho giáo viên chấm</span></span>
           <span aria-hidden="true">›</span>
