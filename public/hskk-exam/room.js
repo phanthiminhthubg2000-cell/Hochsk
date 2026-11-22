@@ -235,7 +235,13 @@
     const qno = isPrep ? "准备时间" : `第 ${q} 题`;
     let ins = "", mid = "";
     if (kind === "listen") { const rep = /复述/.test(p.title); ins = rep ? "请听一段话，然后复述你听到的内容。" : "请听录音，然后重复你听到的句子。"; mid = `<div class="ear">🎧</div>`; }
-    else if (kind === "pic") { const idx = (p.qs || []).indexOf(q); ins = "请看图，用一两句话说一说图片的内容。"; mid = idx >= 0 ? `<img class="pic" src="${esc(p.imgs[idx])}" alt="">` : ""; }
+    else if (kind === "pic") {
+      const idx = (p.qs || []).indexOf(q), nx = p.also != null ? E.parts[p.also] : null;
+      if (isPrep) {
+        ins = `现在开始准备${nx ? `第${(p.qs || [])[0]}到${(nx.ask || []).slice(-1)[0]?.[0] || ""}题` : ""}。可以在草稿区写下提纲。`;
+        mid = `<div class="pics">${p.imgs.map((src, i) => `<figure><span class="no">${(p.qs || [])[i] || i + 1}</span><img src="${esc(src)}" alt=""></figure>`).join("")}</div>` + (nx && nx.ask ? `<div class="ins" style="margin-top:14px">${esc(nx.cn)}：${esc(nx.title.split("：").pop())}</div>` + askHTML(nx, 0, true) : "");
+      } else { ins = p.talk ? "请看图说话。" : "请看图，用一两句话说一说图片的内容。"; mid = idx >= 0 ? `<img class="pic" src="${esc(p.imgs[idx])}" alt="">` : ""; }
+    }
     else if (kind === "story") { ins = isPrep ? "请看图片，准备按顺序讲一个完整的故事。可以在草稿区写下要点。" : "请看图片，按顺序讲一个完整的故事。"; mid = `<div class="pics">${p.imgs.map((src, i) => `<figure><span class="no">${CIRC[i] || i + 1}</span><img src="${esc(src)}" alt=""></figure>`).join("")}</div>`; }
     else if (kind === "read") {
       const nx = p.also != null ? E.parts[p.also] : null;
@@ -243,13 +249,13 @@
       mid = `<div class="rtext">${String(p.read).split(/\n+/).map(x => `<p>${esc(x)}</p>`).join("")}</div>` + (isPrep && nx && nx.ask ? `<div class="ins" style="margin-top:14px">${esc(nx.cn)}：${esc(nx.title.split("：").pop())}</div>` + askHTML(nx, 0, true) : "");
     }
     else { ins = isPrep ? "请阅读下面的问题，准备回答。可以在草稿区写下要点。" : `请回答第${q}题。`; mid = askHTML(p, q, isPrep); }
-    const draft = p.draft && (kind === "ask" || kind === "story" || (kind === "read" && isPrep)) ? `<div class="draftbox" data-dp="${p.draftOf != null ? p.draftOf : s.part}"><div class="dhead"><b>草稿区</b><span>（不计分 · không chấm điểm）</span><span class="sp"></span><button type="button" data-dt="type" class="on">打字</button><button type="button" data-dt="draw">手写</button><button type="button" class="dclear">清除</button></div><textarea class="draft" placeholder="写下要点、关键词……"></textarea><canvas class="dcan hide"></canvas></div>` : "";
+    const draft = p.draft && (kind === "ask" || kind === "story" || ((kind === "read" || kind === "pic") && isPrep) || (kind === "pic" && p.talk)) ? `<div class="draftbox" data-dp="${p.draftOf != null ? p.draftOf : s.part}"><div class="dhead"><b>草稿区</b><span>（不计分 · không chấm điểm）</span><span class="sp"></span><button type="button" data-dt="type" class="on">打字</button><button type="button" data-dt="draw">手写</button><button type="button" class="dclear">清除</button></div><textarea class="draft" placeholder="写下要点、关键词……"></textarea><canvas class="dcan hide"></canvas></div>` : "";
     $("#mBody").innerHTML = `<div class="qcard"><span class="qtag">${tag}</span><div class="oral"><div class="qno">${qno}</div><div class="ins">${ins}</div>${mid}<div class="phase" id="phase"></div><div id="stat"></div><p class="hint" id="hint"></p>${draft}</div></div>`;
     $("#mTtl").textContent = `${p.title.replace("：", "　")}（${cnTime(s.part)}）`.replace("（）", "");
     initDraft();
   }
   function renderPhase(s) {
-    const steps = ["听题"]; const hp = partHasPrep(s.part) && kindOf(E.parts[s.part]) !== "pic" && kindOf(E.parts[s.part]) !== "listen"; if (hp) steps.push("准备"); steps.push("录音");
+    const steps = ["听题"]; const hp = partHasPrep(s.part) && !(kindOf(E.parts[s.part]) === "pic" && !E.parts[s.part].talk) && kindOf(E.parts[s.part]) !== "listen"; if (hp) steps.push("准备"); steps.push("录音");
     const w = s.win || {}; let cur = !s.win ? steps.length : s.t === "play" ? 0 : w.k === "prep" ? 1 : steps.length - 1;
     if (s.t === "play" && hp && w.k === "ans" && E.parts[s.part].ask) cur = 0;
     $("#phase").innerHTML = steps.map((t, i) => `<div class="st ${i === steps.length - 1 ? "rec " : ""}${i < cur ? "done" : i === cur ? "on" : ""}">${["①", "②", "③"][i]} ${t}${i < cur ? " ✓" : i === cur && t === "录音" ? "中" : ""}</div>`).join("");
