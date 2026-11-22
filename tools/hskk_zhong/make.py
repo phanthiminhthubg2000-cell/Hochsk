@@ -106,9 +106,9 @@ def build(code, mp3, ver):
 if __name__ == "__main__":
     ver = hashlib.md5(open(os.path.join(EX, "room.js"), "rb").read() + open(os.path.join(EX, "room.css"), "rb").read()).hexdigest()[:8]
     L = [e for e in json.load(open(os.path.join(EX, "exams.json"))) if e.get("tier") != "zhong"]
-    for mp3 in sorted(glob.glob(os.path.join(SRC, "*H81*.mp3"))):
+    for mp3 in sorted(glob.glob(os.path.join(SRC, "*H8[01]*.mp3"))):
         if os.path.getsize(mp3) < 1e6: continue
-        code = re.search(r"H81\d{3}", mp3)[0]
+        code = re.search(r"H8[01]\d{3}", mp3)[0]
         if not os.path.exists(os.path.join(O, f"{code}.json")): print(code, "chưa có dữ liệu đề"); continue
         L.append(build(code, mp3, ver))
     if not DRY:

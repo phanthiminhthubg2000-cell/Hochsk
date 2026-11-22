@@ -12,7 +12,7 @@ Câu 13: {q13}
 Câu 14: {q14}
 Câu 1-10 (nghe nhắc lại): {s}
 Trả JSON: {{"p11":{{"zh":"…","vi":"bản dịch tiếng Việt"}},"p12":{{…}},"q13":{{…}},"q14":{{…}},"s_vi":["dịch câu 1",…]}}   // s_vi rỗng nếu không có câu 1-10. Chỉ trả JSON."""
-for f in sorted(glob.glob(os.path.join(O, "H81*.json"))):
+for f in sorted(glob.glob(os.path.join(O, "H8[01]*.json"))):
     if f.endswith(".sa.json"): continue
     code = os.path.basename(f)[:-5]; dst = f[:-5] + ".sa.json"
     if os.path.exists(dst): continue

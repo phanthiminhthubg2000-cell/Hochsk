@@ -16,7 +16,7 @@ JOBS = {
     "H81107": ("H81107.pdf", [2, 3], "H81107_a.pdf", [1]), "H81208": (SCAN, [10, 11], SCAN, [12]),
     "H81209": (SCAN, [14, 15], SCAN, [16]), "H81210": (SCAN, [18, 19], SCAN, [20]),
     "H81311": ("H81311.pdf", [2, 3], "H81311_a.pdf", [1]), "H81312": ("H81312.pdf", [2, 3], None, []),
-    "H81416": ("H81416.pdf", [2, 3], "H81416_a.pdf", [1]),
+    "H81416": ("H81416.pdf", [2, 3], "H81416_a.pdf", [1]), "H80000": ("H80000.pdf", [2, 3], None, []),
 }
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 MODELS = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
