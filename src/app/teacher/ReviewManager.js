@@ -74,6 +74,7 @@ export default function ReviewManager({ db, levels }) {
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState("");
   const [collapsed, setCollapsed] = useState({});
+  const [openCls, setOpenCls] = useState({}); // lớp nào đang mở danh sách học viên (mặc định thu gọn)
   const [importing, setImporting] = useState(false);
 
   // modal states
@@ -415,7 +416,11 @@ export default function ReviewManager({ db, levels }) {
                     <button onClick={() => openEditClass(cls)} className={`${btn} px-3 py-1.5 bg-white border border-[#E2E8F0] text-slate-600 hover:bg-slate-50`}>✏️ Sửa lớp</button>
                     <button onClick={() => deleteClass(cls)} className={`${btn} px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100`}>🗑️ Xoá</button>
                   </div>
-                  <div className="space-y-2 mb-3">
+                  <button onClick={() => setOpenCls((o) => ({ ...o, [cls.id]: !o[cls.id] }))} aria-expanded={!!openCls[cls.id]}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2 mb-2 rounded-xl bg-white border border-[#E2E8F0] text-xs font-bold text-slate-600 hover:bg-slate-50">
+                    <span>👥 Học viên ({cls.students?.length || 0})</span><span>{openCls[cls.id] ? "▲ Thu gọn" : "▼ Mở danh sách"}</span>
+                  </button>
+                  {openCls[cls.id] && <div className="space-y-2 mb-3">
                     {(cls.students || []).map((st) => {
                       const sr = resultsOf(cls.id, st.id);
                       const last = sr[0];
@@ -437,14 +442,15 @@ export default function ReviewManager({ db, levels }) {
                         </div>
                       );
                     })}
-                  </div>
+                  </div>}
                   <div className="pt-3 border-t border-slate-200 mt-auto">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Báo cáo lớp theo bài</p>
                     {testNames.length === 0 ? <p className="text-[10px] text-slate-400 italic">Chưa có bài nào được kiểm tra.</p> : (
-                      <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-                        {testNames.map((tn) => (
+                      <div className="flex flex-wrap gap-1.5">
+                        {(openCls["r" + cls.id] ? testNames : testNames.slice(0, 3)).map((tn) => (
                           <button key={tn} onClick={() => setReportFor({ cls, testName: tn })} className={`${btn} px-2.5 py-1 bg-white hover:bg-[#10B981] hover:text-white border border-[#E2E8F0] text-[#142033] text-[10px]`}>📊 {tn}</button>
                         ))}
+                        {testNames.length > 3 && <button onClick={() => setOpenCls((o) => ({ ...o, ["r" + cls.id]: !o["r" + cls.id] }))} className={`${btn} px-2.5 py-1 text-[10px] text-slate-500 underline`}>{openCls["r" + cls.id] ? "Thu gọn" : `+${testNames.length - 3} bài khác`}</button>}
                       </div>
                     )}
                   </div>
