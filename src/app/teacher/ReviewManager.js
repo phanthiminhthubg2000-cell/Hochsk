@@ -396,7 +396,7 @@ export default function ReviewManager({ db, levels }) {
         {loading ? <p className="text-slate-400 text-xs py-6">Đang tải…</p> : classes.length === 0 ? (
           <p className="text-slate-400 text-xs py-6">Chưa có lớp học nào được tạo.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
             {classes.map((cls) => {
               const cr = results.filter((r) => r.classId === cls.id);
               const testNames = [...new Set(cr.map((r) => r.testName))];
@@ -415,17 +415,20 @@ export default function ReviewManager({ db, levels }) {
                     <button onClick={() => openEditClass(cls)} className={`${btn} px-3 py-1.5 bg-white border border-[#E2E8F0] text-slate-600 hover:bg-slate-50`}>✏️ Sửa lớp</button>
                     <button onClick={() => deleteClass(cls)} className={`${btn} px-3 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100`}>🗑️ Xoá</button>
                   </div>
-                  <div className="space-y-2 max-h-72 overflow-y-auto pr-1 mb-3">
+                  <div className="space-y-2 mb-3">
                     {(cls.students || []).map((st) => {
                       const sr = resultsOf(cls.id, st.id);
                       const last = sr[0];
                       return (
                         <div key={st.id} className="p-3 bg-white rounded-xl border border-[#E2E8F0] flex justify-between items-center gap-2 shadow-sm">
-                          <div className="min-w-0">
-                            <p className="font-bold text-xs text-[#142033] truncate">{st.name}</p>
-                            <p className="text-[10px] text-slate-400 truncate">
-                              {last ? `${last.date} · ${last.score}% · ${last.testName}` : "Chưa kiểm tra"}
-                            </p>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-sm text-[#142033] leading-snug break-words">{st.name}</p>
+                            {last ? (
+                              <p className="text-[11px] text-slate-500 leading-snug mt-0.5 break-words">
+                                <span className={`inline-block font-black px-1.5 rounded mr-1 ${last.score >= 80 ? "bg-emerald-50 text-emerald-700" : last.score >= 50 ? "bg-amber-50 text-amber-700" : "bg-rose-50 text-rose-600"}`}>{last.score}%</span>
+                                {last.date} · {last.testName}
+                              </p>
+                            ) : <p className="text-[11px] text-slate-400 mt-0.5">Chưa kiểm tra</p>}
                           </div>
                           <div className="flex gap-1 shrink-0">
                             <button onClick={() => setProfileFor({ cls, st })} className={`${btn} px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200`} title="Hồ sơ">📜</button>
