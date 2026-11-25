@@ -181,7 +181,7 @@ export default function TuViPage() {
 
   return (
     <Shell title="Lá số Tử vi">
-      <div className="flex items-center gap-2 text-[13px] mb-3" style={{ color: C.mute }}><Link href="/huyen-hoc" className="hover:underline">‹ 玄门学宫</Link><span>/</span><Link href="/huyen-hoc/cong-cu" className="hover:underline">法器</Link></div>
+      <div className="flex items-center gap-2 text-[13px] mb-3" style={{ color: C.mute }}><Link href="/huyen-hoc" className="hover:underline">‹ 玄门学宫</Link><span>/</span><Link href="/huyen-hoc/cong-cu" className="hover:underline">法器</Link><Link href="/huyen-hoc/bat-tu" className="ml-auto font-bold hover:underline" style={{ color: C.gold }}>Xem Bát tự 八字 ›</Link></div>
       <header className="mb-4">
         <div className="font-zh text-[14px]" style={{ color: C.gold }}>紫微斗数 · 排盘与论命</div>
         <h1 className="font-serif-vn text-[28px] md:text-[34px] font-extrabold">Lập lá số Tử vi</h1>
