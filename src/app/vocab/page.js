@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import myCustomData from "../cards.json";
+let myCustomData = []; // tải từ /data/bank/cards.json khi mở trang
 import { useAuth, useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, collection, getDocs, query, limit } from "firebase/firestore";
@@ -19,7 +19,7 @@ const generateLevelsFromData = (data, wordsPerLevel = 10) => {
   return levels.length > 0 ? levels : [{ level: 1, words: [] }];
 };
 
-export default function FlashcardPage() {
+function FlashcardPage__Inner() {
   const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
   const availableHskLevels = [...new Set(myCustomData.map(item => item.level))].filter(Boolean).sort();
@@ -488,4 +488,14 @@ export default function FlashcardPage() {
       </main>
     </div>
   );
+}
+// Dữ liệu lớn tải riêng (trình duyệt cache được) thay vì nhét vào gói JS → trang mở nhanh hơn
+export default function FlashcardPage() {
+  const [ok, setOk] = useState(false);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    Promise.all([fetch("/data/bank/cards.json").then((r) => r.json())]).then((d) => { myCustomData = d[0] || []; setOk(true); }).catch(() => setErr(true));
+  }, []);
+  if (ok) return <FlashcardPage__Inner />;
+  return <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", color: "#64748b", fontSize: 14 }}>{err ? "Không tải được dữ liệu, thử tải lại trang." : "Đang tải dữ liệu…"}</div>;
 }

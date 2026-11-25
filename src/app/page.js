@@ -69,10 +69,24 @@ const HSKK_EXAMS_FALLBACK = [
 const LEAF_PER_LESSON = 30;
 const LOTUS_STAGES = 11; // /public/lotus/lotus_stage_01..11.webp
 
+// Tải danh sách kho (bài giảng / đề) dạng gọn qua /api/bank (không kèm htmlContent nặng); lỗi thì đọc thẳng Firestore.
+// Có bản lưu trên máy để hiện ngay lần sau.
+const wrapTs = (x) => { for (const k in x) { const v = x[k]; if (v && typeof v === "object" && "__ts" in v) { const ms = v.__ts; x[k] = { toMillis: () => ms, toDate: () => new Date(ms), seconds: Math.floor(ms / 1000) }; } } return x; };
+async function loadBank(col, onCached) {
+  const ck = "bank_" + col;
+  try { const c = JSON.parse(localStorage.getItem(ck) || "null"); if (Array.isArray(c) && c.length) onCached?.(c.map((x) => wrapTs({ ...x, _col: col }))); } catch (_) {}
+  try {
+    const r = await fetch(`/api/bank?col=${col}`);
+    if (r.ok) { const l = await r.json(); if (Array.isArray(l)) { try { localStorage.setItem(ck, JSON.stringify(l)); } catch (_) {} return l.map((x) => wrapTs({ ...x, _col: col })); } }
+  } catch (_) {}
+  const snap = await getDocs(collection(db, col)); const l = []; snap.forEach((d) => l.push({ id: d.id, ...d.data() })); return l;
+}
+
 // Hiển thị tệp .html (đề thi / bài giảng) trong iframe.
 function htmlFrameProps(item) {
   if (!item) return {};
   if (item.htmlContent) return { srcDoc: item.htmlContent };
+  if (item.hasHtml && item._col) return { src: `/api/bank?col=${item._col}&id=${encodeURIComponent(item.id)}` };
   const url = item.fileUrl || "";
   if (/^https:\/\/(firebasestorage\.googleapis\.com|storage\.googleapis\.com|[^/]+\.firebasestorage\.app)\//.test(url)) {
     return { src: `/api/exam-html?u=${encodeURIComponent(url)}` };
@@ -653,8 +667,7 @@ export default function HomePage() {
     if (statics.length) setHsk3ExamsList(prev => (prev.length ? prev : statics));
     const list = [];
     try {
-      const snapshot = await getDocs(collection(db, "hsk3_exams_bank"));
-      snapshot.forEach(d => list.push({ id: d.id, ...d.data() }));
+      list.push(...await loadBank("hsk3_exams_bank"));
     } catch (err) { console.error("Lỗi tải kho đề thi HSK 3.0:", err); }
     const names = new Set(list.map(e => e.examName));
     setHsk3ExamsList([...list, ...statics.filter(e => !names.has(e.examName))]);
@@ -662,7 +675,7 @@ export default function HomePage() {
 
   const fetchLectures = useCallback(async () => {
     try {
-      const snapshot = await getDocs(collection(db, "lectures_bank"));
+      const build = (docs) => {
       const list = [...STATIC_LECTURES];
       // Bài tĩnh (bản bố cục mới) thay cho bài cùng cấp & cùng số bài đã tải lên Firestore
       // Chỉ coi là "trùng" khi tên là bài khoá đánh số (Bài 3 / Lesson 3 / 第3课) — không đụng tới bài ngữ âm, ôn tập, kiểm tra…
@@ -675,13 +688,14 @@ export default function HomePage() {
       const staticKey = new Set(STATIC_LECTURES.map(x => x.level + "#" + numOf(x.lectureName)));
       const norm = (t) => String(t || "").normalize("NFC").toLowerCase().replace(/\s+/g, " ");
       const replacers = STATIC_LECTURES.filter(x => x.replaces);
-      snapshot.forEach(d => {
-        const x = { id: d.id, ...d.data() };
+      docs.forEach(x => {
         if (replacers.some(r => r.level === x.level && [].concat(r.replaces).some(t => norm(x.lectureName).includes(norm(t))))) return; // đã có bản sửa tĩnh
         const k = numOf(x.lectureName); if (!k || !staticKey.has(x.level + "#" + k)) list.push(x);
       });
       list.sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true, sensitivity: "base" }));
       setLecturesBankList(list);
+      };
+      build(await loadBank("lectures_bank", build));
     } catch (err) { console.error("Lỗi tải bài giảng:", err); setLecturesBankList([...STATIC_LECTURES]); }
   }, []);
 
@@ -717,9 +731,8 @@ export default function HomePage() {
             avatar: user.imageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`
           }, { merge: true });
         }
-        const upSnap = await getDoc(doc(db, "user_progress", userId));
+        const [upSnap, pSnap] = await Promise.all([getDoc(doc(db, "user_progress", userId)), getDoc(doc(db, "progress", userId))]);
         const upData = upSnap.exists() ? upSnap.data() : {};
-        const pSnap = await getDoc(doc(db, "progress", userId));
         const pData = pSnap.exists() ? pSnap.data() : {};
 
         const tv = uData.todayVocabLearned ?? upData.todayVocabLearned ?? 0;
@@ -735,24 +748,26 @@ export default function HomePage() {
             catch (e) { console.warn("Không đọc được", col, e?.message); }
           };
           let latest = null;
-          await grab("test_submissions", "userId", (t, id) => {
+          await Promise.all([
+          grab("test_submissions", "userId", (t, id) => {
             const graded = t.status === "graded";
             if (graded && (!latest || ms(t.submittedAt) > ms(latest.submittedAt))) latest = t;
             return { id, type: "test", graded, title: "Thi đánh giá năng lực", score: t.teacherScore, level: t.evaluatedLevel, feedback: t.teacherFeedback, recommendation: t.recommendation, skills: t.skillsEvaluation, time: ms(t.gradedAt) || ms(t.submittedAt) };
-          });
-          await grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) }));
-          await grab("hsk3_submissions", "userId", (h, id) => ({
+          }),
+          grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) })),
+          grab("hsk3_submissions", "userId", (h, id) => ({
             id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback, examId: h.examId || "",
             review: { answersJson: h.answersJson || "", briefs: [h.listeningDetail, h.readingDetail, h.writingAutoDetail].filter(Boolean).join(" "), writing: (h.writingItems || []).map((x) => [x.n, x.text]), min: h.durationMin || 0 },
             autoPct: (() => { const c = (h.listeningCorrect || 0) + (h.readingCorrect || 0) + (h.writingAutoCorrect || 0), t = (h.listeningTotal || 0) + (h.readingTotal || 0) + (h.writingAutoTotal || 0); return t ? Math.round((c / t) * 100) : null; })(),
             parts: [["Nghe", h.listeningCorrect, h.listeningTotal], ["Đọc", h.readingCorrect, h.readingTotal], ["Viết (tự chấm)", h.writingAutoCorrect, h.writingAutoTotal]].filter(x => x[2]),
             time: ms(h.gradedAt) || ms(h.submittedAt)
-          }));
-          await grab("phonetics_tests", "studentUserId", (h, id) => ({
+          })),
+          grab("phonetics_tests", "studentUserId", (h, id) => ({
             id, type: "phonetics", graded: h.status === "graded", title: h.lessonName ? `Kiểm tra ngữ âm · ${h.lessonName}` : "Kiểm tra ngữ âm", score: h.totalScore, max: h.totalMax ?? 10, level: h.className || "", feedback: h.teacherFeedback,
             parts: [["Nghe", h.listeningScore, null], ["Đọc", h.readingScore, null]].filter(x => x[1] != null),
             time: ms(h.gradedAt) || ms(h.submittedAt)
-          }));
+          }))
+          ]);
           list.sort((a, b) => b.time - a.time);
           setResults(list);
           if (latest?.skillsEvaluation) {

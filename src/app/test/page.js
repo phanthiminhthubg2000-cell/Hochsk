@@ -6,8 +6,8 @@ import { doc, getDoc, collection, addDoc, serverTimestamp } from "firebase/fires
 import Link from "next/link";
 
 // Import dữ liệu lấy trực tiếp từ arrange và sentences
-import arrangeData from "../arrange.json";    
-import sentencesData from "../sentences.json"; 
+let arrangeData = []; // tải từ /data/bank/arrange.json khi mở trang
+let sentencesData = []; // tải từ /data/bank/sentences.json khi mở trang
 import GardenNav from "../GardenNav";
 
 // --- HÀM HỖ TRỢ CƠ BẢN ---
@@ -186,7 +186,7 @@ function AudioRecorder({ onRecord }) {
 }
 
 // --- MAIN COMPONENT ---
-export default function PlacementTestPage() {
+function PlacementTestPage__Inner() {
   const { user, isLoaded } = useUser();
   const { userId } = useAuth();
   
@@ -683,4 +683,14 @@ export default function PlacementTestPage() {
       </div>
     </main>
   );
+}
+// Dữ liệu lớn tải riêng (trình duyệt cache được) thay vì nhét vào gói JS → trang mở nhanh hơn
+export default function PlacementTestPage() {
+  const [ok, setOk] = useState(false);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    Promise.all([fetch("/data/bank/arrange.json").then((r) => r.json()), fetch("/data/bank/sentences.json").then((r) => r.json())]).then((d) => { arrangeData = d[0] || []; sentencesData = d[1] || []; setOk(true); }).catch(() => setErr(true));
+  }, []);
+  if (ok) return <PlacementTestPage__Inner />;
+  return <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", color: "#64748b", fontSize: 14 }}>{err ? "Không tải được dữ liệu, thử tải lại trang." : "Đang tải dữ liệu…"}</div>;
 }

@@ -13,7 +13,7 @@ import { useAuth } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import { doc, setDoc, increment } from "firebase/firestore";
 import { logUserError } from "../../lib/firebaseUtils";
-import sentencesData from "../sentences.json";
+let sentencesData = []; // tải từ /data/bank/sentences.json khi mở trang
 import GardenNav from "../GardenNav";
 
 const HSK_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6"];
@@ -63,7 +63,7 @@ function speak(text) {
   } catch (e) {}
 }
 
-export default function ArrangePage() {
+function ArrangePage__Inner() {
   const { userId } = useAuth();
 
   // ----- chọn đề -----
@@ -387,4 +387,15 @@ export default function ArrangePage() {
       </div>
     </div>
   );
+}
+
+// Dữ liệu lớn tải riêng (trình duyệt cache được) thay vì nhét vào gói JS → trang mở nhanh hơn
+export default function ArrangePage() {
+  const [ok, setOk] = useState(false);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    Promise.all([fetch("/data/bank/sentences.json").then((r) => r.json())]).then((d) => { sentencesData = d[0] || []; setOk(true); }).catch(() => setErr(true));
+  }, []);
+  if (ok) return <ArrangePage__Inner />;
+  return <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", color: "#64748b", fontSize: 14 }}>{err ? "Không tải được dữ liệu, thử tải lại trang." : "Đang tải dữ liệu…"}</div>;
 }

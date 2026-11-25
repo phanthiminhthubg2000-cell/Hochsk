@@ -7,7 +7,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateUserProgress } from "../../lib/firebaseUtils";
 
 // IMPORT DATA TỪ FILE ARRANGE.JSON
-import translationData from "../arrange.json"; 
+let translationData = []; // tải từ /data/bank/arrange.json khi mở trang
 import GardenNav from "../GardenNav";
 
 // --- HÀM CHUẨN HÓA LEVEL ---
@@ -44,7 +44,7 @@ const getSimilarity = (s1, s2) => {
   return (longer.length - costs[shorter.length]) / parseFloat(longer.length);
 };
 
-export default function TranslatePage() {
+function TranslatePage__Inner() {
   const { isSignedIn, userId } = useAuth();
   const { user, isLoaded } = useUser();
 
@@ -546,4 +546,14 @@ export default function TranslatePage() {
       </main>
     </div>
   );
+}
+// Dữ liệu lớn tải riêng (trình duyệt cache được) thay vì nhét vào gói JS → trang mở nhanh hơn
+export default function TranslatePage() {
+  const [ok, setOk] = useState(false);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    Promise.all([fetch("/data/bank/arrange.json").then((r) => r.json())]).then((d) => { translationData = d[0] || []; setOk(true); }).catch(() => setErr(true));
+  }, []);
+  if (ok) return <TranslatePage__Inner />;
+  return <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", color: "#64748b", fontSize: 14 }}>{err ? "Không tải được dữ liệu, thử tải lại trang." : "Đang tải dữ liệu…"}</div>;
 }
