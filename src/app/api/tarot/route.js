@@ -1,10 +1,9 @@
 // Giải bài Tarot bằng AI: nhận câu hỏi + trải bài + các lá đã rút (xuôi/ngược) → Gemini viết lời giải tiếng Việt
 import { guard } from "@/lib/apiGuard";
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { raceJSON } from "@/lib/geminiRace";
 
 export const maxDuration = 60;
-const MODELS = [["gemini-3.5-flash", 40000], ["gemini-3.5-flash-lite", 15000]];
 
 const PROMPT = (b) => `Bạn là người giải bài Tarot (塔罗牌) có kinh nghiệm, viết cho người Việt đang học tiếng Trung.
 Chủ đề: ${b.topic || "Tổng quát"}
@@ -29,18 +28,12 @@ export async function POST(req) {
     if (!Array.isArray(b?.cards) || !b.cards.length) return NextResponse.json({ error: "Chưa có lá bài." }, { status: 400 });
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return NextResponse.json({ error: "Thiếu API Key." }, { status: 500 });
-    const genAI = new GoogleGenerativeAI(apiKey);
-    let last = null;
-    for (const [m, timeout] of MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({ model: m, generationConfig: { responseMimeType: "application/json", temperature: 0.6 } }, { timeout });
-        const r = await model.generateContent(PROMPT(b));
-        const d = JSON.parse(r.response.text().replace(/```json|```/g, "").trim());
-        return NextResponse.json({ ...(Array.isArray(d) ? d[0] : d), model: m });
-      } catch (e) { last = e; }
+    try {
+      return NextResponse.json(await raceJSON(apiKey, PROMPT(b), { temperature: 0.6 }));
+    } catch (e) {
+      console.error("tarot:", e);
+      return NextResponse.json({ error: "AI đang quá tải hoặc trả lời quá chậm, bạn bấm thử lại nhé." }, { status: 503 });
     }
-    console.error("tarot:", last);
-    return NextResponse.json({ error: "AI đang quá tải, bạn thử lại sau ít phút nhé." }, { status: 503 });
   } catch (e) {
     console.error("tarot:", e);
     return NextResponse.json({ error: "Lỗi giải bài: " + e.message }, { status: 500 });

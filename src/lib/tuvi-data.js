@@ -108,3 +108,41 @@ export const CLASS = {
   土五局: "Thổ ngũ cục — trầm ổn, đáng tin; đại vận khởi từ 5 tuổi.",
   火六局: "Hoả lục cục — nhiệt tình, bộc trực; đại vận khởi từ 6 tuổi.",
 };
+
+// ---------- Sao an theo trường phái Tử vi Việt Nam (iztro không có / an khác) ----------
+const ZHI = "子丑寅卯辰巳午未申酉戌亥", GAN = "甲乙丙丁戊己庚辛壬癸";
+const at = (i) => ZHI[((i % 12) + 12) % 12];
+// Tuần Trung Không Vong: hai chi trống của tuần giáp chứa năm sinh
+export function tuanPair(yg, yz) { const s = (ZHI.indexOf(yz) - GAN.indexOf(yg) + 12) % 12; return [at(s - 2), at(s - 1)]; }
+// Triệt Lộ Không Vong theo can năm: Giáp Kỷ Thân Dậu, Ất Canh Ngọ Mùi, Bính Tân Thìn Tỵ, Đinh Nhâm Dần Mão, Mậu Quý Tý Sửu
+export function trietPair(yg) { return [["申", "酉"], ["午", "未"], ["辰", "巳"], ["寅", "卯"], ["子", "丑"]][GAN.indexOf(yg) % 5]; }
+export const TUAN_TRIET = {
+  Tuần: ["旬空", "Tuần Trung Không Vong: án ngữ hai cung, làm sao trong cung giảm lực — sao xấu bớt xấu, sao tốt bớt tốt; ảnh hưởng mạnh nửa sau cuộc đời (sau 30 tuổi)."],
+  Triệt: ["截空", "Triệt Lộ Không Vong: chặn ngang hai cung, như dao cắt — việc dễ đứt quãng, phải làm lại; ảnh hưởng mạnh nửa đầu cuộc đời (trước 30 tuổi), về sau nhẹ dần."],
+};
+// Vòng Thái Tuế (an theo chi năm sinh, đi thuận)
+export const THAI_TUE = [["Thái Tuế", "太岁"], ["Thiếu Dương", "少阳"], ["Tang Môn", "丧门"], ["Thiếu Âm", "少阴"], ["Quan Phù", "官符"], ["Tử Phù", "死符"], ["Tuế Phá", "岁破"], ["Long Đức", "龙德"], ["Bạch Hổ", "白虎"], ["Phúc Đức", "福德"], ["Điếu Khách", "吊客"], ["Trực Phù", "直符"]];
+// Vòng Lộc Tồn (Bác sĩ) — iztro trả về boshi12, chỉ đổi tên cho đúng cách gọi Việt
+export const BAC_SI = { 博士: "Bác Sĩ", 力士: "Lực Sĩ", 青龙: "Thanh Long", 小耗: "Tiểu Hao", 将军: "Tướng Quân", 奏书: "Tấu Thư", 飞廉: "Phi Liêm", 喜神: "Hỷ Thần", 病符: "Bệnh Phù", 大耗: "Đại Hao", 伏兵: "Phục Binh", 官府: "Quan Phủ" };
+// Các sao lẻ khác của trường phái Việt
+export function vnStars({ yg, yz, lm, hour, locTon }) {
+  const out = {}; const add = (z, vi, zh, k) => (out[z] = out[z] || []).push({ vi, zh, k });
+  const yi = ZHI.indexOf(yz);
+  THAI_TUE.forEach(([vi, zh], i) => add(at(yi + i), vi, zh, ["Thái Tuế", "Long Đức", "Phúc Đức"].includes(vi) ? "cát" : ["Tang Môn", "Bạch Hổ", "Điếu Khách", "Quan Phù", "Tuế Phá"].includes(vi) ? "sát" : "trung"));
+  add("辰", "Thiên La", "天罗", "sát"); add("戌", "Địa Võng", "地网", "sát");
+  add("酉戌未申巳午辰卯亥寅"[GAN.indexOf(yg)], "Lưu Hà", "流霞", "sát");
+  if (locTon) { const l = ZHI.indexOf(locTon); add(at(l + 8), "Quốc Ấn", "国印", "cát"); add(at(l - 7), "Đường Phù", "唐符", "cát"); }
+  if (lm) { add(at(yi - (lm - 1) + (hour % 12)), "Đẩu Quân", "斗君", "trung"); add(at(8 + lm - 1), "Thiên Giải", "天解", "cát"); add(at(7 + lm - 1), "Địa Giải", "地解", "cát"); }
+  return out;
+}
+Object.assign(MINOR, {
+  天罗: ["Thiên La", "sát", "Lưới trời: gò bó, dễ vướng thị phi, kiện tụng."], 地网: ["Địa Võng", "sát", "Lưới đất: bị trói buộc, việc khó thoát ra."],
+  流霞: ["Lưu Hà", "sát", "Chủ rủi ro về máu huyết, sông nước; nên cẩn thận khi đi lại."], 国印: ["Quốc Ấn", "cát", "Ấn của nhà nước: chủ chức quyền, được giao trọng trách."],
+  唐符: ["Đường Phù", "cát", "Chủ danh giá, chức vị, nhà cửa khang trang."], 斗君: ["Đẩu Quân", "trung", "Nguyệt tướng: dùng xem vận từng tháng trong năm (tháng Giêng khởi tại cung này)."],
+  天解: ["Thiên Giải", "cát", "Giải trừ tai ách, gặp nạn có người giúp."], 地解: ["Địa Giải", "cát", "Giải trừ tai ách, hoá giải hung tinh."],
+  太岁: ["Thái Tuế", "trung", "Đứng đầu vòng Thái Tuế: chủ lời nói, lý lẽ, dễ tranh cãi nhưng có uy."], 少阳: ["Thiếu Dương", "cát", "Thông minh, vui vẻ, gặp may nhỏ."],
+  丧门: ["Tang Môn", "sát", "Chủ buồn phiền, tang chế, hao tổn tinh thần."], 少阴: ["Thiếu Âm", "cát", "Hiền hoà, kín đáo, được giúp ngầm."],
+  官符: ["Quan Phù", "sát", "Chủ giấy tờ, kiện tụng, va chạm pháp lý."], 死符: ["Tử Phù", "sát", "Chủ buồn rầu, ốm đau nhẹ."], 岁破: ["Tuế Phá", "sát", "Phá hao, việc dễ đổ vỡ, tính ngang."],
+  龙德: ["Long Đức", "cát", "Phúc tinh, giải hung, gặp quý nhân."], 白虎: ["Bạch Hổ", "sát", "Hung tinh: tai nạn, tranh đấu; cũng chủ uy quyền, quyết đoán."],
+  福德: ["Phúc Đức", "cát", "Phúc tinh, hưởng phúc, giải hung."], 吊客: ["Điếu Khách", "sát", "Chủ tang thương, buồn bã, việc thăm viếng."], 直符: ["Trực Phù", "sát", "Chủ ngăn trở, thị phi nhỏ."],
+});
