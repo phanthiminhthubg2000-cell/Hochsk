@@ -164,7 +164,7 @@ function Uploader({ db, onDone }) {
         const st = students.find((x) => x.id === sid) || { id: sid, name: sid.replace(/^x:/, "") };
         const ref = doc(collection(db, HW_COL));
         await setDoc(doc(db, HW_IMG, ref.id), { images: imgs, createdAt: serverTimestamp() });
-        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: part === "essay" ? topic.trim() : "", task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => mode === "essay" || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
+        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: part === "essay" ? topic.trim() : "", task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => mode === "essay" || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))).map(([k, v]) => ({ k, v })) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
       }
       setMsg(`✅ Đã lưu ${ready.length} bài — AI đang chấm ở danh sách bên dưới.`); setPics({}); setActive(""); onDone?.();
     } catch (e) { setMsg("Chưa lưu được: " + (e.code === "permission-denied" ? "Firestore chưa cho phép ghi vào homework_submissions / homework_images." : e.message || e)); }

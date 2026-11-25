@@ -50,7 +50,7 @@ ${tail}
 function taskText(t) {
   if (!t || !t.t) return "";
   return `YÊU CẦU BÀI TẬP CÔ GIAO (trong slide bài giảng): ${t.t}
-${(t.req || []).map((r) => "- " + r).join("\n")}${(t.kw || []).length ? "\nTừ mới yêu cầu dùng theo từng bài khoá:\n" + t.kw.map(([k, v]) => `- ${k}: ${v}`).join("\n") : ""}
+${(t.req || []).map((r) => "- " + r).join("\n")}${(t.kw || []).length ? "\nTừ mới yêu cầu dùng theo từng bài khoá:\n" + t.kw.map((x) => (Array.isArray(x) ? `- ${x[0]}: ${x[1]}` : `- ${x.k}: ${x.v}`)).join("\n") : ""}
 Chấm bám sát các yêu cầu này (số câu, số từ mới phải dùng…). Danh sách từ mới là để chọn: yêu cầu "ít nhất N từ" thì dùng đủ N từ là ĐẠT, không bắt dùng hết.`;
 }
 
