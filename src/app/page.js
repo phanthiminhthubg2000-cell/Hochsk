@@ -754,9 +754,9 @@ export default function HomePage() {
             if (graded && (!latest || ms(t.submittedAt) > ms(latest.submittedAt))) latest = t;
             return { id, type: "test", graded, title: "Thi đánh giá năng lực", score: t.teacherScore, level: t.evaluatedLevel, feedback: t.teacherFeedback, recommendation: t.recommendation, skills: t.skillsEvaluation, time: ms(t.gradedAt) || ms(t.submittedAt) };
           }),
-          grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) })),
+          grab("hskk_exams", "userId", (h, id) => ({ id, type: "hskk", graded: h.status === "graded", title: "Thi khẩu ngữ HSKK", score: h.teacherScore, max: 100, report: h.report || null, level: h.level, feedback: h.teacherFeedback, time: ms(h.gradedAt) || ms(h.submittedAt) })),
           grab("hsk3_submissions", "userId", (h, id) => ({
-            id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, level: h.level, feedback: h.teacherFeedback, examId: h.examId || "",
+            id, type: "hsk", graded: h.status === "graded", title: h.examName || "Bài thi HSK", score: h.teacherScore, max: h.maxScore || null, report: h.report || null, level: h.level, feedback: h.teacherFeedback, examId: h.examId || "",
             review: { answersJson: h.answersJson || "", briefs: [h.listeningDetail, h.readingDetail, h.writingAutoDetail].filter(Boolean).join(" "), writing: (h.writingItems || []).map((x) => [x.n, x.text]), min: h.durationMin || 0 },
             autoPct: (() => { const c = (h.listeningCorrect || 0) + (h.readingCorrect || 0) + (h.writingAutoCorrect || 0), t = (h.listeningTotal || 0) + (h.readingTotal || 0) + (h.writingAutoTotal || 0); return t ? Math.round((c / t) * 100) : null; })(),
             parts: [["Nghe", h.listeningCorrect, h.listeningTotal], ["Đọc", h.readingCorrect, h.readingTotal], ["Viết (tự chấm)", h.writingAutoCorrect, h.writingAutoTotal]].filter(x => x[2]),
@@ -2065,7 +2065,26 @@ export default function HomePage() {
                   ))}
                 </div>
               )}
-              {selectedResult.parts?.length > 0 && (
+              {selectedResult.graded !== false && selectedResult.report?.sections?.length > 0 && (
+                <div>
+                  <h4 className={eyebrow}>Phiếu điểm 成绩报告</h4>
+                  <div className="mt-2 rounded-xl border border-[#E4D9C3] overflow-hidden text-sm">
+                    {selectedResult.report.sections.map((x) => (
+                      <div key={x.name} className="flex items-center gap-3 px-4 py-2 border-b border-[#ECE3D0]">
+                        <span className="flex-1">{x.name}</span>
+                        <div className="w-24 h-1.5 rounded bg-[#EFE7D6] overflow-hidden"><div className="h-full bg-[#7A2218]" style={{ width: `${Math.min(100, (x.score / (x.max || 1)) * 100)}%` }} /></div>
+                        <b className="tabular-nums w-16 text-right">{x.score}<span className="text-xs text-[#6B6253]">/{x.max}</span></b>
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-3 px-4 py-2.5 bg-[#FAF5E8]">
+                      <span className="flex-1 font-bold">Tổng điểm 总分 <span className="text-xs font-normal text-[#6B6253]">· đạt từ {selectedResult.report.pass}</span></span>
+                      <b className="tabular-nums text-lg">{selectedResult.report.total}<span className="text-xs text-[#6B6253]">/{selectedResult.report.max}</span></b>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${selectedResult.report.passed ? "bg-[#DCEFD9] text-[#2F6B2A]" : "bg-[#F6DCD7] text-[#7A2218]"}`}>{selectedResult.report.passed ? "Đạt 合格" : "Chưa đạt"}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {selectedResult.parts?.length > 0 && !selectedResult.report && (
                 <div>
                   <h4 className={eyebrow}>Máy chấm tự động</h4>
                   <div className="mt-2 grid grid-cols-3 gap-2">

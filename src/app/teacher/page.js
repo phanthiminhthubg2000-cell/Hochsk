@@ -9,6 +9,7 @@ import { usePhoneticsResultSaver } from "../../phoneticsResultSaver";
 import ReviewManager from "./ReviewManager";
 import HomeworkManager from "./HomeworkManager";
 import { HskWritingAI, useHskkAI, HskkAINote } from "./aiGrade";
+import { hskReport, hasWriting, hskkReport } from "@/lib/scoring";
 import Schedule from "../thoi-khoa-bieu/Schedule";
 
 const storage = getStorage();
@@ -193,7 +194,11 @@ export default function TeacherDashboard() {
     loadWritingMeta(sub.examId).then(m => { if (alive) setWritingMeta(m || {}); });
     return () => { alive = false; };
   }, [selectedHsk3Submission]);
-  const [hsk3ScoreInput, setHsk3ScoreInput] = useState("");
+  const [hsk3ScoreInput, setHsk3ScoreInput] = useState(""); // điểm Viết /100
+  const [hsk3LR, setHsk3LR] = useState({ L: "", R: "" });     // điểm Nghe, Đọc /100
+  useEffect(() => { const s = selectedHsk3Submission; setHsk3LR({ L: s?.listeningScore ?? "", R: s?.readingScore ?? "" }); }, [selectedHsk3Submission?.id]); // eslint-disable-line
+  const hsk3WithW = hasWriting(selectedHsk3Submission);
+  const hsk3Rep = selectedHsk3Submission ? hskReport({ L: hsk3LR.L, R: hsk3LR.R, W: hsk3ScoreInput, withW: hsk3WithW }) : null;
   const [hsk3FeedbackInput, setHsk3FeedbackInput] = useState("");
   const [isLoadingHsk3Submissions, setIsLoadingHsk3Submissions] = useState(true);
 
@@ -280,7 +285,7 @@ export default function TeacherDashboard() {
   useEffect(() => {
     if (activeTab === "grading" && selectedExam) {
       const total = Object.values(itemScores).reduce((sum, val) => sum + (Number(val) || 0), 0);
-      setScoreInput(String(Math.round(total)));
+      setScoreInput(String(Math.round(total) || (Object.keys(itemScores).length ? 0 : "")));
     }
   }, [itemScores, activeTab, selectedExam]);
 
@@ -607,14 +612,16 @@ export default function TeacherDashboard() {
   };
 
   const handleSubmitHsk3Grade = async () => {
-    if (!hsk3ScoreInput || !hsk3FeedbackInput.trim()) {
-      return alert("Vui lòng nhập điểm số và nhận xét bài thi!");
+    if (hsk3LR.L === "" || hsk3LR.R === "" || (hsk3WithW && hsk3ScoreInput === "") || !hsk3FeedbackInput.trim()) {
+      return alert("Vui lòng nhập điểm Nghe, Đọc" + (hsk3WithW ? ", Viết" : "") + " và nhận xét bài thi!");
     }
     setIsSubmitting(true);
     try {
       await updateDoc(doc(db, "hsk3_submissions", selectedHsk3Submission.id), {
         status: "graded",
-        teacherScore: Number(hsk3ScoreInput),
+        teacherScore: hsk3Rep.total,
+        maxScore: hsk3Rep.max,
+        report: hsk3Rep,
         teacherFeedback: hsk3FeedbackInput,
         evaluatedLevel: selectedHsk3Submission.level,
         gradedAt: serverTimestamp()
@@ -974,14 +981,14 @@ export default function TeacherDashboard() {
   } });
 
   const submitGradeAndFinish = async () => {
-    if (!scoreInput || !feedbackInput.trim()) return alert("Vui lòng nhập đầy đủ điểm số tổng và nhận xét chung!");
+    if (!feedbackInput.trim()) return alert("Vui lòng nhập nhận xét chung!");
     setIsSubmitting(true);
     try {
       for (const ans of examAnswers) {
         const answerDocRef = doc(db, "hskk_exams", selectedExam.id, "answers", ans.id);
         await updateDoc(answerDocRef, { teacherComment: commentInputs[ans.id] || "", teacherScore: Number(itemScores[ans.id]) || 0 });
       }
-      await updateDoc(doc(db, "hskk_exams", selectedExam.id), { status: "graded", teacherScore: parseInt(scoreInput), teacherFeedback: feedbackInput, gradedAt: serverTimestamp() });
+      await updateDoc(doc(db, "hskk_exams", selectedExam.id), { status: "graded", teacherScore: hskkReport(hskkAI.plan, itemScores).total, maxScore: 100, report: hskkReport(hskkAI.plan, itemScores), teacherFeedback: feedbackInput, gradedAt: serverTimestamp() });
       alert("✅ Đã chấm xong và trả kết quả thẳng về trang cá nhân của học viên!");
       setSelectedExam(null); fetchPendingExams(); 
     } catch (error) { alert("Lỗi: " + error.message); } finally { setIsSubmitting(false); }
@@ -1524,15 +1531,17 @@ export default function TeacherDashboard() {
                       })()}
 
                       {selectedHsk3Submission.autoResult && <HskWritingAI key={selectedHsk3Submission.id} db={db} sub={selectedHsk3Submission} meta={writingMeta} onFill={(sc, fb) => { setHsk3ScoreInput((v) => v || String(sc)); setHsk3FeedbackInput((v) => (v && v.trim() ? v : fb)); }} />}
-                      <div>
-                        <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Điểm số tổng (0 - 100)</label>
-                        <input 
-                          type="number" min="0" max="100" 
-                          value={hsk3ScoreInput} 
-                          onChange={(e) => setHsk3ScoreInput(e.target.value)} 
-                          placeholder="VD: 85" 
-                          className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] text-xl font-black text-[#10B981] outline-none focus:border-[#10B981]" 
-                        />
+                      <div className="rounded-2xl border-2 border-[#E2E8F0] p-4">
+                        <div className="flex items-center gap-2 mb-3"><b className="text-sm text-[#142033]">Phiếu điểm</b><span className="text-xs text-slate-500">mỗi phần /100 · tổng /{hsk3Rep?.max} · đạt từ {hsk3Rep?.pass}</span></div>
+                        <div className={`grid gap-3 ${hsk3WithW ? "grid-cols-3" : "grid-cols-2"}`}>
+                          {[["Nghe 听力", hsk3LR.L, (v) => setHsk3LR((x) => ({ ...x, L: v }))], ["Đọc 阅读", hsk3LR.R, (v) => setHsk3LR((x) => ({ ...x, R: v }))], ...(hsk3WithW ? [["Viết 书写", hsk3ScoreInput, setHsk3ScoreInput]] : [])].map(([l, v, set]) => (
+                            <label key={l} className="block">
+                              <span className="block text-[11px] font-bold text-[#64748B] uppercase tracking-wider mb-1">{l}</span>
+                              <input type="number" min="0" max="100" value={v} onChange={(e) => set(e.target.value)} placeholder="0–100" className="w-full p-3 rounded-xl border-2 border-[#E2E8F0] text-xl font-black text-center text-[#10B981] outline-none focus:border-[#10B981]" />
+                            </label>
+                          ))}
+                        </div>
+                        {hsk3Rep && <div className="mt-3 flex items-center gap-3 text-sm"><span>Tổng:</span><b className="text-2xl text-[#142033] tabular-nums">{hsk3Rep.total}<span className="text-sm text-slate-400">/{hsk3Rep.max}</span></b><span className={`ml-auto text-xs font-black px-2 py-1 rounded ${hsk3Rep.passed ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}>{hsk3Rep.passed ? "ĐẠT 合格" : "CHƯA ĐẠT"}</span></div>}
                       </div>
 
                       <div>
@@ -1615,17 +1624,18 @@ export default function TeacherDashboard() {
                         <div className="space-y-6">
                           <div className="rounded-2xl border-2 border-sky-200 bg-sky-50/60 p-3 flex flex-wrap items-center gap-2 text-sm">
                             <b>🤖 AI chấm trước</b>
-                            {Object.keys(hskkAI.busy).length ? <span className="text-sky-700 font-bold">đang nghe {Object.keys(hskkAI.busy).length} câu…</span> : <span className="text-slate-600">{Object.keys(hskkAI.ai).length}/{examAnswers.length} câu · mỗi câu tối đa {hskkAI.per} điểm (tổng 100)</span>}
+                            {Object.keys(hskkAI.busy).length ? <span className="text-sky-700 font-bold">đang nghe {Object.keys(hskkAI.busy).length} câu…</span> : <span className="text-slate-600">{Object.keys(hskkAI.ai).length}/{examAnswers.length} câu · chấm theo tiêu chí từng dạng câu · tổng 100, đạt từ 60</span>}
                             <button onClick={hskkAI.rerun} disabled={Object.keys(hskkAI.busy).length > 0} className="ml-auto text-xs font-bold underline text-sky-700 disabled:opacity-40">↻ Chấm lại cả bài</button>
                             {hskkAI.err && <span className="w-full text-xs text-rose-600">{hskkAI.err}</span>}
                             {hskkAI.sum?.comment && <span className="w-full text-slate-700"><b>Nhận xét chung (AI):</b> {hskkAI.sum.comment}</span>}
                             <span className="w-full text-xs text-slate-500">Điểm và nhận xét AI đã điền sẵn vào các ô — cô nghe lại, sửa rồi bấm gửi.</span>
                           </div>
-                          {examAnswers.map((ans, idx) => (
-                            <div key={ans.id} className="bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow-sm relative">
+                          {examAnswers.map((ans, idx) => { const part = hskkAI.plan.parts.find((p) => p.ids[0] === ans.id); return (<div key={ans.id}>
+                            {part && <div className="mb-4 mt-2 flex items-baseline gap-2 border-b-2 border-[#142033] pb-1"><b className="text-[#142033]" style={{ fontFamily: "'Noto Sans SC',sans-serif" }}>{part.title}</b><span className="text-xs text-slate-500">{part.vi} · {part.ids.length} câu · {part.max} điểm</span></div>}
+                            <div className="bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow-sm relative">
                               <div className="absolute -top-3 -left-3 w-8 h-8 bg-[#10B981] text-white rounded-full flex items-center justify-center font-black text-sm shadow-md border-2 border-white">{idx + 1}</div>
                               <div className="pl-4 mb-4">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-[#94A3B8] bg-[#F1F5F9] px-2 py-1 rounded mb-2 inline-block">{ans.type === "repeat" ? "Nghe nhắc lại" : ans.type === "picture" ? "Nhìn tranh nói" : "Trả lời câu hỏi"}</span>
+                                
                                 <p className="text-base font-bold text-[#142033] leading-relaxed">{ans.question}</p>
                               </div>
                               {ans.images && ans.images.length > 0 && (
@@ -1633,7 +1643,7 @@ export default function TeacherDashboard() {
                                   {ans.images.map((img, i) => (<img key={i} src={img} alt="đề bài" className="w-full rounded-xl border border-[#E2E8F0] shadow-sm object-cover" />))}
                                 </div>
                               )}
-                              <HskkAINote d={hskkAI.ai[ans.id]} busy={!!hskkAI.busy[ans.id]} per={hskkAI.per} onRe={() => hskkAI.regradeOne(ans)} />
+                              <HskkAINote d={hskkAI.ai[ans.id]} busy={!!hskkAI.busy[ans.id]} per={hskkAI.per[ans.id]} onRe={() => hskkAI.regradeOne(ans)} />
                               <div className="bg-[#F8FAFC] rounded-xl p-3 border border-[#E2E8F0] mb-4">
                                 {ans.audioBase64 || ans.audioUrl ? (
                                   <audio src={ans.audioBase64 || ans.audioUrl} controls className="w-full h-10 outline-none" />
@@ -1643,8 +1653,8 @@ export default function TeacherDashboard() {
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4 pt-4 border-t border-[#E2E8F0]">
                                 <div className="md:col-span-3">
-                                  <label className="block text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1.5">Điểm (tối đa {hskkAI.per || 100})</label>
-                                  <input type="number" min="0" max="100" step="0.1" value={itemScores[ans.id] || ""} onChange={(e) => setItemScores(prev => ({...prev, [ans.id]: e.target.value}))} className="w-full p-3 rounded-xl border border-[#E2E8F0] text-lg font-black text-center text-[#10B981] focus:border-[#10B981] focus:bg-[#ECFDF5] outline-none transition-all" placeholder="0" />
+                                  <label className="block text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1.5">Điểm (tối đa {hskkAI.per[ans.id]})</label>
+                                  <input type="number" min="0" max={hskkAI.per[ans.id]} step="0.1" value={itemScores[ans.id] || ""} onChange={(e) => setItemScores(prev => ({...prev, [ans.id]: e.target.value}))} className="w-full p-3 rounded-xl border border-[#E2E8F0] text-lg font-black text-center text-[#10B981] focus:border-[#10B981] focus:bg-[#ECFDF5] outline-none transition-all" placeholder="0" />
                                 </div>
                                 <div className="md:col-span-9">
                                   <label className="block text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1.5">Ghi chú nhanh / Nhận xét câu này</label>
@@ -1652,7 +1662,7 @@ export default function TeacherDashboard() {
                                 </div>
                               </div>
                             </div>
-                          ))}
+                          </div>); })}
                         </div>
                       )}
                     </div>
@@ -1661,8 +1671,11 @@ export default function TeacherDashboard() {
                       <h3 className="text-lg font-black text-[#142033] flex items-center gap-2"><span>🎖️</span> Đánh giá Tổng quan & Chốt điểm</h3>
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
                         <div className="md:col-span-3">
-                          <label className="block text-[11px] font-black text-[#64748B] uppercase tracking-widest mb-2">Điểm tổng (Auto-sum)</label>
-                          <input type="number" value={scoreInput} readOnly className="w-full p-4 rounded-xl border-2 border-[#E2E8F0] bg-slate-50 text-2xl font-black text-center text-[#10B981] outline-none transition-all cursor-not-allowed" />
+                          <label className="block text-[11px] font-black text-[#64748B] uppercase tracking-widest mb-2">Phiếu điểm</label>
+                          {(() => { const rep = hskkReport(hskkAI.plan, itemScores); return (<div className="rounded-xl border-2 border-[#E2E8F0] p-3 grid gap-1 text-xs">
+                            {rep.sections.map((x) => <div key={x.name} className="flex justify-between gap-2"><span style={{ fontFamily: "'Noto Sans SC',sans-serif" }}>{x.name}</span><b className="tabular-nums">{x.score}/{x.max}</b></div>)}
+                            <div className="flex items-center justify-between border-t pt-1 mt-1"><b className="text-2xl text-[#10B981] tabular-nums">{rep.total}<span className="text-sm text-slate-400">/100</span></b><span className={`font-black px-2 py-0.5 rounded ${rep.passed ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}>{rep.passed ? "ĐẠT" : "CHƯA ĐẠT"}</span></div>
+                          </div>); })()}
                         </div>
                         <div className="md:col-span-9">
                           <label className="block text-[11px] font-black text-[#64748B] uppercase tracking-widest mb-2">Nhận xét tổng thể (Bắt buộc)</label>
