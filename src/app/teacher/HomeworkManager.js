@@ -3,7 +3,7 @@
 // cô tải ảnh lên đây theo lớp/học viên → AI đọc chữ + chấm → cô duyệt, sửa điểm/nhận xét, sao chép gửi lại Zalo.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, doc, getDoc, getDocs, setDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
-import { HW_COL, HW_IMG, PARTS, partName, lectureText, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
+import { HW_COL, HW_IMG, PARTS, partName, kwNums, lectureText, lectureHw, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
 import { STATIC_LECTURES } from "../staticLectures";
 
 const btn = "rounded-xl font-bold text-sm transition-colors disabled:opacity-50";
@@ -74,13 +74,26 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
                 <div className="rounded-xl bg-[#FFFDF7] border border-amber-100 p-3 text-[17px] leading-[2.1] whitespace-pre-wrap" style={{ fontFamily: '"Noto Serif SC","Noto Sans SC",serif' }}><Marked text={ai.ocr || ""} errors={ai.errors} /></div>
                 {ai.hand && <div className="text-xs text-slate-500 mt-1">✍️ Chữ viết: {ai.hand}</div>}
               </div>
+              {ai.sections?.length > 0 && (
+                <div className="grid gap-2">
+                  {ai.sections.map((sec) => (
+                    <div key={sec.n} className="rounded-xl border border-slate-200 p-3">
+                      <div className="flex flex-wrap items-baseline gap-2"><b className="text-[#142033]" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>课文{"一二三四五"[sec.n - 1] || sec.n}</b>{sec.title && <span className="text-xs text-slate-500" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{sec.title}</span>}{sec.score != null && <span className={`text-xs font-bold px-1.5 rounded border ${tone(sec.score)}`}>{sec.score}</span>}{sec.written === false && <span className="text-xs font-bold text-rose-600">Chưa làm phần này</span>}</div>
+                      {sec.points?.length > 0 && <ul className="grid gap-0.5 text-sm mt-1">{sec.points.map((p, i) => <li key={i} className={p.hit ? "text-emerald-700" : "text-rose-600"}>{p.hit ? "✓" : "✗"} {p.vi}</li>)}</ul>}
+                      {(sec.kw_used?.length > 0 || sec.kw_missing?.length > 0) && <div className="text-xs mt-1" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{sec.kw_used?.length > 0 && <span className="text-emerald-700">Từ mới đã dùng: {sec.kw_used.join("、")}　</span>}{sec.kw_missing?.length > 0 && <span className="text-slate-500">Chưa dùng: {sec.kw_missing.join("、")}</span>}</div>}
+                      {sec.comment && <div className="text-sm text-slate-600 mt-1">{sec.comment}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {ai.req_check?.length > 0 && <div className="text-sm"><div className="text-xs font-bold text-slate-500 mb-1">Yêu cầu bài tập</div>{ai.req_check.map((r, i) => <div key={i} className={r.ok ? "text-emerald-700" : "text-rose-600"}>{r.ok ? "✓" : "✗"} {r.req}{r.note ? ` — ${r.note}` : ""}</div>)}</div>}
               {ai.points?.length > 0 && (
                 <div>
                   <div className="text-xs font-bold text-slate-500 mb-1">Ý chính của bài khoá{ai.source_title ? ` · ${ai.source_title}` : ""}</div>
                   <ul className="grid gap-1 text-sm">{ai.points.map((p, i) => <li key={i} className={p.hit ? "text-emerald-700" : "text-rose-600"}>{p.hit ? "✓" : "✗"} {p.vi}</li>)}</ul>
                 </div>
               )}
-              {ai.source_found === false && h.part !== "essay" && <div className="text-xs text-amber-700">AI không tìm thấy văn bản {partName(h.part).replace("Tóm tắt ", "")} trong bài giảng — chỉ chấm ngôn ngữ, chưa so ý chính.</div>}
+              {ai.source_found === false && h.part !== "essay" && <div className="text-xs text-amber-700">AI không tìm thấy văn bản bài khoá trong bài giảng — chỉ chấm ngôn ngữ, chưa so ý chính.</div>}
               {ai.errors?.length > 0 && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm"><thead><tr className="text-left text-xs text-slate-500"><th className="py-1 pr-2">Sai</th><th className="py-1 pr-2">Sửa</th><th className="py-1 pr-2">Loại</th><th className="py-1">Giải thích</th></tr></thead>
@@ -113,7 +126,10 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
 // Cô tải bài học viên gửi qua Zalo: chọn lớp – bài – dạng bài một lần, rồi thêm ảnh cho từng học viên
 function Uploader({ db, onDone }) {
   const [classes, setClasses] = useState([]); const [lectures, setLectures] = useState(STATIC_LECTURES);
-  const [clsId, setClsId] = useState(""); const [lecId, setLecId] = useState(""); const [part, setPart] = useState("kw1"); const [topic, setTopic] = useState("");
+  const [clsId, setClsId] = useState(""); const [lecId, setLecId] = useState(""); const [topic, setTopic] = useState("");
+  const [mode, setMode] = useState("kw"); const [kws, setKws] = useState([1, 2, 3]); // mặc định tóm tắt cả 3 bài khoá
+  const part = mode === "essay" ? "essay" : "kw" + [...kws].sort().join("");
+  const [hw, setHw] = useState([]); const [taskIx, setTaskIx] = useState(0);
   const [pics, setPics] = useState({}); const [active, setActive] = useState(""); const [extra, setExtra] = useState(""); const [busy, setBusy] = useState(""); const [msg, setMsg] = useState("");
   useEffect(() => {
     getDocs(collection(db, "classes")).then((s) => setClasses(s.docs.map((d) => ({ id: d.id, ...d.data() })))).catch(() => {});
@@ -122,6 +138,10 @@ function Uploader({ db, onDone }) {
   const cls = classes.find((c) => c.id === clsId);
   const lecs = lectures.filter((l) => (cls?.level ? l.level === cls.level : /HSK\s*[45]/i.test(l.level || ""))).sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true }));
   const lec = lecs.find((l) => l.id === lecId);
+  // bài tập về nhà ghi trong slide (HSK4) → hiện cho cô xem & gửi kèm yêu cầu cho AI
+  useEffect(() => { setHw([]); setTaskIx(0); if (lec) lectureHw(lec).then((h) => setHw(h.flatMap((b) => (b.tasks || []).filter((t) => /viết/i.test(t.kind || "")).map((t) => ({ ...t, range: b.range, s: b.s }))))); }, [lec]);
+  const task = hw[taskIx];
+  useEffect(() => { if (!task) return; const ns = [...(task.range || "").matchAll(/课文([一二三四五])/g)].map((m) => "一二三四五".indexOf(m[1]) + 1); if (/tóm tắt/i.test(task.t || "")) { setMode("kw"); if (ns.length >= 2 && /～|~|-/.test(task.range)) { const r = []; for (let i = ns[0]; i <= ns[ns.length - 1]; i++) r.push(i); setKws(r.filter((x) => x <= 3)); } } else setMode("essay"); }, [task]);
   const students = [...(cls?.students || []), ...(pics["x:" + extra] && extra ? [{ id: "x:" + extra, name: extra }] : [])];
   const add = async (sid, files) => {
     setBusy("Đang nén ảnh…"); setActive(sid);
@@ -144,7 +164,7 @@ function Uploader({ db, onDone }) {
         const st = students.find((x) => x.id === sid) || { id: sid, name: sid.replace(/^x:/, "") };
         const ref = doc(collection(db, HW_COL));
         await setDoc(doc(db, HW_IMG, ref.id), { images: imgs, createdAt: serverTimestamp() });
-        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: part === "essay" ? topic.trim() : "", pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
+        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: part === "essay" ? topic.trim() : "", task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => mode === "essay" || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
       }
       setMsg(`✅ Đã lưu ${ready.length} bài — AI đang chấm ở danh sách bên dưới.`); setPics({}); setActive(""); onDone?.();
     } catch (e) { setMsg("Chưa lưu được: " + (e.code === "permission-denied" ? "Firestore chưa cho phép ghi vào homework_submissions / homework_images." : e.message || e)); }
@@ -158,7 +178,22 @@ function Uploader({ db, onDone }) {
         <select className={sel} value={clsId} onChange={(e) => { setClsId(e.target.value); setLecId(""); setPics({}); }}><option value="">— Chọn lớp —</option>{classes.map((c) => <option key={c.id} value={c.id}>{c.className}{c.level ? ` · ${c.level}` : ""}</option>)}</select>
         <select className={sel} value={lecId} onChange={(e) => setLecId(e.target.value)} disabled={!cls}><option value="">— Chọn bài học —</option>{lecs.map((l) => <option key={l.id} value={l.id}>{l.lectureName}</option>)}</select>
       </div>
-      <div className="flex flex-wrap gap-2">{PARTS.map(([k, l]) => <button key={k} onClick={() => setPart(k)} className={`${btn} px-3 py-2 ${part === k ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{l}</button>)}</div>
+      {hw.length > 0 && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3 text-sm">
+          <div className="font-bold text-amber-800 mb-1">📌 Bài tập về nhà trong slide bài này — AI chấm theo đúng yêu cầu</div>
+          {hw.length > 1 && <div className="flex flex-wrap gap-1.5 mb-1.5">{hw.map((t, i) => <button key={i} onClick={() => setTaskIx(i)} className={`${btn} px-2.5 py-1 text-xs ${i === taskIx ? "bg-amber-600 text-white" : "bg-white border border-amber-200 text-amber-800"}`}>{t.s} · {t.t}</button>)}</div>}
+          <div><b>{task.t}</b> <span className="text-xs text-slate-500">({task.range})</span></div>
+          <ul className="list-disc ml-5 text-slate-700">{(task.req || []).map((r) => <li key={r}>{r}</li>)}</ul>
+          {task.kw?.length > 0 && <div className="mt-1 grid gap-0.5">{task.kw.map(([k, v]) => <div key={k} style={{ fontFamily: '"Noto Sans SC",sans-serif' }}><b>{k}</b>：{v}</div>)}</div>}
+        </div>
+      )}
+      <div className="flex flex-wrap gap-2 items-center">
+        <span className="text-sm font-bold text-slate-600">Tóm tắt:</span>
+        {PARTS.map(([k, l]) => { const n = +k.slice(2), on = mode === "kw" && kws.includes(n); return <button key={k} onClick={() => { setMode("kw"); setKws((x) => (mode !== "kw" ? [n] : x.includes(n) ? (x.length > 1 ? x.filter((y) => y !== n) : x) : [...x, n])); }} className={`${btn} px-3 py-2 ${on ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`} style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{on ? "✓ " : ""}{l}</button>; })}
+        <button onClick={() => { setMode("kw"); setKws([1, 2, 3]); }} className={`${btn} px-3 py-2 text-xs underline text-slate-500`}>chọn cả 3</button>
+        <span className="text-slate-300">|</span>
+        <button onClick={() => setMode("essay")} className={`${btn} px-3 py-2 ${mode === "essay" ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>Viết bài văn 作文</button>
+      </div>
       {part === "essay" && <input className={sel} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Đề bài / chủ đề đã giao" />}
       {cls && (
         <>
@@ -205,7 +240,7 @@ export default function HomeworkManager({ db }) {
         if (!lec && h.lectureUrl) lec = { fileUrl: h.lectureUrl };
         text = lecCache.current[h.lectureId] = await lectureText(lec);
       }
-      const r = await fetch("/api/homework", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ images, part: h.part, level: h.level || h.lectureLevel, prompt: h.topic, lectureText: text }) });
+      const r = await fetch("/api/homework", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ images, part: h.part, level: h.level || h.lectureLevel, prompt: h.topic, task: h.task || null, lectureText: text }) });
       const d = await r.json(); if (!r.ok || d.error) throw new Error(d.error || "Lỗi " + r.status);
       await updateDoc(doc(db, HW_COL, h.id), { ai: d, aiAt: serverTimestamp(), aiError: null, ...(h.status === "new" ? { status: "ai" } : {}) });
     } catch (e) { await updateDoc(doc(db, HW_COL, h.id), { aiError: String(e.message || e).slice(0, 300) }).catch(() => {}); }

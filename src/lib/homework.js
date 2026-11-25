@@ -2,13 +2,35 @@
 // cô tải lên trang giáo viên; AI đọc chữ viết tay + chấm, cô duyệt rồi sao chép nhận xét gửi lại.
 export const HW_COL = "homework_submissions";
 export const HW_IMG = "homework_images"; // ảnh bài làm, cùng id với bài nộp
-export const PARTS = [
-  ["kw1", "Tóm tắt 课文一", "Tóm tắt bài khoá 1"],
-  ["kw2", "Tóm tắt 课文二", "Tóm tắt bài khoá 2"],
-  ["kw3", "Tóm tắt 课文三", "Tóm tắt bài khoá 3"],
-  ["essay", "Viết bài văn 作文", "Viết bài văn"],
-];
-export const partName = (k) => (PARTS.find((p) => p[0] === k) || [k, k])[1];
+export const PARTS = [["kw1", "课文一"], ["kw2", "课文二"], ["kw3", "课文三"]];
+// part: "essay" hoặc "kw" + các số bài khoá, vd "kw123" = tóm tắt cả 课文一、二、三 trong một lần nộp
+const CN = { 1: "一", 2: "二", 3: "三", 4: "四", 5: "五" };
+export const kwNums = (k) => (/^kw\d+$/.test(k || "") ? k.slice(2).split("").map(Number) : []);
+export const partName = (k) => (k === "essay" ? "Viết bài văn 作文" : kwNums(k).length ? `Tóm tắt 课文${kwNums(k).map((n) => CN[n]).join("·")}` : k);
+
+async function lectureHtml(lec) {
+  let html = lec?.htmlContent || "";
+  if (!html && lec?.fileUrl) {
+    const u = /^https:\/\/(firebasestorage\.googleapis\.com|storage\.googleapis\.com|[^/]+\.firebasestorage\.app)\//.test(lec.fileUrl) ? `/api/exam-html?u=${encodeURIComponent(lec.fileUrl)}` : lec.fileUrl;
+    const r = await fetch(u); if (r.ok) html = await r.text();
+  }
+  return html;
+}
+// Phần "Bài tập về nhà" trong slide bài giảng (HSK4: dữ liệu hw: [{ s, zh, range, tasks:[{ t, kind, req, kw }] }])
+export async function lectureHw(lec) {
+  try {
+    if (!lec?.fileUrl?.startsWith("/lectures/")) return [];   // chỉ đọc bài giảng có sẵn của web
+    const html = await lectureHtml(lec); const i = html.search(/\bhw:\s*\[/); if (i < 0) return [];
+    let j = html.indexOf("[", i), d = 0, k = j, q = null;
+    for (; k < html.length; k++) {
+      const c = html[k];
+      if (q) { if (c === "\\") k++; else if (c === q) q = null; continue; }
+      if (c === '"' || c === "'") q = c; else if (c === "[") d++; else if (c === "]" && --d === 0) break;
+    }
+    const hw = new Function("return " + html.slice(j, k + 1))();
+    return Array.isArray(hw) ? hw : [];
+  } catch { return []; }
+}
 
 // Ảnh chụp → JPEG nén (cạnh dài ≤ maxSide), trả data URL. Tự giảm chất lượng để vừa ngân sách byte.
 export async function compressImage(file, maxSide = 1500, budget = 280000) {
@@ -40,11 +62,7 @@ export async function rotateDataUrl(src) {
 export async function lectureText(lec) {
   if (!lec) return "";
   try {
-    let html = lec.htmlContent || "";
-    if (!html && lec.fileUrl) {
-      const u = /^https:\/\/(firebasestorage\.googleapis\.com|storage\.googleapis\.com|[^/]+\.firebasestorage\.app)\//.test(lec.fileUrl) ? `/api/exam-html?u=${encodeURIComponent(lec.fileUrl)}` : lec.fileUrl;
-      const r = await fetch(u); if (r.ok) html = await r.text();
-    }
+    const html = await lectureHtml(lec);
     if (!html) return "";
     // bài giảng dạng slide: nội dung nằm trong dữ liệu JS (n: 1, kind: "对话", "câu tiếng Trung"…) → lấy các chuỗi có chữ Hán
     const raw = html.replace(/<style[\s\S]*?<\/style>/g, "");
