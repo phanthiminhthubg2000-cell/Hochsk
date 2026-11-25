@@ -8,6 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { usePhoneticsResultSaver } from "../../phoneticsResultSaver";
 import ReviewManager from "./ReviewManager";
 import HomeworkManager from "./HomeworkManager";
+import { HskWritingAI, useHskkAI, HskkAINote } from "./aiGrade";
 import Schedule from "../thoi-khoa-bieu/Schedule";
 
 const storage = getStorage();
@@ -279,7 +280,7 @@ export default function TeacherDashboard() {
   useEffect(() => {
     if (activeTab === "grading" && selectedExam) {
       const total = Object.values(itemScores).reduce((sum, val) => sum + (Number(val) || 0), 0);
-      setScoreInput(total.toString());
+      setScoreInput(String(Math.round(total)));
     }
   }, [itemScores, activeTab, selectedExam]);
 
@@ -965,6 +966,12 @@ export default function TeacherDashboard() {
   };
 
   const handleCommentChange = (answerId, text) => { setCommentInputs(prev => ({ ...prev, [answerId]: text })); };
+  // AI chấm trước từng câu HSKK → điền sẵn điểm/nhận xét (chỉ điền ô còn trống), cô duyệt rồi gửi
+  const hskkAI = useHskkAI({ db, exam: selectedExam, answers: examAnswers, onFill: (scores, comments, overall) => {
+    setItemScores((p) => { const n = { ...p }; for (const k in scores) if (n[k] === "" || n[k] == null || n[k] === 0) n[k] = scores[k]; return n; });
+    setCommentInputs((p) => { const n = { ...p }; for (const k in comments) if (!n[k]) n[k] = comments[k]; return n; });
+    if (overall) setFeedbackInput((f) => (f && f.trim() ? f : overall));
+  } });
 
   const submitGradeAndFinish = async () => {
     if (!scoreInput || !feedbackInput.trim()) return alert("Vui lòng nhập đầy đủ điểm số tổng và nhận xét chung!");
@@ -1516,6 +1523,7 @@ export default function TeacherDashboard() {
                         );
                       })()}
 
+                      {selectedHsk3Submission.autoResult && <HskWritingAI key={selectedHsk3Submission.id} db={db} sub={selectedHsk3Submission} meta={writingMeta} onFill={(sc, fb) => { setHsk3ScoreInput((v) => v || String(sc)); setHsk3FeedbackInput((v) => (v && v.trim() ? v : fb)); }} />}
                       <div>
                         <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-2">Điểm số tổng (0 - 100)</label>
                         <input 
@@ -1605,6 +1613,14 @@ export default function TeacherDashboard() {
                         <div className="flex flex-col items-center justify-center py-10 opacity-50"><div className="w-8 h-8 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin mb-4"></div><p className="text-sm font-bold text-[#142033]">Đang tải dữ liệu ghi âm...</p></div>
                       ) : (
                         <div className="space-y-6">
+                          <div className="rounded-2xl border-2 border-sky-200 bg-sky-50/60 p-3 flex flex-wrap items-center gap-2 text-sm">
+                            <b>🤖 AI chấm trước</b>
+                            {Object.keys(hskkAI.busy).length ? <span className="text-sky-700 font-bold">đang nghe {Object.keys(hskkAI.busy).length} câu…</span> : <span className="text-slate-600">{Object.keys(hskkAI.ai).length}/{examAnswers.length} câu · mỗi câu tối đa {hskkAI.per} điểm (tổng 100)</span>}
+                            <button onClick={hskkAI.rerun} disabled={Object.keys(hskkAI.busy).length > 0} className="ml-auto text-xs font-bold underline text-sky-700 disabled:opacity-40">↻ Chấm lại cả bài</button>
+                            {hskkAI.err && <span className="w-full text-xs text-rose-600">{hskkAI.err}</span>}
+                            {hskkAI.sum?.comment && <span className="w-full text-slate-700"><b>Nhận xét chung (AI):</b> {hskkAI.sum.comment}</span>}
+                            <span className="w-full text-xs text-slate-500">Điểm và nhận xét AI đã điền sẵn vào các ô — cô nghe lại, sửa rồi bấm gửi.</span>
+                          </div>
                           {examAnswers.map((ans, idx) => (
                             <div key={ans.id} className="bg-white p-6 rounded-2xl border border-[#E2E8F0] shadow-sm relative">
                               <div className="absolute -top-3 -left-3 w-8 h-8 bg-[#10B981] text-white rounded-full flex items-center justify-center font-black text-sm shadow-md border-2 border-white">{idx + 1}</div>
@@ -1617,6 +1633,7 @@ export default function TeacherDashboard() {
                                   {ans.images.map((img, i) => (<img key={i} src={img} alt="đề bài" className="w-full rounded-xl border border-[#E2E8F0] shadow-sm object-cover" />))}
                                 </div>
                               )}
+                              <HskkAINote d={hskkAI.ai[ans.id]} busy={!!hskkAI.busy[ans.id]} per={hskkAI.per} onRe={() => hskkAI.regradeOne(ans)} />
                               <div className="bg-[#F8FAFC] rounded-xl p-3 border border-[#E2E8F0] mb-4">
                                 {ans.audioBase64 || ans.audioUrl ? (
                                   <audio src={ans.audioBase64 || ans.audioUrl} controls className="w-full h-10 outline-none" />
@@ -1626,8 +1643,8 @@ export default function TeacherDashboard() {
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4 pt-4 border-t border-[#E2E8F0]">
                                 <div className="md:col-span-3">
-                                  <label className="block text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1.5">Điểm (0-100)</label>
-                                  <input type="number" min="0" max="100" value={itemScores[ans.id] || ""} onChange={(e) => setItemScores(prev => ({...prev, [ans.id]: e.target.value}))} className="w-full p-3 rounded-xl border border-[#E2E8F0] text-lg font-black text-center text-[#10B981] focus:border-[#10B981] focus:bg-[#ECFDF5] outline-none transition-all" placeholder="0" />
+                                  <label className="block text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1.5">Điểm (tối đa {hskkAI.per || 100})</label>
+                                  <input type="number" min="0" max="100" step="0.1" value={itemScores[ans.id] || ""} onChange={(e) => setItemScores(prev => ({...prev, [ans.id]: e.target.value}))} className="w-full p-3 rounded-xl border border-[#E2E8F0] text-lg font-black text-center text-[#10B981] focus:border-[#10B981] focus:bg-[#ECFDF5] outline-none transition-all" placeholder="0" />
                                 </div>
                                 <div className="md:col-span-9">
                                   <label className="block text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1.5">Ghi chú nhanh / Nhận xét câu này</label>
