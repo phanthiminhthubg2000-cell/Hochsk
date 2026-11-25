@@ -102,6 +102,11 @@ function Home({ S }) {
         <span className="flex-1"><b className="block"><span className="font-zh">紫微斗数</span> · Lập lá số Tử vi</b><span className="text-[13px]" style={{ color: C.mute }}>An sao 12 cung · luận giải từng cung · luận giải chi tiết bằng AI</span></span>
         <span style={{ color: C.mute }}>›</span>
       </Link>
+      <Link href="/huyen-hoc/tarot" className="rounded-[10px] border p-4 flex items-center gap-3" style={{ background: "linear-gradient(160deg,#241F2E,#1E2126)", borderColor: C.goldDim }}>
+        <span className="w-11 h-11 rounded-[6px] grid place-items-center font-brush text-[24px]" style={{ background: C.goldSoft, color: C.gold }} aria-hidden="true">塔</span>
+        <span className="flex-1"><b className="block"><span className="font-zh">塔罗牌</span> · Bói bài Tarot</b><span className="text-[13px]" style={{ color: C.mute }}>Tự tay rút lá · 5 kiểu trải bài · ý nghĩa 78 lá song ngữ · giải bài bằng AI</span></span>
+        <span style={{ color: C.mute }}>›</span>
+      </Link>
       <Link href="/huyen-hoc/cong-cu" className="rounded-[10px] border p-4 flex items-center gap-3" style={{ background: C.panel, borderColor: C.line }}>
         <span className="w-11 h-11 rounded-[6px] grid place-items-center font-brush text-[24px]" style={{ background: C.goldSoft, color: C.gold }} aria-hidden="true">器</span>
         <span className="flex-1"><b className="block"><span className="font-zh">法器</span> · Công cụ tra cứu</b><span className="text-[13px]" style={{ color: C.mute }}>Can chi năm sinh · gieo quẻ · lập Bát tự · mệnh quái · Hoàng lịch hôm nay</span></span>
