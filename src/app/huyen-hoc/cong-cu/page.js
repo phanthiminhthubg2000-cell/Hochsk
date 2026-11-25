@@ -662,6 +662,7 @@ export default function HuyenHocPage() {
           <div><p className="tt-eyebrow">玄门学宫 · 法器</p><h1 className="font-serif-vn text-[26px] md:text-[30px] font-extrabold tracking-tight">Công cụ tra cứu <span className="font-zh text-[20px] text-[#6B6253]">法器</span></h1></div>
         </div>
         <Link href="/huyen-hoc" className="inline-flex items-center gap-1 text-[14px] font-bold text-[#9E2F22] mb-2 hover:underline">‹ Về 玄门学宫 · lộ trình bài học</Link>
+        <Link href="/huyen-hoc/tu-vi" className="flex items-center gap-3 rounded-[8px] bg-[#1C1A17] text-[#F3EEE2] px-4 py-3 mb-3 hover:bg-[#2A2622]"><span className="font-brush text-[26px] text-[#E6B656]" aria-hidden="true">紫</span><span className="flex-1"><b>紫微斗数 · Lập lá số Tử vi</b><span className="block text-[12px] opacity-80">An sao 12 cung, luận giải từng cung và luận giải chi tiết bằng AI</span></span><span aria-hidden="true">›</span></Link>
         <p className="text-[13px] text-[#6B6253] mb-4">Nội dung mang tính văn hoá – tham khảo để học từ vựng và hiểu người Trung Quốc; không dùng thay cho lời khuyên chuyên môn khi ra quyết định quan trọng.</p>
         <nav className="flex gap-1.5 overflow-x-auto pb-2 mb-3 -mx-3 px-3" aria-label="Chủ đề huyền học">
           {TABS.map(([k, zh, vi]) => (

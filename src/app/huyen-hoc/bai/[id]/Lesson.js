@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LESSONS, lessonById, unlockedSet, isDone, PASS } from "../../../../lib/hh";
 import { Shell, Panel, H2, Lock, Check, Speak, speak, usePy, useProg, seeded, C } from "../../ui";
 
-const TOOL = { wx: "阴阳五行", gz: "干支生肖", yj: "易经八卦", bz: "八字排盘", fs: "风水命卦", hl: "黄历" };
+const TOOL = { wx: "阴阳五行", gz: "干支生肖", yj: "易经八卦", bz: "八字排盘", fs: "风水命卦", hl: "黄历", tv: "紫微斗数排盘" };
 
 function Toggle({ on, set, children }) {
   return <button onClick={() => set(!on)} className="h-8 px-3 rounded-full border text-[12px] font-bold" style={on ? { background: C.goldSoft, borderColor: C.gold, color: C.gold } : { borderColor: C.line, color: C.mute }} aria-pressed={on}>{children}</button>;
@@ -189,7 +189,7 @@ export default function Lesson({ id }) {
         <Panel>
           <H2 zh="讲解">Bài giảng</H2>
           {l.intro.map((t, i) => <p key={i} className="text-[15px] leading-relaxed mb-2.5 last:mb-0">{t}</p>)}
-          {l.tool && <Link href={`/huyen-hoc/cong-cu#${l.tool}`} className="mt-3 inline-flex items-center gap-2 rounded-[8px] border px-3 py-2 text-[14px] font-bold" style={{ borderColor: C.goldDim, color: C.gold }}>器 Thực hành với công cụ <span className="font-zh">{TOOL[l.tool]}</span> ›</Link>}
+          {l.tool && <Link href={l.tool === "tv" ? "/huyen-hoc/tu-vi" : `/huyen-hoc/cong-cu#${l.tool}`} className="mt-3 inline-flex items-center gap-2 rounded-[8px] border px-3 py-2 text-[14px] font-bold" style={{ borderColor: C.goldDim, color: C.gold }}>器 Thực hành với công cụ <span className="font-zh">{TOOL[l.tool]}</span> ›</Link>}
         </Panel>
         <Panel>
           <H2 zh="词汇" right={`${l.vocab.length} từ`}>Từ vựng cần nhớ</H2>

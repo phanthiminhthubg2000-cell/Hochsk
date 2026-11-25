@@ -230,6 +230,7 @@ export const L7 = {
         { q: "Bốn hoá gồm:", o: ["禄、权、科、忌", "金、木、水、火", "吉、凶、悔、吝", "生、克、乘、侮"], a: 0 },
       ],
       dich: [["紫微斗数与八字不同。", "Tử vi khác với Bát tự."], ["命盘分为十二宫。", "Lá số chia thành mười hai cung."]],
+      tool: "tv",
     },
     {
       id: "7-4", zh: "风水入门", vi: "Nhập môn Phong thuỷ",
