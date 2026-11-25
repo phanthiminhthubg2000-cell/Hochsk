@@ -11,11 +11,15 @@ function prompt(b) {
   const lv = String(b.level || "HSK4–5");
   const common = `Bạn là giáo viên tiếng Trung giàu kinh nghiệm, chấm bài tập về nhà VIẾT TAY của học viên người Việt trình độ ${lv}. Các ảnh đính kèm là bài viết tay (có thể nhiều trang, theo thứ tự).
 Bước 1 — "ocr": chép lại CHÍNH XÁC từng chữ học viên viết, giữ xuống dòng. Đây là bài để chấm lỗi nên TUYỆT ĐỐI KHÔNG tự sửa: chữ viết sai/nhầm chữ đồng âm (vd 时侯 thay vì 时候, 羡幕 thay vì 羡慕), thiếu/thừa nét, sai ngữ pháp đều phải chép y nguyên như trên giấy — nhìn kỹ từng chữ trước khi chép. Chữ không đọc được ghi [?]. Bỏ phần đề bài in sẵn nếu có.
-Bước 2 — chấm và nhận xét bằng tiếng Việt, cụ thể, thẳng thắn nhưng khích lệ.
+Bước 2 — chấm và nhận xét bằng tiếng Việt.
+GIỌNG VĂN (rất quan trọng): viết như cô giáo người Việt nhắn tin Zalo cho học trò — xưng "cô", gọi "em", câu ngắn, nói thẳng vào việc, tự nhiên như người thật nói.
+- KHÔNG khen chung chung, KHÔNG sáo rỗng kiểu văn AI: cấm các cụm "bài viết rất hay", "hành văn mượt mà", "chỉn chu", "tuyệt vời", "đáng khen", "xuất sắc", "hãy tiếp tục phát huy", "chú ý một chút", "nhìn chung", "tổng thể"; không dùng dấu chấm than; không mở đầu bằng lời khen rồi "tuy nhiên".
+- Khen thì khen cụ thể (trích đúng từ/cấu trúc em dùng tốt). Chê thì chỉ đúng chỗ.
+- Mọi phần giải thích chỉ bằng tiếng Việt, không chen tiếng Anh.
 Chỉ trả JSON hợp lệ, không markdown.`;
-  const tail = `"errors": tối đa 8 lỗi quan trọng nhất, ưu tiên lỗi chữ viết sai và lỗi ngữ pháp [{"wrong":"cụm sai, chép đúng nguyên văn như trong ocr","right":"câu/cụm đã sửa, viết HOÀN TOÀN bằng tiếng Trung (chữ Hán + dấu câu Trung) — tuyệt đối không chen chữ tiếng Việt; giải thích để ở why","type":"chữ viết|từ vựng|ngữ pháp|dấu câu|diễn đạt|nội dung","why":"giải thích ngắn"}],
-"upgrades": 2–3 câu viết lại hay hơn [{"orig":"câu của học viên","better":"câu nâng cấp đúng trình độ ${lv}"}],
-"strengths": 1–3 điểm tốt, "comment": 2–4 câu nhận xét chung để giáo viên gửi học viên, "tips": 1–3 việc nên luyện tiếp,
+  const tail = `"errors": tối đa 8 lỗi quan trọng nhất, ưu tiên lỗi chữ viết sai và lỗi ngữ pháp [{"wrong":"cụm sai, chép đúng nguyên văn như trong ocr","right":"câu/cụm đã sửa, viết HOÀN TOÀN bằng tiếng Trung (chữ Hán + dấu câu Trung) — tuyệt đối không chen chữ tiếng Việt; giải thích để ở why","type":"chữ viết|từ vựng|ngữ pháp|dấu câu|diễn đạt|nội dung","why":"giải thích tiếng Việt, tối đa 15 chữ, vd: \"候 có thêm nét sổ, khác 侯\""}],
+"upgrades": 2 câu viết lại cho tự nhiên hơn [{"orig":"câu của học viên","better":"giữ nguyên ý của em, chỉ sửa cho giống người Trung Quốc nói/viết bình thường, đúng trình độ ${lv}; không thêm thành ngữ, không văn hoa"}],
+"strengths": 1–2 điểm tốt cụ thể (ngắn), "comment": TỐI ĐA 2 câu ngắn (≤ 40 chữ) nhận xét chính để cô gửi em, "tips": 1–2 việc cần luyện, mỗi việc ≤ 12 chữ,
 "hand": nhận xét ngắn về chữ viết tay (nét, bộ thủ hay viết sai), "chars": số chữ Hán học viên viết.`;
   if (b.part === "essay") {
     return `${common}
@@ -37,7 +41,7 @@ Dạng bài: TÓM TẮT BÀI KHOÁ (缩写) — học viên tóm tắt ${ns.leng
 ${taskText(b.task)}
 ${b.lectureText ? `Dưới đây là chữ của bài giảng có chứa các bài khoá. Tìm đúng ${list} làm BÀI GỐC (trong dữ liệu có thể đánh dấu "课文一…" hoặc "### 课文 n: 1…"; chỉ lấy lời bài khoá — hội thoại/đoạn văn — bỏ phần từ vựng, ví dụ, bài tập):\n"""${String(b.lectureText).slice(0, 30000)}"""` : `Không có văn bản bài khoá — chấm dựa trên sự mạch lạc và ngôn ngữ; "source_found": false, để "points" rỗng.`}
 - Đọc kỹ bài gốc, phân biệt rõ nhân vật nào nói/làm gì; học viên kể nhầm thông tin thì ghi vào errors với type "nội dung".
-- "sections": mỗi bài khoá một mục [{"n":số bài khoá (${ns.join(",")}),"title":"tiêu đề bài khoá gốc","written":true/false — học viên có viết phần này không,"points":[4–6 ý chính {"vi":"ý chính (tiếng Việt)","hit":true/false}],"kw_used":["từ mới của bài khoá này học viên đã dùng"],"kw_missing":["từ mới yêu cầu mà chưa dùng"],"score":0–100,"comment":"1–2 câu nhận xét riêng đoạn này"}].
+- "sections": mỗi bài khoá một mục [{"n":số bài khoá (${ns.join(",")}),"title":"tiêu đề bài khoá gốc","written":true/false — học viên có viết phần này không,"points":[4–6 ý chính {"vi":"ý chính (tiếng Việt)","hit":true/false}],"kw_used":["từ mới của bài khoá này học viên đã dùng"],"kw_missing":["từ mới yêu cầu mà chưa dùng"],"score":0–100,"comment":"1 câu ngắn ≤ 20 chữ"}].
 - "req_check": đối chiếu từng yêu cầu bài tập (nếu có) [{"req":"yêu cầu","ok":true/false,"note":"ngắn"}].
 Chấm chung (0–100 mỗi mục): coverage (đủ ý chính, đúng trình tự, làm đủ các bài khoá được giao), own (bằng lời của mình, độ dài đúng yêu cầu), grammar (chính xác), vocab (dùng đúng và đủ từ mới yêu cầu).
 total = round(coverage*0.4 + own*0.15 + grammar*0.3 + vocab*0.15).
@@ -52,6 +56,15 @@ function taskText(t) {
   return `YÊU CẦU BÀI TẬP CÔ GIAO (trong slide bài giảng): ${t.t}
 ${(t.req || []).map((r) => "- " + r).join("\n")}${(t.kw || []).length ? "\nTừ mới yêu cầu dùng theo từng bài khoá:\n" + t.kw.map((x) => (Array.isArray(x) ? `- ${x[0]}: ${x[1]}` : `- ${x.k}: ${x.v}`)).join("\n") : ""}
 Chấm bám sát các yêu cầu này (số câu, số từ mới phải dùng…). Danh sách từ mới là để chọn: yêu cầu "ít nhất N từ" thì dùng đủ N từ là ĐẠT, không bắt dùng hết.`;
+}
+
+// phần sửa phải là tiếng Trung thuần: bỏ chữ Latin/tiếng Việt lỡ chen vào
+const zhOnly = (t) => String(t || "").replace(/[（(][^）)]*[A-Za-zÀ-ỹ][^）)]*[）)]/g, "").replace(/[A-Za-zÀ-ỹ][A-Za-zÀ-ỹ0-9\s/'’-]*/g, "").replace(/\s+/g, "").trim();
+function clean(d) {
+  if (!d || typeof d !== "object") return d;
+  d.errors = (d.errors || []).map((e) => ({ ...e, right: zhOnly(e.right) || e.right })).filter((e) => e.wrong && e.right && e.wrong !== e.right);
+  d.upgrades = (d.upgrades || []).map((u) => ({ ...u, better: zhOnly(u.better) || u.better }));
+  return d;
 }
 
 export async function POST(req) {
@@ -72,7 +85,7 @@ export async function POST(req) {
         const model = genAI.getGenerativeModel({ model: m, generationConfig: { responseMimeType: "application/json", temperature: 0.2 } }, { timeout });
         const r = await model.generateContent(parts);
         const d = JSON.parse(r.response.text().replace(/```json|```/g, "").trim());
-        return NextResponse.json({ ...(Array.isArray(d) ? d[0] : d), model: m });
+        return NextResponse.json({ ...clean(Array.isArray(d) ? d[0] : d), model: m });
       } catch (e) { last = e; }
     }
     console.error("homework:", last);

@@ -28,17 +28,17 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
   useEffect(() => { if (open && !imgs) getDoc(doc(db, HW_IMG, h.id)).then((s) => setImgs(s.data()?.images || [])).catch(() => setImgs([])); }, [open, imgs, db, h.id]);
   useEffect(() => {
     setScore(h.teacherScore ?? (ai?.score?.total != null ? Math.round(ai.score.total / 10) : ""));
-    setCmt(h.teacherComment ?? (ai ? [ai.comment, ...(ai.tips || []).map((t) => "• " + t)].filter(Boolean).join("\n") : ""));
+    setCmt(h.teacherComment ?? (ai?.comment || ""));
   }, [h.id, ai, h.teacherScore, h.teacherComment]);
-  const fixesText = (ai?.errors || []).map((e) => `✗ ${e.wrong} → ✓ ${e.right}${e.why ? `（${e.why}）` : ""}`).join("\n");
+  const fixesText = (ai?.errors || []).map((e) => `✗ ${e.wrong} → ✓ ${e.right}${e.why ? ` (${e.why})` : ""}`).join("\n");
   const ret = async () => {
     setSaving(true);
     try { await updateDoc(doc(db, HW_COL, h.id), { status: "returned", teacherScore: score === "" ? null : Number(score), teacherComment: cmt.trim(), teacherFixes: fix ? fixesText : "", returnedAt: serverTimestamp() }); setOpen(null); }
     catch (e) { alert("Chưa lưu được: " + (e.message || e)); }
     setSaving(false);
   };
-  const [copied, setCopied] = useState(false);
-  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${partName(h.part)}`, score !== "" && score != null ? `Điểm: ${score}/10` : "", cmt.trim(), fix && fixesText ? "Sửa lỗi:\n" + fixesText : "", ai?.upgrades?.length ? "Câu hay hơn:\n" + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
+  const [copied, setCopied] = useState(false); const [up2, setUp2] = useState(false);
+  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${partName(h.part)}`, score !== "" && score != null ? `Điểm: ${score}/10` : "", cmt.trim(), fix && fixesText ? "Sửa lỗi:\n" + fixesText : "", up2 && ai?.upgrades?.length ? "Viết thế này tự nhiên hơn:\n" + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
   const copy = async () => { const t = zalo(); try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); } setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const del = async () => { if (!confirm(`Xoá bài của ${h.studentName}?`)) return; await deleteDoc(doc(db, HW_COL, h.id)).catch(() => {}); await deleteDoc(doc(db, HW_IMG, h.id)).catch(() => {}); };
   const total = ai?.score?.total;
@@ -110,6 +110,7 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
             <div className="flex items-center gap-2 text-sm"><span>Điểm (thang 10)</span><input type="number" min="0" max="10" step="0.5" value={score} onChange={(e) => setScore(e.target.value)} className="w-24 h-9 px-2 rounded-lg border border-slate-300" /></div>
             <textarea rows={4} value={cmt} onChange={(e) => setCmt(e.target.value)} className="w-full rounded-lg border border-slate-300 p-2 text-sm" placeholder="Nhận xét gửi học viên…" />
             {fixesText && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={fix} onChange={(e) => setFix(e.target.checked)} /> Kèm danh sách lỗi đã sửa ({ai.errors.length} lỗi)</label>}
+            {ai?.upgrades?.length > 0 && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={up2} onChange={(e) => setUp2(e.target.checked)} /> Kèm câu viết tự nhiên hơn</label>}
             <div className="flex flex-wrap gap-2">
               <button onClick={copy} className={`${btn} px-4 py-2 bg-[#0068FF] hover:bg-[#0052CC] text-white`}>{copied ? "✓ Đã sao chép" : "📋 Sao chép gửi Zalo"}</button>
               <button onClick={ret} disabled={saving} className={`${btn} px-4 py-2 bg-[#10B981] hover:bg-[#059669] text-white`}>{h.status === "returned" ? "Lưu lại" : "✓ Đánh dấu đã chữa"}</button>
