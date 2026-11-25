@@ -1,9 +1,9 @@
 "use client";
-// TRANG GIÁO VIÊN · BÀI TẬP VỀ NHÀ — học viên chụp bài viết tay (tóm tắt 课文 / bài văn) gửi lên;
-// trang này tự gọi AI đọc chữ + chấm, cô xem, sửa điểm/nhận xét rồi trả bài (học viên chỉ thấy phần cô trả).
+// TRANG GIÁO VIÊN · BÀI TẬP VỀ NHÀ — học viên gửi ảnh bài viết tay (tóm tắt 课文 / bài văn) qua nhóm Zalo;
+// cô tải ảnh lên đây theo lớp/học viên → AI đọc chữ + chấm → cô duyệt, sửa điểm/nhận xét, sao chép gửi lại Zalo.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { collection, doc, getDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
-import { HW_COL, HW_IMG, partName, lectureText, fmtTime } from "../../lib/homework";
+import { collection, doc, getDoc, getDocs, setDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { HW_COL, HW_IMG, PARTS, partName, lectureText, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
 import { STATIC_LECTURES } from "../staticLectures";
 
 const btn = "rounded-xl font-bold text-sm transition-colors disabled:opacity-50";
@@ -37,6 +37,9 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
     catch (e) { alert("Chưa lưu được: " + (e.message || e)); }
     setSaving(false);
   };
+  const [copied, setCopied] = useState(false);
+  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${partName(h.part)}`, score !== "" && score != null ? `Điểm: ${score}/10` : "", cmt.trim(), fix && fixesText ? "Sửa lỗi:\n" + fixesText : "", ai?.upgrades?.length ? "Câu hay hơn:\n" + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
+  const copy = async () => { const t = zalo(); try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); } setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const del = async () => { if (!confirm(`Xoá bài của ${h.studentName}?`)) return; await deleteDoc(doc(db, HW_COL, h.id)).catch(() => {}); await deleteDoc(doc(db, HW_IMG, h.id)).catch(() => {}); };
   const total = ai?.score?.total;
   return (
@@ -48,7 +51,7 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
           <div className="text-xs text-slate-500 break-words"><b className="text-slate-700">{partName(h.part)}</b> · {h.lectureName} · {fmtTime(h.createdAt)} · {h.pages || "?"} trang</div>
         </div>
         <span className={`text-[11px] font-bold px-2 py-1 rounded-full shrink-0 ${h.status === "returned" ? "bg-emerald-50 text-emerald-700" : grading ? "bg-sky-50 text-sky-700" : h.aiError ? "bg-rose-50 text-rose-600" : ai ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
-          {h.status === "returned" ? "Đã trả" : grading ? "AI đang chấm" : h.aiError ? "AI lỗi" : ai ? "Chờ cô duyệt" : "Chưa chấm"}
+          {h.status === "returned" ? "Đã chữa" : grading ? "AI đang chấm" : h.aiError ? "AI lỗi" : ai ? "Chờ cô duyệt" : "Chưa chấm"}
         </span>
       </button>
       {open && (
@@ -90,12 +93,13 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
             </>
           )}
           <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 grid gap-2">
-            <div className="text-sm font-bold text-[#142033]">Trả bài cho học viên <span className="font-normal text-xs text-slate-500">— học viên chỉ thấy phần này, không thấy điểm AI</span></div>
+            <div className="text-sm font-bold text-[#142033]">Chữa bài gửi học viên <span className="font-normal text-xs text-slate-500">— sửa lại rồi bấm “Sao chép” để dán vào Zalo</span></div>
             <div className="flex items-center gap-2 text-sm"><span>Điểm (thang 10)</span><input type="number" min="0" max="10" step="0.5" value={score} onChange={(e) => setScore(e.target.value)} className="w-24 h-9 px-2 rounded-lg border border-slate-300" /></div>
             <textarea rows={4} value={cmt} onChange={(e) => setCmt(e.target.value)} className="w-full rounded-lg border border-slate-300 p-2 text-sm" placeholder="Nhận xét gửi học viên…" />
-            {fixesText && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={fix} onChange={(e) => setFix(e.target.checked)} /> Gửi kèm danh sách lỗi đã sửa ({ai.errors.length} lỗi)</label>}
+            {fixesText && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={fix} onChange={(e) => setFix(e.target.checked)} /> Kèm danh sách lỗi đã sửa ({ai.errors.length} lỗi)</label>}
             <div className="flex flex-wrap gap-2">
-              <button onClick={ret} disabled={saving} className={`${btn} px-4 py-2 bg-[#10B981] hover:bg-[#059669] text-white`}>{h.status === "returned" ? "Cập nhật bài đã trả" : "✓ Trả bài"}</button>
+              <button onClick={copy} className={`${btn} px-4 py-2 bg-[#0068FF] hover:bg-[#0052CC] text-white`}>{copied ? "✓ Đã sao chép" : "📋 Sao chép gửi Zalo"}</button>
+              <button onClick={ret} disabled={saving} className={`${btn} px-4 py-2 bg-[#10B981] hover:bg-[#059669] text-white`}>{h.status === "returned" ? "Lưu lại" : "✓ Đánh dấu đã chữa"}</button>
               <button onClick={() => regrade(h)} disabled={grading} className={`${btn} px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100`}>{grading ? "AI đang chấm…" : "↻ Chấm lại bằng AI"}</button>
               <button onClick={del} className={`${btn} px-4 py-2 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 ml-auto`}>Xoá</button>
             </div>
@@ -106,9 +110,87 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
   );
 }
 
+// Cô tải bài học viên gửi qua Zalo: chọn lớp – bài – dạng bài một lần, rồi thêm ảnh cho từng học viên
+function Uploader({ db, onDone }) {
+  const [classes, setClasses] = useState([]); const [lectures, setLectures] = useState(STATIC_LECTURES);
+  const [clsId, setClsId] = useState(""); const [lecId, setLecId] = useState(""); const [part, setPart] = useState("kw1"); const [topic, setTopic] = useState("");
+  const [pics, setPics] = useState({}); const [active, setActive] = useState(""); const [extra, setExtra] = useState(""); const [busy, setBusy] = useState(""); const [msg, setMsg] = useState("");
+  useEffect(() => {
+    getDocs(collection(db, "classes")).then((s) => setClasses(s.docs.map((d) => ({ id: d.id, ...d.data() })))).catch(() => {});
+    getDocs(collection(db, "lectures_bank")).then((s) => { const fs = s.docs.map((d) => ({ id: d.id, ...d.data() })); setLectures([...STATIC_LECTURES, ...fs.filter((x) => !STATIC_LECTURES.some((y) => y.level === x.level && y.lectureName === x.lectureName))]); }).catch(() => {});
+  }, [db]);
+  const cls = classes.find((c) => c.id === clsId);
+  const lecs = lectures.filter((l) => (cls?.level ? l.level === cls.level : /HSK\s*[45]/i.test(l.level || ""))).sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true }));
+  const lec = lecs.find((l) => l.id === lecId);
+  const students = [...(cls?.students || []), ...(pics["x:" + extra] && extra ? [{ id: "x:" + extra, name: extra }] : [])];
+  const add = async (sid, files) => {
+    setBusy("Đang nén ảnh…"); setActive(sid);
+    try { const out = []; for (const f of [...files].slice(0, 6)) out.push(await compressImage(f, 1500, 150000)); setPics((p) => ({ ...p, [sid]: [...(p[sid] || []), ...out].slice(0, 6) })); } catch { setMsg("Không đọc được ảnh."); }
+    setBusy("");
+  };
+  // dán ảnh (Ctrl+V) từ Zalo PC vào học viên đang chọn
+  useEffect(() => {
+    const h = (e) => { if (!active) return; const fs = [...(e.clipboardData?.files || [])].filter((f) => f.type.startsWith("image/")); if (fs.length) { e.preventDefault(); add(active, fs); } };
+    window.addEventListener("paste", h); return () => window.removeEventListener("paste", h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+  const ready = Object.entries(pics).filter(([, v]) => v.length);
+  const save = async () => {
+    if (!cls || !lec) return setMsg("Chọn lớp và bài học trước.");
+    if (!ready.length) return setMsg("Chưa có ảnh bài làm nào.");
+    setBusy("Đang lưu…"); setMsg("");
+    try {
+      for (const [sid, imgs] of ready) {
+        const st = students.find((x) => x.id === sid) || { id: sid, name: sid.replace(/^x:/, "") };
+        const ref = doc(collection(db, HW_COL));
+        await setDoc(doc(db, HW_IMG, ref.id), { images: imgs, createdAt: serverTimestamp() });
+        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: part === "essay" ? topic.trim() : "", pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
+      }
+      setMsg(`✅ Đã lưu ${ready.length} bài — AI đang chấm ở danh sách bên dưới.`); setPics({}); setActive(""); onDone?.();
+    } catch (e) { setMsg("Chưa lưu được: " + (e.code === "permission-denied" ? "Firestore chưa cho phép ghi vào homework_submissions / homework_images." : e.message || e)); }
+    setBusy("");
+  };
+  const sel = "h-10 px-3 rounded-xl border border-slate-300 text-sm bg-white w-full";
+  return (
+    <div className="rounded-[24px] bg-white border border-emerald-200 p-5 md:p-6 shadow-sm grid gap-3">
+      <h3 className="text-lg font-black text-[#142033]">＋ Tải bài học viên gửi qua Zalo</h3>
+      <div className="grid sm:grid-cols-2 gap-2">
+        <select className={sel} value={clsId} onChange={(e) => { setClsId(e.target.value); setLecId(""); setPics({}); }}><option value="">— Chọn lớp —</option>{classes.map((c) => <option key={c.id} value={c.id}>{c.className}{c.level ? ` · ${c.level}` : ""}</option>)}</select>
+        <select className={sel} value={lecId} onChange={(e) => setLecId(e.target.value)} disabled={!cls}><option value="">— Chọn bài học —</option>{lecs.map((l) => <option key={l.id} value={l.id}>{l.lectureName}</option>)}</select>
+      </div>
+      <div className="flex flex-wrap gap-2">{PARTS.map(([k, l]) => <button key={k} onClick={() => setPart(k)} className={`${btn} px-3 py-2 ${part === k ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{l}</button>)}</div>
+      {part === "essay" && <input className={sel} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Đề bài / chủ đề đã giao" />}
+      {cls && (
+        <>
+          <p className="text-xs text-slate-500">Bấm <b>📷 Thêm ảnh</b> ở dòng học viên để chọn ảnh (tối đa 6 trang/bạn). Trên máy tính: bấm vào tên học viên rồi <b>Ctrl+V</b> để dán ảnh vừa sao chép từ Zalo.</p>
+          <div className="grid gap-1.5">
+            {students.map((st) => { const ps = pics[st.id] || []; return (
+              <div key={st.id} onClick={() => setActive(st.id)} className={`rounded-xl border p-2 flex flex-wrap items-center gap-2 cursor-pointer ${active === st.id ? "border-emerald-400 bg-emerald-50/40" : "border-slate-200"}`}>
+                <span className="font-bold text-sm text-[#142033] min-w-[140px] flex-1 break-words">{st.name}{active === st.id && <span className="ml-1 text-[10px] text-emerald-600 font-bold">● dán ảnh vào đây</span>}</span>
+                <div className="flex gap-1.5 flex-wrap">{ps.map((src, i) => (
+                  <span key={i} className="relative"><img src={src} alt="" className="h-14 w-11 object-cover rounded border border-slate-200" />
+                    <button onClick={async (e) => { e.stopPropagation(); const r = await rotateDataUrl(src); setPics((p) => ({ ...p, [st.id]: p[st.id].map((y, j) => (j === i ? r : y)) })); }} className="absolute -left-1 -top-1 w-5 h-5 rounded-full bg-white border text-[10px]" aria-label="Xoay">⟳</button>
+                    <button onClick={(e) => { e.stopPropagation(); setPics((p) => ({ ...p, [st.id]: p[st.id].filter((_, j) => j !== i) })); }} className="absolute -right-1 -top-1 w-5 h-5 rounded-full bg-white border text-[10px]" aria-label="Xoá">✕</button></span>
+                ))}</div>
+                <label className={`${btn} px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer text-xs`} onClick={(e) => e.stopPropagation()}>📷 Thêm ảnh<input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { add(st.id, e.target.files || []); e.target.value = ""; }} /></label>
+              </div>
+            ); })}
+            <div className="flex gap-2 items-center"><input className={sel + " flex-1"} value={extra} onChange={(e) => setExtra(e.target.value)} placeholder="Học viên ngoài danh sách (gõ tên)…" />
+              {extra.trim() && <label className={`${btn} px-3 py-2 bg-slate-100 hover:bg-slate-200 text-xs cursor-pointer shrink-0`}>📷 Thêm ảnh<input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { add("x:" + extra.trim(), e.target.files || []); e.target.value = ""; }} /></label>}</div>
+          </div>
+        </>
+      )}
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={save} disabled={!!busy || !ready.length} className={`${btn} px-5 py-2.5 bg-[#10B981] hover:bg-[#059669] text-white`}>{busy || `Lưu & chấm AI${ready.length ? ` (${ready.length} bài)` : ""}`}</button>
+        {msg && <span className="text-sm">{msg}</span>}
+      </div>
+    </div>
+  );
+}
+
 export default function HomeworkManager({ db }) {
   const [list, setList] = useState([]); const [cls, setCls] = useState(""); const [tab, setTab] = useState("todo"); const [open, setOpen] = useState(null);
-  const [grading, setGrading] = useState({}); const tried = useRef(new Set()); const lecCache = useRef({});
+  const [grading, setGrading] = useState({}); const tried = useRef(new Set()); const lecCache = useRef({}); const [up, setUp] = useState(false);
   useEffect(() => onSnapshot(collection(db, HW_COL), (s) => setList(s.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0))), (e) => console.error("homework:", e)), [db]);
 
   const grade = async (h) => {
@@ -139,7 +221,7 @@ export default function HomeworkManager({ db }) {
 
   const classes = [...new Map(list.map((h) => [h.classId, h.className])).entries()];
   const inCls = list.filter((h) => !cls || h.classId === cls);
-  const TABS = [["todo", "Cần xử lý", (h) => h.status !== "returned"], ["done", "Đã trả", (h) => h.status === "returned"], ["all", "Tất cả", () => true]];
+  const TABS = [["todo", "Chưa chữa xong", (h) => h.status !== "returned"], ["done", "Đã chữa", (h) => h.status === "returned"], ["all", "Tất cả", () => true]];
   const shown = inCls.filter(TABS.find((t) => t[0] === tab)[2]);
   // lỗi hay gặp của lớp đang lọc
   const common = useMemo(() => {
@@ -152,13 +234,15 @@ export default function HomeworkManager({ db }) {
     <div className="grid gap-4">
       <div className="rounded-[24px] bg-white border border-[#E2E8F0] p-5 md:p-6 shadow-sm">
         <h2 className="text-2xl font-black text-[#142033]">📝 Bài tập về nhà</h2>
-        <p className="text-sm text-slate-500 mt-1">Học viên vào <b>/bai-tap</b>, chụp bài viết tay (tóm tắt 课文一/二/三 hoặc bài văn) gửi lên. AI tự đọc chữ và chấm khi cô mở trang này; cô duyệt, sửa điểm – nhận xét rồi bấm <b>Trả bài</b>. Học viên chỉ thấy phần cô trả.</p>
+        <p className="text-sm text-slate-500 mt-1">Tải ảnh bài viết tay học viên gửi qua Zalo (tóm tắt 课文一/二/三 hoặc bài văn). AI đọc chữ và chấm ngay; cô duyệt, sửa điểm – nhận xét rồi bấm <b>📋 Sao chép gửi Zalo</b>.</p>
+        <button onClick={() => setUp(!up)} className={`${btn} mt-3 px-4 py-2.5 ${up ? "bg-slate-100 text-slate-700" : "bg-[#10B981] hover:bg-[#059669] text-white"}`}>{up ? "Ẩn khung tải bài" : "＋ Tải bài lên"}</button>
         <div className="flex flex-wrap gap-2 mt-4 items-center">
           <select value={cls} onChange={(e) => setCls(e.target.value)} className="h-10 px-3 rounded-xl border border-slate-300 text-sm"><option value="">Tất cả lớp</option>{classes.map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select>
           {TABS.map(([k, l, f]) => <button key={k} onClick={() => setTab(k)} className={`${btn} px-3 py-2 ${tab === k ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{l} ({inCls.filter(f).length})</button>)}
           {Object.keys(grading).length > 0 && <span className="text-xs text-sky-700 font-bold">AI đang chấm {Object.keys(grading).length} bài…</span>}
         </div>
       </div>
+      {up && <Uploader db={db} onDone={() => setTab("todo")} />}
       {common.length > 0 && (
         <details className="rounded-[20px] bg-white border border-[#E2E8F0] p-4 shadow-sm">
           <summary className="cursor-pointer font-bold text-[#142033]">📊 Lỗi hay gặp {cls ? "của lớp" : "của các lớp"} — để chữa chung trên lớp</summary>

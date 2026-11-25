@@ -1,5 +1,5 @@
-// Bài tập về nhà (HSK4–5): tóm tắt bài khoá 课文一/二/三 hoặc viết bài văn — học viên chụp bài viết tay gửi cô,
-// AI đọc chữ viết tay + chấm; điểm AI chỉ hiện ở trang giáo viên.
+// Bài tập về nhà (HSK4–5): tóm tắt bài khoá 课文一/二/三 hoặc viết bài văn — học viên gửi ảnh bài viết tay qua Zalo,
+// cô tải lên trang giáo viên; AI đọc chữ viết tay + chấm, cô duyệt rồi sao chép nhận xét gửi lại.
 export const HW_COL = "homework_submissions";
 export const HW_IMG = "homework_images"; // ảnh bài làm, cùng id với bài nộp
 export const PARTS = [
