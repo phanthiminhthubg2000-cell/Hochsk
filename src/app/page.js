@@ -1360,6 +1360,11 @@ export default function HomePage() {
                 <h1 className="font-serif-vn text-2xl md:text-[28px] font-extrabold tracking-tight">{isSignedIn ? firstName : "Thư sinh mới nhập môn"}{isSignedIn && realm && !realm.provisional ? <span className="ml-3 text-[15px] font-bold text-[#9E2F22] align-middle">{realm.zh} {realm.vn} · {realm.stage}</span> : null}</h1>
               </div>
               <OnboardCard />
+              <Link href="/bai-tap" className="flex items-center gap-4 rounded-[6px] bg-white border border-[#D8CBAE] p-3.5 hover:border-[#9E2F22]">
+                <span className="w-11 h-11 shrink-0 rounded-[4px] bg-[#9E2F22] text-[#FBF3E4] grid place-items-center font-brush text-[24px]" aria-hidden="true">作</span>
+                <span className="flex-1 min-w-0"><b className="block font-serif-vn">Nộp bài tập về nhà</b><span className="block text-sm text-[#6B6253]">HSK 4–5 · chụp bài viết tay (tóm tắt 课文 / bài văn) gửi cô chấm</span></span>
+                <span className="text-[#6B6253]">›</span>
+              </Link>
               <Link href="/thoi-khoa-bieu" className="flex items-center gap-4 rounded-[6px] bg-white border border-[#D8CBAE] p-3.5 hover:border-[#9E2F22]">
                 <span className="w-11 h-11 shrink-0 rounded-[4px] bg-[#F3E3D2] text-[#9E2F22] grid place-items-center font-brush text-[24px]" aria-hidden="true">課</span>
                 <span className="flex-1 min-w-0"><b className="block font-serif-vn">Thời khoá biểu</b><span className="block text-sm text-[#6B6253]">Lịch học các lớp · bấm vào buổi học để mở đúng bài giảng</span></span>
@@ -1404,7 +1409,7 @@ export default function HomePage() {
           {/* ===== HỌC ===== */}
           {activeTab === "learn" && (
             <div className="flex flex-col gap-5">
-              <div className="flex items-center gap-3 flex-wrap"><h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">法</span>Công pháp</h1><Link href="/thoi-khoa-bieu" className="ml-auto h-10 px-3 rounded-[6px] border border-[#D8CBAE] bg-white text-sm font-bold inline-flex items-center gap-1.5 hover:border-[#9E2F22]">🗓 Thời khoá biểu</Link></div>
+              <div className="flex items-center gap-3 flex-wrap"><h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight font-serif-vn flex items-baseline gap-3"><span className="font-brush font-normal text-[#9E2F22] text-[34px] md:text-[40px]" aria-hidden="true">法</span>Công pháp</h1><Link href="/bai-tap" className="ml-auto h-10 px-3 rounded-[6px] border border-[#D8CBAE] bg-white text-sm font-bold inline-flex items-center gap-1.5 hover:border-[#9E2F22]">作 Nộp bài tập</Link><Link href="/thoi-khoa-bieu" className="h-10 px-3 rounded-[6px] border border-[#D8CBAE] bg-white text-sm font-bold inline-flex items-center gap-1.5 hover:border-[#9E2F22]">🗓 Thời khoá biểu</Link></div>
 
               <label className="flex items-center gap-3 h-12 px-4 rounded-[6px] bg-white border border-[#D8CBAE] focus-within:border-[#9E2F22]">
                 <Icon name="search" className="w-5 h-5 text-[#6B6253]" />
