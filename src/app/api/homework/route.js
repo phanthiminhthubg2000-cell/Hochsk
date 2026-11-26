@@ -6,8 +6,16 @@ import { raceJSON } from "@/lib/geminiRace";
 
 export const maxDuration = 180; // bài nhiều trang + tóm tắt + bài văn cần thời gian đọc chữ viết tay
 
+// HSK5: toàn bộ nhận xét bằng tiếng Trung (giáo viên yêu cầu)
+const ZH_RULE = `
+QUAN TRỌNG — NGÔN NGỮ: học viên trình độ HSK5 nên TOÀN BỘ phần nhận xét viết bằng TIẾNG TRUNG giản thể (không dùng tiếng Việt, không pinyin, không tiếng Anh), thay cho mọi chỗ ở trên ghi "tiếng Việt". Áp dụng cho: comment, strengths, tips, hand, errors[].why, errors[].type, sections[].title, sections[].points[].vi, sections[].comment, req_check[].req/note, essay.topic, essay.comment.
+Giọng: như cô giáo viết cho học trò — xưng "老师", gọi "你"; câu ngắn, tự nhiên, dùng từ vựng – ngữ pháp trong tầm HSK5; không sáo rỗng (không "非常棒""继续加油""总的来说""总体而言"), không dấu chấm than. Khen cụ thể, chỉ lỗi cụ thể. "why" ≤ 15 chữ Hán.`;
 function prompt(b) {
   const lv = String(b.level || "HSK4–5");
+  const zhMode = /HSK\s*5/i.test(lv);
+  return promptBody(b, lv) + (zhMode ? ZH_RULE : "");
+}
+function promptBody(b, lv) {
   const common = `Bạn là giáo viên tiếng Trung giàu kinh nghiệm, chấm bài tập về nhà VIẾT TAY của học viên người Việt trình độ ${lv}. Các ảnh đính kèm là bài viết tay (có thể nhiều trang, theo thứ tự).
 Bước 1 — "ocr": chép lại CHÍNH XÁC từng chữ học viên viết, giữ xuống dòng. Đây là bài để chấm lỗi nên TUYỆT ĐỐI KHÔNG tự sửa: chữ viết sai/nhầm chữ đồng âm (vd 时侯 thay vì 时候, 羡幕 thay vì 羡慕), thiếu/thừa nét, sai ngữ pháp đều phải chép y nguyên như trên giấy — nhìn kỹ từng chữ trước khi chép. Chữ không đọc được ghi [?]. Bỏ phần đề bài in sẵn nếu có.
 Bước 2 — chấm và nhận xét bằng tiếng Việt.

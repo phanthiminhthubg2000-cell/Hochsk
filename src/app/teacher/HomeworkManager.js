@@ -38,7 +38,9 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
     setSaving(false);
   };
   const [copied, setCopied] = useState(false); const [up2, setUp2] = useState(false);
-  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${partName(h.part, h.level || h.lectureLevel)}`, score !== "" && score != null ? `Điểm: ${score}/10` : "", cmt.trim(), fix && fixesText ? "Sửa lỗi:\n" + fixesText : "", up2 && ai?.upgrades?.length ? "Viết thế này tự nhiên hơn:\n" + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
+  const zh5 = isHsk5(h.level || h.lectureLevel); // HSK5: tin nhắn gửi học viên toàn tiếng Trung
+  const partZh = [kwNums(h.part).length ? "课文缩写" : "", hasEssay(h.part) ? "作文" : ""].filter(Boolean).join(" + ");
+  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${zh5 ? partZh : partName(h.part, h.level || h.lectureLevel)}`, score !== "" && score != null ? (zh5 ? `分数：${score}/10` : `Điểm: ${score}/10`) : "", cmt.trim(), fix && fixesText ? (zh5 ? "改错：\n" : "Sửa lỗi:\n") + fixesText : "", up2 && ai?.upgrades?.length ? (zh5 ? "这样写更自然：\n" : "Viết thế này tự nhiên hơn:\n") + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
   const copy = async () => { const t = zalo(); try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); } setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const del = async () => { if (!confirm(`Xoá bài của ${h.studentName}?`)) return; await deleteDoc(doc(db, HW_COL, h.id)).catch(() => {}); await deleteDoc(doc(db, HW_IMG, h.id)).catch(() => {}); };
   const total = ai?.score?.total;
