@@ -17,6 +17,8 @@
     "next": "16.3.4",
     "nodemailer": "^9.1.1",
     "openai": "^7.8.0",
+    "page-flip": "^2.0.7",
+    "pdfjs-dist": "^4.10.38",
     "pinyin-pro": "^3.26.0",
     "qrcode": "^1.5.4",
     "react": "19.2.8",
