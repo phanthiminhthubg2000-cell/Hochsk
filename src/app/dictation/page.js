@@ -461,7 +461,7 @@ export default function DictationPage() {
                   <div className="flex justify-center mb-6 shrink-0">
                      <div className="bg-[#F6F0E2] p-1 rounded-xl flex gap-1 border border-[#D8CBAE] shadow-sm">
                        <button onClick={() => { setMode("dictation"); setIsCorrect(null); setShowAnswer(false); setShadowingResult(null); }} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${mode === "dictation" ? 'bg-white text-[#2F6E5A] shadow-sm border border-[#CDBF9F]' : 'text-slate-400 hover:text-[#1C1A17]'}`}>✍️ Gõ chính tả</button>
-                       <button onClick={() => { setMode("shadowing"); setIsCorrect(null); setShowAnswer(false); setShadowingResult(null); }} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${mode === "shadowing" ? 'bg-white text-[#2F6E5A] shadow-sm border border-[#CDBF9F]' : 'text-slate-400 hover:text-[#1C1A17]'}`}>🗣️ Shadowing</button>
+                       <Link href={`/shadowing?id=${currentCard?.id || ""}`} className="px-6 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-[#1C1A17]">🗣️ Shadowing</Link>
                      </div>
                   </div>
 

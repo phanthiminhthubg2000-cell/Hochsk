@@ -849,7 +849,7 @@ export default function HomePage() {
     // v2: mỗi kỹ năng là một bí cảnh thuộc một hệ ngũ hành
     { key: "vocabulary", label: "Từ vựng", bc: "Vạn Từ Bí Cảnh", bcZh: "万字秘境", el: "moc", sub: "Thẻ từ theo bài · học mới và ôn", href: "/vocab", extra: { href: "/topic", label: "Vạn Tượng Lâm · từ theo chủ đề" } },
     { key: "grammar", label: "Ngữ pháp", bc: "Thiên Cơ Trận", bcZh: "天机阵", el: "tho", sub: "Sắp xếp câu cho đúng trận pháp", href: "/arrange" },
-    { key: "listening", label: "Nghe", bc: "Thiên Âm Cốc", bcZh: "天音谷", el: "kim", sub: "Nghe và chép lại", href: "/dictation" },
+    { key: "listening", label: "Nghe", bc: "Thiên Âm Cốc", bcZh: "天音谷", el: "kim", sub: "Nghe và chép lại", href: "/dictation", extra: { href: "/shadowing", label: "Shadowing · nghe rồi nói nhại từng câu" } },
     { key: "translation", label: "Đọc · dịch", bc: "Văn Tự Tháp", bcZh: "文字塔", el: "thuy", sub: "Dịch Việt ⇄ Trung, đọc hiểu", href: "/translate" },
     { key: "speaking", label: "Nói", bc: "Khẩu Ngữ Đài", bcZh: "口语台", el: "hoa", sub: "Nhập vai hội thoại theo tình huống", href: "/roleplay", extra: { href: "/hskk", label: "Thiên Ngôn Điện · thi nói HSKK" }, extra2: { href: "/hskk-cao", label: "Luyện HSKK Cao cấp · nghe kể lại, trả lời câu hỏi" } },
   ].map(s => ({ ...s, value: Math.round(Math.min(skillMap[s.key] || 0, 100)) }));
