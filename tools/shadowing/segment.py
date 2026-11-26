@@ -84,6 +84,78 @@ for f in sorted(glob.glob(f"{ROOT}/public/lectures/hsk6-*/LESSON_*.html")):
         zh = re.sub(r"【[^】]*】\s*", "", re.sub(r"[{}]", "", zh)); pid = f"hsk6-{key}-{k + 1}"
         res[pid] = align(split_text(zh), [x for x in sil if a < x[0] < b], a, b)
         items.append({"id": pid, "level": "HSK 6 (2.0)", "lesson": num, "p": k + 1, "audio": f"/audio/hsk6kw/{key}.mp3", "title": title, "vn": vn})
+# HSKK: Trung cấp — 听后重复 (10 câu ngắn/đề); Cao cấp, HSKK 3.0 — 听后复述 (đoạn có lời) → tách câu
+def strip_html(t): return re.sub(r"<[^>]+>", "", re.sub(r"<br\s*/?>", "\n", t or "")).strip()
+def voiced_tail(sil, a, b, chars):
+    """câu nằm ở cuối đoạn [a,b]: ghép các khúc có tiếng từ cuối lên cho đủ ≈ độ dài câu (bỏ lời đọc số câu ở đầu)"""
+    exp = 0.27 * chars + 0.3
+    S = sorted([(max(a, x), min(b, y)) for x, y in sil if y > a and x < b])
+    voiced, cur = [], a
+    for x, y in S:
+        if x - cur > 0.12: voiced.append((cur, x))
+        cur = max(cur, y)
+    if b - cur > 0.12: voiced.append((cur, b))
+    voiced = [v for v in voiced if v[1] - v[0] >= 0.3]                 # bỏ tiếng động rất ngắn
+    if len(voiced) > 1 and voiced[-1][1] - voiced[-1][0] < 0.85: voiced.pop()  # bỏ tiếng "bíp" báo bắt đầu trả lời
+    if not voiced: return a, b
+    end = voiced[-1][1]; st = voiced[-1][0]; k = len(voiced) - 1
+    while k > 0 and (end - st) < exp * 0.75 and st - voiced[k - 1][1] < 0.9: k -= 1; st = voiced[k][0]
+    return st, end
+
+exams = json.load(open(f"{ROOT}/public/hskk-exam/exams.json"))
+LVN = {"zhong": "HSKK Trung cấp", "cao": "HSKK Cao cấp"}
+cnt = {}
+for ex in exams:
+    f = ROOT + "/public" + ex["file"]
+    if not os.path.exists(f): continue
+    h = open(f).read(); m = re.search(r"window\.EXAM=(\{.*?\});</script>", h, re.S)
+    if not m: continue
+    E = json.loads(m.group(1)); apath = os.path.join(os.path.dirname(f), E.get("audio", ""))
+    if not E.get("audio") or not os.path.exists(apath): continue
+    lvname = LVN.get(ex.get("tier"), f"HSKK {ex.get('level')} (3.0)")
+    mc = re.search(r"H\d{5}", ex["file"]); code = mc.group() if mc else re.sub(r"\W+", "", ex.get("name", "")) or str(len(items))
+    lname = f"Đề {mc.group()}" if mc else ex.get("name", "Đề")
+    plays = []; last = None; wi = 0
+    for st in E["timeline"]:
+        if st["t"] == "play": last = (st["a"], st["b"])
+        elif st["t"] == "win":
+            w = E["windows"][wi] if wi < len(E["windows"]) else {}; wi += 1
+            if w.get("k") == "ans" and last: plays.append((w.get("q"), last))
+            last = None
+    qplay = {q: ab for q, ab in plays}
+    texts = {}
+    for lab, body, *_ in E.get("samples", []):
+        r = re.match(r"Câu\s*(\d+)(?:\s*[–-]\s*(\d+))?\s*·\s*(.*)", lab)
+        if not r or not re.search(r"Lời|ghi âm", r.group(3)): continue
+        a, b = int(r.group(1)), int(r.group(2) or r.group(1)); t = strip_html(body)
+        if b > a:
+            for n, x in re.findall(r"(\d+)\.\s*([^\n]+?)(?=\s*\d+\.|\n|$)", t): texts[int(n)] = x.strip()
+        else: texts[a] = t
+    for q, t in (E.get("qText") or {}).items():
+        if int(q) not in texts and (E.get("qMeta", {}).get(q, {}).get("type") == "repeat") and re.search(r"[。？！?]$", t or "") and len(t) < 40: texts[int(q)] = t
+    if not texts: continue
+    sil, dur = silences(apath)
+    cnt[lvname] = cnt.get(lvname, 0) + 1; no = cnt[lvname]
+    short = sorted(q for q, t in texts.items() if len(t) < 40 and q in qplay)
+    longs = sorted(q for q, t in texts.items() if len(t) >= 40 and q in qplay)
+    if short:
+        pid = f"hskk-{code or no}-rep"; segs = []
+        for q in short:
+            a, b = qplay[q]; t = texts[q]; st, en = voiced_tail(sil, a, b, len(re.sub(r"\W", "", t)))
+            segs.append({"t": t, "s": round(max(a, st - 0.12), 2), "e": round(min(b, en + 0.15), 2)})
+        res[pid] = segs
+        items.append({"id": pid, "level": lvname, "lesson": no, "p": 1, "audio": "/hskk-exam/" + E["audio"], "lname": lname, "pname": f"Nghe nhắc lại · {len(segs)} câu"})
+    for q in longs:
+        a, b = qplay[q]; pid = f"hskk-{code or no}-{q}"
+        inner = [x for x in sil if a < x[0] < b]
+        head = a
+        early = [x for x in inner if x[0] - a < 3.0 and x[1] - x[0] >= 0.35]  # bỏ lời đọc "第几题" ở đầu
+        if early: head = early[0][1]
+        tail_end = voiced_tail(sil, a, b, 9999)[1]  # bỏ tiếng bíp cuối
+        res[pid] = align(split_text(texts[q]), [x for x in inner if x[1] < tail_end], head, tail_end)
+        items.append({"id": pid, "level": lvname, "lesson": no, "p": q, "audio": "/hskk-exam/" + E["audio"], "lname": lname, "pname": f"Câu {q} · nghe thuật lại"})
+print("HSKK:", cnt)
+
 os.makedirs(f"{ROOT}/public/shadowing", exist_ok=True)
 json.dump(res, open(f"{ROOT}/public/shadowing/segments.json", "w"), ensure_ascii=False, separators=(",", ":"))
 json.dump(items, open(f"{ROOT}/public/shadowing/items.json", "w"), ensure_ascii=False, separators=(",", ":"))

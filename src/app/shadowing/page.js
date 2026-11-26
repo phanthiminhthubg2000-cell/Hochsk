@@ -9,7 +9,7 @@ import { useTuVi } from "../useTuVi";
 import { dayKey } from "../tuTien";
 
 const zhF = { fontFamily: '"Noto Serif SC","Noto Sans SC",serif' };
-const LEVELS = ["HSK 1 (3.0)", "HSK 2 (3.0)", "HSK 3 (3.0)", "HSK 6 (2.0)"];
+const LEVELS = ["HSK 1 (3.0)", "HSK 2 (3.0)", "HSK 3 (3.0)", "HSK 6 (2.0)", "HSKK Trung cấp", "HSKK Cao cấp", "HSKK 5 (3.0)"];
 const STEPS = [["1", "Nghe", "Nghe câu mẫu, nhìn chữ và pinyin"], ["2", "Che chữ", "Nghe không nhìn chữ, nhẩm theo"], ["3", "Nói đè", "Nói cùng lúc với giọng mẫu (nên đeo tai nghe)"], ["4", "Tự nói", "Tự nói lại cả câu, AI chấm từng chữ"]];
 const ST = { ok: ["#2F6E5A", "Đúng"], tone: ["#B7791F", "Sai thanh"], wrong: ["#BE123C", "Sai âm"], miss: ["#94A3B8", "Thiếu"] };
 const lessonNo = (it) => it.lesson;
@@ -67,11 +67,11 @@ export default function Shadowing() {
                   const done = keys.filter((k) => (best[k] || 0) >= 80).length;
                   return (
                     <div key={no} className="rounded-[10px] bg-white border border-[#D8CBAE] p-3">
-                      <div className="flex items-baseline justify-between gap-2"><b className="font-serif-vn text-[17px]">Bài {no}{list[0]?.title ? <span className="font-normal text-[14px]" style={zhF}> · {list[0].title}</span> : null}</b><span className="text-[12px] text-[#6B6253]">{done}/{keys.length} câu đạt</span></div>
+                      <div className="flex items-baseline justify-between gap-2"><b className="font-serif-vn text-[17px]">{list[0]?.lname || `Bài ${no}`}{list[0]?.title ? <span className="font-normal text-[14px]" style={zhF}> · {list[0].title}</span> : null}</b><span className="text-[12px] text-[#6B6253]">{done}/{keys.length} câu đạt</span></div>
                       <div className="h-1.5 rounded bg-[#EFE7D6] mt-1.5 overflow-hidden"><div className="h-full bg-[#2F6E5A]" style={{ width: `${(done / Math.max(1, keys.length)) * 100}%` }} /></div>
                       <div className="flex flex-wrap gap-1.5 mt-2.5">
                         {list.map((x) => { const ks = (segs[x.id] || []).map((_, i) => keyOf(x.id, i)); const ok = ks.every((k) => (best[k] || 0) >= 80); return (
-                          <button key={x.id} onClick={() => { setCur(x.id); try { history.replaceState(null, "", "/shadowing?id=" + x.id); } catch {} }} className={`h-9 px-3 rounded-[6px] border text-[13px] font-bold ${ok ? "bg-[#E6F2EC] border-[#9CC7B2] text-[#2F6E5A]" : "bg-[#FAF6EC] border-[#D8CBAE]"}`} title={(segs[x.id] || []).map((z) => z.t).join("")}>Đoạn {paraIdx(all, x)} · {ks.length} câu</button>
+                          <button key={x.id} onClick={() => { setCur(x.id); try { history.replaceState(null, "", "/shadowing?id=" + x.id); } catch {} }} className={`h-9 px-3 rounded-[6px] border text-[13px] font-bold ${ok ? "bg-[#E6F2EC] border-[#9CC7B2] text-[#2F6E5A]" : "bg-[#FAF6EC] border-[#D8CBAE]"}`} title={(segs[x.id] || []).map((z) => z.t).join("")}>{x.pname || `Đoạn ${paraIdx(all, x)} · ${ks.length} câu`}</button>
                         ); })}
                       </div>
                     </div>
@@ -166,7 +166,7 @@ function Practice({ item, pIdx, segs, py, best, userId, gain, u, onBack, onNext 
       <section className="rounded-[12px] bg-white border border-[#D8CBAE] p-4 md:p-6">
         <div className="flex items-center gap-2 flex-wrap text-[13px] mb-3">
           <button onClick={onBack} className="h-9 px-3 rounded-[6px] border border-[#D8CBAE] font-bold">‹ Danh sách</button>
-          <b>{item.level} · Bài {lessonNo(item)}{item.title ? ` ${item.title}` : ""} · Đoạn {pIdx}</b>
+          <b>{item.level} · {item.lname || `Bài ${lessonNo(item)}`}{item.title ? ` ${item.title}` : ""} · {item.pname || `Đoạn ${pIdx}`}</b>
           <span className="text-[#6B6253]">Câu {i + 1}/{segs.length}</span>
         </div>
 

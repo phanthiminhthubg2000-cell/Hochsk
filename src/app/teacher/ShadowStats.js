@@ -47,7 +47,7 @@ export default function ShadowStats({ db }) {
                   <div className="text-xs font-bold text-slate-500 mb-1">Câu điểm thấp nhất</div>
                   <ul className="grid gap-1">
                     {Object.entries(r.shadow).sort((a, b) => a[1] - b[1]).slice(0, 8).map(([k, v]) => { const { t, it } = textOf(k); return (
-                      <li key={k} className="flex gap-2"><b className={`w-8 text-right ${tone(v)}`}>{v}</b><span style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{t}</span><span className="text-xs text-slate-400 ml-auto whitespace-nowrap">{it ? `${it.level} · Bài ${it.lesson}` : ""}</span></li>
+                      <li key={k} className="flex gap-2"><b className={`w-8 text-right ${tone(v)}`}>{v}</b><span style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{t}</span><span className="text-xs text-slate-400 ml-auto whitespace-nowrap">{it ? `${it.level} · ${it.lname || "Bài " + it.lesson}` : ""}</span></li>
                     ); })}
                   </ul>
                 </div>
