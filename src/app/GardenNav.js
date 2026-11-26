@@ -74,13 +74,14 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
         const d = s.data();
         setU(d); setStreak(d.streak ?? 0); setLeaves(d.xp ?? 0);
         const xp = d.xp || 0; const prevXp = lastXp.current; lastXp.current = xp; // ghi trước khi setDoc để không lặp lại khi thông báo đến ngay
-        if (!lite && prevXp != null && xp > prevXp) {
-          const n = xp - prevXp; const k = Date.now();
-          setToast({ n, k }); setTimeout(() => setToast((t) => (t && t.k === k ? null : t)), 2400);
-          // Nhận tu vi = có tu luyện hôm nay → giữ chuỗi ngày (trang chủ cũng làm việc này)
+        const gained = prevXp != null ? xp > prevXp : d.streakXp != null && xp > d.streakXp; // tu vi tăng (kể cả lúc trang khác cộng khi chưa mở thanh này)
+        if (gained) {
+          const n = prevXp != null ? xp - prevXp : 0; const k = Date.now();
+          if (!lite && n > 0) { setToast({ n, k }); setTimeout(() => setToast((t) => (t && t.k === k ? null : t)), 2400); }
+          // Nhận tu vi = có tu luyện hôm nay → giữ chuỗi ngày (mọi trang, kể cả trang chủ)
           const ns = nextStreak({ streak: d.streak || 0, last: d.lastActiveDay || "", pills: d.pills }, dayKey(), dayNum);
-          setDoc(ref, { ...(ns ? { streak: ns.streak, lastActiveDay: ns.last, pills: ns.pills } : {}), ...weekBump(d, n) }, { merge: true }).catch(() => {});
-        }
+          if (ns || n) setDoc(ref, { ...(ns ? { streak: ns.streak, lastActiveDay: ns.last, pills: ns.pills } : {}), streakXp: xp, ...(n && !lite ? weekBump(d, n) : {}) }, { merge: true }).catch(() => {});
+        } else if (d.streakXp == null) setDoc(ref, { streakXp: xp }, { merge: true }).catch(() => {});
       }, () => {});
     } catch (_) {}
     return () => { try { off(); } catch (_) {} };
@@ -142,7 +143,7 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
               )}
             </span>
             {isTeacher && (
-              <Link href="/truong-lao" className="tt-chip hidden sm:inline-flex" title="Chưởng Môn Điện · Trưởng lão">
+              <Link href="/truong-lao" className="tt-chip !px-2 sm:!px-3" title="Chưởng Môn Điện · Trưởng lão" aria-label="Trưởng lão">
                 <span className="zh" aria-hidden="true">长老</span><span className="hidden xl:inline">Trưởng lão</span>
               </Link>
             )}

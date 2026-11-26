@@ -1375,6 +1375,18 @@ export default function HomePage() {
                 <h1 className="font-serif-vn text-2xl md:text-[28px] font-extrabold tracking-tight">{isSignedIn ? firstName : "Thư sinh mới nhập môn"}{isSignedIn && realm && !realm.provisional ? <span className="ml-3 text-[15px] font-bold text-[#9E2F22] align-middle">{realm.zh} {realm.vn} · {realm.stage}</span> : null}</h1>
               </div>
               <OnboardCard />
+              {isTeacher && (
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/truong-lao" className="flex items-center gap-3 rounded-[6px] bg-[#1C1A17] border border-[#9E7A2E] p-3 text-[#F3EEE2] hover:border-[#E6B656]">
+                    <span className="w-10 h-10 shrink-0 rounded-[4px] bg-[#2A251E] text-[#E6B656] grid place-items-center font-brush text-[20px]" aria-hidden="true">长老</span>
+                    <span className="min-w-0"><b className="block font-serif-vn text-[15px]">Trưởng lão</b><span className="block text-[12px] text-[#CFC3A8]">Chưởng Môn Điện</span></span>
+                  </Link>
+                  <Link href="/teacher" className="flex items-center gap-3 rounded-[6px] bg-white border border-[#D8CBAE] p-3 hover:border-[#9E2F22]">
+                    <span className="w-10 h-10 shrink-0 rounded-[4px] bg-[#F3E3D2] text-[#9E2F22] grid place-items-center font-brush text-[22px]" aria-hidden="true">批</span>
+                    <span className="min-w-0"><b className="block font-serif-vn text-[15px]">Chấm bài</b><span className="block text-[12px] text-[#6B6253]">Trang giáo viên</span></span>
+                  </Link>
+                </div>
+              )}
               <Link href="/thoi-khoa-bieu" className="flex items-center gap-4 rounded-[6px] bg-white border border-[#D8CBAE] p-3.5 hover:border-[#9E2F22]">
                 <span className="w-11 h-11 shrink-0 rounded-[4px] bg-[#F3E3D2] text-[#9E2F22] grid place-items-center font-brush text-[24px]" aria-hidden="true">課</span>
                 <span className="flex-1 min-w-0"><b className="block font-serif-vn">Thời khoá biểu</b><span className="block text-sm text-[#6B6253]">Lịch học các lớp · bấm vào buổi học để mở đúng bài giảng</span></span>
