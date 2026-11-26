@@ -2,10 +2,9 @@
 // Gọi từ trang giáo viên (kết quả không hiển thị cho học viên).
 import { guard } from "@/lib/apiGuard";
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { raceJSON } from "@/lib/geminiRace";
 
-export const maxDuration = 60;
-const MODELS = [["gemini-3.5-flash", 42000], ["gemini-3.5-flash-lite", 15000]];
+export const maxDuration = 180; // bài nhiều trang + tóm tắt + bài văn cần thời gian đọc chữ viết tay
 
 function prompt(b) {
   const lv = String(b.level || "HSK4–5");
@@ -46,7 +45,7 @@ Chấm bài văn riêng trong "essay" (0–100 mỗi mục): content, structure,
   return `${common}
 Dạng bài: TÓM TẮT BÀI KHOÁ (缩写) — học viên tóm tắt ${ns.length > 1 ? `${ns.length} bài khoá ${list} (thường viết liền trên cùng tờ giấy, theo thứ tự; nhận ra ranh giới từng đoạn qua tiêu đề/số thứ tự hoặc nội dung)` : list} bằng lời của mình.
 ${taskText(b.task)}
-${b.lectureText ? `Dưới đây là chữ của bài giảng có chứa các bài khoá. Tìm đúng ${list} làm BÀI GỐC (trong dữ liệu có thể đánh dấu "课文一…" hoặc "### 课文 n: 1…"; chỉ lấy lời bài khoá — hội thoại/đoạn văn — bỏ phần từ vựng, ví dụ, bài tập):\n"""${String(b.lectureText).slice(0, 30000)}"""` : `Không có văn bản bài khoá — chấm dựa trên sự mạch lạc và ngôn ngữ; "source_found": false, để "points" rỗng.`}
+${b.lectureText ? `Dưới đây là chữ của bài giảng có chứa các bài khoá. Tìm đúng ${list} làm BÀI GỐC (trong dữ liệu có thể đánh dấu "课文一…" hoặc "### 课文 n: 1…"; chỉ lấy lời bài khoá — hội thoại/đoạn văn — bỏ phần từ vựng, ví dụ, bài tập):\n"""${String(b.lectureText).slice(0, 20000)}"""` : `Không có văn bản bài khoá — chấm dựa trên sự mạch lạc và ngôn ngữ; "source_found": false, để "points" rỗng.`}
 - Đọc kỹ bài gốc, phân biệt rõ nhân vật nào nói/làm gì; học viên kể nhầm thông tin thì ghi vào errors với type "nội dung".
 - "sections": mỗi bài khoá một mục [{"n":số bài khoá (${ns.join(",")}),"title":"tiêu đề bài khoá gốc","written":true/false — học viên có viết phần này không,"points":[4–6 ý chính {"vi":"ý chính (tiếng Việt)","hit":true/false}],"kw_used":["từ mới của bài khoá này học viên đã dùng"],"kw_missing":["từ mới yêu cầu mà chưa dùng"],"score":0–100,"comment":"1 câu ngắn ≤ 20 chữ"}].
 - "req_check": đối chiếu từng yêu cầu bài tập (nếu có) [{"req":"yêu cầu","ok":true/false,"note":"ngắn"}].
@@ -88,19 +87,14 @@ export async function POST(req) {
     if (imgs.join("").length > 8_000_000) return NextResponse.json({ error: "Ảnh quá lớn." }, { status: 413 });
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return NextResponse.json({ error: "Thiếu API Key." }, { status: 500 });
-    const genAI = new GoogleGenerativeAI(apiKey);
     const parts = [{ text: prompt(b) }, ...imgs.map((d) => ({ inlineData: { data: d.replace(/^data:[^,]+,/, ""), mimeType: d.slice(5, d.indexOf(";")) || "image/jpeg" } }))];
-    let last = null;
-    for (const [m, timeout] of MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({ model: m, generationConfig: { responseMimeType: "application/json", temperature: 0.2 } }, { timeout });
-        const r = await model.generateContent(parts);
-        const d = JSON.parse(r.response.text().replace(/```json|```/g, "").trim());
-        return NextResponse.json({ ...clean(Array.isArray(d) ? d[0] : d), model: m });
-      } catch (e) { last = e; }
+    try {
+      const d = await raceJSON(apiKey, parts, { head: 50000, deadline: 170000, temperature: 0.2 });
+      return NextResponse.json({ ...clean(d), model: d.model });
+    } catch (e) {
+      console.error("homework:", e);
+      return NextResponse.json({ error: "AI đang quá tải hoặc đọc bài quá lâu, bấm chấm lại sau ít phút." }, { status: 503 });
     }
-    console.error("homework:", last);
-    return NextResponse.json({ error: "AI đang quá tải, thử lại sau ít phút." }, { status: 503 });
   } catch (e) {
     console.error("homework:", e);
     return NextResponse.json({ error: "Lỗi chấm bài: " + e.message }, { status: 500 });

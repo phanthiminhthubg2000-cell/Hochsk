@@ -254,8 +254,15 @@ export default function HomeworkManager({ db }) {
         if (!lec && h.lectureUrl) lec = { fileUrl: h.lectureUrl };
         text = lecCache.current[h.lectureId] = await lectureText(lec);
       }
-      const r = await fetch("/api/homework", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ images, part: h.part, level: h.level || h.lectureLevel, prompt: h.topic, task: h.task || null, lectureText: text }) });
-      const d = await r.json(); if (!r.ok || d.error) throw new Error(d.error || "Lỗi " + r.status);
+      const body = JSON.stringify({ images, part: h.part, level: h.level || h.lectureLevel, prompt: h.topic, task: h.task || null, lectureText: text });
+      let d = null, last = "";
+      for (let k = 0; k < 2 && !d; k++) { // quá tải / hết giờ → tự thử lại một lần sau 15 giây
+        if (k) await new Promise((ok) => setTimeout(ok, 15000));
+        const r = await fetch("/api/homework", { method: "POST", headers: { "Content-Type": "application/json" }, body }).catch(() => null);
+        const j = r ? await r.json().catch(() => ({})) : {};
+        if (r?.ok && !j.error) d = j; else { last = j.error || (r ? "Lỗi " + r.status : "Mất kết nối"); if (r && ![429, 500, 502, 503, 504].includes(r.status)) break; }
+      }
+      if (!d) throw new Error(last);
       await updateDoc(doc(db, HW_COL, h.id), { ai: d, aiAt: serverTimestamp(), aiError: null, ...(h.status === "new" ? { status: "ai" } : {}) });
     } catch (e) { await updateDoc(doc(db, HW_COL, h.id), { aiError: String(e.message || e).slice(0, 300) }).catch(() => {}); }
     setGrading((g) => { const n = { ...g }; delete n[h.id]; return n; });
