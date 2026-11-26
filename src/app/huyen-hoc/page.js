@@ -107,6 +107,11 @@ function Home({ S }) {
         <span className="flex-1"><b className="block"><span className="font-zh">八字</span> · Bát tự – Tứ trụ</b><span className="text-[13px]" style={{ color: C.mute }}>Mệnh gì · ngũ hành vượng, khuyết · dụng thần · nên bổ sung hành gì, nên làm và tránh gì · đại vận</span></span>
         <span style={{ color: C.mute }}>›</span>
       </Link>
+      <Link href="/huyen-hoc/chiem-tinh" className="rounded-[10px] border p-4 flex items-center gap-3" style={{ background: "linear-gradient(160deg,#1E2433,#1E2126)", borderColor: C.goldDim }}>
+        <span className="w-11 h-11 rounded-[6px] grid place-items-center font-brush text-[24px]" style={{ background: C.goldSoft, color: C.gold }} aria-hidden="true">星</span>
+        <span className="flex-1"><b className="block"><span className="font-zh">星盘</span> · Cung hoàng đạo – Bản đồ sao</b><span className="text-[13px]" style={{ color: C.mute }}>Mặt Trời · Mặt Trăng · cung Mọc · 10 hành tinh trong 12 nhà · góc chiếu · yếu tố trội</span></span>
+        <span style={{ color: C.mute }}>›</span>
+      </Link>
       <Link href="/huyen-hoc/tarot" className="rounded-[10px] border p-4 flex items-center gap-3" style={{ background: "linear-gradient(160deg,#241F2E,#1E2126)", borderColor: C.goldDim }}>
         <span className="w-11 h-11 rounded-[6px] grid place-items-center font-brush text-[24px]" style={{ background: C.goldSoft, color: C.gold }} aria-hidden="true">塔</span>
         <span className="flex-1"><b className="block"><span className="font-zh">塔罗牌</span> · Bói bài Tarot</b><span className="text-[13px]" style={{ color: C.mute }}>Tự tay rút lá · 5 kiểu trải bài · ý nghĩa 78 lá song ngữ · giải bài bằng AI</span></span>
