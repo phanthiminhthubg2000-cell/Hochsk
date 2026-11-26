@@ -71,15 +71,30 @@ export async function lectureText(lec) {
     const html = await lectureHtml(lec);
     if (!html) return "";
     // bài giảng dạng slide: nội dung nằm trong dữ liệu JS (n: 1, kind: "对话", "câu tiếng Trung"…) → lấy các chuỗi có chữ Hán
+    // bài giảng HSK5–6: lời bài khoá nằm trong dữ liệu {"title":"…","sub":"…","paras":["đoạn 1","đoạn 2"…]}
+    if (html.includes('"paras":[')) {
+      const out = []; let i = 0;
+      while ((i = html.indexOf('"paras":[', i)) >= 0) {
+        const st = html.indexOf("[", i); let d = 0, k = st, q = false;
+        for (; k < html.length; k++) { const c = html[k]; if (q) { if (c === "\\") k++; else if (c === '"') q = false; continue; } if (c === '"') q = true; else if (c === "[") d++; else if (c === "]" && --d === 0) break; }
+        let paras = []; try { paras = JSON.parse(html.slice(st, k + 1)).filter((x) => typeof x === "string"); } catch {}
+        const head = html.slice(Math.max(0, i - 400), i); const t = [...head.matchAll(/"title":"([^"]*)"/g)].pop()?.[1] || ""; const sub = [...head.matchAll(/"sub":"([^"]*)"/g)].pop()?.[1] || "";
+        if (paras.length) out.push(t ? `### 课文 · ${t}${sub ? `（${sub}）` : ""}\n${paras.join("\n")}` : `### (đoạn luyện tập, không phải bài khoá)\n${paras.join("\n")}`);
+        i = k;
+      }
+      if (out.join("").length > 100) return ("【Lời bài khoá trong slide bài giảng】\n" + out.join("\n\n")).slice(0, 40000);
+    }
     const raw = html.replace(/<style[\s\S]*?<\/style>/g, "");
     const toks = raw.match(/\bn:\s*\d+\s*,\s*kind:\s*"[^"]*"|"(?:[^"\\]|\\.)*[\u4e00-\u9fff](?:[^"\\]|\\.)*"/g) || [];
     if (toks.some((x) => x.startsWith("n:"))) {
       const t2 = toks.map((x) => (x.startsWith("n:") ? "\n### 课文 " + x : x.slice(1, -1))).join(" | ");
       return t2.slice(Math.max(0, t2.indexOf("### 课文") - 50)).slice(0, 40000);
     }
+    const lits = toks.filter((x) => !x.startsWith("n:")).map((x) => x.slice(1, -1)).filter((x) => /[\u4e00-\u9fff]{6,}/.test(x));
     const d = new DOMParser().parseFromString(html, "text/html");
     d.querySelectorAll("script,style,noscript,svg").forEach((x) => x.remove());
-    const t = (d.body?.innerText || d.body?.textContent || "").replace(/[ \t ]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
+    let t = (d.body?.innerText || d.body?.textContent || "").replace(/[ \t ]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
+    if (t.replace(/[^\u4e00-\u9fff]/g, "").length < 200 && lits.length) t = lits.join("\n"); // bài giảng dựng bằng JS: lấy các chuỗi chữ Hán trong dữ liệu
     // ưu tiên đoạn từ chữ 课文 đầu tiên trở đi
     const i = t.search(/课文/);
     return (i > 0 ? t.slice(Math.max(0, i - 200)) : t).slice(0, 40000);
