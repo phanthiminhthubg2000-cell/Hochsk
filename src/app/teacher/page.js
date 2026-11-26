@@ -8,6 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { usePhoneticsResultSaver } from "../../phoneticsResultSaver";
 import ReviewManager from "./ReviewManager";
 import HomeworkManager from "./HomeworkManager";
+import ShadowStats from "./ShadowStats";
 import { HskWritingAI, useHskkAI, HskkAINote } from "./aiGrade";
 import { hskReport, hasWriting, hskkReport } from "@/lib/scoring";
 import Schedule from "../thoi-khoa-bieu/Schedule";
@@ -1144,6 +1145,10 @@ export default function TeacherDashboard() {
                 <div className="flex items-center gap-3"><span className="text-lg">📝</span>{!isSidebarCollapsed && <span>Bài tập về nhà</span>}</div>
               </button>
 
+              <button onClick={() => setActiveTab("shadowing")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'shadowing' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
+                <div className="flex items-center gap-3"><span className="text-lg">🗣️</span>{!isSidebarCollapsed && <span>Shadowing</span>}</div>
+              </button>
+
               <button onClick={() => setActiveTab("schedule")} className={`w-full mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition-all ${activeTab === 'schedule' ? 'bg-[#ECFDF5] text-[#10B981] border border-[#A7F3D0]/30 shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#142033]'}`}>
                 <div className="flex items-center gap-3"><span className="text-lg">🗓</span>{!isSidebarCollapsed && <span>Thời khoá biểu</span>}</div>
               </button>
@@ -1185,7 +1190,7 @@ export default function TeacherDashboard() {
         </header>
 
         <nav aria-label="Các mục giáo viên" className="md:hidden sticky top-16 z-20 bg-[#F7FAF8]/95 backdrop-blur border-b border-[#E2E8F0] px-3 py-2 flex gap-2 overflow-x-auto">
-          {[["students", "Học viên"], ["schedule", "Thời khoá biểu"], ["hsk3_grading", "Chấm HSK 3.0", pendingHsk3Submissions.length], ["grading", "Chấm HSKK", pendingExams.length], ["grading_test", "Chấm Test", pendingTests.length], ["phonetics_grading", "Ngữ âm", pendingPhoneticCount], ["homework", "Bài tập về nhà"], ["review_manager", "Bài cũ"], ["hsk3_exam_manager", "Đề HSK 3.0"], ["lecture_manager", "Bài giảng"]].map(([k, v, n]) => (
+          {[["students", "Học viên"], ["schedule", "Thời khoá biểu"], ["hsk3_grading", "Chấm HSK 3.0", pendingHsk3Submissions.length], ["grading", "Chấm HSKK", pendingExams.length], ["grading_test", "Chấm Test", pendingTests.length], ["phonetics_grading", "Ngữ âm", pendingPhoneticCount], ["homework", "Bài tập về nhà"], ["shadowing", "Shadowing"], ["review_manager", "Bài cũ"], ["hsk3_exam_manager", "Đề HSK 3.0"], ["lecture_manager", "Bài giảng"]].map(([k, v, n]) => (
             <button key={k} onClick={() => setActiveTab(k)} className={`shrink-0 h-9 px-3 rounded-full text-[13px] font-bold border inline-flex items-center gap-1.5 ${activeTab === k ? "bg-[#1C1A17] text-[#F3EEE2] border-[#1C1A17]" : "bg-white text-[#4A4238] border-[#E2E8F0]"}`}>
               {v}{n > 0 && <span className="bg-[#9E2F22] text-white text-[10px] px-1.5 rounded-full">{n}</span>}
             </button>
@@ -2135,6 +2140,7 @@ export default function TeacherDashboard() {
           {/* TAB 4: KIỂM TRA BÀI CŨ */}
           {activeTab === "review_manager" && <ReviewManager db={db} levels={LEVEL_OPTIONS} />}
           {activeTab === "homework" && <HomeworkManager db={db} />}
+          {activeTab === "shadowing" && <ShadowStats db={db} />}
           {activeTab === "schedule" && <div className="rounded-[18px] bg-[#EFE7D6] p-3 md:p-5"><Schedule editable /></div>}
 
           {/* TAB 5: KHO BÀI GIẢNG (THU GỌN / MỞ RỘNG THEO CẤP ĐỘ) */}

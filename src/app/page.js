@@ -467,6 +467,7 @@ export default function HomePage() {
   const [leaves, setLeaves] = useState(0); // = xp
   const [todayVocabLearned, setTodayVocabLearned] = useState(0);
   const [todayListeningLearned, setTodayListeningLearned] = useState(0);
+  const [todayShadow, setTodayShadow] = useState(0); // số câu shadowing đã luyện hôm nay
   const [todayGrammarLearned, setTodayGrammarLearned] = useState(0);
   const [isTeacher, setIsTeacher] = useState(false);
   const [linhCan, setLinhCan] = useState(null); // {scores:{kim,moc,thuy,hoa,tho}, at}
@@ -738,6 +739,7 @@ export default function HomePage() {
         const tv = uData.todayVocabLearned ?? upData.todayVocabLearned ?? 0;
         const tl = uData.todayListeningLearned ?? upData.todayListeningLearned ?? 0;
         const tg = uData.todayGrammarLearned ?? upData.todayGrammarLearned ?? 0;
+        setTodayShadow(uData.shadowDay?.d === dayKey() ? uData.shadowDay.n || 0 : 0);
 
         let teacherSkills = null;
         const list = [];
@@ -859,6 +861,7 @@ export default function HomePage() {
     { label: "Ôn 20 từ vựng", done: todayVocabLearned >= 20, sub: `${Math.min(todayVocabLearned, 20)}/20`, href: "/vocab", leaf: 20 },
     { label: nextLesson ? `Học tiếp ${nextLesson.lectureName}` : "Học 1 bài mới", done: false, sub: `+${LEAF_PER_LESSON}`, lesson: nextLesson, leaf: LEAF_PER_LESSON },
     { label: "Nghe chép 1 bài", done: todayListeningLearned >= 1, sub: `${Math.min(todayListeningLearned, 1)}/1`, href: "/dictation", leaf: 15 },
+    { label: "Shadowing 5 câu", done: todayShadow >= 5, sub: `${Math.min(todayShadow, 5)}/5`, href: "/shadowing", leaf: 15 },
     { label: "Sắp xếp 10 câu", done: todayGrammarLearned >= 10, sub: `${Math.min(todayGrammarLearned, 10)}/10`, href: "/arrange", leaf: 20 },
   ];
   // Bài đến hạn ôn (để lên Viên mãn)

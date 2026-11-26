@@ -6,16 +6,16 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import GardenNav from "../GardenNav";
 import { useTuVi } from "../useTuVi";
-import dictationData from "../dictation.json";
+import { dayKey } from "../tuTien";
 
 const zhF = { fontFamily: '"Noto Serif SC","Noto Sans SC",serif' };
-const LEVELS = ["HSK 1 (3.0)", "HSK 2 (3.0)", "HSK 3 (3.0)"];
+const LEVELS = ["HSK 1 (3.0)", "HSK 2 (3.0)", "HSK 3 (3.0)", "HSK 6 (2.0)"];
 const STEPS = [["1", "Nghe", "Nghe câu mẫu, nhìn chữ và pinyin"], ["2", "Che chữ", "Nghe không nhìn chữ, nhẩm theo"], ["3", "Nói đè", "Nói cùng lúc với giọng mẫu (nên đeo tai nghe)"], ["4", "Tự nói", "Tự nói lại cả câu, AI chấm từng chữ"]];
 const ST = { ok: ["#2F6E5A", "Đúng"], tone: ["#B7791F", "Sai thanh"], wrong: ["#BE123C", "Sai âm"], miss: ["#94A3B8", "Thiếu"] };
-const lessonNo = (it) => +(String(it.lesson).match(/Bài\s*(\d+)/)?.[1] || 0);
-const paraNo = (it) => +(String(it.lesson).match(/Câu\s*(\d+)/)?.[1] || 0);
-// số thứ tự đoạn trong bài (dữ liệu đánh số Câu 1, 3, 5… → hiện Đoạn 1, 2, 3…)
-const paraIdx = (it) => dictationData.filter((x) => x.level === it.level && lessonNo(x) === lessonNo(it) && paraNo(x) <= paraNo(it)).length;
+const lessonNo = (it) => it.lesson;
+const sortIt = (a, b) => a.lesson - b.lesson || a.p - b.p;
+// số thứ tự đoạn trong bài (dữ liệu HSK 1–3 đánh số Câu 1, 3, 5… → hiện Đoạn 1, 2, 3…)
+const paraIdx = (all, it) => all.filter((x) => x.level === it.level && x.lesson === it.lesson && x.p <= it.p).length;
 const keyOf = (id, i) => `${id}#${i}`.replace(/[.\/]/g, "_");
 const tone = (v) => (v >= 80 ? "#2F6E5A" : v >= 60 ? "#B7791F" : "#BE123C");
 
@@ -27,30 +27,30 @@ function pickMime() {
 
 export default function Shadowing() {
   const { u, userId, isSignedIn, gain } = useTuVi();
-  const [segs, setSegs] = useState(null);
+  const [segs, setSegs] = useState(null); const [all, setAll] = useState([]);
   const [lv, setLv] = useState(LEVELS[0]);
   const [cur, setCur] = useState(null); // { id } đoạn đang luyện
   const [py, setPy] = useState(null);
   useEffect(() => {
-    fetch("/shadowing/segments.json").then((r) => r.json()).then(setSegs).catch(() => setSegs({}));
+    Promise.all([fetch("/shadowing/segments.json").then((r) => r.json()), fetch("/shadowing/items.json").then((r) => r.json())]).then(([sg, it]) => { setAll(it); setSegs(sg); }).catch(() => setSegs({}));
     import("pinyin-pro").then((m) => setPy(() => m.pinyin)).catch(() => {});
     const q = new URLSearchParams(location.search); const id = q.get("id"); const l = q.get("lv");
     if (l && LEVELS.includes(l)) setLv(l);
     if (id) setCur(id);
   }, []);
   const best = u?.shadow || {};
-  const items = useMemo(() => dictationData.filter((x) => x.level === lv && segs?.[x.id]).sort((a, b) => lessonNo(a) - lessonNo(b) || paraNo(a) - paraNo(b)), [lv, segs]);
+  const items = useMemo(() => all.filter((x) => x.level === lv && segs?.[x.id]).sort(sortIt), [lv, segs, all]);
   const lessons = useMemo(() => { const m = new Map(); items.forEach((x) => { const k = lessonNo(x); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }); return [...m.entries()]; }, [items]);
-  const item = cur && dictationData.find((x) => x.id === cur);
+  const item = cur && all.find((x) => x.id === cur);
 
   return (
     <div className="min-h-screen bg-[#EFE7D6] text-[#1C1A17]" style={{ fontFamily: '"Be Vietnam Pro","Noto Sans SC",system-ui,sans-serif' }}>
       <GardenNav active="practice" title="Shadowing · Nói nhại" />
       <main className="max-w-[1100px] mx-auto px-3 md:px-6 pt-5 pb-28 md:pb-14">
         {item && segs ? (
-          <Practice key={item.id} item={item} segs={segs[item.id] || []} py={py} best={best} userId={userId} gain={gain}
+          <Practice key={item.id} u={u} item={item} pIdx={paraIdx(all, item)} segs={segs[item.id] || []} py={py} best={best} userId={userId} gain={gain}
             onBack={() => { setCur(null); try { history.replaceState(null, "", "/shadowing?lv=" + encodeURIComponent(item.level)); } catch {} }}
-            onNext={() => { const all = dictationData.filter((x) => x.level === item.level && segs[x.id]).sort((a, b) => lessonNo(a) - lessonNo(b) || paraNo(a) - paraNo(b)); const i = all.findIndex((x) => x.id === item.id); const n = all[i + 1]; if (n) { setCur(n.id); try { history.replaceState(null, "", "/shadowing?id=" + n.id); } catch {} } else setCur(null); }} />
+            onNext={() => { const lst = all.filter((x) => x.level === item.level && segs[x.id]).sort(sortIt); const i = lst.findIndex((x) => x.id === item.id); const n = lst[i + 1]; if (n) { setCur(n.id); try { history.replaceState(null, "", "/shadowing?id=" + n.id); } catch {} } else setCur(null); }} />
         ) : (
           <>
             <header className="mb-4">
@@ -67,11 +67,11 @@ export default function Shadowing() {
                   const done = keys.filter((k) => (best[k] || 0) >= 80).length;
                   return (
                     <div key={no} className="rounded-[10px] bg-white border border-[#D8CBAE] p-3">
-                      <div className="flex items-baseline justify-between"><b className="font-serif-vn text-[17px]">Bài {no}</b><span className="text-[12px] text-[#6B6253]">{done}/{keys.length} câu đạt</span></div>
+                      <div className="flex items-baseline justify-between gap-2"><b className="font-serif-vn text-[17px]">Bài {no}{list[0]?.title ? <span className="font-normal text-[14px]" style={zhF}> · {list[0].title}</span> : null}</b><span className="text-[12px] text-[#6B6253]">{done}/{keys.length} câu đạt</span></div>
                       <div className="h-1.5 rounded bg-[#EFE7D6] mt-1.5 overflow-hidden"><div className="h-full bg-[#2F6E5A]" style={{ width: `${(done / Math.max(1, keys.length)) * 100}%` }} /></div>
                       <div className="flex flex-wrap gap-1.5 mt-2.5">
                         {list.map((x) => { const ks = (segs[x.id] || []).map((_, i) => keyOf(x.id, i)); const ok = ks.every((k) => (best[k] || 0) >= 80); return (
-                          <button key={x.id} onClick={() => { setCur(x.id); try { history.replaceState(null, "", "/shadowing?id=" + x.id); } catch {} }} className={`h-9 px-3 rounded-[6px] border text-[13px] font-bold ${ok ? "bg-[#E6F2EC] border-[#9CC7B2] text-[#2F6E5A]" : "bg-[#FAF6EC] border-[#D8CBAE]"}`} title={x.fullText}>Đoạn {paraIdx(x)} · {ks.length} câu</button>
+                          <button key={x.id} onClick={() => { setCur(x.id); try { history.replaceState(null, "", "/shadowing?id=" + x.id); } catch {} }} className={`h-9 px-3 rounded-[6px] border text-[13px] font-bold ${ok ? "bg-[#E6F2EC] border-[#9CC7B2] text-[#2F6E5A]" : "bg-[#FAF6EC] border-[#D8CBAE]"}`} title={(segs[x.id] || []).map((z) => z.t).join("")}>Đoạn {paraIdx(all, x)} · {ks.length} câu</button>
                         ); })}
                       </div>
                     </div>
@@ -86,7 +86,7 @@ export default function Shadowing() {
   );
 }
 
-function Practice({ item, segs, py, best, userId, gain, onBack, onNext }) {
+function Practice({ item, pIdx, segs, py, best, userId, gain, u, onBack, onNext }) {
   const audio = useRef(null), stopAt = useRef(0), loopLeft = useRef(0), onDone = useRef(null);
   const rec = useRef(null), chunks = useRef([]), stream = useRef(null), autoStop = useRef(null);
   const [i, setI] = useState(0); const [step, setStep] = useState(0); const [rate, setRate] = useState(1); const [loop, setLoop] = useState(false);
@@ -145,6 +145,9 @@ function Practice({ item, segs, py, best, userId, gain, onBack, onNext }) {
       }
       if (!d) throw new Error(last);
       setRes(d);
+      // nhiệm vụ ngày: đếm số câu đã luyện (mỗi câu tính 1 lần/ngày)
+      const today = dayKey(); const sd = u?.shadowDay?.d === today ? u.shadowDay : { d: today, n: 0, k: [] };
+      if (!(sd.k || []).includes(key)) await setDoc(doc(db, "users", userId), { shadowDay: { d: today, n: (sd.n || 0) + 1, k: [...(sd.k || []), key].slice(-60) } }, { merge: true }).catch(() => {});
       const prev = best[key] || 0;
       if (d.score > prev) {
         await setDoc(doc(db, "users", userId), { shadow: { [key]: d.score } }, { merge: true }).catch(() => {});
@@ -159,11 +162,11 @@ function Practice({ item, segs, py, best, userId, gain, onBack, onNext }) {
 
   return (
     <div className="grid lg:grid-cols-[1fr_300px] gap-4">
-      <audio ref={audio} src={item.audioUrl} preload="auto" onTimeUpdate={onTime} onEnded={() => setPlaying(false)} />
+      <audio ref={audio} src={item.audio} preload="auto" onTimeUpdate={onTime} onEnded={() => setPlaying(false)} />
       <section className="rounded-[12px] bg-white border border-[#D8CBAE] p-4 md:p-6">
         <div className="flex items-center gap-2 flex-wrap text-[13px] mb-3">
           <button onClick={onBack} className="h-9 px-3 rounded-[6px] border border-[#D8CBAE] font-bold">‹ Danh sách</button>
-          <b>{item.level} · Bài {lessonNo(item)} · Đoạn {paraIdx(item)}</b>
+          <b>{item.level} · Bài {lessonNo(item)}{item.title ? ` ${item.title}` : ""} · Đoạn {pIdx}</b>
           <span className="text-[#6B6253]">Câu {i + 1}/{segs.length}</span>
         </div>
 
@@ -200,6 +203,8 @@ function Practice({ item, segs, py, best, userId, gain, onBack, onNext }) {
             </div>
           )}
         </div>
+
+        {item.vn && step === 0 && <details className="mt-2 text-[14px] text-[#4A443A]"><summary className="cursor-pointer text-[13px] font-bold text-[#6B6253]">🇻🇳 Dịch cả đoạn</summary><p className="mt-1 leading-6">{item.vn}</p></details>}
 
         {/* điều khiển nghe */}
         <div className="flex items-center gap-2 flex-wrap mt-4">
