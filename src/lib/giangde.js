@@ -146,3 +146,44 @@ export const FIELDS = [
   { k: "tip", label: "Mẹo làm dạng này", rows: 2 },
   { k: "note", label: "Ghi chú riêng của giáo viên (không hiện cho học viên)", rows: 2 },
 ];
+
+// ---- Bài làm của học viên (hsk3_submissions) ----
+export function subAnswers(h) {
+  let ans = {};
+  try { ans = JSON.parse(h?.answersJson || "{}") || {}; } catch (_) { ans = {}; }
+  if (!Object.keys(ans).length) {
+    // bài nộp cũ: dựng lại từ chuỗi chấm tự động "12:B✓ 13:C✗A"
+    [h?.listeningDetail, h?.readingDetail, h?.writingAutoDetail].filter(Boolean).join(" ").split(/\s+/).forEach((x) => {
+      const m = x.match(/^(\d+):(.*?)(✓|✗)/); if (m && m[2] !== "-") ans[m[1]] = m[2];
+    });
+  }
+  return ans;
+}
+const normTxt = (s) => String(s ?? "").replace(/[\s，。！？、,.!?“”"'：:；;（）()]/g, "");
+// đúng / sai / null (không chấm tự động được: bài viết)
+export function isRight(it, v) {
+  if (v == null || v === "" || (Array.isArray(v) && !v.length)) return false;
+  if (it.type === "c" || it.type === "m") return String(v).trim().toUpperCase() === String(it.ans ?? "").trim().toUpperCase();
+  if (it.type === "w") return null;
+  const keys = (Array.isArray(it.ans) ? it.ans : [it.ans]).map(normTxt).filter(Boolean);
+  if (!keys.length) return null;
+  return keys.includes(normTxt(Array.isArray(v) ? v.join("") : v));
+}
+// thống kê cả lớp: { n: { total, ok, pct, pick: {A: 2, …}, wrong: [tên] } }
+export function classStats(items, subs) {
+  const out = {};
+  items.forEach((it) => {
+    if (it.type === "w") return;
+    const s = { total: 0, ok: 0, pick: {}, wrong: [] };
+    subs.forEach((h) => {
+      const v = h.ans[it.n];
+      const r = isRight(it, v);
+      if (r == null) return;
+      s.total++;
+      if (r) s.ok++; else s.wrong.push(h.name);
+      if (it.type === "c" || it.type === "m") { const k = v ? String(v).toUpperCase() : "–"; s.pick[k] = (s.pick[k] || 0) + 1; }
+    });
+    if (s.total) { s.pct = Math.round((s.ok / s.total) * 100); out[it.n] = s; }
+  });
+  return out;
+}

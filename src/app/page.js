@@ -480,6 +480,15 @@ export default function HomePage() {
   const newResults = results.filter(r => r.graded && !seenIds.has(r.type + r.id));
   const markSeen = (keys) => setSeenIds(prev => { const n = new Set(prev); keys.forEach(k => n.add(k)); try { localStorage.setItem("hg_seen_results", JSON.stringify([...n].slice(-300))); } catch (_) {} return n; });
   const openResult = (r) => { setSelectedResult(r); if (r.graded) markSeen([r.type + r.id]); };
+  // Bài chữa đề cô đã gửi (exam_lessons) cho đề của kết quả đang mở
+  const [gdLink, setGdLink] = useState("");
+  useEffect(() => {
+    setGdLink("");
+    const m = String(selectedResult?.examId || "").match(/^(hsk-exam|hsk2-exam)\/(.+)$/);
+    if (selectedResult?.type !== "hsk" || !m) return;
+    const k = `${m[1]}__${m[2]}`;
+    getDoc(doc(db, "exam_lessons", k)).then((s) => { if (s.exists() && s.data().published) setGdLink(`/giang-de?p=${k}`); }).catch(() => {});
+  }, [selectedResult]);
   // Mở lại bài đã nộp trong phòng thi ở chế độ chữa đề (đáp án của học viên + đáp án đúng + nghe lại + bài mẫu)
   const openReview = (r) => {
     const [dir, paper] = String(r.examId || "").split("/");
@@ -2122,6 +2131,7 @@ export default function HomePage() {
               {selectedResult.type === "hsk" && /^(hsk-exam|hsk2-exam)\/./.test(selectedResult.examId || "") && (
                 <button onClick={() => openReview(selectedResult)} className="h-12 rounded-[6px] bg-[#1C1A17] hover:bg-[#2A2622] text-[#F2D58C] font-bold inline-flex items-center justify-center gap-2">📝 Xem lại bài làm & chữa đề</button>
               )}
+              {gdLink && <Link href={gdLink} className="h-12 rounded-[6px] bg-[#F2D58C] hover:bg-[#E6C470] text-[#1C1A17] font-bold inline-flex items-center justify-center gap-2">🎓 Xem bài chữa đề của cô</Link>}
               <button onClick={() => setSelectedResult(null)} className="h-12 rounded-[6px] bg-[#9E2F22] hover:bg-[#7A2218] text-white font-bold">Đã hiểu</button>
             </div>
           </div>
