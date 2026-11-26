@@ -33,9 +33,16 @@ ${tail}
 "req_check": đối chiếu từng yêu cầu bài tập (nếu có) [{"req":"","ok":true,"note":""}],
 "sample": "bài văn mẫu ngắn cùng đề, đúng trình độ (để giáo viên tham khảo)"}`;
   }
-  const ns = (/^kw\d+$/.test(b.part || "") ? b.part.slice(2).split("").map(Number) : [1]).filter((x) => x >= 1 && x <= 5);
+  const m = String(b.part || "").match(/^kw(\d+)/);
+  const ns = (m ? m[1].split("").map(Number) : [1]).filter((x) => x >= 1 && x <= 5);
+  const withEssay = /\+essay$/.test(b.part || "");
+  const h5 = /HSK\s*5/i.test(lv) && ns.length === 1;
   const zh = (x) => "一二三四五"[x - 1];
-  const list = ns.map((x) => `课文${zh(x)}`).join("、");
+  const list = h5 ? "课文 (bài khoá duy nhất của bài học)" : ns.map((x) => `课文${zh(x)}`).join("、");
+  const essayPart = withEssay ? `
+PHẦN 2 — VIẾT BÀI VĂN (作文): trên cùng các ảnh, sau (hoặc trước) phần tóm tắt, học viên còn viết một bài văn.${b.prompt ? ` Đề bài: ${b.prompt}.` : " Không có đề cụ thể — tự nhận chủ đề từ bài viết."} Tách rõ hai phần (dựa vào tiêu đề, số thứ tự, nội dung). Ghi cả hai phần vào "ocr" (đánh dấu "【缩写】" và "【作文】" ở đầu mỗi phần).
+Chấm bài văn riêng trong "essay" (0–100 mỗi mục): content, structure, vocab (dùng từ của bài học), grammar, length (HSK5 ≥ 250 chữ, HSK4 ≥ 150 chữ); total = round(content*0.3 + structure*0.15 + vocab*0.2 + grammar*0.25 + length*0.1).
+"errors" và "upgrades" gộp lỗi của cả hai phần. "score" là phần tóm tắt.` : "";
   return `${common}
 Dạng bài: TÓM TẮT BÀI KHOÁ (缩写) — học viên tóm tắt ${ns.length > 1 ? `${ns.length} bài khoá ${list} (thường viết liền trên cùng tờ giấy, theo thứ tự; nhận ra ranh giới từng đoạn qua tiêu đề/số thứ tự hoặc nội dung)` : list} bằng lời của mình.
 ${taskText(b.task)}
@@ -45,9 +52,11 @@ ${b.lectureText ? `Dưới đây là chữ của bài giảng có chứa các b�
 - "req_check": đối chiếu từng yêu cầu bài tập (nếu có) [{"req":"yêu cầu","ok":true/false,"note":"ngắn"}].
 Chấm chung (0–100 mỗi mục): coverage (đủ ý chính, đúng trình tự, làm đủ các bài khoá được giao), own (bằng lời của mình, độ dài đúng yêu cầu), grammar (chính xác), vocab (dùng đúng và đủ từ mới yêu cầu).
 total = round(coverage*0.4 + own*0.15 + grammar*0.3 + vocab*0.15).
+${essayPart}
 JSON: {"ocr":"","source_found":true,"sections":[],"req_check":[],"score":{"coverage":0,"own":0,"grammar":0,"vocab":0,"total":0},
+${withEssay ? `"essay":{"written":true,"topic":"đề/chủ đề bài văn","score":{"content":0,"structure":0,"vocab":0,"grammar":0,"length":0,"total":0},"chars":0,"comment":"1 câu ≤ 25 chữ"},` : ""}
 ${tail}
-"sample": "bản tóm tắt mẫu cho ${list}, mỗi bài 3–4 câu, đúng trình độ (để giáo viên tham khảo)"}`;
+"sample": "bản tóm tắt mẫu cho ${list}, mỗi bài 3–4 câu, đúng trình độ${withEssay ? "; sau đó một bài văn mẫu ngắn cùng đề" : ""} (để giáo viên tham khảo)"}`;
 }
 
 // yêu cầu bài tập lấy từ slide bài giảng (HSK4)
@@ -62,6 +71,8 @@ Chấm bám sát các yêu cầu này (số câu, số từ mới phải dùng�
 const zhOnly = (t) => String(t || "").replace(/[（(][^）)]*[A-Za-zÀ-ỹ][^）)]*[）)]/g, "").replace(/[A-Za-zÀ-ỹ][A-Za-zÀ-ỹ0-9\s/'’-]*/g, "").replace(/\s+/g, "").trim();
 function clean(d) {
   if (!d || typeof d !== "object") return d;
+  // nộp cùng tóm tắt + bài văn: điểm tổng = trung bình hai phần
+  if (d.essay?.score?.total != null && d.score?.total != null) { d.score.summary = d.score.total; d.score.essay = d.essay.score.total; d.score.total = Math.round((Number(d.score.summary) + Number(d.essay.score.total)) / 2); }
   d.errors = (d.errors || []).map((e) => ({ ...e, right: zhOnly(e.right) || e.right })).filter((e) => e.wrong && e.right && e.wrong !== e.right);
   d.upgrades = (d.upgrades || []).map((u) => ({ ...u, better: zhOnly(u.better) || u.better }));
   return d;

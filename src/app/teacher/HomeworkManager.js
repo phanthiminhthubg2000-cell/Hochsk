@@ -3,11 +3,11 @@
 // cô tải ảnh lên đây theo lớp/học viên → AI đọc chữ + chấm → cô duyệt, sửa điểm/nhận xét, sao chép gửi lại Zalo.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, doc, getDoc, getDocs, setDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
-import { HW_COL, HW_IMG, PARTS, partName, kwNums, lectureText, lectureHw, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
+import { HW_COL, HW_IMG, PARTS, partName, kwNums, hasEssay, isHsk5, lectureText, lectureHw, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
 import { STATIC_LECTURES } from "../staticLectures";
 
 const btn = "rounded-xl font-bold text-sm transition-colors disabled:opacity-50";
-const SC = { content: "Nội dung", structure: "Bố cục", vocab: "Từ vựng", grammar: "Ngữ pháp", length: "Độ dài", coverage: "Đủ ý", own: "Lời của mình" };
+const SC = { summary: "Tóm tắt", essay: "Bài văn", content: "Nội dung", structure: "Bố cục", vocab: "Từ vựng", grammar: "Ngữ pháp", length: "Độ dài", coverage: "Đủ ý", own: "Lời của mình" };
 const tone = (v) => (v >= 80 ? "bg-emerald-50 text-emerald-700 border-emerald-200" : v >= 60 ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-rose-50 text-rose-600 border-rose-200");
 
 // Tô đỏ các cụm sai trong bản chép
@@ -38,7 +38,7 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
     setSaving(false);
   };
   const [copied, setCopied] = useState(false); const [up2, setUp2] = useState(false);
-  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${partName(h.part)}`, score !== "" && score != null ? `Điểm: ${score}/10` : "", cmt.trim(), fix && fixesText ? "Sửa lỗi:\n" + fixesText : "", up2 && ai?.upgrades?.length ? "Viết thế này tự nhiên hơn:\n" + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
+  const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${partName(h.part, h.level || h.lectureLevel)}`, score !== "" && score != null ? `Điểm: ${score}/10` : "", cmt.trim(), fix && fixesText ? "Sửa lỗi:\n" + fixesText : "", up2 && ai?.upgrades?.length ? "Viết thế này tự nhiên hơn:\n" + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
   const copy = async () => { const t = zalo(); try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); } setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const del = async () => { if (!confirm(`Xoá bài của ${h.studentName}?`)) return; await deleteDoc(doc(db, HW_COL, h.id)).catch(() => {}); await deleteDoc(doc(db, HW_IMG, h.id)).catch(() => {}); };
   const total = ai?.score?.total;
@@ -48,7 +48,7 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
         <div className={`w-12 h-12 shrink-0 rounded-xl border grid place-items-center font-black ${total != null ? tone(total) : "bg-slate-50 text-slate-400 border-slate-200"}`}>{grading ? "…" : total != null ? total : h.aiError ? "!" : "–"}</div>
         <div className="flex-1 min-w-0">
           <div className="font-bold text-[#142033] break-words">{h.studentName} <span className="font-normal text-slate-500 text-sm">· {h.className}</span></div>
-          <div className="text-xs text-slate-500 break-words"><b className="text-slate-700">{partName(h.part)}</b> · {h.lectureName} · {fmtTime(h.createdAt)} · {h.pages || "?"} trang</div>
+          <div className="text-xs text-slate-500 break-words"><b className="text-slate-700">{partName(h.part, h.level || h.lectureLevel)}</b> · {h.lectureName} · {fmtTime(h.createdAt)} · {h.pages || "?"} trang</div>
         </div>
         <span className={`text-[11px] font-bold px-2 py-1 rounded-full shrink-0 ${h.status === "returned" ? "bg-emerald-50 text-emerald-700" : grading ? "bg-sky-50 text-sky-700" : h.aiError ? "bg-rose-50 text-rose-600" : ai ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
           {h.status === "returned" ? "Đã chữa" : grading ? "AI đang chấm" : h.aiError ? "AI lỗi" : ai ? "Chờ cô duyệt" : "Chưa chấm"}
@@ -78,12 +78,19 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
                 <div className="grid gap-2">
                   {ai.sections.map((sec) => (
                     <div key={sec.n} className="rounded-xl border border-slate-200 p-3">
-                      <div className="flex flex-wrap items-baseline gap-2"><b className="text-[#142033]" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>课文{"一二三四五"[sec.n - 1] || sec.n}</b>{sec.title && <span className="text-xs text-slate-500" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{sec.title}</span>}{sec.score != null && <span className={`text-xs font-bold px-1.5 rounded border ${tone(sec.score)}`}>{sec.score}</span>}{sec.written === false && <span className="text-xs font-bold text-rose-600">Chưa làm phần này</span>}</div>
+                      <div className="flex flex-wrap items-baseline gap-2"><b className="text-[#142033]" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>课文{isHsk5(h.level || h.lectureLevel) && ai.sections.length === 1 ? "" : "一二三四五"[sec.n - 1] || sec.n}</b>{sec.title && <span className="text-xs text-slate-500" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{sec.title}</span>}{sec.score != null && <span className={`text-xs font-bold px-1.5 rounded border ${tone(sec.score)}`}>{sec.score}</span>}{sec.written === false && <span className="text-xs font-bold text-rose-600">Chưa làm phần này</span>}</div>
                       {sec.points?.length > 0 && <ul className="grid gap-0.5 text-sm mt-1">{sec.points.map((p, i) => <li key={i} className={p.hit ? "text-emerald-700" : "text-rose-600"}>{p.hit ? "✓" : "✗"} {p.vi}</li>)}</ul>}
                       {(sec.kw_used?.length > 0 || sec.kw_missing?.length > 0) && <div className="text-xs mt-1" style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{sec.kw_used?.length > 0 && <span className="text-emerald-700">Từ mới đã dùng: {sec.kw_used.join("、")}　</span>}{sec.kw_missing?.length > 0 && <span className="text-slate-500">Chưa dùng: {sec.kw_missing.join("、")}</span>}</div>}
                       {sec.comment && <div className="text-sm text-slate-600 mt-1">{sec.comment}</div>}
                     </div>
                   ))}
+                </div>
+              )}
+              {ai.essay && (
+                <div className="rounded-xl border border-slate-200 p-3">
+                  <div className="flex flex-wrap items-baseline gap-2"><b className="text-[#142033]">Bài văn 作文</b>{ai.essay.topic && <span className="text-xs text-slate-500">{ai.essay.topic}</span>}{ai.essay.score?.total != null && <span className={`text-xs font-bold px-1.5 rounded border ${tone(ai.essay.score.total)}`}>{ai.essay.score.total}</span>}{ai.essay.written === false && <span className="text-xs font-bold text-rose-600">Chưa làm phần này</span>}</div>
+                  <div className="flex flex-wrap gap-1.5 mt-1">{Object.entries(ai.essay.score || {}).filter(([k]) => k !== "total").map(([k, v]) => <span key={k} className={`text-[11px] font-bold px-1.5 py-0.5 rounded border ${tone(v)}`}>{SC[k] || k}: {v}</span>)}{ai.essay.chars != null && <span className="text-[11px] px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">{ai.essay.chars} chữ</span>}</div>
+                  {ai.essay.comment && <div className="text-sm text-slate-600 mt-1">{ai.essay.comment}</div>}
                 </div>
               )}
               {ai.req_check?.length > 0 && <div className="text-sm"><div className="text-xs font-bold text-slate-500 mb-1">Yêu cầu bài tập</div>{ai.req_check.map((r, i) => <div key={i} className={r.ok ? "text-emerald-700" : "text-rose-600"}>{r.ok ? "✓" : "✗"} {r.req}{r.note ? ` — ${r.note}` : ""}</div>)}</div>}
@@ -93,7 +100,7 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
                   <ul className="grid gap-1 text-sm">{ai.points.map((p, i) => <li key={i} className={p.hit ? "text-emerald-700" : "text-rose-600"}>{p.hit ? "✓" : "✗"} {p.vi}</li>)}</ul>
                 </div>
               )}
-              {ai.source_found === false && h.part !== "essay" && <div className="text-xs text-amber-700">AI không tìm thấy văn bản bài khoá trong bài giảng — chỉ chấm ngôn ngữ, chưa so ý chính.</div>}
+              {ai.source_found === false && kwNums(h.part).length > 0 && <div className="text-xs text-amber-700">AI không tìm thấy văn bản bài khoá trong bài giảng — chỉ chấm ngôn ngữ, chưa so ý chính.</div>}
               {ai.errors?.length > 0 && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm"><thead><tr className="text-left text-xs text-slate-500"><th className="py-1 pr-2">Sai</th><th className="py-1 pr-2">Sửa</th><th className="py-1 pr-2">Loại</th><th className="py-1">Giải thích</th></tr></thead>
@@ -128,8 +135,10 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
 function Uploader({ db, onDone }) {
   const [classes, setClasses] = useState([]); const [lectures, setLectures] = useState(STATIC_LECTURES);
   const [clsId, setClsId] = useState(""); const [lecId, setLecId] = useState(""); const [topic, setTopic] = useState("");
-  const [mode, setMode] = useState("kw"); const [kws, setKws] = useState([1, 2, 3]); // mặc định tóm tắt cả 3 bài khoá
-  const part = mode === "essay" ? "essay" : "kw" + [...kws].sort().join("");
+  // kws: các bài khoá cần tóm tắt (HSK4: 3 bài, HSK5: 1 bài); essay: có viết bài văn — hai phần có thể nộp cùng
+  const [kws, setKws] = useState([1, 2, 3]); const [essay, setEssay] = useState(false);
+  const part = [kws.length ? "kw" + [...kws].sort().join("") : "", essay ? "essay" : ""].filter(Boolean).join("+") || "kw1";
+  const mode = kws.length ? "kw" : "essay";
   const [hw, setHw] = useState([]); const [taskIx, setTaskIx] = useState(0);
   const [pics, setPics] = useState({}); const [active, setActive] = useState(""); const [extra, setExtra] = useState(""); const [busy, setBusy] = useState(""); const [msg, setMsg] = useState("");
   useEffect(() => {
@@ -139,10 +148,13 @@ function Uploader({ db, onDone }) {
   const cls = classes.find((c) => c.id === clsId);
   const lecs = lectures.filter((l) => (cls?.level ? l.level === cls.level : /HSK\s*[45]/i.test(l.level || ""))).sort((a, b) => (a.lectureName || "").localeCompare(b.lectureName || "", undefined, { numeric: true }));
   const lec = lecs.find((l) => l.id === lecId);
+  const h5 = isHsk5(cls?.level || lec?.level);
+  useEffect(() => { if (h5) { setKws([1]); setEssay(true); } else { setKws([1, 2, 3]); setEssay(false); } }, [h5]); // HSK5: 1 bài khoá + bài văn
+  const KW = h5 ? [["kw1", "课文"]] : PARTS;
   // bài tập về nhà ghi trong slide (HSK4) → hiện cho cô xem & gửi kèm yêu cầu cho AI
   useEffect(() => { setHw([]); setTaskIx(0); if (lec) lectureHw(lec).then((h) => setHw(h.flatMap((b) => (b.tasks || []).filter((t) => /viết/i.test(t.kind || "")).map((t) => ({ ...t, range: b.range, s: b.s }))))); }, [lec]);
   const task = hw[taskIx];
-  useEffect(() => { if (!task) return; const ns = [...(task.range || "").matchAll(/课文([一二三四五])/g)].map((m) => "一二三四五".indexOf(m[1]) + 1); if (/tóm tắt/i.test(task.t || "")) { setMode("kw"); if (ns.length >= 2 && /～|~|-/.test(task.range)) { const r = []; for (let i = ns[0]; i <= ns[ns.length - 1]; i++) r.push(i); setKws(r.filter((x) => x <= 3)); } } else setMode("essay"); }, [task]);
+  useEffect(() => { if (!task) return; const ns = [...(task.range || "").matchAll(/课文([一二三四五])/g)].map((m) => "一二三四五".indexOf(m[1]) + 1); if (/tóm tắt/i.test(task.t || "")) { if (!h5 && ns.length >= 2 && /～|~|-/.test(task.range)) { const r = []; for (let i = ns[0]; i <= ns[ns.length - 1]; i++) r.push(i); setKws(r.filter((x) => x <= 3)); } } else if (!h5) { setKws([]); setEssay(true); } }, [task]); // eslint-disable-line
   const students = [...(cls?.students || []), ...(pics["x:" + extra] && extra ? [{ id: "x:" + extra, name: extra }] : [])];
   const add = async (sid, files) => {
     setBusy("Đang nén ảnh…"); setActive(sid);
@@ -165,7 +177,7 @@ function Uploader({ db, onDone }) {
         const st = students.find((x) => x.id === sid) || { id: sid, name: sid.replace(/^x:/, "") };
         const ref = doc(collection(db, HW_COL));
         await setDoc(doc(db, HW_IMG, ref.id), { images: imgs, createdAt: serverTimestamp() });
-        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: part === "essay" ? topic.trim() : "", task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => mode === "essay" || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))).map(([k, v]) => ({ k, v })) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
+        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: essay ? topic.trim() : "", task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => essay || h5 || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))).map(([k, v]) => ({ k, v })) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
       }
       setMsg(`✅ Đã lưu ${ready.length} bài — AI đang chấm ở danh sách bên dưới.`); setPics({}); setActive(""); onDone?.();
     } catch (e) { setMsg("Chưa lưu được: " + (e.code === "permission-denied" ? "Firestore chưa cho phép ghi vào homework_submissions / homework_images." : e.message || e)); }
@@ -190,12 +202,13 @@ function Uploader({ db, onDone }) {
       )}
       <div className="flex flex-wrap gap-2 items-center">
         <span className="text-sm font-bold text-slate-600">Tóm tắt:</span>
-        {PARTS.map(([k, l]) => { const n = +k.slice(2), on = mode === "kw" && kws.includes(n); return <button key={k} onClick={() => { setMode("kw"); setKws((x) => (mode !== "kw" ? [n] : x.includes(n) ? (x.length > 1 ? x.filter((y) => y !== n) : x) : [...x, n])); }} className={`${btn} px-3 py-2 ${on ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`} style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{on ? "✓ " : ""}{l}</button>; })}
-        <button onClick={() => { setMode("kw"); setKws([1, 2, 3]); }} className={`${btn} px-3 py-2 text-xs underline text-slate-500`}>chọn cả 3</button>
-        <span className="text-slate-300">|</span>
-        <button onClick={() => setMode("essay")} className={`${btn} px-3 py-2 ${mode === "essay" ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>Viết bài văn 作文</button>
+        {KW.map(([k, l]) => { const n = +k.slice(2), on = kws.includes(n); return <button key={k} onClick={() => setKws((x) => (x.includes(n) ? (x.length > 1 || essay ? x.filter((y) => y !== n) : x) : [...x, n]))} className={`${btn} px-3 py-2 ${on ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`} style={{ fontFamily: '"Noto Sans SC",sans-serif' }}>{on ? "✓ " : ""}{l}</button>; })}
+        {!h5 && <button onClick={() => setKws([1, 2, 3])} className={`${btn} px-3 py-2 text-xs underline text-slate-500`}>chọn cả 3</button>}
+        <span className="text-slate-300">+</span>
+        <button onClick={() => setEssay((e) => (e && !kws.length ? e : !e))} className={`${btn} px-3 py-2 ${essay ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{essay ? "✓ " : ""}Viết bài văn 作文</button>
       </div>
-      {part === "essay" && <input className={sel} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Đề bài / chủ đề đã giao" />}
+      <p className="text-xs text-slate-500 -mt-1">Đang chấm: <b>{partName(part, cls?.level || lec?.level)}</b>{kws.length && essay ? " — hai phần nằm trên cùng các ảnh, AI tự tách." : ""}</p>
+      {essay && <input className={sel} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Đề bài / chủ đề bài văn đã giao" />}
       {cls && (
         <>
           <p className="text-xs text-slate-500">Bấm <b>📷 Thêm ảnh</b> ở dòng học viên để chọn ảnh (tối đa 6 trang/bạn). Trên máy tính: bấm vào tên học viên rồi <b>Ctrl+V</b> để dán ảnh vừa sao chép từ Zalo.</p>

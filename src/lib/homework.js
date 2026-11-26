@@ -5,8 +5,14 @@ export const HW_IMG = "homework_images"; // ảnh bài làm, cùng id với bài
 export const PARTS = [["kw1", "课文一"], ["kw2", "课文二"], ["kw3", "课文三"]];
 // part: "essay" hoặc "kw" + các số bài khoá, vd "kw123" = tóm tắt cả 课文一、二、三 trong một lần nộp
 const CN = { 1: "一", 2: "二", 3: "三", 4: "四", 5: "五" };
-export const kwNums = (k) => (/^kw\d+$/.test(k || "") ? k.slice(2).split("").map(Number) : []);
-export const partName = (k) => (k === "essay" ? "Viết bài văn 作文" : kwNums(k).length ? `Tóm tắt 课文${kwNums(k).map((n) => CN[n]).join("·")}` : k);
+// part có thể ghép: "kw1+essay" = tóm tắt bài khoá + viết bài văn cùng một lần nộp
+export const kwNums = (k) => { const m = String(k || "").match(/^kw(\d+)/); return m ? m[1].split("").map(Number) : []; };
+export const hasEssay = (k) => /(^|\+)essay$/.test(k || "");
+export const isHsk5 = (lv) => /HSK\s*5/i.test(lv || "");
+export const partName = (k, lv) => {
+  const ns = kwNums(k), sum = ns.length ? (isHsk5(lv) && ns.length === 1 ? "Tóm tắt 课文" : `Tóm tắt 课文${ns.map((n) => CN[n]).join("·")}`) : "";
+  return [sum, hasEssay(k) ? "Viết bài văn 作文" : ""].filter(Boolean).join(" + ") || k;
+};
 
 async function lectureHtml(lec) {
   let html = lec?.htmlContent || "";
