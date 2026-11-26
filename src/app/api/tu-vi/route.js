@@ -3,7 +3,7 @@ import { guard } from "@/lib/apiGuard";
 import { NextResponse } from "next/server";
 import { raceJSON } from "@/lib/geminiRace";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const PROMPT = (chart, year) => `Bạn là thầy Tử vi đẩu số (紫微斗数) uyên bác, viết luận giải cho người Việt đang học tiếng Trung. Dưới đây là lá số đã an sao đầy đủ (tên sao kèm chữ Hán, độ sáng, Tứ hoá):
 

@@ -3,7 +3,7 @@ import { guard } from "@/lib/apiGuard";
 import { NextResponse } from "next/server";
 import { raceJSON } from "@/lib/geminiRace";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const PROMPT = (chart, year) => `Bạn là thầy Bát tự (八字 / Tứ trụ) uyên bác, viết luận giải cho người Việt đang học tiếng Trung. Dữ liệu tứ trụ đã tính sẵn:
 

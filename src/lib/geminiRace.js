@@ -2,7 +2,7 @@
 // lấy kết quả nào về trước (hợp lệ JSON). Tổng thời gian ≤ `deadline` để không vượt giới hạn 60 giây của hàm.
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export async function raceJSON(apiKey, prompt, { models = ["gemini-3.5-flash", "gemini-3.5-flash-lite"], head = 20000, deadline = 56000, temperature = 0.5 } = {}) {
+export async function raceJSON(apiKey, prompt, { models = ["gemini-3.5-flash", "gemini-3.5-flash-lite"], head = 25000, deadline = 110000, temperature = 0.5 } = {}) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const t0 = Date.now();
   const run = (m) => {

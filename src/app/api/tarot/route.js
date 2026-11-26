@@ -3,7 +3,7 @@ import { guard } from "@/lib/apiGuard";
 import { NextResponse } from "next/server";
 import { raceJSON } from "@/lib/geminiRace";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const PROMPT = (b) => `Bạn là người giải bài Tarot (塔罗牌) có kinh nghiệm, viết cho người Việt đang học tiếng Trung.
 Chủ đề: ${b.topic || "Tổng quát"}
