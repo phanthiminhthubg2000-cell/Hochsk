@@ -23,7 +23,7 @@ export async function POST(req) {
   if (blocked) return blocked;
   try {
     const b = await req.json();
-    if (!b?.chart || typeof b.chart !== "string" || b.chart.length > 12000) return NextResponse.json({ error: "Thiếu dữ liệu lá số." }, { status: 400 });
+    if (!b?.chart || typeof b.chart !== "string" || b.chart.length > 16000) return NextResponse.json({ error: "Thiếu dữ liệu lá số." }, { status: 400 });
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return NextResponse.json({ error: "Thiếu API Key." }, { status: 500 });
     try {

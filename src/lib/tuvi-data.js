@@ -125,16 +125,77 @@ export const THAI_TUE = [["Thái Tuế", "太岁"], ["Thiếu Dương", "少阳"
 // Vòng Lộc Tồn (Bác sĩ) — iztro trả về boshi12, chỉ đổi tên cho đúng cách gọi Việt
 export const BAC_SI = { 博士: "Bác Sĩ", 力士: "Lực Sĩ", 青龙: "Thanh Long", 小耗: "Tiểu Hao", 将军: "Tướng Quân", 奏书: "Tấu Thư", 飞廉: "Phi Liêm", 喜神: "Hỷ Thần", 病符: "Bệnh Phù", 大耗: "Đại Hao", 伏兵: "Phục Binh", 官府: "Quan Phủ" };
 // Các sao lẻ khác của trường phái Việt
-export function vnStars({ yg, yz, lm, hour, locTon }) {
+export function vnStars({ yg, yz, lm, hour, locTon, male, yao, fengge }) {
   const out = {}; const add = (z, vi, zh, k) => (out[z] = out[z] || []).push({ vi, zh, k });
   const yi = ZHI.indexOf(yz);
   THAI_TUE.forEach(([vi, zh], i) => add(at(yi + i), vi, zh, ["Thái Tuế", "Long Đức", "Phúc Đức"].includes(vi) ? "cát" : ["Tang Môn", "Bạch Hổ", "Điếu Khách", "Quan Phù", "Tuế Phá"].includes(vi) ? "sát" : "trung"));
   add("辰", "Thiên La", "天罗", "sát"); add("戌", "Địa Võng", "地网", "sát");
-  add("酉戌未申巳午辰卯亥寅"[GAN.indexOf(yg)], "Lưu Hà", "流霞", "sát");
+  add("酉戌未申巳午卯辰亥寅"[GAN.indexOf(yg)], "Lưu Hà", "流霞", "sát");
   if (locTon) { const l = ZHI.indexOf(locTon); add(at(l + 8), "Quốc Ấn", "国印", "cát"); add(at(l - 7), "Đường Phù", "唐符", "cát"); }
   if (lm) { add(at(yi - (lm - 1) + (hour % 12)), "Đẩu Quân", "斗君", "trung"); add(at(8 + lm - 1), "Thiên Giải", "天解", "cát"); add(at(7 + lm - 1), "Địa Giải", "地解", "cát"); }
+  const g3 = (m) => m[Math.floor(["申子辰", "寅午戌", "巳酉丑", "亥卯未"].findIndex((x) => x.includes(yz)))];
+  add(g3("巳亥寅申"), "Kiếp Sát", "劫煞", "sát");
+  add(at(9 + yi), "Thiên Đức", "天德", "cát"); add(at(5 + yi), "Nguyệt Đức", "月德", "cát");
+  add("巳午申酉申酉亥子寅卯"[GAN.indexOf(yg)], "Văn Tinh", "文星", "cát");
+  if (yao) add(yao, "Thiên Y", "天医", "cát");
+  if (fengge) add(fengge, "Giải Thần", "解神", "cát");
   return out;
 }
+
+// Khôi – Việt, Hoả – Linh an theo sách Việt (khác bản Trung Quốc ở can Canh và ở chiều Hoả/Linh theo âm dương nam nữ)
+export function vnMinor({ yg, yz, hour, male }) {
+  const gi = GAN.indexOf(yg), yi = ZHI.indexOf(yz), h = hour % 12;
+  const kv = [["丑", "未"], ["子", "申"], ["亥", "酉"], ["亥", "酉"], ["丑", "未"], ["子", "申"], ["午", "寅"], ["午", "寅"], ["卯", "巳"], ["卯", "巳"]][gi];
+  const grp = ["申子辰", "寅午戌", "巳酉丑", "亥卯未"].findIndex((x) => x.includes(yz));
+  const [hs, ls] = [["寅", "戌"], ["丑", "卯"], ["卯", "戌"], ["酉", "戌"]][grp];
+  const thuan = (male && gi % 2 === 0) || (!male && gi % 2 === 1);            // Dương nam / Âm nữ
+  const hoa = at(ZHI.indexOf(hs) + (thuan ? h : -h)), linh = at(ZHI.indexOf(ls) + (thuan ? -h : h));
+  return { 天魁: kv[0], 天钺: kv[1], 火星: hoa, 铃星: linh, _yi: yi };
+}
+
+// Độ sáng theo bảng Việt (M miếu, V vượng, Đ đắc, B bình hoà, H hãm) — thứ tự Tý → Hợi
+const VBR = {
+  紫微: "BĐMBVMMĐMBVB", 廉贞: "VĐVHMHVĐVHMH", 天同: "VHMĐHĐHHMHHĐ", 武曲: "VMVĐMHVMVĐMH", 太阳: "HĐVVVMMĐHHHH", 天机: "ĐĐHMMVĐĐVMMH", 天府: "MBMBVĐMĐMBVĐ",
+  太阴: "VĐHHHHHĐVMMM", 贪狼: "HMĐHVHHMĐHVH", 巨门: "VHVMHHVHĐMHĐ", 天相: "VĐMHVĐVĐMHVĐ", 天梁: "VĐVVMHMĐVHMH", 七杀: "MĐMHHVMĐMHHV", 破军: "MVHHĐHMVHHĐH",
+  擎羊: "HĐ·HĐ·HĐ·HĐ·", 陀罗: "·ĐHHĐH·ĐHHĐH", 火星: "HHĐĐĐĐĐ·HHHH", 铃星: "HHĐĐĐĐĐ·HHHH", 地空: "HHĐHHĐHHĐHHĐ", 地劫: "HHĐHHĐHHĐHHĐ",
+  文昌: "·Đ···Đ···Đ··", 文曲: "·Đ···Đ···Đ··", 天马: "··Đ·····Đ···", 天刑: "HHĐĐHHHHĐĐHH", 丧门: "HHĐĐHHHHĐĐHH", 天虚: "ĐH·ĐH·ĐH·ĐH·", 天哭: "ĐH·ĐH·ĐH·ĐH·", 天姚: "··ĐĐ·····ĐĐ·",
+};
+export const vnBright = (zh, zhi) => { const c = VBR[zh]?.[ZHI.indexOf(zhi)]; return c && c !== "·" ? c : ""; };
+
+// Sao lưu niên của năm xem
+export function luuStars(year) {
+  const gi = (year - 4) % 10, zi = (year - 4) % 12, out = {}; const add = (z, vi, zh) => (out[z] = out[z] || []).push({ vi: "L." + vi, zh: "流" + zh, luu: 1 });
+  const loc = ZHI.indexOf("寅卯巳午巳午申酉亥子"[gi]);
+  add(at(zi), "Thái Tuế", "太岁"); add(at(zi + 2), "Tang Môn", "丧门"); add(at(zi + 8), "Bạch Hổ", "白虎");
+  add(at(6 - zi), "Thiên Khốc", "天哭"); add(at(6 + zi), "Thiên Hư", "天虚");
+  add(at(loc), "Lộc Tồn", "禄存"); add(at(loc + 1), "Kình Dương", "擎羊"); add(at(loc - 1), "Đà La", "陀罗");
+  add("寅申亥巳"[["申子辰", "寅午戌", "巳酉丑", "亥卯未"].findIndex((x) => x.includes(ZHI[zi]))], "Thiên Mã", "天马");
+  return { out, gz: GAN[gi] + ZHI[zi] };
+}
+
+// Tiểu hạn: năm sinh khởi ở Thìn (Dần Ngọ Tuất) / Tuất (Thân Tý Thìn) / Mùi (Tỵ Dậu Sửu) / Sửu (Hợi Mão Mùi); nam thuận, nữ nghịch
+export function tieuHan(yz, male) {
+  const st = ZHI.indexOf("戌辰未丑"[["申子辰", "寅午戌", "巳酉丑", "亥卯未"].findIndex((x) => x.includes(yz))]); const yi = ZHI.indexOf(yz);
+  const map = {}; for (let k = 0; k < 12; k++) map[at(st + (male ? k : -k))] = at(yi + k); return map; // cung → chi năm tiểu hạn
+}
+// Nguyệt hạn: từ cung tiểu hạn năm xem đếm nghịch đến tháng sinh, rồi thuận đến giờ sinh = tháng Giêng; các tháng sau đi thuận
+export function nguyetHan(thPalace, lm, hour) { const s = ZHI.indexOf(thPalace) - (lm - 1) + (hour % 12); const m = {}; for (let k = 0; k < 12; k++) m[at(s + k)] = k + 1; return m; }
+
+const NAYIN = "海中金 炉中火 大林木 路旁土 剑锋金 山头火 涧下水 城头土 白蜡金 杨柳木 泉中水 屋上土 霹雳火 松柏木 长流水 沙中金 山下火 平地木 壁上土 金箔金 覆灯火 天河水 大驿土 钗钏金 桑柘木 大溪水 沙中土 天上火 石榴木 大海水".split(" ");
+const jiazi = (g, z) => { for (let i = 0; i < 60; i++) if (i % 10 === GAN.indexOf(g) && i % 12 === ZHI.indexOf(z)) return i; return 0; };
+export const napAm = (g, z) => NAYIN[Math.floor(jiazi(g, z) / 2)];
+export const NAYIN_NOTE = { 海中金: ["Hải Trung Kim", "Vàng trong biển"], 炉中火: ["Lư Trung Hoả", "Lửa trong lò"], 大林木: ["Đại Lâm Mộc", "Gỗ rừng già"], 路旁土: ["Lộ Bàng Thổ", "Đất ven đường"], 剑锋金: ["Kiếm Phong Kim", "Vàng mũi kiếm"], 山头火: ["Sơn Đầu Hoả", "Lửa trên núi"], 涧下水: ["Giản Hạ Thuỷ", "Nước dưới khe"], 城头土: ["Thành Đầu Thổ", "Đất trên thành"], 白蜡金: ["Bạch Lạp Kim", "Vàng trong nến trắng"], 杨柳木: ["Dương Liễu Mộc", "Gỗ cây dương liễu"], 泉中水: ["Tuyền Trung Thuỷ", "Nước giữa dòng suối"], 屋上土: ["Ốc Thượng Thổ", "Đất trên nóc nhà"], 霹雳火: ["Tích Lịch Hoả", "Lửa sấm sét"], 松柏木: ["Tùng Bách Mộc", "Gỗ tùng bách"], 长流水: ["Trường Lưu Thuỷ", "Dòng nước lớn"], 沙中金: ["Sa Trung Kim", "Vàng trong cát"], 山下火: ["Sơn Hạ Hoả", "Lửa dưới chân núi"], 平地木: ["Bình Địa Mộc", "Cây ở đồng bằng"], 壁上土: ["Bích Thượng Thổ", "Đất trên vách"], 金箔金: ["Kim Bạch Kim", "Vàng pha bạch kim"], 覆灯火: ["Phúc Đăng Hoả", "Lửa ngọn đèn"], 天河水: ["Thiên Hà Thuỷ", "Nước trên trời"], 大驿土: ["Đại Dịch Thổ", "Đất cát lớn"], 钗钏金: ["Thoa Xuyến Kim", "Vàng trang sức"], 桑柘木: ["Tang Đố Mộc", "Gỗ cây dâu"], 大溪水: ["Đại Khê Thuỷ", "Nước dưới khe lớn"], 沙中土: ["Sa Trung Thổ", "Đất lẫn trong cát"], 天上火: ["Thiên Thượng Hoả", "Lửa trên trời"], 石榴木: ["Thạch Lựu Mộc", "Gỗ cây thạch lựu"], 大海水: ["Đại Hải Thuỷ", "Nước đại dương"] };
+// Cân lượng (xưng cốt — bảng Viên Thiên Cương), đơn vị chỉ (1 lượng = 10 chỉ)
+const CL_Y = [12, 9, 6, 7, 12, 5, 9, 8, 7, 8, 15, 9, 16, 8, 8, 19, 12, 6, 8, 7, 5, 15, 6, 16, 15, 7, 9, 12, 10, 7, 15, 6, 5, 14, 14, 9, 7, 7, 9, 12, 8, 7, 13, 5, 14, 5, 9, 17, 5, 7, 12, 8, 8, 6, 19, 6, 8, 16, 10, 6];
+const CL_M = [6, 7, 18, 9, 5, 16, 9, 15, 18, 8, 9, 5];
+const CL_D = [5, 10, 8, 15, 16, 15, 8, 16, 8, 16, 9, 17, 8, 17, 10, 8, 9, 18, 5, 15, 10, 9, 8, 9, 15, 18, 7, 8, 16, 6];
+const CL_H = [16, 6, 7, 10, 9, 16, 10, 8, 8, 9, 6, 6];
+export function canLuong(yg, yz, lm, ld, hour) { const t = CL_Y[jiazi(yg, yz)] + CL_M[Math.abs(lm) - 1] + CL_D[ld - 1] + CL_H[hour % 12]; return `${Math.floor(t / 10)} lượng ${t % 10} chỉ`; }
+// Mệnh chủ theo chi năm sinh (sách Việt); Thân chủ theo chi năm sinh
+export const menhChuVN = (yz) => ({ 子: "Tham Lang", 丑: "Cự Môn", 亥: "Cự Môn", 寅: "Lộc Tồn", 戌: "Lộc Tồn", 卯: "Văn Khúc", 酉: "Văn Khúc", 辰: "Liêm Trinh", 申: "Liêm Trinh", 巳: "Vũ Khúc", 未: "Vũ Khúc", 午: "Phá Quân" })[yz];
+export const thanChuVN = (yz) => ({ 子: "Linh Tinh", 午: "Linh Tinh", 丑: "Thiên Tướng", 未: "Thiên Tướng", 寅: "Thiên Lương", 申: "Thiên Lương", 卯: "Thiên Đồng", 酉: "Thiên Đồng", 辰: "Văn Xương", 戌: "Văn Xương", 巳: "Thiên Cơ", 亥: "Thiên Cơ" })[yz];
+export const ZHI_YANG = (z) => ZHI.indexOf(z) % 2 === 0;
+export const WX_REL = (a, b) => { const G = { 木: "火", 火: "土", 土: "金", 金: "水", 水: "木" }, K = { 木: "土", 土: "水", 水: "火", 火: "金", 金: "木" }; return a === b ? "bình hoà" : G[a] === b ? "sinh" : G[b] === a ? "được sinh bởi" : K[a] === b ? "khắc" : "bị khắc bởi"; };
 Object.assign(MINOR, {
   天罗: ["Thiên La", "sát", "Lưới trời: gò bó, dễ vướng thị phi, kiện tụng."], 地网: ["Địa Võng", "sát", "Lưới đất: bị trói buộc, việc khó thoát ra."],
   流霞: ["Lưu Hà", "sát", "Chủ rủi ro về máu huyết, sông nước; nên cẩn thận khi đi lại."], 国印: ["Quốc Ấn", "cát", "Ấn của nhà nước: chủ chức quyền, được giao trọng trách."],
@@ -143,6 +204,7 @@ Object.assign(MINOR, {
   太岁: ["Thái Tuế", "trung", "Đứng đầu vòng Thái Tuế: chủ lời nói, lý lẽ, dễ tranh cãi nhưng có uy."], 少阳: ["Thiếu Dương", "cát", "Thông minh, vui vẻ, gặp may nhỏ."],
   丧门: ["Tang Môn", "sát", "Chủ buồn phiền, tang chế, hao tổn tinh thần."], 少阴: ["Thiếu Âm", "cát", "Hiền hoà, kín đáo, được giúp ngầm."],
   官符: ["Quan Phù", "sát", "Chủ giấy tờ, kiện tụng, va chạm pháp lý."], 死符: ["Tử Phù", "sát", "Chủ buồn rầu, ốm đau nhẹ."], 岁破: ["Tuế Phá", "sát", "Phá hao, việc dễ đổ vỡ, tính ngang."],
+  劫煞: ["Kiếp Sát", "sát", "Chủ tai hoạ bất ngờ, mất mát; nên cẩn trọng khi đi lại, giao dịch."], 文星: ["Văn Tinh", "cát", "Sao văn chương: thuận lợi học hành, thi cử, viết lách."], 天医: ["Thiên Y", "cát", "Sao thầy thuốc: chủ chữa bệnh, giải bệnh, hợp nghề y dược."],
   龙德: ["Long Đức", "cát", "Phúc tinh, giải hung, gặp quý nhân."], 白虎: ["Bạch Hổ", "sát", "Hung tinh: tai nạn, tranh đấu; cũng chủ uy quyền, quyết đoán."],
   福德: ["Phúc Đức", "cát", "Phúc tinh, hưởng phúc, giải hung."], 吊客: ["Điếu Khách", "sát", "Chủ tang thương, buồn bã, việc thăm viếng."], 直符: ["Trực Phù", "sát", "Chủ ngăn trở, thị phi nhỏ."],
 });

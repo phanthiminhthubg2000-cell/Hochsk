@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Shell, Panel, H2, usePy, speak, C } from "../ui";
-import { PALACE, MAJOR, MINOR, MUTAGEN, BRIGHT, BRIGHT_NOTE, CLASS, tuanPair, trietPair, TUAN_TRIET, BAC_SI, vnStars } from "../../../lib/tuvi-data";
+import { PALACE, MAJOR, MINOR, MUTAGEN, BRIGHT, BRIGHT_NOTE, CLASS, tuanPair, trietPair, TUAN_TRIET, BAC_SI, vnStars, vnMinor, vnBright, luuStars, tieuHan, nguyetHan, napAm, NAYIN_NOTE, canLuong, menhChuVN, thanChuVN, ZHI_YANG, WX_REL } from "../../../lib/tuvi-data";
 
 const HOURS = ["Tý sớm (00–01h)", "Sửu (01–03h)", "Dần (03–05h)", "Mão (05–07h)", "Thìn (07–09h)", "Tỵ (09–11h)", "Ngọ (11–13h)", "Mùi (13–15h)", "Thân (15–17h)", "Dậu (17–19h)", "Tuất (19–21h)", "Hợi (21–23h)", "Tý muộn (23–24h)"];
 const POS = { 巳: [1, 1], 午: [1, 2], 未: [1, 3], 申: [1, 4], 辰: [2, 1], 酉: [2, 4], 卯: [3, 1], 戌: [3, 4], 寅: [4, 1], 丑: [4, 2], 子: [4, 3], 亥: [4, 4] };
@@ -15,39 +15,77 @@ const inpS = { background: "#262A31", borderColor: "#363B45", color: "#ECE4D3" }
 function hourFromNow() { const h = new Date().getHours(); return h === 23 ? 12 : Math.floor((h + 1) / 2); }
 
 // Tuần/Triệt vẽ riêng ở ranh giới hai cung (theo lối Việt) nên bỏ bản an một cung của iztro; vòng Thái Tuế an lại theo tên Việt
-const SKIP = new Set(["旬空", "截路", "空亡"]);
+const SKIP = new Set(["旬空", "截路", "空亡", "天月", "阴煞", "天巫", "年解", "蜚廉", "解神", "天德", "月德", "大耗"]);
+const VI_NAME = { 台辅: "Thai Phụ", 凤阁: "Phượng Các", 咸池: "Đào Hoa", 天姚: "Thiên Diêu", 天刑: "Thiên Hình" };
+const VN_MINOR_VI = { 天魁: "Thiên Khôi", 天钺: "Thiên Việt", 火星: "Hoả Tinh", 铃星: "Linh Tinh" };
 // thêm sao theo trường phái Việt + Tuần/Triệt
-function addVN(P, z, v, hour) {
+function addVN(P, z, v, hour, male) {
   const [yg, yz] = z.rawDates.chineseDate.yearly;
-  const lm = v.rawDates?.lunarDate?.lunarMonth;
-  const locTon = P.find((p) => p.minor.some((s) => s.zh === "禄存"))?.zhi;
-  const ext = vnStars({ yg, yz, lm, hour, locTon });
+  const lm = v.rawDates?.lunarDate?.lunarMonth, ld = v.rawDates?.lunarDate?.lunarDay;
+  const find = (zh, k = "adj") => P.find((p) => p[k].some((s) => s.zh === zh))?.zhi;
+  const locTon = find("禄存", "minor");
+  // Khôi Việt, Hoả Linh an lại theo sách Việt
+  const vm = vnMinor({ yg, yz, hour, male });
+  P.forEach((p) => { p.minor = p.minor.filter((s) => !VN_MINOR_VI[s.zh]); });
+  Object.entries(VN_MINOR_VI).forEach(([zh, vi]) => P.find((p) => p.zhi === vm[zh])?.minor.push({ vi, zh, br: "", mu: "" }));
+  // Ân Quang, Thiên Quý theo sách Việt: Ân Quang từ Văn Xương đếm thuận đến ngày sinh rồi lùi 1; Thiên Quý từ Văn Khúc đếm nghịch đến ngày sinh rồi tiến 1
+  if (ld) {
+    const ZH = "子丑寅卯辰巳午未申酉戌亥", ix = (k) => ZH[((k % 12) + 12) % 12];
+    const xi = ZH.indexOf(find("文昌", "minor")), ki = ZH.indexOf(find("文曲", "minor"));
+    P.forEach((p) => { p.adj = p.adj.filter((s) => s.zh !== "恩光" && s.zh !== "天贵"); });
+    if (xi >= 0) P.find((p) => p.zhi === ix(xi + ld - 2))?.adj.push({ vi: "Ân Quang", zh: "恩光", br: "", mu: "" });
+    if (ki >= 0) P.find((p) => p.zhi === ix(ki - ld + 2))?.adj.push({ vi: "Thiên Quý", zh: "天贵", br: "", mu: "" });
+  }
+  const ext = vnStars({ yg, yz, lm, hour, locTon, male, yao: find("天姚"), fengge: find("凤阁") });
   const tuan = tuanPair(yg, yz), triet = trietPair(yg);
-  P.forEach((p) => { p.ext = ext[p.zhi] || []; p.tt = [tuan.includes(p.zhi) && "Tuần", triet.includes(p.zhi) && "Triệt"].filter(Boolean); });
-  return { tuan, triet };
+  const year = new Date().getFullYear(), L = luuStars(year), TH = tieuHan(yz, male);
+  const thNow = Object.keys(TH).find((k) => TH[k] === L.gz[1]);
+  const NH = thNow && lm ? nguyetHan(thNow, Math.abs(lm), hour) : {};
+  P.forEach((p) => {
+    p.ext = ext[p.zhi] || []; p.luu = L.out[p.zhi] || []; p.th = TH[p.zhi]; p.thNow = p.zhi === thNow; p.nh = NH[p.zhi];
+    p.tt = [tuan.includes(p.zhi) && "Tuần", triet.includes(p.zhi) && "Triệt"].filter(Boolean);
+    [...p.major, ...p.minor, ...p.adj, ...p.ext].forEach((s) => { s.vbr = vnBright(s.zh, p.zhi); });
+  });
+  // thông tin tổng quát theo lối Việt
+  const ny = napAm(yg, yz), cucWx = (z.fiveElementsClass || "")[0], nyWx = ny[2];
+  const ming = P.find((p) => p.zh === "命宫"), body = P.find((p) => p.body);
+  const yang = "甲丙戊庚壬".includes(yg);
+  const lai = P.find((p) => p.gan === yg);
+  const rel = WX_REL(cucWx, nyWx);
+  return {
+    tuan, triet, year, yearGz: L.gz, thNow,
+    info: {
+      amduong: `${yang ? "Dương" : "Âm"} ${male ? "Nam" : "Nữ"} (${yang === ZHI_YANG(ming?.zhi) ? "Âm dương thuận lý" : "Âm dương nghịch lý"})`,
+      menh: `${NAYIN_NOTE[ny]?.[0] || ny} (${NAYIN_NOTE[ny]?.[1] || ""})`, menhZh: ny,
+      cucRel: rel === "bình hoà" ? `Cục và Mệnh cùng hành (bình hoà)` : rel === "sinh" ? `Cục sinh Mệnh — tốt` : rel === "được sinh bởi" ? `Mệnh sinh Cục — hao tổn` : rel === "khắc" ? `Cục khắc Mệnh — vất vả` : `Mệnh khắc Cục — phải tự lực`,
+      menhChu: menhChuVN(yz), thanChu: thanChuVN(yz),
+      canLuong: lm && ld ? canLuong(yg, yz, lm, ld, hour) : "",
+      laiNhan: lai ? PALACE[lai.zh]?.vi || lai.vi : "", thanCu: body ? PALACE[body.zh]?.vi || body.vi : "",
+    },
+  };
 }
 
 // gộp lá số tiếng Việt + tiếng Trung theo thứ tự cung/sao
 function merge(v, z) {
   return v.palaces.map((p, i) => {
     const q = z.palaces[i];
-    const stars = (k) => p[k].map((s, j) => ({ vi: s.name, zh: q[k][j]?.name, br: q[k][j]?.brightness || "", mu: q[k][j]?.mutagen || "" }));
+    const stars = (k) => p[k].map((s, j) => ({ vi: VI_NAME[q[k][j]?.name] || s.name, zh: q[k][j]?.name, br: q[k][j]?.brightness || "", mu: q[k][j]?.mutagen || "" }));
     return { i, vi: p.name, zh: q.name, can: p.heavenlyStem, chi: p.earthlyBranch, zhi: q.earthlyBranch, gan: q.heavenlyStem, body: p.isBodyPalace, major: stars("majorStars"), minor: stars("minorStars"), adj: stars("adjectiveStars").filter((s) => !SKIP.has(s.zh)), dv: p.decadal.range, cs: p.changsheng12, csz: q.changsheng12, bs: q.boshi12 };
   });
 }
 
-const BR_AB = { 庙: "M", 旺: "V", 得: "Đ", 利: "L", 平: "B", 不: "Bt", 陷: "H" };
+const VBR_NOTE = { M: "Miếu địa — vị trí đẹp nhất, sao phát huy hết mặt tốt", V: "Vượng địa — sao mạnh, tốt", Đ: "Đắc địa — sao được việc, khá tốt", B: "Bình hoà — trung bình", H: "Hãm địa — sao yếu, dễ lộ mặt xấu" };
 function Star({ s, big }) {
   const mu = s.mu && MUTAGEN[s.mu];
   return (
     <span className={"inline-flex items-baseline gap-x-0.5 flex-wrap leading-tight " + (big ? "text-[11px] md:text-[13px] font-bold" : "text-[9.5px] md:text-[11px]")}>
       <span style={{ color: big ? "#F3E7C8" : KIND[MINOR[s.zh]?.[1]] || C.mute }}>{s.vi}</span>
-      {s.br && <span className="text-[8.5px] md:text-[10px]" style={{ color: C.mute }}>({BR_AB[s.br] || s.br})</span>}
+      {s.vbr && <span className="text-[8.5px] md:text-[10px]" style={{ color: s.vbr === "H" ? "#C98A7E" : C.mute }}>({s.vbr})</span>}
       {mu && <span className="text-[8.5px] md:text-[10px] font-bold px-0.5 rounded" style={{ background: mu[1], color: "#fff" }}>{mu[0].replace("Hoá ", "")}</span>}
     </span>
   );
 }
-const Small = ({ list }) => list.map((s) => <span key={s.zh} className="text-[8.5px] md:text-[10px] leading-tight" style={{ color: KIND[MINOR[s.zh]?.[1] || s.k] || C.mute }}>{s.vi}</span>);
+const Small = ({ list }) => list.map((s) => <span key={s.zh} className={"text-[8.5px] md:text-[10px] leading-tight" + (s.luu ? " italic" : "")} style={{ color: s.luu ? "#8AB8E6" : KIND[MINOR[s.zh]?.[1] || s.k] || C.mute }}>{s.vi}{s.vbr ? <span style={{ color: s.vbr === "H" ? "#C98A7E" : C.mute }}> ({s.vbr})</span> : null}</span>);
 
 function Cell({ p, sel, onPick, dv, ln }) {
   const [r, c] = POS[p.zhi];
@@ -68,13 +106,19 @@ function Cell({ p, sel, onPick, dv, ln }) {
         {p.bs && <span className="text-[8.5px] md:text-[10px]" style={{ color: "#9FB7C9" }}>{BAC_SI[p.bs] || p.bs}</span>}
         <Small list={(p.ext || []).filter((x) => THAI_TUE_ZH.has(x.zh))} />
       </div>
+      {p.luu?.length > 0 && <div className="flex flex-wrap gap-x-1"><Small list={p.luu} /></div>}
       <div className="flex items-end justify-between gap-1 text-[8.5px] md:text-[10px]" style={{ color: C.mute }}>
         <span className="whitespace-nowrap">{p.can} {p.chi}</span><span className="hidden sm:inline truncate">{p.cs}</span><span className="font-bold whitespace-nowrap" style={{ color: "#CFC3A8" }}>{p.dv[0]}–{p.dv[1]}</span>
       </div>
       <div className="sm:hidden text-[8.5px] -mt-0.5" style={{ color: C.mute }}>{p.cs}</div>
+      <div className="flex items-center justify-between gap-1 text-[8.5px] md:text-[10px]" style={{ color: C.mute }}>
+        <span title="Tiểu hạn: năm có chi này đi qua cung" className={p.thNow ? "font-bold px-0.5 rounded" : ""} style={p.thNow ? { background: "#3A3222", color: C.gold } : {}}>TH {CHI_VI[p.th] || ""}</span>
+        {p.nh && <span title="Nguyệt hạn năm nay">Th.{p.nh}</span>}
+      </div>
     </button>
   );
 }
+const CHI_VI = { 子: "Tý", 丑: "Sửu", 寅: "Dần", 卯: "Mão", 辰: "Thìn", 巳: "Tỵ", 午: "Ngọ", 未: "Mùi", 申: "Thân", 酉: "Dậu", 戌: "Tuất", 亥: "Hợi" };
 const THAI_TUE_ZH = new Set(["太岁", "少阳", "丧门", "少阴", "官符", "死符", "岁破", "龙德", "白虎", "福德", "吊客", "直符"]);
 
 // nhãn Tuần / Triệt đặt trên ranh giới giữa hai cung
@@ -105,7 +149,7 @@ function Detail({ P, i }) {
               <button onClick={() => speak(s.zh)} className="font-zh text-[22px] font-bold" style={{ color: C.gold }}>{s.zh}</button>
               <span className="text-[13px]" style={{ color: C.goldDim }}>{py(s.zh)}</span>
               <b className="text-[16px]">{m.hv}</b>
-              {s.br && <span className="text-[12px] px-1.5 rounded" style={{ background: C.panel, color: C.mute }}>{BRIGHT[s.br]} — {BRIGHT_NOTE[s.br]}</span>}
+              {s.vbr && <span className="text-[12px] px-1.5 rounded" style={{ background: C.panel, color: C.mute }}>{VBR_NOTE[s.vbr]}</span>}
               <span className="text-[12px] ml-auto" style={{ color: C.mute }}>{m.wx} · <span className="font-zh">{m.hq}</span></span>
             </div>
             <p className="text-[14px] mt-1">{m.t}</p>
@@ -135,12 +179,12 @@ function Detail({ P, i }) {
   );
 }
 
-function chartText(v, P, hz, name) {
-  const st = (a) => a.map((s) => `${s.vi} ${s.zh}${s.br ? `(${BRIGHT[s.br]})` : ""}${s.mu ? `[Hoá ${MUTAGEN[s.mu][0].replace("Hoá ", "")}]` : ""}`).join(", ");
+function chartText(v, P, hz, name, tt) {
+  const st = (a) => a.map((s) => `${s.vi} ${s.zh}${s.vbr ? `(${s.vbr})` : ""}${s.mu ? `[Hoá ${MUTAGEN[s.mu][0].replace("Hoá ", "")}]` : ""}`).join(", ");
   const head = [`Đương số: ${name || "—"}, ${v.gender}, sinh dương lịch ${v.solarDate}, ${v.lunarDate}, giờ ${v.time} (${v.timeRange}).`,
-    `Bát tự: ${v.chineseDate}. Cục: ${v.fiveElementsClass}. Mệnh chủ: ${v.soul}. Thân chủ: ${v.body}. Mệnh tại ${v.earthlyBranchOfSoulPalace}, Thân tại ${v.earthlyBranchOfBodyPalace}.`,
+    `Bát tự: ${v.chineseDate}. Cục: ${v.fiveElementsClass}${tt?.info ? ` (${tt.info.cucRel}); ${tt.info.amduong}; bản mệnh ${tt.info.menh}; cân lượng ${tt.info.canLuong}; lai nhân cung ${tt.info.laiNhan}` : ""}. Mệnh chủ: ${tt?.info?.menhChu || v.soul}. Thân chủ: ${tt?.info?.thanChu || v.body}. Mệnh tại ${v.earthlyBranchOfSoulPalace}, Thân tại ${v.earthlyBranchOfBodyPalace}.`,
     hz ? `Hiện tại (năm ${new Date().getFullYear()}, ${hz.age} tuổi mụ): đại vận ở cung ${P[hz.dv].vi} (${P[hz.dv].dv.join("–")} tuổi), lưu niên ${hz.yname} ở cung ${P[hz.ln].vi}.` : ""];
-  return head.join("\n") + "\n" + P.map((p) => `Cung ${p.vi} 「${p.zh}」 tại ${p.can} ${p.chi}${p.body ? " (Thân cư)" : ""}, đại vận ${p.dv.join("–")}: chính tinh: ${p.major.length ? st(p.major) : "vô chính diệu"}; phụ tinh: ${st(p.minor) || "—"}; sao khác: ${[...p.adj, ...(p.ext || [])].map((s) => s.vi).join(", ") || "—"}; vòng Bác sĩ: ${BAC_SI[p.bs] || "—"}; tràng sinh: ${p.cs}${p.tt?.length ? `; bị ${p.tt.join(" và ")} án ngữ` : ""}.`).join("\n");
+  return head.join("\n") + "\n" + P.map((p) => `Cung ${p.vi} 「${p.zh}」 tại ${p.can} ${p.chi}${p.body ? " (Thân cư)" : ""}, đại vận ${p.dv.join("–")}: chính tinh: ${p.major.length ? st(p.major) : "vô chính diệu"}; phụ tinh: ${st(p.minor) || "—"}; sao khác: ${[...p.adj, ...(p.ext || [])].map((s) => s.vi).join(", ") || "—"}; vòng Bác sĩ: ${BAC_SI[p.bs] || "—"}; tràng sinh: ${p.cs}${p.tt?.length ? `; bị ${p.tt.join(" và ")} án ngữ` : ""}${p.luu?.length ? `; lưu niên: ${p.luu.map((x) => x.vi).join(", ")}` : ""}${p.thNow ? "; TIỂU HẠN năm nay" : ""}.`).join("\n");
 }
 
 const AI_SEC = [["tong_quan", "总论", "Tổng quan"], ["tinh_cach", "性格", "Tính cách"], ["su_nghiep", "事业", "Sự nghiệp – học hành"], ["tai_loc", "财运", "Tài lộc"], ["tinh_duyen", "感情", "Tình duyên – hôn nhân"], ["gia_dao", "家庭", "Gia đạo"], ["suc_khoe", "健康", "Sức khoẻ"], ["dai_van", "大运", "Đại vận hiện tại"], ["nam_nay", "流年", "Vận năm nay"]];
@@ -158,7 +202,7 @@ export default function TuViPage() {
     try {
       const args = f.cal === "solar" ? ["bySolar", f.date.replace(/-0?/g, "-").replace(/^-/, ""), +f.h, f.gender, true] : ["byLunar", `${f.ly}-${f.lm}-${f.ld}`, +f.h, f.gender, !!f.leap, true];
       const run = (lang) => args[0] === "bySolar" ? lib.astro.bySolar(args[1], args[2], args[3], true, lang) : lib.astro.byLunar(args[1], args[2], args[3], args[4], true, lang);
-      const v = run("vi-VN"), z = run("zh-CN"); const P = merge(v, z); const tt = addVN(P, z, v, +f.h);
+      const v = run("vi-VN"), z = run("zh-CN"); const P = merge(v, z); const tt = addVN(P, z, v, +f.h, f.gender === "男");
       let hz = null;
       try { const h = v.horoscope(new Date()); hz = { dv: h.decadal.index, ln: h.yearly.index, age: h.age?.nominalAge, yname: `${h.yearly.heavenlyStem} ${h.yearly.earthlyBranch}` }; } catch {}
       setChart({ v, z, P, hz, tt }); setSel(P.findIndex((p) => p.zh === "命宫"));
@@ -169,7 +213,7 @@ export default function TuViPage() {
   const askAI = async () => {
     setBusy(true); setErr("");
     try {
-      const r = await fetch("/api/tu-vi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chart: chartText(chart.v, chart.P, chart.hz, f.name), year: new Date().getFullYear() }) });
+      const r = await fetch("/api/tu-vi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chart: chartText(chart.v, chart.P, chart.hz, f.name, chart.tt), year: new Date().getFullYear() }) });
       const d = await r.json(); if (!r.ok || d.error) throw new Error(d.error || "Lỗi " + r.status);
       setAi(d); setTimeout(() => document.getElementById("ai")?.scrollIntoView({ behavior: "smooth" }), 50);
     } catch (e) { setErr(e.message || String(e)); }
@@ -227,10 +271,14 @@ export default function TuViPage() {
                 <div style={{ color: C.mute }}>{ch.time} · {ch.timeRange}</div>
                 <div className="font-zh text-[12px] md:text-[15px] mt-1" style={{ color: "#F3E7C8" }}>{chart.z.chineseDate}</div>
                 <div className="grid grid-cols-[auto_auto] gap-x-2 md:gap-x-4 gap-y-0.5 mt-1 md:mt-2 text-left">
-                  <span style={{ color: C.mute }}>Cục</span><b>{ch.fiveElementsClass}</b>
-                  <span style={{ color: C.mute }}>Mệnh chủ</span><b>{ch.soul}</b>
-                  <span style={{ color: C.mute }}>Thân chủ</span><b>{ch.body}</b>
-                  <span style={{ color: C.mute }}>Mệnh / Thân</span><b>{ming?.chi} / {shen?.vi}</b>
+                  {chart.tt?.info && <><span style={{ color: C.mute }}>Âm dương</span><b>{chart.tt.info.amduong}</b>
+                  <span style={{ color: C.mute }}>Bản mệnh</span><b>{chart.tt.info.menh}</b></>}
+                  <span style={{ color: C.mute }}>Cục</span><b>{ch.fiveElementsClass}{chart.tt?.info ? <span className="block font-normal text-[0.9em]" style={{ color: C.mute }}>{chart.tt.info.cucRel}</span> : null}</b>
+                  <span style={{ color: C.mute }}>Mệnh chủ</span><b>{chart.tt?.info?.menhChu || ch.soul}</b>
+                  <span style={{ color: C.mute }}>Thân chủ</span><b>{chart.tt?.info?.thanChu || ch.body}</b>
+                  <span style={{ color: C.mute }}>Mệnh / Thân cư</span><b>{ming?.chi} / {shen?.vi}</b>
+                  {chart.tt?.info?.canLuong && <><span style={{ color: C.mute }}>Cân lượng</span><b>{chart.tt.info.canLuong}</b></>}
+                  {chart.tt?.info?.laiNhan && <><span style={{ color: C.mute }}>Lai nhân</span><b>cung {chart.tt.info.laiNhan}</b></>}
                   {chart.hz && <><span style={{ color: C.mute }}>Năm nay</span><b>{chart.hz.yname} · {chart.hz.age} tuổi</b></>}
                   {chart.tt && <><span style={{ color: C.mute }}>Tuần / Triệt</span><b>{chart.tt.tuan.join("")} / {chart.tt.triet.join("")}</b></>}
                 </div>
@@ -238,13 +286,13 @@ export default function TuViPage() {
               </div>
             </div>
           </div>
-          <p className="text-[12px] -mt-2" style={{ color: C.mute }}>ĐV = cung đại vận hiện tại · LN = cung lưu niên năm nay · <b style={{ color: "#B9AEF0" }}>Tuần</b> / <b style={{ color: "#E07A63" }}>Triệt</b> án ngữ hai cung hai bên nhãn · chữ xanh: cát tinh, đỏ: sát tinh, hồng: đào hoa · dưới vạch: vòng Bác sĩ (xanh nhạt) và vòng Thái Tuế · độ sáng: M miếu, V vượng, Đ đắc, L lợi, B bình, Bt bất, H hãm. Bấm vào một cung để xem luận giải.</p>
+          <p className="text-[12px] -mt-2" style={{ color: C.mute }}>ĐV = cung đại vận hiện tại · LN = cung lưu niên năm nay · <b style={{ color: "#B9AEF0" }}>Tuần</b> / <b style={{ color: "#E07A63" }}>Triệt</b> án ngữ hai cung hai bên nhãn · chữ xanh: cát tinh, đỏ: sát tinh, hồng: đào hoa · dưới vạch: vòng Bác sĩ (xanh nhạt) và vòng Thái Tuế · <i style={{ color: "#8AB8E6" }}>L.</i> = sao lưu niên năm nay · TH = tiểu hạn (năm có chi đó đi qua cung, ô vàng là năm nay) · Th. = nguyệt hạn tháng âm năm nay · độ sáng theo sách Việt: M miếu, V vượng, Đ đắc, B bình hoà, H hãm. Bấm vào một cung để xem luận giải.</p>
 
           <Panel>
             <H2 zh="命格">Tổng quan lá số</H2>
             <div className="grid sm:grid-cols-3 gap-2 text-[14px]">
               <div className="rounded-[8px] border p-3" style={{ borderColor: C.line, background: C.card }}><div className="text-[12px]" style={{ color: C.mute }}>Ngũ hành cục <span className="font-zh">{chart.z.fiveElementsClass}</span></div><b>{ch.fiveElementsClass}</b><div className="text-[13px] mt-1">{CLASS[chart.z.fiveElementsClass]}</div></div>
-              <div className="rounded-[8px] border p-3" style={{ borderColor: C.line, background: C.card }}><div className="text-[12px]" style={{ color: C.mute }}>Mệnh chủ <span className="font-zh">命主 {chart.z.soul}</span></div><b>{ch.soul}</b><div className="text-[13px] mt-1">Sao chủ của bản mệnh, theo chi cung Mệnh — nét tính cách gốc.</div></div>
+              <div className="rounded-[8px] border p-3" style={{ borderColor: C.line, background: C.card }}><div className="text-[12px]" style={{ color: C.mute }}>Mệnh chủ <span className="font-zh">命主</span></div><b>{chart.tt?.info?.menhChu || ch.soul}</b><div className="text-[13px] mt-1">Sao chủ của bản mệnh (sách Việt an theo chi năm sinh; sách Trung Quốc theo chi cung Mệnh: {ch.soul}) — nét tính cách gốc.</div></div>
               <div className="rounded-[8px] border p-3" style={{ borderColor: C.line, background: C.card }}><div className="text-[12px]" style={{ color: C.mute }}>Thân chủ <span className="font-zh">身主 {chart.z.body}</span></div><b>{ch.body}</b><div className="text-[13px] mt-1">Thân cư cung <b>{shen?.vi}</b>: từ khoảng 30 tuổi trở đi, lĩnh vực này ảnh hưởng mạnh đến cuộc sống.</div></div>
             </div>
             <p className="text-[14px] mt-3">Cung Mệnh tại <b>{ming.can} {ming.chi}</b>: {ming.major.length ? <>chính tinh <b>{ming.major.map((s) => s.vi).join(" – ")}</b> <span className="font-zh" style={{ color: C.gold }}>{ming.major.map((s) => s.zh).join("")}</span> {py(ming.major.map((s) => s.zh).join(" "))}.</> : "vô chính diệu."} Xem chi tiết từng cung ở bảng dưới, rồi bấm “Luận giải chi tiết” để có bài luận đầy đủ.</p>
