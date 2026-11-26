@@ -22,7 +22,6 @@ export const GARDEN_TABS = [
   { key: "practice", label: "Tu luyện", zh: "修", icon: "target" },
   { key: "exam", label: "Độ kiếp", zh: "劫", icon: "trophy" },
   { key: "play", label: "Giang hồ", zh: "江湖", icon: "gamepad" },
-  { key: "books", label: "Giáo trình", zh: "书", icon: "book", href: "/giao-trinh" },
 ];
 
 const PATHS = {
@@ -100,7 +99,6 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
     const inner = mobile
       ? <><span className={`font-brush text-[24px] leading-none ${cur ? "text-[#E6B656]" : "text-[#8C7550]"}`} aria-hidden="true">{t.zh}</span>{t.label}</>
       : <><span className="zh" aria-hidden="true">{t.zh}</span><span className="hidden lg:inline">{t.label}</span></>;
-    if (t.href) return <Link href={t.href} aria-current={cur} aria-label={t.label} className={cls}>{inner}</Link>;
     return onTab
       ? <button type="button" onClick={() => onTab(t.key)} aria-current={cur} aria-label={t.label} className={cls}>{inner}</button>
       : <Link href={href(t.key)} aria-current={cur} aria-label={t.label} className={cls}>{inner}</Link>;
@@ -171,7 +169,7 @@ export default function GardenNav({ active = "practice", title, right, onTab, li
           </div>
         )}
       </header>
-      <nav aria-label="Khu chính" className="hg-nav md:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-6 bg-[#1C1A17] border-t-2 border-[#9E7A2E] pt-1.5 pb-[max(12px,env(safe-area-inset-bottom))]">
+      <nav aria-label="Khu chính" className="hg-nav md:hidden fixed bottom-0 inset-x-0 z-40 grid grid-cols-5 bg-[#1C1A17] border-t-2 border-[#9E7A2E] pt-1.5 pb-[max(12px,env(safe-area-inset-bottom))]">
         {GARDEN_TABS.map((t) => <Tab key={t.key} t={t} mobile />)}
       </nav>
     </>
