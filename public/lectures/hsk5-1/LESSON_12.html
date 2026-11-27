@@ -874,7 +874,7 @@ function orderer(label,str,sc){var parts=str.split("|");var target=parts.join(""
     s.appendChild(el("h3",{class:"h"},(pi+1)+". "+p.t));
     s.appendChild(el("div",{class:"legend"},'<span class="vlink" style="cursor:default">từ mới của bài 12</span> bấm xem nghĩa · bấm <b>Dịch</b> để xem tiếng Việt'));
     s.appendChild(el("div",{class:"idea"},'<b class="k">Ý chính:</b> <span class="vn">'+esc(p.idea)+'</span>'));
-    var FIG=[["zhang-xiaolong.jpg","张小龙","张小龙在2019年微信公开课上演讲 · Trương Tiểu Long phát biểu tại WeChat Open Class 2019",560],["tencent.png","腾讯","腾讯 · Tencent — công ty đứng sau QQ và WeChat",320],null,["wechat.jpg","微信","微信 · WeChat",560]][pi];
+    var FIG=[["zhang-xiaolong.jpg","张小龙","张小龙在2019年微信公开课上演讲 · Trương Tiểu Long phát biểu tại WeChat Open Class 2019",560],["tencent.png","腾讯","腾讯 · Tencent — công ty đứng sau QQ và WeChat",320],["wechat.jpg","微信","微信 · WeChat",560],["ma-huateng.jpg","马化腾","腾讯创始人马化腾 · Mã Hóa Đằng, nhà sáng lập Tencent",560]][pi];
     if(FIG)s.appendChild(el("figure",{style:"margin:0 0 22px;text-align:center"},'<img src="img/'+FIG[0]+'" alt="'+FIG[1]+'" style="max-width:100%;width:'+FIG[3]+'px;border-radius:16px"><figcaption class="vn" style="font-size:15px;margin-top:6px">'+FIG[2]+'</figcaption>'));
     p.ps.forEach(function(x){var d=el("p",{class:"para"},linkText(x[0]));d.appendChild(spk(x[0],"Nghe đoạn"));s.appendChild(d);
       var r=el("div",{style:"margin:-8px 0 22px"});r.appendChild(reveal("Dịch",'<span class="vn">'+esc(x[1])+'</span>'));s.appendChild(r);});
