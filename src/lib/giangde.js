@@ -34,7 +34,7 @@ const imgOf = (x) => (x && typeof x === "object" && !Array.isArray(x) && x.img ?
 // ---- Bản chép lời nghe → từng câu ----
 const QLINE = /^\s*(\d{1,3})\s*[.．、](?!\d)\s*(.*)$/;
 const QLINE2 = /^\s*第\s*(\d{1,3})\s*题\s*[：:]\s*(.*)$/;
-const PASSAGE = /(?:现在开始)第\s*(\d{1,3})\s*(?:到|至|-|–|—|～|~)\s*(\d{1,3})\s*题|第\s*(\d{1,3})\s*(?:到|至|-|–|—|～|~)\s*(\d{1,3})\s*题(?:是)?根据|^第\s*(\d{1,3})\s*(?:到|至|-|–|—)\s*(\d{1,3})\s*题\s*[：:]\s*$/;
+const PASSAGE = /(?:现在开始)第\s*(\d{1,3})\s*(?:到|至|-|–|—|～|~)\s*(\d{1,3})\s*题|第\s*(\d{1,3})\s*(?:到|至|-|–|—|～|~)\s*(\d{1,3})\s*题(?:是)?根据|^第\s*(\d{1,3})\s*(?:到|至|-|–|—)\s*(\d{1,3})\s*题\s*[：:]\s*$|^(\d{1,3})\s*(?:—|–|-|～|~|到)\s*(\d{1,3})\s*[.．、：:]?\s*$/;
 const JUNK = /^\s*(第[一二三四五]部分|第\s*\d{1,3}\s*(?:到|至|-|–|—)\s*\d{1,3}\s*题[^根]|一共\s*\d+\s*个题|例如|现在开始第|听力考试现在结束|请大家注意|大家好|HSK\s*[（(].{1,4}[）)]\s*听力考试分|（音乐|\(音乐|中文水平考试|听力文本|HSK\s*[（(].{1,6}[）)]\s*模拟试卷|（第\d)/;
 
 export function splitScript(script) {
@@ -49,7 +49,7 @@ export function splitScript(script) {
     if (!line) continue;
     const pm = line.match(PASSAGE);
     if (pm) {
-      const p = { from: +(pm[1] || pm[3] || pm[5]), to: +(pm[2] || pm[4] || pm[6]), lines: [] };
+      const p = { from: +(pm[1] || pm[3] || pm[5] || pm[7]), to: +(pm[2] || pm[4] || pm[6] || pm[8]), lines: [] };
       const rest = pm[1] ? line.slice(line.indexOf(pm[0]) + pm[0].length).replace(/^[：:，,。\s]+/, "").trim() : line.replace(/^.*?根据[^：:]*[：:]?/, "").trim();
       if (rest) p.lines.push(rest);
       passages.push(p);
