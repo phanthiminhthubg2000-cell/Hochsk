@@ -3,7 +3,7 @@
 // cô tải ảnh lên đây theo lớp/học viên → AI đọc chữ + chấm → cô duyệt, sửa điểm/nhận xét, sao chép gửi lại Zalo.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, doc, getDoc, getDocs, setDoc, onSnapshot, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
-import { HW_COL, HW_IMG, PARTS, partName, kwNums, hasEssay, isHsk5, lectureText, lectureHw, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
+import { HW_COL, HW_IMG, PARTS, partName, kwNums, hasEssay, isHsk5, zhReview, lectureText, lectureHw, lectureEssays, fmtTime, compressImage, rotateDataUrl } from "../../lib/homework";
 import { STATIC_LECTURES } from "../staticLectures";
 
 const btn = "rounded-xl font-bold text-sm transition-colors disabled:opacity-50";
@@ -38,7 +38,7 @@ function Item({ db, h, open, setOpen, regrade, grading }) {
     setSaving(false);
   };
   const [copied, setCopied] = useState(false); const [up2, setUp2] = useState(false);
-  const zh5 = isHsk5(h.level || h.lectureLevel); // HSK5: tin nhắn gửi học viên toàn tiếng Trung
+  const zh5 = zhReview(h.level || h.lectureLevel); // HSK4–5: tin nhắn gửi học viên toàn tiếng Trung
   const partZh = [kwNums(h.part).length ? "课文缩写" : "", hasEssay(h.part) ? "作文" : ""].filter(Boolean).join(" + ");
   const zalo = () => [`📝 ${h.studentName} · ${h.lectureName} · ${zh5 ? partZh : partName(h.part, h.level || h.lectureLevel)}`, score !== "" && score != null ? (zh5 ? `分数：${score}/10` : `Điểm: ${score}/10`) : "", cmt.trim(), fix && fixesText ? (zh5 ? "改错：\n" : "Sửa lỗi:\n") + fixesText : "", up2 && ai?.upgrades?.length ? (zh5 ? "这样写更自然：\n" : "Viết thế này tự nhiên hơn:\n") + ai.upgrades.map((x) => "→ " + x.better).join("\n") : ""].filter(Boolean).join("\n\n");
   const copy = async () => { const t = zalo(); try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); } setCopied(true); setTimeout(() => setCopied(false), 2000); };
@@ -156,6 +156,10 @@ function Uploader({ db, onDone }) {
   // bài tập về nhà ghi trong slide (HSK4) → hiện cho cô xem & gửi kèm yêu cầu cho AI
   useEffect(() => { setHw([]); setTaskIx(0); if (lec) lectureHw(lec).then((h) => setHw(h.flatMap((b) => (b.tasks || []).filter((t) => /viết/i.test(t.kind || "")).map((t) => ({ ...t, range: b.range, s: b.s }))))); }, [lec]);
   const task = hw[taskIx];
+  // đề bài văn lấy từ bài giảng: HSK4 = khẩu ngữ bài tập buổi 2; HSK5 = 口语专题 hoặc câu 72 (HSK 3.0)
+  const [essays, setEssays] = useState([]); const [essayK, setEssayK] = useState("");
+  useEffect(() => { setEssays([]); setEssayK(""); if (lec) lectureEssays(lec).then((es) => { setEssays(es); const d = es.find((x) => x.k === "hw2") || es[0]; if (d) { setEssayK(d.k); setTopic(d.prompt); } }); }, [lec]);
+  const essayRef = essays.find((x) => x.k === essayK && x.prompt === topic);
   useEffect(() => { if (!task) return; const ns = [...(task.range || "").matchAll(/课文([一二三四五])/g)].map((m) => "一二三四五".indexOf(m[1]) + 1); if (/tóm tắt/i.test(task.t || "")) { if (!h5 && ns.length >= 2 && /～|~|-/.test(task.range)) { const r = []; for (let i = ns[0]; i <= ns[ns.length - 1]; i++) r.push(i); setKws(r.filter((x) => x <= 3)); } } else if (!h5) { setKws([]); setEssay(true); } }, [task]); // eslint-disable-line
   const students = [...(cls?.students || []), ...(pics["x:" + extra] && extra ? [{ id: "x:" + extra, name: extra }] : [])];
   const add = async (sid, files) => {
@@ -179,7 +183,7 @@ function Uploader({ db, onDone }) {
         const st = students.find((x) => x.id === sid) || { id: sid, name: sid.replace(/^x:/, "") };
         const ref = doc(collection(db, HW_COL));
         await setDoc(doc(db, HW_IMG, ref.id), { images: imgs, createdAt: serverTimestamp() });
-        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: essay ? topic.trim() : "", task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => essay || h5 || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))).map(([k, v]) => ({ k, v })) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
+        await setDoc(ref, { classId: cls.id, className: cls.className || "", level: cls.level || lec.level || "", studentId: st.id, studentName: st.name, lectureId: lec.id, lectureName: lec.lectureName || "", lectureLevel: lec.level || "", lectureUrl: lec.fileUrl || "", part, topic: essay ? topic.trim() : "", essayRef: essay && essayRef ? { k: essayRef.k, label: essayRef.label, min: essayRef.min || 0, sample: essayRef.sample || "" } : null, task: task ? { t: task.t, req: task.req || [], kw: (task.kw || []).filter(([k]) => essay || h5 || kwNums(part).some((n) => k.includes("一二三四五"[n - 1]))).map(([k, v]) => ({ k, v })) } : null, pages: imgs.length, status: "new", source: "teacher", createdAt: serverTimestamp() });
       }
       setMsg(`✅ Đã lưu ${ready.length} bài — AI đang chấm ở danh sách bên dưới.`); setPics({}); setActive(""); onDone?.();
     } catch (e) { setMsg("Chưa lưu được: " + (e.code === "permission-denied" ? "Firestore chưa cho phép ghi vào homework_submissions / homework_images." : e.message || e)); }
@@ -210,7 +214,14 @@ function Uploader({ db, onDone }) {
         <button onClick={() => setEssay((e) => (e && !kws.length ? e : !e))} className={`${btn} px-3 py-2 ${essay ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{essay ? "✓ " : ""}Viết bài văn 作文</button>
       </div>
       <p className="text-xs text-slate-500 -mt-1">Đang chấm: <b>{partName(part, cls?.level || lec?.level)}</b>{kws.length && essay ? " — hai phần nằm trên cùng các ảnh, AI tự tách." : ""}</p>
-      {essay && <input className={sel} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Đề bài / chủ đề bài văn đã giao" />}
+      {essay && essays.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 items-center text-xs">
+          <span className="font-bold text-slate-500">Đề bài văn trong bài giảng:</span>
+          {essays.map((x) => <button key={x.k} onClick={() => { setEssayK(x.k); setTopic(x.prompt); }} className={`${btn} px-2.5 py-1 ${essayK === x.k && topic === x.prompt ? "bg-[#142033] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{x.label}</button>)}
+        </div>
+      )}
+      {essay && <textarea rows={2} className={`${sel} h-auto py-2`} style={{ fontFamily: '"Noto Sans SC",sans-serif' }} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Đề bài / chủ đề bài văn đã giao" />}
+      {essay && essayRef?.vn && <p className="text-xs text-slate-500 -mt-1">{essayRef.vn}{essayRef.min ? ` · tối thiểu ${essayRef.min} chữ` : ""}</p>}
       {cls && (
         <>
           <p className="text-xs text-slate-500">Bấm <b>📷 Thêm ảnh</b> ở dòng học viên để chọn ảnh (tối đa 6 trang/bạn). Trên máy tính: bấm vào tên học viên rồi <b>Ctrl+V</b> để dán ảnh vừa sao chép từ Zalo.</p>
@@ -256,7 +267,7 @@ export default function HomeworkManager({ db }) {
         if (!lec && h.lectureUrl) lec = { fileUrl: h.lectureUrl };
         text = lecCache.current[h.lectureId] = await lectureText(lec);
       }
-      const body = JSON.stringify({ images, part: h.part, level: h.level || h.lectureLevel, prompt: h.topic, task: h.task || null, lectureText: text });
+      const body = JSON.stringify({ images, part: h.part, level: h.level || h.lectureLevel, prompt: h.topic, essayRef: h.essayRef || null, task: h.task || null, lectureText: text });
       let d = null, last = "";
       for (let k = 0; k < 2 && !d; k++) { // quá tải / hết giờ → tự thử lại một lần sau 15 giây
         if (k) await new Promise((ok) => setTimeout(ok, 15000));

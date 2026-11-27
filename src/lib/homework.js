@@ -9,6 +9,7 @@ const CN = { 1: "一", 2: "二", 3: "三", 4: "四", 5: "五" };
 export const kwNums = (k) => { const m = String(k || "").match(/^kw(\d+)/); return m ? m[1].split("").map(Number) : []; };
 export const hasEssay = (k) => /(^|\+)essay$/.test(k || "");
 export const isHsk5 = (lv) => /HSK\s*5/i.test(lv || "");
+export const zhReview = (lv) => /HSK\s*[45]/i.test(lv || ""); // HSK4–5: nhận xét & tin nhắn toàn tiếng Trung
 export const partName = (k, lv) => {
   const ns = kwNums(k), sum = ns.length ? (isHsk5(lv) && ns.length === 1 ? "Tóm tắt 课文" : `Tóm tắt 课文${ns.map((n) => CN[n]).join("·")}`) : "";
   return [sum, hasEssay(k) ? "Viết bài văn 作文" : ""].filter(Boolean).join(" + ") || k;
@@ -36,6 +37,32 @@ export async function lectureHw(lec) {
     const hw = new Function("return " + html.slice(j, k + 1))();
     return Array.isArray(hw) ? hw : [];
   } catch { return []; }
+}
+
+// Đề bài văn lấy từ bài giảng:
+//  · HSK4: "Bài khẩu ngữ" của bài tập về nhà Buổi 2 (dòng "Đề: …")
+//  · HSK5: 口语专题 (mục 运用) hoặc 书写 第72题 trong phần luyện HSK 3.0
+// → [{ k, label, prompt, vn, min, sample }]
+export async function lectureEssays(lec) {
+  const out = [];
+  try {
+    if (!lec?.fileUrl?.startsWith("/lectures/")) return out;
+    const html = await lectureHtml(lec);
+    const str = (src, key) => { const m = src.match(new RegExp(`"${key}"\\s*:\\s*("(?:[^"\\\\]|\\\\.)*")`)); try { return m ? JSON.parse(m[1]) : ""; } catch { return ""; } };
+    // HSK4: hw Buổi 2
+    const hw = await lectureHw(lec);
+    hw.forEach((b, bi) => (b.tasks || []).forEach((t) => {
+      const d = (t.req || []).map((r) => String(r).match(/^Đề\s*[:：]\s*(.+)$/)).find(Boolean);
+      if (d) out.push({ k: "hw" + (bi + 1), label: `Bài tập ${b.s || "buổi " + (bi + 1)} · ${t.t}`, prompt: d[1].trim(), vn: "", min: 0, sample: "" });
+    }));
+    // HSK5: 口语专题
+    const ia = html.indexOf('"APPLY"');
+    if (ia >= 0) { const seg = html.slice(ia, ia + 4000); const topic = str(seg, "topic"); if (topic) out.push({ k: "apply", label: "口语专题 · Khẩu ngữ", prompt: topic, vn: str(seg, "topic_vn"), min: 0, sample: "" }); }
+    // HSK5: 书写 第72题 (HSK 3.0)
+    const iw = html.indexOf('"w72"');
+    if (iw >= 0) { const seg = html.slice(iw, iw + 6000); const prompt = str(seg, "prompt"); const mm = seg.match(/"min"\s*:\s*(\d+)/); if (prompt) out.push({ k: "w72", label: "Câu 72 · Luyện HSK 3.0", prompt, vn: str(seg, "vn"), min: mm ? +mm[1] : 0, sample: str(seg, "sample") }); }
+  } catch { /* bài giảng không đọc được */ }
+  return out;
 }
 
 // Ảnh chụp → JPEG nén (cạnh dài ≤ maxSide), trả data URL. Tự giảm chất lượng để vừa ngân sách byte.

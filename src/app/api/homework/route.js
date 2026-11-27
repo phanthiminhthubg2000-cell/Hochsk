@@ -6,14 +6,19 @@ import { raceJSON } from "@/lib/geminiRace";
 
 export const maxDuration = 180; // bài nhiều trang + tóm tắt + bài văn cần thời gian đọc chữ viết tay
 
-// HSK5: toàn bộ nhận xét bằng tiếng Trung (giáo viên yêu cầu)
-const ZH_RULE = `
-QUAN TRỌNG — NGÔN NGỮ: học viên trình độ HSK5 nên TOÀN BỘ phần nhận xét viết bằng TIẾNG TRUNG giản thể (không dùng tiếng Việt, không pinyin, không tiếng Anh), thay cho mọi chỗ ở trên ghi "tiếng Việt". Áp dụng cho: comment, strengths, tips, hand, errors[].why, errors[].type, sections[].title, sections[].points[].vi, sections[].comment, req_check[].req/note, essay.topic, essay.comment.
-Giọng: như cô giáo viết cho học trò — xưng "老师", gọi "你"; câu ngắn, tự nhiên, dùng từ vựng – ngữ pháp trong tầm HSK5; không sáo rỗng (không "非常棒""继续加油""总的来说""总体而言"), không dấu chấm than. Khen cụ thể, chỉ lỗi cụ thể. "why" ≤ 15 chữ Hán.`;
+// HSK4, HSK5: toàn bộ nhận xét bằng tiếng Trung (giáo viên yêu cầu)
+const ZH_RULE = (lvN) => `
+QUAN TRỌNG — NGÔN NGỮ: học viên trình độ HSK${lvN} nên TOÀN BỘ phần nhận xét viết bằng TIẾNG TRUNG giản thể (không dùng tiếng Việt, không pinyin, không tiếng Anh), thay cho mọi chỗ ở trên ghi "tiếng Việt". Áp dụng cho: comment, strengths, tips, hand, errors[].why, errors[].type, sections[].title, sections[].points[].vi, sections[].comment, req_check[].req/note, essay.topic, essay.comment.
+Giọng: như cô giáo viết cho học trò — xưng "老师", gọi "你"; câu ngắn, tự nhiên, dùng từ vựng – ngữ pháp trong tầm HSK${lvN}${lvN === "4" ? " (câu đơn giản, dễ hiểu)" : ""}; không sáo rỗng (không "非常棒""继续加油""总的来说""总体而言"), không dấu chấm than. Khen cụ thể, chỉ lỗi cụ thể. "why" ≤ 15 chữ Hán.`;
+// đề bài văn lấy từ bài giảng (khẩu ngữ buổi 2 / 口语专题 / câu 72) + bài mẫu của giáo trình để AI đối chiếu
+function essayRefText(b) {
+  const r = b.essayRef; if (!r) return "";
+  return `\nĐề này lấy từ bài giảng (${String(r.label || "").slice(0, 60)}) — chấm bám sát đúng đề này.${r.sample ? `\nBài mẫu của bài giảng (chỉ để tham khảo ý và độ dài, không bắt học viên viết giống):\n"""${String(r.sample).slice(0, 2000)}"""` : ""}`;
+}
 function prompt(b) {
   const lv = String(b.level || "HSK4–5");
-  const zhMode = /HSK\s*5/i.test(lv);
-  return promptBody(b, lv) + (zhMode ? ZH_RULE : "");
+  const m = lv.match(/HSK\s*([45])/i);
+  return promptBody(b, lv) + (m ? ZH_RULE(m[1]) : "");
 }
 function promptBody(b, lv) {
   const common = `Bạn là giáo viên tiếng Trung giàu kinh nghiệm, chấm bài tập về nhà VIẾT TAY của học viên người Việt trình độ ${lv}. Các ảnh đính kèm là bài viết tay (có thể nhiều trang, theo thứ tự).
@@ -30,10 +35,10 @@ Chỉ trả JSON hợp lệ, không markdown.`;
 "hand": nhận xét ngắn về chữ viết tay (nét, bộ thủ hay viết sai), "chars": số chữ Hán học viên viết.`;
   if (b.part === "essay") {
     return `${common}
-Dạng bài: VIẾT BÀI VĂN (作文).${b.prompt ? `\nĐỀ BÀI / CHỦ ĐỀ: ${b.prompt}` : "\nKhông có đề cụ thể — tự nhận chủ đề từ bài viết."}
+Dạng bài: VIẾT BÀI VĂN (作文).${b.prompt ? `\nĐỀ BÀI / CHỦ ĐỀ: ${b.prompt}` : "\nKhông có đề cụ thể — tự nhận chủ đề từ bài viết."}${essayRefText(b)}
 ${taskText(b.task)}
 ${b.lectureText ? `Bài học liên quan (để biết từ vựng/ngữ pháp trọng tâm học viên nên dùng):\n"""${String(b.lectureText).slice(0, 12000)}"""` : ""}
-Chấm (0–100 mỗi mục): content (bám đề, ý phong phú, có ví dụ), structure (mở – thân – kết, từ nối), vocab (đúng, phong phú, dùng từ của bài học), grammar (chính xác, đa dạng cấu trúc), length (đủ dài: HSK4 ≥ 150 chữ, HSK5 ≥ 250 chữ).
+Chấm (0–100 mỗi mục): content (bám đề, ý phong phú, có ví dụ), structure (mở – thân – kết, từ nối), vocab (đúng, phong phú, dùng từ của bài học), grammar (chính xác, đa dạng cấu trúc), length (đủ dài: ${b.essayRef?.min ? `≥ ${b.essayRef.min} chữ theo đề` : "HSK4 ≥ 150 chữ, HSK5 ≥ 250 chữ"}).
 total = round(content*0.3 + structure*0.15 + vocab*0.2 + grammar*0.25 + length*0.1).
 JSON: {"ocr":"","score":{"content":0,"structure":0,"vocab":0,"grammar":0,"length":0,"total":0},
 ${tail}
@@ -47,8 +52,8 @@ ${tail}
   const zh = (x) => "一二三四五"[x - 1];
   const list = h5 ? "课文 (bài khoá duy nhất của bài học)" : ns.map((x) => `课文${zh(x)}`).join("、");
   const essayPart = withEssay ? `
-PHẦN 2 — VIẾT BÀI VĂN (作文): trên cùng các ảnh, sau (hoặc trước) phần tóm tắt, học viên còn viết một bài văn.${b.prompt ? ` Đề bài: ${b.prompt}.` : " Không có đề cụ thể — tự nhận chủ đề từ bài viết."} Tách rõ hai phần (dựa vào tiêu đề, số thứ tự, nội dung). Ghi cả hai phần vào "ocr" (đánh dấu "【缩写】" và "【作文】" ở đầu mỗi phần).
-Chấm bài văn riêng trong "essay" (0–100 mỗi mục): content, structure, vocab (dùng từ của bài học), grammar, length (HSK5 ≥ 250 chữ, HSK4 ≥ 150 chữ); total = round(content*0.3 + structure*0.15 + vocab*0.2 + grammar*0.25 + length*0.1).
+PHẦN 2 — VIẾT BÀI VĂN (作文): trên cùng các ảnh, sau (hoặc trước) phần tóm tắt, học viên còn viết một bài văn.${b.prompt ? ` Đề bài: ${b.prompt}.` : " Không có đề cụ thể — tự nhận chủ đề từ bài viết."}${essayRefText(b)} Tách rõ hai phần (dựa vào tiêu đề, số thứ tự, nội dung). Ghi cả hai phần vào "ocr" (đánh dấu "【缩写】" và "【作文】" ở đầu mỗi phần).
+Chấm bài văn riêng trong "essay" (0–100 mỗi mục): content, structure, vocab (dùng từ của bài học), grammar, length (${b.essayRef?.min ? `≥ ${b.essayRef.min} chữ theo đề` : "HSK5 ≥ 250 chữ, HSK4 ≥ 150 chữ"}); total = round(content*0.3 + structure*0.15 + vocab*0.2 + grammar*0.25 + length*0.1).
 "errors" và "upgrades" gộp lỗi của cả hai phần. "score" là phần tóm tắt.` : "";
   return `${common}
 Dạng bài: TÓM TẮT BÀI KHOÁ (缩写) — học viên tóm tắt ${ns.length > 1 ? `${ns.length} bài khoá ${list} (thường viết liền trên cùng tờ giấy, theo thứ tự; nhận ra ranh giới từng đoạn qua tiêu đề/số thứ tự hoặc nội dung)` : list} bằng lời của mình.
