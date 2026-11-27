@@ -11,6 +11,44 @@ const hasA = (a) => a && AI_FIELDS.some((k) => (a[k] || "").trim());
 const partLabel = (u) => `${SEC_NAME[u.sec] || u.sec} · phần ${u.part}${u.label ? ` · câu ${u.label}` : ""}`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// ---------- Nghe riêng từng câu: phát một đoạn [đầu, cuối] của file nghe cả đề ----------
+const fmtT = (x) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+export function ClipPlayer({ src, it, dark = false, autoKey }) {
+  const au = useRef(null); const stopAt = useRef(0); const from = useRef(0);
+  const [on, setOn] = useState(""); const [pos, setPos] = useState(0); const [rate, setRate] = useState(1);
+  const at = it?.at;
+  const play = (s, e, k) => {
+    const a = au.current; if (!a) return;
+    if (on === k && !a.paused) { a.pause(); setOn(""); return; }
+    from.current = s; stopAt.current = e; a.currentTime = s; a.playbackRate = rate; a.play().catch(() => {}); setOn(k);
+  };
+  useEffect(() => { const a = au.current; if (a) { a.pause(); } setOn(""); setPos(0); }, [it?.n, src]);
+  useEffect(() => { if (au.current) au.current.playbackRate = rate; }, [rate]);
+  useEffect(() => {
+    if (!autoKey) return;
+    const k = (e) => { if (e.target?.tagName === "TEXTAREA" || e.target?.tagName === "INPUT") return; if (e.key.toLowerCase() === "a" && at) play(at[0], at[1], "q"); };
+    window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
+  });
+
+  if (!src) return null;
+  const tick = () => { const a = au.current; if (!a) return; if (stopAt.current && a.currentTime >= stopAt.current) { a.pause(); setOn(""); } setPos(Math.max(0, a.currentTime - from.current)); };
+  const b = dark ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-white text-[#142033] border-slate-300 hover:bg-slate-50";
+  const onB = dark ? "bg-amber-300 text-[#142033] border-amber-300" : "bg-[#142033] text-white border-[#142033]";
+  const len = on === "g" ? at[3] - at[2] : at ? at[1] - at[0] : 0;
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <audio ref={au} src={src} preload="metadata" onTimeUpdate={tick} onPause={() => setOn((o) => (au.current && au.current.currentTime < stopAt.current - 0.3 ? o : ""))} />
+      {at ? <>
+        <button onClick={() => play(at[0], at[1], "q")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "q" ? onB : b}`}>{on === "q" ? "⏸" : "▶"} Nghe câu {it.n}</button>
+        {at.length >= 4 && <button onClick={() => play(at[2], at[3], "g")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "g" ? onB : b}`}>{on === "g" ? "⏸" : "▶"} Cả đoạn</button>}
+        <button onClick={() => { const a = au.current; if (a) { a.currentTime = Math.max(from.current, a.currentTime - 5); } }} className={`h-9 px-2 rounded-lg text-sm font-bold border ${b}`} title="Lùi 5 giây">↺5s</button>
+        <button onClick={() => setRate((r) => (r === 1 ? 0.8 : r === 0.8 ? 0.6 : 1))} className={`h-9 px-2 rounded-lg text-sm font-bold border ${b}`} title="Tốc độ">{rate}×</button>
+        {on && <span className={`text-xs tabular-nums ${dark ? "text-white/70" : "text-slate-500"}`}>{fmtT(pos)} / {fmtT(len)}</span>}
+      </> : <audio src={src} controls preload="none" className="h-9 max-w-[320px]" />}
+    </div>
+  );
+}
+
 // ---------- Hiển thị một câu hỏi (dùng chung cho soạn & trình chiếu) ----------
 const norm = (s) => String(s || "").normalize("NFC").trim().toLowerCase().replace(/\s+/g, " ");
 const tone = (p) => (p >= 80 ? "text-emerald-700" : p >= 50 ? "text-amber-600" : "text-rose-600");
@@ -250,7 +288,7 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
         <Btn onClick={() => setZoom((z) => Math.max(0.7, +(z - 0.1).toFixed(1)))}>A−</Btn>
         <Btn onClick={() => setZoom((z) => Math.min(2, +(z + 0.1).toFixed(1)))}>A+</Btn>
         <Btn onClick={toggleFs} title="F">⛶</Btn>
-        {audio && <audio src={audio} controls preload="none" className="h-9 ml-auto max-w-[320px]" />}
+        {audio && <div className="ml-auto">{sl?.it?.sec === "L" ? <ClipPlayer src={audio} it={sl.it} dark autoKey /> : <audio src={audio} controls preload="none" className="h-9 max-w-[320px]" />}</div>}
       </div>
     </div>
   );
@@ -442,6 +480,7 @@ export default function GiangDe({ db }) {
                     {[["Câu hỏi", 0], ["Đáp án", 1], ["Đầy đủ", 3]].map(([l, s]) => <button key={s} onClick={() => setStep(s)} className={`px-2 py-1 rounded-md border ${step === s ? "bg-[#142033] text-white" : ""}`}>{l}</button>)}
                     {it.sec === "L" && <label className="ml-auto flex items-center gap-1"><input type="checkbox" checked={script} onChange={(e) => setScript(e.target.checked)} />Lời nghe</label>}
                   </div>
+                  {it.sec === "L" && paper.audio && <ClipPlayer src={Array.isArray(paper.audio) ? paper.audio[0] : paper.audio} it={it} />}
                   <QView it={it} step={step} showScript={script} />
                   {stats?.[it.n] && <StatBar it={it} st={stats[it.n]} />}
                   <Analysis a={lesson.q?.[it.n]} step={step} />

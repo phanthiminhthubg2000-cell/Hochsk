@@ -115,6 +115,7 @@ export function buildItems(paper) {
       const it = {
         n: q.n, sec: u.sec, part: String(u.part), u: ui, head: strip(u.head), passage, listen,
         stem, sPy, p, pPy, opts, ans, ansText, type: t, img: q.img || "", extra, min: q.min || 0,
+        at: Array.isArray(paper?.qtime?.[q.n]) ? paper.qtime[q.n] : null, // [đầu, cuối, (đầu nhóm, cuối nhóm)] giây trong file nghe
       };
       items.push(it);
       nums.push(q.n);
