@@ -20,7 +20,10 @@ export function ClipPlayer({ src, it, dark = false, autoKey }) {
   const play = (s, e, k) => {
     const a = au.current; if (!a) return;
     if (on === k && !a.paused) { a.pause(); setOn(""); return; }
-    from.current = s; stopAt.current = e; a.currentTime = s; a.playbackRate = rate; a.play().catch(() => {}); setOn(k);
+    document.querySelectorAll("audio").forEach((x) => { if (x !== a) x.pause(); });
+    from.current = s; stopAt.current = e; setOn(k);
+    const go = () => { a.currentTime = s; a.playbackRate = rate; a.play().catch(() => {}); };
+    if (a.readyState >= 1) go(); else { a.addEventListener("loadedmetadata", go, { once: true }); a.load(); }
   };
   useEffect(() => { const a = au.current; if (a) { a.pause(); } setOn(""); setPos(0); }, [it?.n, src]);
   useEffect(() => { if (au.current) au.current.playbackRate = rate; }, [rate]);
