@@ -21,9 +21,32 @@ function Marked({ text, errors }) {
   return <>{parts.map((p, i) => { const e = (errors || []).find((x) => x.wrong === p); return e ? <mark key={i} title={`→ ${e.right} · ${e.why || ""}`} className="bg-rose-100 text-rose-700 rounded px-0.5 underline decoration-rose-400">{p}<sup className="text-emerald-700 font-bold ml-0.5 no-underline">{e.right}</sup></mark> : <span key={i}>{p}</span>; })}</>;
 }
 
+// Kết quả AI có thể lệch khuôn (chuỗi thay vì mảng, đối tượng thay vì chữ…) → chuẩn hoá trước khi hiển thị để trang không lỗi
+const S = (x) => (x == null ? "" : typeof x === "string" ? x : typeof x === "number" || typeof x === "boolean" ? String(x) : Array.isArray(x) ? x.map(S).filter(Boolean).join("\n") : Object.entries(x).map(([k, v]) => `${k}: ${S(v)}`).join("\n"));
+const A = (x) => (Array.isArray(x) ? x : x == null || x === "" ? [] : [x]);
+const N = (x) => { const n = Number(x); return Number.isFinite(n) ? n : null; };
+const scoreMap = (o) => { const r = {}; if (o && typeof o === "object") Object.entries(o).forEach(([k, v]) => { const n = N(v); if (n != null) r[k] = n; }); return r; };
+export function normAI(ai) {
+  if (!ai || typeof ai !== "object") return null;
+  const pt = (p) => (p && typeof p === "object" ? { vi: S(p.vi ?? p.text ?? p.point ?? ""), hit: !!p.hit } : { vi: S(p), hit: false });
+  return {
+    ...ai,
+    ocr: S(ai.ocr), hand: S(ai.hand), comment: S(ai.comment), sample: S(ai.sample), source_title: S(ai.source_title),
+    chars: N(ai.chars), score: scoreMap(ai.score),
+    errors: A(ai.errors).filter((e) => e && typeof e === "object").map((e) => ({ wrong: S(e.wrong), right: S(e.right), type: S(e.type), why: S(e.why) })),
+    upgrades: A(ai.upgrades).map((x) => (x && typeof x === "object" ? { orig: S(x.orig), better: S(x.better) } : { orig: "", better: S(x) })),
+    strengths: A(ai.strengths).map(S).filter(Boolean),
+    tips: A(ai.tips).map(S).filter(Boolean),
+    points: A(ai.points).map(pt),
+    req_check: A(ai.req_check).map((r) => (r && typeof r === "object" ? { req: S(r.req), ok: !!r.ok, note: S(r.note) } : { req: S(r), ok: false, note: "" })),
+    sections: A(ai.sections).filter((x) => x && typeof x === "object").map((x, i) => ({ ...x, n: N(x.n) || i + 1, title: S(x.title), score: N(x.score), comment: S(x.comment), points: A(x.points).map(pt), kw_used: A(x.kw_used).map(S), kw_missing: A(x.kw_missing).map(S) })),
+    essay: ai.essay && typeof ai.essay === "object" ? { ...ai.essay, topic: S(ai.essay.topic), comment: S(ai.essay.comment), chars: N(ai.essay.chars), score: scoreMap(ai.essay.score) } : null,
+  };
+}
+
 function Item({ db, h, open, setOpen, regrade, grading }) {
   const [imgs, setImgs] = useState(null); const [big, setBig] = useState(null);
-  const ai = h.ai;
+  const ai = useMemo(() => normAI(h.ai), [h.ai]);
   const [score, setScore] = useState(""); const [cmt, setCmt] = useState(""); const [fix, setFix] = useState(true); const [saving, setSaving] = useState(false);
   useEffect(() => { if (open && !imgs) getDoc(doc(db, HW_IMG, h.id)).then((s) => setImgs(s.data()?.images || [])).catch(() => setImgs([])); }, [open, imgs, db, h.id]);
   useEffect(() => {
@@ -295,7 +318,7 @@ export default function HomeworkManager({ db }) {
   // lỗi hay gặp của lớp đang lọc
   const common = useMemo(() => {
     const m = new Map();
-    inCls.forEach((h) => (h.ai?.errors || []).forEach((e) => { const k = (e.type || "khác") + "|" + (e.why || "").slice(0, 60); const v = m.get(k) || { type: e.type, why: e.why, n: 0, ex: e }; v.n++; m.set(k, v); }));
+    inCls.forEach((h) => (normAI(h.ai)?.errors || []).forEach((e) => { const k = (e.type || "khác") + "|" + (e.why || "").slice(0, 60); const v = m.get(k) || { type: e.type, why: e.why, n: 0, ex: e }; v.n++; m.set(k, v); }));
     return [...m.values()].filter((x) => x.n > 1).sort((a, b) => b.n - a.n).slice(0, 8);
   }, [inCls]);
 
