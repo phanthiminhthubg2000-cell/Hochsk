@@ -14,10 +14,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ---------- Nghe riêng từng câu: phát một đoạn [đầu, cuối] của file nghe cả đề ----------
 const fmtT = (x) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
-export function ClipPlayer({ src, it, dark = false, autoKey }) {
+export function ClipPlayer({ src, it, items, dark = false, autoKey }) {
+  const its = (items && items.length ? items : it ? [it] : []).filter(Boolean);
+  const timed = its.filter((x) => x.at);
+  const gAt = timed.find((x) => x.at.length >= 4)?.at || null;
+  const grange = gAt ? [gAt[2], gAt[3]] : timed.length > 1 ? [timed[0].at[0], timed[timed.length - 1].at[1]] : null;
   const au = useRef(null); const stopAt = useRef(0); const from = useRef(0);
   const [on, setOn] = useState(""); const [pos, setPos] = useState(0); const [rate, setRate] = useState(1); const [err, setErr] = useState("");
-  const at = it?.at;
+  const at = timed[0]?.at;
   const play = (s, e, k) => {
     const a = au.current; if (!a) return;
     if (on === k && !a.paused) { a.pause(); setOn(""); return; }
@@ -34,11 +38,12 @@ export function ClipPlayer({ src, it, dark = false, autoKey }) {
     const p = a.play();
     if (p && p.catch) p.catch((er) => { a.muted = false; setOn(""); setErr(er?.name === "NotAllowedError" ? "Trình duyệt chặn phát tiếng — bấm lại nút nghe" : "Không phát được file nghe (" + (er?.name || "lỗi") + ")"); });
   };
-  useEffect(() => { const a = au.current; if (a) { a.pause(); } setOn(""); setPos(0); }, [it?.n, src]);
+  const idKey = its.map((x) => x.n).join(",");
+  useEffect(() => { const a = au.current; if (a) { a.pause(); } setOn(""); setPos(0); }, [idKey, src]);
   useEffect(() => { if (au.current) au.current.playbackRate = rate; }, [rate]);
   useEffect(() => {
     if (!autoKey) return;
-    const k = (e) => { if (e.target?.tagName === "TEXTAREA" || e.target?.tagName === "INPUT") return; if (e.key.toLowerCase() === "a" && at) play(at[0], at[1], "q"); };
+    const k = (e) => { if (e.target?.tagName === "TEXTAREA" || e.target?.tagName === "INPUT") return; if (e.key.toLowerCase() === "a") { if (grange && its.length > 1) play(grange[0], grange[1], "g"); else if (at) play(at[0], at[1], "q" + its[0].n); } };
     window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
   });
 
@@ -46,13 +51,14 @@ export function ClipPlayer({ src, it, dark = false, autoKey }) {
   const tick = () => { const a = au.current; if (!a) return; if (stopAt.current && a.currentTime >= stopAt.current) { a.pause(); setOn(""); } setPos(Math.max(0, a.currentTime - from.current)); };
   const b = dark ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-white text-[#142033] border-slate-300 hover:bg-slate-50";
   const onB = dark ? "bg-amber-300 text-[#142033] border-amber-300" : "bg-[#142033] text-white border-[#142033]";
-  const len = on === "g" ? at[3] - at[2] : at ? at[1] - at[0] : 0;
+  const cur = on === "g" ? grange : timed.find((x) => "q" + x.n === on)?.at;
+  const len = cur ? cur[1] - cur[0] : 0;
   return (
     <div className="flex flex-wrap items-center gap-2">
       <audio ref={au} src={src} preload="metadata" onError={() => setErr("Không tải được file nghe")} onTimeUpdate={tick} onPause={() => setOn((o) => (au.current && au.current.currentTime < stopAt.current - 0.3 ? o : ""))} />
-      {at ? <>
-        <button onClick={() => play(at[0], at[1], "q")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "q" ? onB : b}`}>{on === "q" ? "⏸" : "▶"} Nghe câu {it.n}</button>
-        {at.length >= 4 && <button onClick={() => play(at[2], at[3], "g")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "g" ? onB : b}`}>{on === "g" ? "⏸" : "▶"} Cả đoạn</button>}
+      {timed.length ? <>
+        {grange && <button onClick={() => play(grange[0], grange[1], "g")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "g" ? onB : b}`}>{on === "g" ? "⏸" : "▶"} Cả đoạn{its.length > 1 ? ` ${its[0].n}–${its[its.length - 1].n}` : ""}</button>}
+        {timed.map((x) => <button key={x.n} onClick={() => play(x.at[0], x.at[1], "q" + x.n)} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "q" + x.n ? onB : b}`}>{on === "q" + x.n ? "⏸" : "▶"} {grange && its.length > 1 ? "" : "Nghe "}câu {x.n}</button>)}
         <button onClick={() => { const a = au.current; if (a) { a.currentTime = Math.max(from.current, a.currentTime - 5); } }} className={`h-9 px-2 rounded-lg text-sm font-bold border ${b}`} title="Lùi 5 giây">↺5s</button>
         <button onClick={() => setRate((r) => (r === 1 ? 0.8 : r === 0.8 ? 0.6 : 1))} className={`h-9 px-2 rounded-lg text-sm font-bold border ${b}`} title="Tốc độ">{rate}×</button>
         {on && <span className={`text-xs tabular-nums ${dark ? "text-white/70" : "text-slate-500"}`}>{fmtT(pos)} / {fmtT(len)}</span>}
@@ -166,12 +172,18 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
       const its = items.filter((x) => x.u === u.i && (!only || only.has(x.n)));
       if (!its.length) return;
       const st = lesson?.units?.[u.i]?.strategy;
-      if (u.passage || st || s.length === 0 || s[s.length - 1]?.u?.sec !== u.sec || s[s.length - 1]?.u?.part !== u.part) s.push({ kind: "unit", u, st });
-      its.forEach((it) => s.push({ kind: "q", u, it }));
+      const prevQ = s[s.length - 1];
+      const joins = prevQ?.kind === "q" && its[0].grp && prevQ.its[0].grp === its[0].grp; // đoạn nghe vắt qua 2 nhóm câu (35 | 36) → không chen trang giới thiệu
+      if (!joins && (u.passage || st || s.length === 0 || prevQ?.u?.sec !== u.sec || prevQ?.u?.part !== u.part)) s.push({ kind: "unit", u, st });
+      its.forEach((it) => {
+        const last = s[s.length - 1];
+        if (it.grp && last?.kind === "q" && last.its[0].grp === it.grp) last.its.push(it); // cùng một đoạn nghe → chung trang
+        else s.push({ kind: "q", u, it, its: [it] });
+      });
     });
     return s;
   }, [units, items, lesson]);
-  const [idx, setIdx] = useState(() => Math.max(0, slides.findIndex((s) => s.kind === "q" && s.it.n === startN)));
+  const [idx, setIdx] = useState(() => Math.max(0, slides.findIndex((s) => s.kind === "q" && s.its.some((x) => x.n === startN))));
   const [step, setStep] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [script, setScript] = useState(false);
@@ -183,7 +195,8 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
   const cv = useRef(null); const drawing = useRef(null); const wrap = useRef(null);
   const sl = slides[idx] || slides[0];
   const a = sl?.kind === "q" ? lesson?.q?.[sl.it.n] : null;
-  const maxStep = sl?.kind === "q" ? (hasA(a) ? 3 : 1) : 0;
+  const anyA = sl?.kind === "q" && sl.its.some((x) => hasA(lesson?.q?.[x.n]));
+  const maxStep = sl?.kind === "q" ? (anyA ? 3 : 1) : 0;
 
   const clearPen = () => { const c = cv.current; if (c) c.getContext("2d").clearRect(0, 0, c.width, c.height); };
   const go = useCallback((d) => { setIdx((i) => Math.min(slides.length - 1, Math.max(0, i + d))); setStep(0); clearPen(); }, [slides.length]);
@@ -231,7 +244,9 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
   const up = () => { drawing.current = null; };
 
   const qSlides = slides.map((s, i) => [s, i]).filter(([s]) => s.kind === "q");
-  const qPos = sl?.kind === "q" ? qSlides.findIndex(([, i]) => i === idx) + 1 : 0;
+  const qList = qSlides.flatMap(([s, i]) => s.its.map((it) => [it, i])); // từng câu → trang chứa nó
+  const qPos = sl?.kind === "q" ? qList.findIndex(([it]) => it.n === sl.its[0].n) + 1 : 0;
+  const multi = sl?.kind === "q" && sl.its.length > 1;
   const twoCol = sl?.kind === "q" && sl.u.passage && sl.u.sec === "R";
   const audio = Array.isArray(paper.audio) ? paper.audio[0] : paper.audio;
   const Btn = ({ on, children, ...p }) => <button {...p} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on ? "bg-white text-[#142033] border-white" : "bg-white/10 text-white border-white/20 hover:bg-white/20"}`}>{children}</button>;
@@ -241,7 +256,7 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
       <div className="flex items-center gap-3 px-4 h-12 bg-[#142033] text-white shrink-0">
         <b className="truncate">HSK {paper.level} · {paper.name}</b>
         <span className="text-white/60 text-sm hidden sm:inline">{sl ? partLabel(sl.u) : ""}</span>
-        <span className="ml-auto shrink-0 whitespace-nowrap text-sm text-white/70">{qPos ? `Câu ${qPos}/${qSlides.length}` : "Giới thiệu phần"}</span>
+        <span className="ml-auto shrink-0 whitespace-nowrap text-sm text-white/70">{qPos ? (multi ? `Câu ${sl.its[0].n}–${sl.its[sl.its.length - 1].n} · ${qPos + sl.its.length - 1}/${qList.length}` : `Câu ${qPos}/${qList.length}`) : "Giới thiệu phần"}</span>
         {timer && <span className={`font-black tabular-nums px-2 rounded ${left === 0 ? "bg-rose-600 animate-pulse" : left <= 10 ? "text-rose-300" : ""}`}>⏱ {Math.floor(left / 60)}:{String(left % 60).padStart(2, "0")}</span>}
         <button onClick={onClose} className="shrink-0 whitespace-nowrap h-8 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-bold">✕ Thoát</button>
       </div>
@@ -261,11 +276,23 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
             <div className={twoCol ? "grid lg:grid-cols-[1fr_1fr] gap-6" : "grid gap-5"}>
               {twoCol && <div className="rounded-2xl bg-white border border-slate-200 p-5 whitespace-pre-line leading-loose lg:max-h-[75vh] lg:overflow-auto" style={ZH}>{sl.u.passage}</div>}
               <div className="grid gap-5 content-start">
-                <QView it={sl.it} step={step} showScript={script} big narrow={twoCol} mine={mine ? (mine[sl.it.n] ?? "") : undefined} />
-                {step >= 1 && showStat && stats?.[sl.it.n] && <StatBar it={sl.it} st={stats[sl.it.n]} names={!student} />}
-                <Analysis a={a} step={step} big />
-                {step === 0 && <div className="text-sm text-slate-400">Bấm <b>Hiện đáp án</b> (hoặc phím Space / →){hasA(a) ? ", bấm tiếp để xem phân tích" : ""}.</div>}
-                {step >= 1 && !hasA(a) && !student && <div className="text-sm text-slate-400">Câu này chưa có phần phân tích — soạn ở màn hình chỉnh sửa.</div>}
+                {multi && <div className="text-sm font-bold text-[#9E2F22]">🎧 Câu {sl.its[0].n}–{sl.its[sl.its.length - 1].n} · cùng một đoạn nghe</div>}
+                {multi && script && (sl.its[0].lpass || sl.its.some((x) => x.lq)) && (
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-3">
+                    <div className="text-xs font-bold text-amber-700 mb-1">🎧 Lời nghe</div>
+                    {sl.its[0].lpass && <div className="whitespace-pre-line leading-relaxed" style={ZH}>{sl.its[0].lpass}</div>}
+                    {sl.its.map((x) => x.lq && <div key={x.n} className="mt-2 whitespace-pre-line" style={ZH}><b>{x.n}.</b> {x.lq}</div>)}
+                  </div>
+                )}
+                {sl.its.map((it) => { const ai = lesson?.q?.[it.n]; return (
+                  <div key={it.n} className={multi ? "grid gap-4 rounded-2xl border border-slate-200 bg-white/60 p-4" : "grid gap-5"}>
+                    <QView it={it} step={step} showScript={script && !multi} big narrow={twoCol || multi} mine={mine ? (mine[it.n] ?? "") : undefined} />
+                    {step >= 1 && showStat && stats?.[it.n] && <StatBar it={it} st={stats[it.n]} names={!student} />}
+                    <Analysis a={ai} step={step} big />
+                  </div>
+                ); })}
+                {step === 0 && <div className="text-sm text-slate-400">Bấm <b>Hiện đáp án</b> (hoặc phím Space / →){anyA ? ", bấm tiếp để xem phân tích" : ""}.</div>}
+                {step >= 1 && !anyA && !student && <div className="text-sm text-slate-400">Câu này chưa có phần phân tích — soạn ở màn hình chỉnh sửa.</div>}
               </div>
             </div>
           )}
@@ -277,9 +304,9 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
             <div className="bg-white rounded-2xl p-5 max-w-3xl w-full max-h-[80vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
               <div className="font-black mb-3">Chuyển tới câu</div>
               <div className="flex flex-wrap gap-1.5">
-                {qSlides.map(([s, i]) => (
-                  <button key={i} onClick={() => { setIdx(i); setStep(0); setGrid(false); clearPen(); }}
-                    className={`w-11 h-9 rounded-lg text-sm font-bold border ${i === idx ? "bg-[#142033] text-white" : mine ? (isRight(s.it, mine[s.it.n]) === false ? "bg-rose-50 border-rose-300" : "bg-white border-slate-200") : hasA(lesson?.q?.[s.it.n]) ? "bg-emerald-50 border-emerald-300" : "bg-white border-slate-200"}`}>{s.it.n}</button>
+                {qList.map(([it, i]) => (
+                  <button key={it.n} onClick={() => { setIdx(i); setStep(0); setGrid(false); clearPen(); }}
+                    className={`w-11 h-9 rounded-lg text-sm font-bold border ${i === idx ? "bg-[#142033] text-white" : mine ? (isRight(it, mine[it.n]) === false ? "bg-rose-50 border-rose-300" : "bg-white border-slate-200") : hasA(lesson?.q?.[it.n]) ? "bg-emerald-50 border-emerald-300" : "bg-white border-slate-200"}`}>{it.n}</button>
                 ))}
               </div>
             </div>
@@ -301,7 +328,7 @@ export function Present({ paper, units, items, lesson, startN, onClose, student 
         <Btn onClick={() => setZoom((z) => Math.max(0.7, +(z - 0.1).toFixed(1)))}>A−</Btn>
         <Btn onClick={() => setZoom((z) => Math.min(2, +(z + 0.1).toFixed(1)))}>A+</Btn>
         <Btn onClick={toggleFs} title="F">⛶</Btn>
-        {audio && <div className="ml-auto">{sl?.it?.sec === "L" ? <ClipPlayer src={audio} it={sl.it} dark autoKey /> : <audio src={audio} controls preload="none" className="h-9 max-w-[320px]" />}</div>}
+        {audio && <div className="ml-auto">{sl?.it?.sec === "L" ? <ClipPlayer src={audio} items={sl.its} dark autoKey /> : <audio src={audio} controls preload="none" className="h-9 max-w-[320px]" />}</div>}
       </div>
     </div>
   );
@@ -357,6 +384,7 @@ export default function GiangDe({ db }) {
   const { items, units } = built;
   useEffect(() => { if (items.length && selN == null) setSelN(items[0].n); }, [items, selN]);
   const it = items.find((x) => x.n === selN);
+  const sib = it ? (it.grp ? items.filter((x) => x.grp === it.grp) : [it]) : [];
   const un = it ? units[it.u] : null;
   const done = items.filter((x) => hasA(lesson?.q?.[x.n])).length;
   const clsOf = useMemo(() => { const m = {}; classes.forEach((k) => (k.students || []).forEach((st) => (m[norm(st.name)] = k.className))); return m; }, [classes]);
@@ -494,8 +522,14 @@ export default function GiangDe({ db }) {
                     {[["Câu hỏi", 0], ["Đáp án", 1], ["Đầy đủ", 3]].map(([l, s]) => <button key={s} onClick={() => setStep(s)} className={`px-2 py-1 rounded-md border ${step === s ? "bg-[#142033] text-white" : ""}`}>{l}</button>)}
                     {it.sec === "L" && <label className="ml-auto flex items-center gap-1"><input type="checkbox" checked={script} onChange={(e) => setScript(e.target.checked)} />Lời nghe</label>}
                   </div>
-                  {it.sec === "L" && paper.audio && <ClipPlayer src={Array.isArray(paper.audio) ? paper.audio[0] : paper.audio} it={it} />}
-                  <QView it={it} step={step} showScript={script} />
+                  {it.sec === "L" && paper.audio && <ClipPlayer src={Array.isArray(paper.audio) ? paper.audio[0] : paper.audio} items={sib} />}
+                  {sib.length > 1 && <div className="text-xs font-bold text-[#9E2F22]">🎧 Câu {sib[0].n}–{sib[sib.length - 1].n} dùng chung một đoạn nghe — khi trình chiếu sẽ hiện chung một trang</div>}
+                  {sib.length > 1 && script && sib[0].lpass && <div className="rounded-xl bg-amber-50 border border-amber-200 p-3"><div className="text-xs font-bold text-amber-700 mb-1">🎧 Lời nghe (đoạn chung)</div><div className="whitespace-pre-line leading-relaxed" style={ZH}>{sib[0].lpass}</div></div>}
+                  {sib.length > 1 ? sib.map((x) => (
+                    <div key={x.n} onClick={() => x.n !== it.n && setSelN(x.n)} className={`rounded-xl p-2 ${x.n === it.n ? "ring-2 ring-[#142033]" : "opacity-60 cursor-pointer hover:opacity-100"}`}>
+                      <QView it={{ ...x, listen: x.lq }} step={step} showScript={script} />
+                    </div>
+                  )) : <QView it={it} step={step} showScript={script} />}
                   {stats?.[it.n] && <StatBar it={it} st={stats[it.n]} />}
                   <Analysis a={lesson.q?.[it.n]} step={step} />
                 </div>

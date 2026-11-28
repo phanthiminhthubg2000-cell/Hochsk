@@ -107,15 +107,19 @@ export function buildItems(paper) {
       if (t === "w") extra = [q.prompt, q.word && !String(q.prompt || "").includes(q.word) ? `Từ: ${q.word}` : "", q.prompt2].filter(Boolean).map(strip).join("\n");
       if (t === "w" && !ansText) ansText = strip(q.ref || "");
       if (t === "w" && q.ref) ansText = strip(q.ref);
-      let listen = "";
+      let listen = "", lpass = "", lq = "", grp = null;
+      const at = Array.isArray(paper?.qtime?.[q.n]) ? paper.qtime[q.n] : null;
       if (u.sec === "L") {
         const ps = passages.find((x) => q.n >= x.from && q.n <= x.to);
-        listen = [ps && ps.text ? ps.text : "", byQ[q.n] || ""].filter(Boolean).join("\n\n");
+        lpass = ps && ps.text ? ps.text : ""; lq = byQ[q.n] || "";
+        listen = [lpass, lq].filter(Boolean).join("\n\n");
+        // các câu dùng chung một đoạn nghe (31–32, 35–36…) → cùng nhóm, trình chiếu chung một trang
+        grp = ps && ps.to > ps.from ? `p${ps.from}-${ps.to}` : at && at.length >= 4 ? `t${at[2]}` : null;
       }
       const it = {
         n: q.n, sec: u.sec, part: String(u.part), u: ui, head: strip(u.head), passage, listen,
         stem, sPy, p, pPy, opts, ans, ansText, type: t, img: q.img || "", extra, min: q.min || 0,
-        at: Array.isArray(paper?.qtime?.[q.n]) ? paper.qtime[q.n] : null, // [đầu, cuối, (đầu nhóm, cuối nhóm)] giây trong file nghe
+        at, lpass, lq, grp, // [đầu, cuối, (đầu nhóm, cuối nhóm)] giây trong file nghe
       };
       items.push(it);
       nums.push(q.n);
