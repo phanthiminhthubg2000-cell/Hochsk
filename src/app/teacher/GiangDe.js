@@ -16,15 +16,23 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const fmtT = (x) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
 export function ClipPlayer({ src, it, dark = false, autoKey }) {
   const au = useRef(null); const stopAt = useRef(0); const from = useRef(0);
-  const [on, setOn] = useState(""); const [pos, setPos] = useState(0); const [rate, setRate] = useState(1);
+  const [on, setOn] = useState(""); const [pos, setPos] = useState(0); const [rate, setRate] = useState(1); const [err, setErr] = useState("");
   const at = it?.at;
   const play = (s, e, k) => {
     const a = au.current; if (!a) return;
     if (on === k && !a.paused) { a.pause(); setOn(""); return; }
     document.querySelectorAll("audio").forEach((x) => { if (x !== a) x.pause(); });
     from.current = s; stopAt.current = e; setOn(k);
-    const go = () => { a.currentTime = s; a.playbackRate = rate; a.play().catch(() => {}); };
-    if (a.readyState >= 1) go(); else { a.addEventListener("loadedmetadata", go, { once: true }); a.load(); }
+    setErr("");
+    a.playbackRate = rate;
+    // gọi play() ngay trong cú bấm (Safari/Mac chặn phát nếu gọi sau khi chờ tải) — chưa tải xong thì tắt tiếng, tua tới đúng chỗ rồi mới bật tiếng
+    if (a.readyState >= 1) { try { a.currentTime = s; } catch (_) {} }
+    else {
+      a.muted = true;
+      a.addEventListener("loadedmetadata", () => { try { a.currentTime = s; } catch (_) {} a.addEventListener("seeked", () => { a.muted = false; }, { once: true }); }, { once: true });
+    }
+    const p = a.play();
+    if (p && p.catch) p.catch((er) => { a.muted = false; setOn(""); setErr(er?.name === "NotAllowedError" ? "Trình duyệt chặn phát tiếng — bấm lại nút nghe" : "Không phát được file nghe (" + (er?.name || "lỗi") + ")"); });
   };
   useEffect(() => { const a = au.current; if (a) { a.pause(); } setOn(""); setPos(0); }, [it?.n, src]);
   useEffect(() => { if (au.current) au.current.playbackRate = rate; }, [rate]);
@@ -41,13 +49,14 @@ export function ClipPlayer({ src, it, dark = false, autoKey }) {
   const len = on === "g" ? at[3] - at[2] : at ? at[1] - at[0] : 0;
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <audio ref={au} src={src} preload="metadata" onTimeUpdate={tick} onPause={() => setOn((o) => (au.current && au.current.currentTime < stopAt.current - 0.3 ? o : ""))} />
+      <audio ref={au} src={src} preload="metadata" onError={() => setErr("Không tải được file nghe")} onTimeUpdate={tick} onPause={() => setOn((o) => (au.current && au.current.currentTime < stopAt.current - 0.3 ? o : ""))} />
       {at ? <>
         <button onClick={() => play(at[0], at[1], "q")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "q" ? onB : b}`}>{on === "q" ? "⏸" : "▶"} Nghe câu {it.n}</button>
         {at.length >= 4 && <button onClick={() => play(at[2], at[3], "g")} className={`h-9 px-3 rounded-lg text-sm font-bold border ${on === "g" ? onB : b}`}>{on === "g" ? "⏸" : "▶"} Cả đoạn</button>}
         <button onClick={() => { const a = au.current; if (a) { a.currentTime = Math.max(from.current, a.currentTime - 5); } }} className={`h-9 px-2 rounded-lg text-sm font-bold border ${b}`} title="Lùi 5 giây">↺5s</button>
         <button onClick={() => setRate((r) => (r === 1 ? 0.8 : r === 0.8 ? 0.6 : 1))} className={`h-9 px-2 rounded-lg text-sm font-bold border ${b}`} title="Tốc độ">{rate}×</button>
         {on && <span className={`text-xs tabular-nums ${dark ? "text-white/70" : "text-slate-500"}`}>{fmtT(pos)} / {fmtT(len)}</span>}
+        {err && <span className="text-xs text-rose-400">{err}</span>}
       </> : <audio src={src} controls preload="none" className="h-9 max-w-[320px]" />}
     </div>
   );
