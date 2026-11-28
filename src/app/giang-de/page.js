@@ -6,7 +6,8 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 import { db } from "../../firebase";
 import GardenNav from "../GardenNav";
 import { useTuVi } from "../useTuVi";
-import { GD_COL, buildItems, isRight, subAnswers } from "@/lib/giangde";
+import * as FS from "firebase/firestore";
+import { buildItems, gdListPublished, gdRead, isRight, subAnswers } from "@/lib/giangde";
 import { Present } from "../teacher/GiangDe";
 
 const ms = (t) => (t?.toMillis ? t.toMillis() : t?.seconds ? t.seconds * 1000 : 0);
@@ -22,8 +23,8 @@ export default function GiangDePage() {
 
   useEffect(() => {
     try { const p = new URLSearchParams(location.search).get("p"); if (p) setKey(p); } catch (_) {}
-    getDocs(query(collection(db, GD_COL), where("published", "==", true)))
-      .then((s) => { const a = []; s.forEach((d) => a.push({ id: d.id, ...d.data() })); setList(a.sort((x, y) => ms(y.publishedAt || y.updatedAt) - ms(x.publishedAt || x.updatedAt))); })
+    gdListPublished(FS, db)
+      .then((a) => { setList(a.sort((x, y) => ms(y.publishedAt || y.updatedAt) - ms(x.publishedAt || x.updatedAt))); })
       .catch(() => setList([]));
   }, []);
 
@@ -32,8 +33,7 @@ export default function GiangDePage() {
     setErr(""); setView(null); setMine(null);
     (async () => {
       try {
-        const s = await getDoc(doc(db, GD_COL, key));
-        const lesson = s.exists() ? s.data() : null;
+        const lesson = (await gdRead(FS, db, key)).data;
         if (!lesson?.published) { setErr("Cô chưa gửi bài chữa của đề này."); return; }
         const [dir, id] = key.split("__");
         const ps = await fetch(`/${dir}/papers.json`).then((r) => r.json());

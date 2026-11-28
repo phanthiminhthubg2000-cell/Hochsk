@@ -14,6 +14,7 @@ export default function Error({ error, reset }) {
           <Link href="/" className="tt-btn ghost">Về Động phủ</Link>
         </div>
         {error?.digest && <p className="text-xs text-[#8A7F6B] mt-2">Mã lỗi: {error.digest}</p>}
+        {error?.message && <details className="text-xs text-[#8A7F6B] mt-1 max-w-full"><summary className="cursor-pointer">Chi tiết lỗi (chụp gửi giáo viên)</summary><p className="mt-1 break-all text-left">{String(error.message).slice(0, 300)}</p></details>}
       </div>
     </main>
   );

@@ -487,7 +487,7 @@ export default function HomePage() {
     const m = String(selectedResult?.examId || "").match(/^(hsk-exam|hsk2-exam)\/(.+)$/);
     if (selectedResult?.type !== "hsk" || !m) return;
     const k = `${m[1]}__${m[2]}`;
-    getDoc(doc(db, "exam_lessons", k)).then((s) => { if (s.exists() && s.data().published) setGdLink(`/giang-de?p=${k}`); }).catch(() => {});
+    Promise.all([getDoc(doc(db, "exam_lessons", k)).catch(() => null), getDoc(doc(db, "schedule_config", "gd__" + k)).catch(() => null)]).then((r) => { if (r.some((s) => s?.exists() && s.data().published)) setGdLink(`/giang-de?p=${k}`); });
   }, [selectedResult]);
   // Mở lại bài đã nộp trong phòng thi ở chế độ chữa đề (đáp án của học viên + đáp án đúng + nghe lại + bài mẫu)
   const openReview = (r) => {

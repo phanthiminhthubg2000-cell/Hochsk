@@ -2,12 +2,13 @@
 // TRANG GIÁO VIÊN · GIẢNG ĐỀ — chọn một đề HSK, AI soạn phần chữa từng câu (giáo viên sửa lại, lưu Firestore),
 // rồi trình chiếu như một bài giảng: từng câu một, bấm để lộ đáp án → phân tích → kiến thức; có bút vẽ, hẹn giờ, lời nghe.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { collection, doc, getDoc, getDocs, query, setDoc, serverTimestamp, where } from "firebase/firestore";
-import { CENTERS, FIELDS, GD_COL, SEC_NAME, buildItems, classStats, isRight, itemPrompt, lessonKey, subAnswers } from "@/lib/giangde";
+import * as FS from "firebase/firestore";
+import { collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { CENTERS, FIELDS, GD_COL, SEC_NAME, buildItems, classStats, gdRead, gdWrite, isRight, itemPrompt, lessonKey, subAnswers } from "@/lib/giangde";
 
 const ZH = { fontFamily: '"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif' };
 const AI_FIELDS = ["key", "traps", "point", "vocab", "tip"];
-const hasA = (a) => a && AI_FIELDS.some((k) => (a[k] || "").trim());
+const hasA = (a) => !!a && typeof a === "object" && AI_FIELDS.some((k) => String(a[k] ?? "").trim());
 const partLabel = (u) => `${SEC_NAME[u.sec] || u.sec} · phần ${u.part}${u.label ? ` · câu ${u.label}` : ""}`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -131,7 +132,7 @@ export function QView({ it, step = 0, showScript = false, big = false, narrow = 
 
 function Analysis({ a, step, big }) {
   if (!a || step < 2) return null;
-  const box = (title, text, cls) => text?.trim() ? (
+  const box = (title, text, cls) => (text = text == null ? "" : String(text)).trim() ? (
     <div className={`rounded-xl border p-3 ${cls}`}>
       <div className="text-xs font-black uppercase tracking-wide mb-1 opacity-70">{title}</div>
       <div className={`whitespace-pre-line leading-relaxed ${big ? "text-[1.15em]" : "text-sm"}`} style={ZH}>{text}</div>
@@ -314,6 +315,7 @@ export default function GiangDe({ db }) {
   const [script, setScript] = useState(true);
   const [step, setStep] = useState(3);
   const stop = useRef(false);
+  const whereRef = useRef(GD_COL); // nơi đang lưu bài chữa (exam_lessons hoặc dự phòng)
   const tmr = useRef({});
   const [subs, setSubs] = useState([]); // bài làm của học viên cho đề này: [{name, cls, ans}]
   const [classes, setClasses] = useState([]);
@@ -339,7 +341,7 @@ export default function GiangDe({ db }) {
       const a = []; qs.forEach((d) => { const h = d.data(); const ans = subAnswers(h); if (Object.keys(ans).length) a.push({ id: d.id, name: h.studentTypedName || h.userName || "Học viên", user: h.userName || "", ans }); });
       setSubs(a);
     }).catch(() => {});
-    getDoc(doc(db, GD_COL, lessonKey(dir, pid))).then((s) => { const d = s.exists() ? s.data() : {}; setLesson({ q: {}, units: {}, ...d }); if (d.lang) setLang(d.lang); }).catch(() => setLesson({ q: {}, units: {} }));
+    gdRead(FS, db, lessonKey(dir, pid)).then(({ data, where: w }) => { const d = data || {}; whereRef.current = w; setLesson({ ...d, q: d.q && typeof d.q === "object" ? d.q : {}, units: d.units && typeof d.units === "object" ? d.units : {} }); if (d.lang) setLang(d.lang); }).catch(() => setLesson({ q: {}, units: {} }));
   }, [pid, dir, list, db]);
 
   const built = useMemo(() => (paper ? buildItems(paper) : { items: [], units: [] }), [paper]);
@@ -356,8 +358,8 @@ export default function GiangDe({ db }) {
   const meta = { dir, paperId: pid, name: paper?.name || "", level: paper?.level || +level || 0 };
   const save = useCallback(async (patch) => {
     setSaved("Đang lưu…");
-    try { await setDoc(doc(db, GD_COL, lessonKey(dir, pid)), { ...patch, ...meta, updatedAt: serverTimestamp() }, { merge: true }); setSaved("Đã lưu ✓"); }
-    catch (e) { setSaved("Lỗi lưu: " + String(e?.message || e).slice(0, 80)); }
+    try { whereRef.current = await gdWrite(FS, db, lessonKey(dir, pid), { ...patch, ...meta, updatedAt: serverTimestamp() }, whereRef.current); setSaved("Đã lưu ✓"); return true; }
+    catch (e) { setSaved("⚠ Chưa lưu được: " + String(e?.code || e?.message || e).slice(0, 80)); return false; }
   }, [db, dir, pid, meta.name, meta.level]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const edit = (n, k, v) => {
@@ -380,7 +382,7 @@ export default function GiangDe({ db }) {
       if (r.ok && d.items) {
         const q = {}; d.items.forEach((x) => { if (its.some((y) => y.n === x.n)) q[x.n] = { key: x.key, traps: x.traps, point: x.point, vocab: x.vocab, tip: x.tip }; });
         setLesson((L) => { const nq = { ...L.q }; Object.entries(q).forEach(([n, v]) => (nq[n] = { ...(nq[n] || {}), ...v })); return { ...L, q: nq, units: { ...L.units, [u.i]: { ...(L.units?.[u.i] || {}), strategy: d.strategy } } }; });
-        await save({ q, units: { [u.i]: { strategy: d.strategy } }, lang });
+        if (!(await save({ q, units: { [u.i]: { strategy: d.strategy || "" } }, lang }))) throw new Error("AI đã soạn xong nhưng chưa lưu được lên máy chủ — nội dung vẫn còn trên màn hình, đừng tải lại trang.");
         return true;
       }
       if (t === 0 && (r.status === 429 || r.status >= 500)) { setBusy((b) => b + " · AI bận, thử lại sau 15 giây…"); await sleep(15000); continue; }

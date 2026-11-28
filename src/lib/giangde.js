@@ -188,3 +188,36 @@ export function classStats(items, subs) {
   });
   return out;
 }
+
+// ---- Lưu bài chữa: ưu tiên exam_lessons; nếu Firestore chưa mở quyền cho collection này
+// thì lưu sang schedule_config (đã được phép ghi) với id "gd__<khoá>" ----
+export const GD_FALLBACK = "schedule_config";
+const denied = (e) => /permission|insufficient/i.test(String(e?.code || e?.message || e));
+export async function gdRead(fs, db, key) {
+  const { doc, getDoc } = fs;
+  let primary = null, err = null;
+  try { const s = await getDoc(doc(db, GD_COL, key)); primary = s.exists() ? s.data() : null; } catch (e) { err = e; }
+  if (primary) return { data: primary, where: GD_COL };
+  try { const s = await getDoc(doc(db, GD_FALLBACK, "gd__" + key)); if (s.exists()) return { data: s.data(), where: GD_FALLBACK }; } catch (e) { if (!err) err = e; }
+  return { data: null, where: err && denied(err) ? GD_FALLBACK : GD_COL };
+}
+export async function gdWrite(fs, db, key, patch, where) {
+  const { doc, setDoc } = fs;
+  if (where !== GD_FALLBACK) {
+    try { await setDoc(doc(db, GD_COL, key), patch, { merge: true }); return GD_COL; }
+    catch (e) { if (!denied(e)) throw e; }
+  }
+  await setDoc(doc(db, GD_FALLBACK, "gd__" + key), { ...patch, gdKey: key }, { merge: true });
+  return GD_FALLBACK;
+}
+export async function gdListPublished(fs, db) {
+  const { collection, getDocs, query, where } = fs;
+  const out = new Map();
+  for (const [col, pre] of [[GD_COL, ""], [GD_FALLBACK, "gd__"]]) {
+    try {
+      const s = await getDocs(query(collection(db, col), where("published", "==", true)));
+      s.forEach((d) => { if (pre && !d.id.startsWith(pre)) return; const id = d.id.slice(pre.length); if (!out.has(id)) out.set(id, { id, ...d.data() }); });
+    } catch (_) { /* collection chưa được phép đọc */ }
+  }
+  return [...out.values()];
+}
